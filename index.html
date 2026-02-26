@@ -3,89 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOGISTIC.PRO | Corporate Shipping Systems</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>LOGISTIC.PRO | Enterprise Suite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --primary-blue: #2563eb;
-            --light-blue: #3b82f6;
-            --bg-soft: #f0f7ff;
-            --sidebar-bg: #ffffff;
-            --white: #ffffff;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
-            --success: #10b981;
+            --accent: #2563eb;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --border: rgba(255, 255, 255, 0.4);
+            --navy: #0f172a;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg-soft); color: var(--text-dark); }
 
-        /* --- LOGIN OVERLAY --- */
+        body { 
+            min-height: 100vh;
+            color: var(--navy);
+            /* Background Mesh Gradient yang Hidup */
+            background: linear-gradient(45deg, #e0e7ff, #f1f5f9, #dbeafe);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- LOGIN SECTION (PREMIUM) --- */
         #login-overlay {
-            position: fixed; inset: 0; background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
-            display: flex; align-items: center; justify-content: center; z-index: 3000;
+            position: fixed; inset: 0; 
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(15px);
+            display: flex; align-items: center; justify-content: center; z-index: 9999;
         }
-        .login-card { 
-            background: var(--white); padding: 3rem; border-radius: 24px; width: 420px; text-align: center;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-        }
-        .login-card input {
-            width: 100%; padding: 14px; margin: 1.5rem 0 1rem; border: 1.5px solid #e2e8f0;
-            border-radius: 12px; outline: none; transition: 0.3s;
-        }
-        .login-card input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
 
-        /* --- LAYOUT --- */
+        .login-card { 
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 3.5rem; border-radius: 40px; width: 480px; 
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        /* Penataan Logo Header & Vendor */
+        .logo-header { width: 180px; margin-bottom: 2rem; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); }
+        
+        .vendor-grid {
+            display: flex; justify-content: center; align-items: center;
+            gap: 25px; margin-bottom: 2.5rem; background: rgba(255,255,255,0.4);
+            padding: 15px; border-radius: 20px;
+        }
+        .vendor-logo { height: 45px; width: auto; object-fit: contain; opacity: 0.9; transition: 0.3s; }
+        .vendor-logo:hover { transform: scale(1.1); opacity: 1; }
+
+        .login-card input {
+            width: 100%; padding: 16px; border-radius: 18px; border: 1px solid #cbd5e1;
+            margin-bottom: 1.5rem; background: rgba(255,255,255,0.8);
+            font-size: 1.1rem; text-align: center; font-weight: 600; outline: none;
+            transition: 0.3s;
+        }
+        .login-card input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+
+        /* --- DASHBOARD LAYOUT --- */
         #app-shell { display: flex; min-height: 100vh; }
         
-        /* SIDEBAR */
         nav {
-            width: 280px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0;
-            padding: 2rem 1.5rem; height: 100vh; position: fixed; display: flex; flex-direction: column;
+            width: 280px; background: rgba(255,255,255,0.6); backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            padding: 2.5rem 1.5rem; height: 100vh; position: fixed; display: flex; flex-direction: column;
         }
-        .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 3rem; color: var(--primary-blue); font-weight: 800; font-size: 1.4rem; }
+
+        .logo-nav { display: flex; align-items: center; gap: 12px; margin-bottom: 3.5rem; font-weight: 800; font-size: 1.4rem; color: var(--accent); }
         
-        .menu-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 1rem; padding-left: 10px; }
         .menu-item {
-            display: flex; align-items: center; padding: 12px 16px; margin-bottom: 0.5rem;
-            cursor: pointer; border-radius: 12px; color: var(--text-muted); transition: 0.3s; font-weight: 500;
+            display: flex; align-items: center; padding: 15px 20px; margin-bottom: 0.8rem;
+            cursor: pointer; border-radius: 20px; color: #64748b; transition: 0.3s; font-weight: 700;
         }
-        .menu-item i { margin-right: 12px; width: 20px; }
-        .menu-item:hover { background: #f1f5f9; color: var(--primary-blue); }
-        .menu-item.active { background: var(--primary-blue); color: var(--white); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
+        .menu-item:hover { background: rgba(255,255,255,0.8); color: var(--accent); transform: translateX(5px); }
+        .menu-item.active { background: var(--accent); color: white; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4); }
 
-        /* MAIN CONTENT */
-        main { flex: 1; margin-left: 280px; padding: 3rem; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
-        .header-info h1 { font-size: 1.75rem; font-weight: 700; }
+        /* --- MAIN CONTENT --- */
+        main { flex: 1; margin-left: 280px; padding: 4rem; }
 
-        .btn-add {
-            background: var(--primary-blue); color: white; padding: 12px 24px; border-radius: 12px;
-            text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px;
-            transition: 0.3s; border: none; cursor: pointer;
+        .glass-panel {
+            background: var(--glass-bg); backdrop-filter: blur(20px);
+            border-radius: 35px; padding: 2.5rem; border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
         }
-        .btn-add:hover { background: #1d4ed8; transform: translateY(-2px); }
 
-        /* CARDS */
-        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
-        .card-stat { 
-            background: var(--white); padding: 1.5rem; border-radius: 20px; 
-            border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        .btn-main {
+            background: var(--accent); color: white; border: none; padding: 18px 35px;
+            border-radius: 20px; font-weight: 700; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 12px; box-shadow: 0 8px 15px rgba(37, 99, 235, 0.2);
         }
-        .card-stat small { font-weight: 600; color: var(--text-muted); }
-        .card-stat h2 { font-size: 2rem; margin-top: 0.5rem; color: var(--primary-blue); }
+        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(37, 99, 235, 0.3); }
 
-        .table-container { 
-            background: var(--white); border-radius: 24px; padding: 2rem;
-            border: 1px solid #f1f5f9; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
-        }
-        
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 16px; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #f8fafc; }
-        td { padding: 18px 16px; border-bottom: 1px solid #f8fafc; font-size: 0.95rem; font-weight: 500; }
-        
-        .badge-pending { background: #fff7ed; color: #c2410c; padding: 4px 12px; border-radius: 8px; font-weight: 700; font-size: 0.75rem; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 12px; margin-top: 1.5rem; }
+        th { padding: 15px; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; text-align: left; }
+        td { padding: 20px 15px; background: rgba(255,255,255,0.4); font-weight: 600; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        td:first-child { border-radius: 20px 0 0 20px; border-left: 1px solid var(--border); }
+        td:last-child { border-radius: 0 20px 20px 0; border-right: 1px solid var(--border); }
+
+        .badge { background: #dcfce7; color: #15803d; padding: 6px 14px; border-radius: 12px; font-size: 0.7rem; font-weight: 800; }
+
         .hidden { display: none !important; }
     </style>
 </head>
@@ -93,72 +117,71 @@
 
     <div id="login-overlay">
         <div class="login-card">
-            <div style="background: var(--bg-soft); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
-                <i data-lucide="shield-check" style="color: var(--primary-blue); width: 32px; height: 32px;"></i>
+            <img src="header1.png" alt="Header Logo" class="logo-header">
+            
+            <p style="color: var(--navy); font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem;">Authorized Access Only</p>
+            
+            <div class="vendor-grid">
+                <img src="ikaen.png" alt="Ikaen" class="vendor-logo">
+                <img src="kse.png" alt="KSE" class="vendor-logo">
+                <img src="ide.png" alt="IDE" class="vendor-logo">
             </div>
-            <h2 style="color: var(--text-dark)">Corporate Access</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Logistic & Supply Chain System</p>
-            <input type="password" id="pass-input" placeholder="Enter Admin Password">
-            <button onclick="handleLogin()" class="btn-add" style="width: 100%; justify-content: center;">Authenticate</button>
-            <p id="error-msg" style="color: #ef4444; font-size: 0.8rem; margin-top: 10px; display: none; font-weight: 600;">Invalid Password!</p>
+
+            <input type="password" id="pass-input" placeholder="Enter Secure Pin">
+            <button onclick="handleLogin()" class="btn-main" style="width: 100%; justify-content: center;">Sign In to System</button>
+            <p style="margin-top: 1.5rem; font-size: 0.75rem; color: #64748b; font-weight: 600;">© 2026 Fleet Management System</p>
         </div>
     </div>
 
     <div id="app-shell" class="hidden">
         <nav>
-            <div class="logo-area">
-                <i data-lucide="boxes" style="width: 32px; height: 32px;"></i>
+            <div class="logo-nav">
+                <i data-lucide="shield-check" style="fill: var(--accent); color: white;"></i>
                 <span>LOGISTIC.PRO</span>
             </div>
             
-            <p class="menu-label">Main Menu</p>
-            <div class="menu-item active" id="nav-ikaen" onclick="switchTab('ikaen')">
-                <i data-lucide="file-check"></i> SJ Ikaen
+            <div class="menu-item active" id="m-ikaen" onclick="switchDept('ikaen')">
+                <i data-lucide="layers" style="margin-right:12px"></i> SJ Ikaen
             </div>
-            <div class="menu-item" id="nav-kse" onclick="switchTab('kse')">
-                <i data-lucide="truck"></i> SJ KSE
+            <div class="menu-item" id="m-kse" onclick="switchDept('kse')">
+                <i data-lucide="truck" style="margin-right:12px"></i> SJ KSE
             </div>
-            <div class="menu-item" id="nav-ide" onclick="switchTab('ide')">
-                <i data-lucide="clipboard-list"></i> SJ IDE
+            <div class="menu-item" id="m-ide" onclick="switchDept('ide')">
+                <i data-lucide="database" style="margin-right:12px"></i> SJ IDE
             </div>
 
-            <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid #f1f5f9;">
-                <div class="menu-item" onclick="location.reload()" style="color: #ef4444;">
-                    <i data-lucide="log-out"></i> Logout Account
+            <div style="margin-top: auto;">
+                <div class="menu-item" onclick="location.reload()" style="color: #ef4444; background: rgba(239, 68, 68, 0.05);">
+                    <i data-lucide="power" style="margin-right:12px"></i> Shutdown
                 </div>
             </div>
         </nav>
 
         <main>
-            <header>
-                <div class="header-info">
-                    <h1 id="title-display">Surat Jalan Ikaen</h1>
-                    <p style="color: var(--text-muted)">Overview manifest data and statistics</p>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem;">
+                <div>
+                    <h1 id="dept-title" style="font-size: 2.5rem; font-weight: 800; letter-spacing: -1.5px;">Surat Jalan Ikaen</h1>
+                    <p style="color: #64748b; font-weight: 600;">Dashboard pemantauan 10 transaksi terakhir</p>
                 </div>
-                <button onclick="goToForm()" class="btn-add">
-                    <i data-lucide="plus-circle"></i> Buat Baru
+                <button onclick="goToForm()" class="btn-main">
+                    <i data-lucide="plus-circle"></i> Create New Manifest
                 </button>
-            </header>
-
-            <div class="stats-row">
-                <div class="card-stat">
-                    <small>Total Manifest</small>
-                    <h2 id="total-val">0</h2>
-                </div>
-                <div class="card-stat">
-                    <small>Pending Status</small>
-                    <h2 id="pending-val" style="color: #f59e0b;">0</h2>
-                </div>
-                <div class="card-stat">
-                    <small>Completed</small>
-                    <h2 style="color: var(--success);">0</h2>
-                </div>
             </div>
 
-            <div class="table-container">
-                <h3 style="margin-bottom: 1.5rem; font-weight: 700;">Manifest Dokumen Terbaru</h3>
-                <div id="table-render">
-                    </div>
+            <div class="glass-panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No. Surat Jalan</th>
+                            <th>Tanggal Terbit</th>
+                            <th>Nama Driver</th>
+                            <th>Lokasi Tujuan</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="manifest-table">
+                        </tbody>
+                </table>
             </div>
         </main>
     </div>
@@ -167,91 +190,50 @@
         lucide.createIcons();
         let activeDept = 'ikaen';
 
-        // 1. LOGIN SYSTEM
         function handleLogin() {
-            const pin = document.getElementById('pass-input').value;
-            if(pin === 'admin123') {
-                document.getElementById('login-overlay').classList.add('hidden');
-                document.getElementById('app-shell').classList.remove('hidden');
-                renderData();
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
-            }
+            if(document.getElementById('pass-input').value === 'admin123') {
+                document.getElementById('login-overlay').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('login-overlay').classList.add('hidden');
+                    document.getElementById('app-shell').classList.remove('hidden');
+                    renderManifest();
+                }, 500);
+            } else { alert('Access Denied: Invalid Credentials'); }
         }
 
-        // 2. NAVIGATION
-        function switchTab(dept) {
+        function switchDept(dept) {
             activeDept = dept;
-            // Update UI Menu
-            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(`nav-${dept}`).classList.add('active');
-            
-            // Update Title
-            document.getElementById('title-display').innerText = "Surat Jalan " + dept.toUpperCase();
-            
-            renderData();
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById(`m-${dept}`).classList.add('active');
+            document.getElementById('dept-title').innerText = "Surat Jalan " + dept.toUpperCase();
+            renderManifest();
         }
 
-        // 3. REDIRECT KE FILE LUAR (sj_ikaen.html, etc)
         function goToForm() {
-            // Ini akan menyambungkan ke file html yang ada di folder Anda
             window.location.href = `sj_${activeDept}.html`;
         }
 
-        // 4. DATA ENGINE (LocalStorage)
-        function renderData() {
-            // Mengambil data dari localStorage yang disimpan oleh file sj_ikaen.html dsb
-            const storageKey = `db_${activeDept}`;
-            const dataList = JSON.parse(localStorage.getItem(storageKey)) || [];
-
-            // Update Counter
-            document.getElementById('total-val').innerText = dataList.length;
-            document.getElementById('pending-val').innerText = dataList.length;
-
-            const targetArea = document.getElementById('table-render');
+        function renderManifest() {
+            const data = JSON.parse(localStorage.getItem(`db_${activeDept}`)) || [];
+            const recentData = data.slice(-10).reverse();
+            const tableBody = document.getElementById('manifest-table');
             
-            if(dataList.length === 0) {
-                targetArea.innerHTML = `
-                    <div style="text-align: center; padding: 4rem;">
-                        <i data-lucide="database-backup" style="width: 48px; height: 48px; color: #cbd5e1; margin-bottom: 1rem;"></i>
-                        <p style="color: var(--text-muted)">Belum ada data manifest untuk departemen ini.</p>
-                    </div>
-                `;
+            if(recentData.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:5rem; color:#94a3b8;">No recent manifests found in database.</td></tr>`;
             } else {
-                let tableHtml = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>No. Surat Jalan</th>
-                                <th>Tanggal</th>
-                                <th>Tujuan</th>
-                                <th>Driver</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
-                dataList.forEach(item => {
-                    tableHtml += `
-                        <tr>
-                            <td style="color: var(--primary-blue); font-weight: 700;">${item.no}</td>
-                            <td>${item.tgl}</td>
-                            <td>${item.tujuan}</td>
-                            <td>${item.driver}</td>
-                            <td><span class="badge-pending">PENDING</span></td>
-                        </tr>
-                    `;
-                });
-
-                tableHtml += `</tbody></table>`;
-                targetArea.innerHTML = tableHtml;
+                tableBody.innerHTML = recentData.map(item => `
+                    <tr>
+                        <td style="color: var(--accent); font-weight: 800;">#${item.no || '---'}</td>
+                        <td>${item.tgl || '---'}</td>
+                        <td>${item.driver || '---'}</td>
+                        <td>${item.tujuan || '---'}</td>
+                        <td><span class="badge">RECORDED</span></td>
+                    </tr>
+                `).join('');
             }
-            lucide.createIcons();
         }
 
-        // Auto-render saat halaman dimuat
-        window.onload = renderData;
+        window.onload = renderManifest;
     </script>
 </body>
 </html>
