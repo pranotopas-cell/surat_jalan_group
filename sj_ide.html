@@ -100,6 +100,19 @@
         .sig-table td { height: 105px; vertical-align: bottom; font-weight: bold; font-size: 9.5pt; padding-bottom: 10px; position: relative; }
         .stamp-container { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 135px; z-index: 1; opacity: 0.95; pointer-events: none; }
 
+        /* PERBAIKAN: Kotak Full Width sejajar sampai kolom menyerahkan */
+        .other-note-container { 
+            width: 100%; 
+            border: 1px solid #000; 
+            border-top: none; /* Menempel ke border bawah tabel tanda tangan */
+            padding: 6px 10px; 
+            font-size: 8pt; 
+            min-height: 45px; 
+            box-sizing: border-box;
+            background: #fff;
+            text-align: left;
+        }
+
         .editor-panel { 
             width: 380px; 
             padding: 20px; 
@@ -114,7 +127,7 @@
         .editor-panel h2 { margin: 18px 0 8px 0; color: var(--dark-blue); font-size: 11pt; border-bottom: 2px solid var(--primary-blue); padding-bottom: 5px; }
         .field { display: flex; flex-direction: column; margin-bottom: 10px; }
         .field label { font-size: 8pt; font-weight: bold; margin-bottom: 4px; color: #444; }
-        input { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; }
+        input, textarea { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; font-family: inherit; }
         
         .action-group { display: flex; flex-direction: column; gap: 10px; margin-top: 25px; }
         .btn { width: 100%; padding: 14px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 10pt; color: white; }
@@ -155,9 +168,10 @@
     <div class="field"><label>Nomor Purchase Order (PO)</label><input type="text" id="i-po-num" value="-"></div>
     <div class="field"><label>PO Quantity (L)</label><input type="text" id="i-poqty" value="-"></div>
 
-    <h2>4. Pengesahan</h2>
+    <h2>4. Pengesahan & Catatan Lain</h2>
     <div class="field"><label>Nama Pengemudi (Driver)</label><input type="text" id="i-driver" value="-"></div>
     <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="RISKY DANDY SAPUTRA"></div>
+    <div class="field"><label>Other Note (Catatan Tambahan)</label><textarea id="i-other-note" rows="2" placeholder="Tulis catatan tambahan di sini..."></textarea></div>
 
     <div class="action-group">
         <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PREVIEW</button>
@@ -176,9 +190,9 @@
     
     <div class="header">
         <div class="company-address">
-            Jln. Natai Arahan Rt.20 Kel. Baru Pangkalan Bun<br>
-            Kotawaringin Barat - Kalimantan Tengah<br>
-            <span style="color:var(--dark-blue); font-weight:bold; text-decoration:underline">indodharmaenergi@gmail.com</span>
+            Jln. Natai arahan Rt.20 Kel. Baru Pangkalan Bun<br>
+            Kotawaringin Barat, Kalimantan Tengah<br>
+            <span style="color:var(--dark-blue); font-weight:bold; text-decoration:underline">indodharmaenergi@gmail.com</span> | 098876
         </div>
         <div class="meta-info-grid">
             <table>
@@ -281,6 +295,10 @@
         </tr>
     </table>
 
+    <div class="other-note-container">
+        <b>Other Note:</b> <span id="v-other-note"></span>
+    </div>
+
     <div class="system-qr-footer">
         <div id="qrcode"></div>
         <div class="system-info-text">
@@ -331,6 +349,9 @@
         document.getElementById('v-driver').innerText = document.getElementById('i-driver').value;
         document.getElementById('v-mgr').innerText = document.getElementById('i-mgr').value;
         
+        // Update Other Note
+        document.getElementById('v-other-note').innerText = document.getElementById('i-other-note').value;
+        
         document.querySelectorAll('.val').forEach(el => fitText(el, 9.5));
         
         qrcode.clear();
@@ -352,9 +373,8 @@
         html2pdf().set(opt).from(element).save();
     }
 
-    document.querySelectorAll('input').forEach(el => el.addEventListener('input', upd));
+    document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', upd));
     upd();
 </script>
 </body>
 </html>
-
