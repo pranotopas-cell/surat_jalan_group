@@ -135,7 +135,7 @@
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (Date)</label><input type="text" id="i-tgl" value="09 Februari 2026"></div>
     <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no" value="009/SJ-IDE/II/2026"></div>
-    <div class="field"><label>Tujuan Header (To)</label><input type="text" id="i-po-to" value="PT."></div>
+    <div class="field"><label>Tujuan Header (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header (Location)</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
     <h2>2. Tabel Rincian Utama</h2>
@@ -244,7 +244,7 @@
             <tr>
                 <td width="45%">
                     <b>Purchase Order to:</b><br>
-                    <span id="w-po-to"></span>
+                    <span id="v-po-to-desc" style="font-weight: bold; color: var(--dark-blue);"></span><br>
                     <i style="font-size: 7.5pt;">Nomor PO / PO Number:</i>
                 </td>
                 <td>: <span class="val" id="v-po-num">-</span></td>
@@ -320,10 +320,11 @@
         document.getElementById('v-t2').innerText = document.getElementById('i-t2').value;
         document.getElementById('v-load').innerText = document.getElementById('i-load-date').value;
         
+        // Perbaikan Koneksi Tujuan
         const ptTujuan = document.getElementById('i-po-to').value;
-        document.getElementById('v-po-to').innerText = ptTujuan;
-        document.getElementById('v-po-to-header').innerText = ptTujuan;
-        document.getElementById('v-dest-table').innerText = ptTujuan;
+        document.getElementById('v-po-to-header').innerText = ptTujuan; // Header
+        document.getElementById('v-dest-table').innerText = ptTujuan;   // Tabel Utama
+        document.getElementById('v-po-to-desc').innerText = ptTujuan;   // Deskripsi PO
         
         document.getElementById('v-po-num').innerText = document.getElementById('i-po-num').value;
         document.getElementById('v-do-top').innerText = document.getElementById('i-do-desc').value;
@@ -359,5 +360,3 @@
 </script>
 </body>
 </html>
-
-
