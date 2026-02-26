@@ -3,189 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOGISTIC.PRO | Enterprise System</title>
+    <title>LOGISTIC.PRO | Corporate Shipping Systems</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --primary: #0f172a; --accent: #2563eb; --success: #10b981;
-            --bg: #f8fafc; --white: #ffffff; --text-main: #1e293b;
-            --text-muted: #64748b; --sidebar-width: 260px;
+            --primary-blue: #2563eb;
+            --light-blue: #3b82f6;
+            --bg-soft: #f0f7ff;
+            --sidebar-bg: #ffffff;
+            --white: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg); color: var(--text-main); }
+        body { background-color: var(--bg-soft); color: var(--text-dark); }
 
-        /* --- UI Components --- */
-        .hidden { display: none !important; }
-        .btn { padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; border: none; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
-        .btn-primary { background: var(--accent); color: white; }
-        .btn-secondary { background: #e2e8f0; color: var(--text-main); }
+        /* --- LOGIN OVERLAY --- */
+        #login-overlay {
+            position: fixed; inset: 0; background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+            display: flex; align-items: center; justify-content: center; z-index: 3000;
+        }
+        .login-card { 
+            background: var(--white); padding: 3rem; border-radius: 24px; width: 420px; text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+        }
+        .login-card input {
+            width: 100%; padding: 14px; margin: 1.5rem 0 1rem; border: 1.5px solid #e2e8f0;
+            border-radius: 12px; outline: none; transition: 0.3s;
+        }
+        .login-card input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
 
-        /* --- Layout --- */
-        #login-overlay { position: fixed; inset: 0; background: var(--primary); display: flex; align-items: center; justify-content: center; z-index: 3000; }
-        .login-card { background: var(--white); padding: 3rem; border-radius: 20px; width: 400px; text-align: center; }
-
+        /* --- LAYOUT --- */
         #app-shell { display: flex; min-height: 100vh; }
-        nav { width: var(--sidebar-width); background: var(--primary); color: white; padding: 2rem 1.2rem; height: 100vh; position: fixed; display: flex; flex-direction: column; }
-        main { flex: 1; margin-left: var(--sidebar-width); padding: 2.5rem; }
-
-        .menu-item { display: flex; align-items: center; padding: 12px 16px; margin-bottom: 0.5rem; cursor: pointer; border-radius: 10px; color: #94a3b8; transition: 0.2s; }
-        .menu-item.active { background: var(--accent); color: white; }
-
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-box { background: var(--white); padding: 1.5rem; border-radius: 15px; border: 1px solid #e2e8f0; }
-        .stat-box h2 { font-size: 1.8rem; margin-top: 5px; }
-
-        .content-card { background: var(--white); padding: 2rem; border-radius: 15px; border: 1px solid #e2e8f0; min-height: 400px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        th { text-align: left; padding: 15px; border-bottom: 2px solid #f1f5f9; color: var(--text-muted); font-size: 0.8rem; }
-        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
         
-        .status-badge { background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.7rem; }
+        /* SIDEBAR */
+        nav {
+            width: 280px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0;
+            padding: 2rem 1.5rem; height: 100vh; position: fixed; display: flex; flex-direction: column;
+        }
+        .logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 3rem; color: var(--primary-blue); font-weight: 800; font-size: 1.4rem; }
+        
+        .menu-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 1rem; padding-left: 10px; }
+        .menu-item {
+            display: flex; align-items: center; padding: 12px 16px; margin-bottom: 0.5rem;
+            cursor: pointer; border-radius: 12px; color: var(--text-muted); transition: 0.3s; font-weight: 500;
+        }
+        .menu-item i { margin-right: 12px; width: 20px; }
+        .menu-item:hover { background: #f1f5f9; color: var(--primary-blue); }
+        .menu-item.active { background: var(--primary-blue); color: var(--white); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
 
-        /* --- Form --- */
-        .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; color: var(--text-muted); font-size: 0.85rem; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; }
+        /* MAIN CONTENT */
+        main { flex: 1; margin-left: 280px; padding: 3rem; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+        .header-info h1 { font-size: 1.75rem; font-weight: 700; }
+
+        .btn-add {
+            background: var(--primary-blue); color: white; padding: 12px 24px; border-radius: 12px;
+            text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px;
+            transition: 0.3s; border: none; cursor: pointer;
+        }
+        .btn-add:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        /* CARDS */
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
+        .card-stat { 
+            background: var(--white); padding: 1.5rem; border-radius: 20px; 
+            border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .card-stat small { font-weight: 600; color: var(--text-muted); }
+        .card-stat h2 { font-size: 2rem; margin-top: 0.5rem; color: var(--primary-blue); }
+
+        .table-container { 
+            background: var(--white); border-radius: 24px; padding: 2rem;
+            border: 1px solid #f1f5f9; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+        }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 16px; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #f8fafc; }
+        td { padding: 18px 16px; border-bottom: 1px solid #f8fafc; font-size: 0.95rem; font-weight: 500; }
+        
+        .badge-pending { background: #fff7ed; color: #c2410c; padding: 4px 12px; border-radius: 8px; font-weight: 700; font-size: 0.75rem; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div id="login-overlay">
         <div class="login-card">
-            <i data-lucide="lock" style="width: 40px; color: var(--accent);"></i>
-            <h2 style="margin: 1rem 0">Admin Login</h2>
-            <input type="password" id="pass-input" style="width:100%; padding:12px; margin-bottom:1rem; border-radius:8px; border:1px solid #ddd" placeholder="Password">
-            <button onclick="login()" class="btn btn-primary" style="width:100%; justify-content:center">Login</button>
+            <div style="background: var(--bg-soft); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                <i data-lucide="shield-check" style="color: var(--primary-blue); width: 32px; height: 32px;"></i>
+            </div>
+            <h2 style="color: var(--text-dark)">Corporate Access</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Logistic & Supply Chain System</p>
+            <input type="password" id="pass-input" placeholder="Enter Admin Password">
+            <button onclick="handleLogin()" class="btn-add" style="width: 100%; justify-content: center;">Authenticate</button>
+            <p id="error-msg" style="color: #ef4444; font-size: 0.8rem; margin-top: 10px; display: none; font-weight: 600;">Invalid Password!</p>
         </div>
     </div>
 
     <div id="app-shell" class="hidden">
         <nav>
-            <div style="font-weight:800; font-size:1.3rem; margin-bottom:3rem; color:var(--accent)">LOGISTIC.PRO</div>
-            <div class="menu-item active" id="nav-ikaen" onclick="switchDept('ikaen')"><i data-lucide="package"></i>&nbsp;&nbsp;SJ Ikaen</div>
-            <div class="menu-item" id="nav-kse" onclick="switchDept('kse')"><i data-lucide="truck"></i>&nbsp;&nbsp;SJ KSE</div>
-            <div class="menu-item" id="nav-ide" onclick="switchDept('ide')"><i data-lucide="file-text"></i>&nbsp;&nbsp;SJ IDE</div>
-            <div style="margin-top:auto" class="menu-item" onclick="location.reload()"><i data-lucide="log-out"></i>&nbsp;&nbsp;Logout</div>
+            <div class="logo-area">
+                <i data-lucide="boxes" style="width: 32px; height: 32px;"></i>
+                <span>LOGISTIC.PRO</span>
+            </div>
+            
+            <p class="menu-label">Main Menu</p>
+            <div class="menu-item active" id="nav-ikaen" onclick="switchTab('ikaen')">
+                <i data-lucide="file-check"></i> SJ Ikaen
+            </div>
+            <div class="menu-item" id="nav-kse" onclick="switchTab('kse')">
+                <i data-lucide="truck"></i> SJ KSE
+            </div>
+            <div class="menu-item" id="nav-ide" onclick="switchTab('ide')">
+                <i data-lucide="clipboard-list"></i> SJ IDE
+            </div>
+
+            <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid #f1f5f9;">
+                <div class="menu-item" onclick="location.reload()" style="color: #ef4444;">
+                    <i data-lucide="log-out"></i> Logout Account
+                </div>
+            </div>
         </nav>
 
-        <main id="main-content">
-            <div id="view-dashboard">
-                <header>
-                    <div>
-                        <h1 id="view-title">Surat Jalan Ikaen</h1>
-                        <p style="color:var(--text-muted)">Data manifest logistik aktif</p>
-                    </div>
-                    <button onclick="sj_ikaen.html" class="btn btn-primary"><i data-lucide="plus-circle"></i> Buat Baru</button>
-                </header>
-
-                <div class="stats-grid">
-                    <div class="stat-box"><small>Total Dokumen</small><h2 id="total-count">0</h2></div>
-                    <div class="stat-box"><small>Status Pending</small><h2 id="pending-count" style="color:#f59e0b">0</h2></div>
-                    <div class="stat-box"><small>Status Selesai</small><h2 style="color:var(--success)">0</h2></div>
+        <main>
+            <header>
+                <div class="header-info">
+                    <h1 id="title-display">Surat Jalan Ikaen</h1>
+                    <p style="color: var(--text-muted)">Overview manifest data and statistics</p>
                 </div>
+                <button onclick="goToForm()" class="btn-add">
+                    <i data-lucide="plus-circle"></i> Buat Baru
+                </button>
+            </header>
 
-                <div class="content-card">
-                    <div id="manifest-table-area"></div>
+            <div class="stats-row">
+                <div class="card-stat">
+                    <small>Total Manifest</small>
+                    <h2 id="total-val">0</h2>
+                </div>
+                <div class="card-stat">
+                    <small>Pending Status</small>
+                    <h2 id="pending-val" style="color: #f59e0b;">0</h2>
+                </div>
+                <div class="card-stat">
+                    <small>Completed</small>
+                    <h2 style="color: var(--success);">0</h2>
                 </div>
             </div>
 
-            <div id="view-form" class="hidden">
-                <header>
-                    <h2>Buat Surat Jalan <span id="form-dept-label" style="color:var(--accent)"></span></h2>
-                    <button onclick="closeForm()" class="btn btn-secondary">Batal</button>
-                </header>
-                <div class="content-card" style="max-width: 600px; margin: 0 auto; min-height: auto;">
-                    <form id="sj-form">
-                        <div class="form-group"><label>Nomor Surat Jalan</label><input type="text" id="f-no" required></div>
-                        <div class="form-group"><label>Tanggal</label><input type="date" id="f-tgl" required></div>
-                        <div class="form-group"><label>Tujuan</label><input type="text" id="f-tujuan" placeholder="Lokasi Tujuan" required></div>
-                        <div class="form-group"><label>Driver</label><input type="text" id="f-driver" placeholder="Nama Sopir" required></div>
-                        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:15px">Simpan ke Manifest</button>
-                    </form>
-                </div>
+            <div class="table-container">
+                <h3 style="margin-bottom: 1.5rem; font-weight: 700;">Manifest Dokumen Terbaru</h3>
+                <div id="table-render">
+                    </div>
             </div>
         </main>
     </div>
 
     <script>
         lucide.createIcons();
-        let currentDept = 'ikaen';
+        let activeDept = 'ikaen';
 
-        // 1. LOGIN
-        function login() {
-            if(document.getElementById('pass-input').value === 'admin123') {
+        // 1. LOGIN SYSTEM
+        function handleLogin() {
+            const pin = document.getElementById('pass-input').value;
+            if(pin === 'admin123') {
                 document.getElementById('login-overlay').classList.add('hidden');
                 document.getElementById('app-shell').classList.remove('hidden');
                 renderData();
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
             }
         }
 
         // 2. NAVIGATION
-        function switchDept(dept) {
-            currentDept = dept;
-            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        function switchTab(dept) {
+            activeDept = dept;
+            // Update UI Menu
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
             document.getElementById(`nav-${dept}`).classList.add('active');
-            document.getElementById('view-title').innerText = "Surat Jalan " + dept.toUpperCase();
-            closeForm();
+            
+            // Update Title
+            document.getElementById('title-display').innerText = "Surat Jalan " + dept.toUpperCase();
+            
             renderData();
         }
 
-        function openForm() {
-            document.getElementById('view-dashboard').classList.add('hidden');
-            document.getElementById('view-form').classList.remove('hidden');
-            document.getElementById('form-dept-label').innerText = currentDept.toUpperCase();
-            
-            // Auto No SJ
-            const data = JSON.parse(localStorage.getItem(`db_${currentDept}`)) || [];
-            document.getElementById('f-no').value = `SJ/${currentDept.toUpperCase()}/2026/00${data.length + 1}`;
+        // 3. REDIRECT KE FILE LUAR (sj_ikaen.html, etc)
+        function goToForm() {
+            // Ini akan menyambungkan ke file html yang ada di folder Anda
+            window.location.href = `sj_${activeDept}.html`;
         }
 
-        function closeForm() {
-            document.getElementById('view-form').classList.add('hidden');
-            document.getElementById('view-dashboard').classList.remove('hidden');
-        }
-
-        // 3. DATA ENGINE
+        // 4. DATA ENGINE (LocalStorage)
         function renderData() {
-            const data = JSON.parse(localStorage.getItem(`db_${currentDept}`)) || [];
-            document.getElementById('total-count').innerText = data.length;
-            document.getElementById('pending-count').innerText = data.length;
+            // Mengambil data dari localStorage yang disimpan oleh file sj_ikaen.html dsb
+            const storageKey = `db_${activeDept}`;
+            const dataList = JSON.parse(localStorage.getItem(storageKey)) || [];
 
-            const area = document.getElementById('manifest-table-area');
-            if(data.length === 0) {
-                area.innerHTML = `<div style="text-align:center; padding:5rem; color:#94a3b8"><i data-lucide="folder-x"></i><p>Belum ada data manifest</p></div>`;
+            // Update Counter
+            document.getElementById('total-val').innerText = dataList.length;
+            document.getElementById('pending-val').innerText = dataList.length;
+
+            const targetArea = document.getElementById('table-render');
+            
+            if(dataList.length === 0) {
+                targetArea.innerHTML = `
+                    <div style="text-align: center; padding: 4rem;">
+                        <i data-lucide="database-backup" style="width: 48px; height: 48px; color: #cbd5e1; margin-bottom: 1rem;"></i>
+                        <p style="color: var(--text-muted)">Belum ada data manifest untuk departemen ini.</p>
+                    </div>
+                `;
             } else {
-                let html = `<table><thead><tr><th>No. SJ</th><th>Tanggal</th><th>Tujuan</th><th>Driver</th><th>Status</th></tr></thead><tbody>`;
-                data.forEach(item => {
-                    html += `<tr><td><b>${item.no}</b></td><td>${item.tgl}</td><td>${item.tujuan}</td><td>${item.driver}</td><td><span class="status-badge">PENDING</span></td></tr>`;
+                let tableHtml = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No. Surat Jalan</th>
+                                <th>Tanggal</th>
+                                <th>Tujuan</th>
+                                <th>Driver</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                dataList.forEach(item => {
+                    tableHtml += `
+                        <tr>
+                            <td style="color: var(--primary-blue); font-weight: 700;">${item.no}</td>
+                            <td>${item.tgl}</td>
+                            <td>${item.tujuan}</td>
+                            <td>${item.driver}</td>
+                            <td><span class="badge-pending">PENDING</span></td>
+                        </tr>
+                    `;
                 });
-                area.innerHTML = html + `</tbody></table>`;
+
+                tableHtml += `</tbody></table>`;
+                targetArea.innerHTML = tableHtml;
             }
             lucide.createIcons();
         }
 
-        // 4. FORM SUBMIT
-        document.getElementById('sj-form').onsubmit = (e) => {
-            e.preventDefault();
-            const newItem = {
-                no: document.getElementById('f-no').value,
-                tgl: document.getElementById('f-tgl').value,
-                tujuan: document.getElementById('f-tujuan').value,
-                driver: document.getElementById('f-driver').value
-            };
-            
-            const data = JSON.parse(localStorage.getItem(`db_${currentDept}`)) || [];
-            data.unshift(newItem);
-            localStorage.setItem(`db_${currentDept}`, JSON.stringify(data));
-            
-            document.getElementById('sj-form').reset();
-            closeForm();
-            renderData();
-        };
+        // Auto-render saat halaman dimuat
+        window.onload = renderData;
     </script>
 </body>
 </html>
-
