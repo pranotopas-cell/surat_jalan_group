@@ -42,45 +42,44 @@
         .main-content { margin-left: 420px; flex-grow: 1; padding: 40px; display: flex; justify-content: center; }
         
         .memo-page { 
-            background: white; width: 210mm; min-height: 297mm; padding: 5mm 15mm 5mm 15mm; 
+            background: white; width: 210mm; min-height: 297mm; padding: 15mm 20mm; 
             box-shadow: 0 0 20px rgba(0,0,0,0.1); color: black; line-height: 1.5;
         }
 
-        /* Memo Header - Horizontal Logo & Text */
+        /* Header - Logo & Address Rapi */
         .header { 
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 2px solid black; padding-bottom: 15px; margin-bottom: 30px; 
         }
         
-        .logo-container { display: flex; align-items: center; gap: 15px; }
-        .logo-container img { height: 80px; width: auto; } /* Tinggi logo disesuaikan */
-        .logo-container .company-name { font-size: 28px; font-weight: bold; color: #000; }
-        .header-address {
-            text-align: right; /* Menjaga teks tetap rata kanan */
-            font-size: 10px;   /* Ukuran font yang ideal untuk sub-header */
-            line-height: 1.5;  /* Memberikan ruang antar baris agar rapi   max-width: 400px;  /* Membatasi lebar agar teks tidak terlalu panjang ke kiri */
-    color: #333;
-}
-        /* Meta Section - Improved Readability */
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+        .logo-container img { height: 55px; width: auto; }
+        .logo-container .company-name { font-size: 24px; font-weight: bold; color: #000; letter-spacing: -0.5px; }
+
+        .header-address { 
+            text-align: right; 
+            font-size: 10px; 
+            line-height: 1.5; 
+            max-width: 400px; 
+            color: #000;
+        }
+
+        /* Meta Section */
         .memo-meta { margin-bottom: 20px; font-size: 14px; }
         .meta-row { display: flex; margin-bottom: 4px; }
-        .meta-label { width: 140px; font-weight: normal; }
+        .meta-label { width: 140px; }
         .meta-colon { width: 20px; }
         .meta-value { font-weight: bold; }
 
         .recipient-block { margin-bottom: 25px; line-height: 1.6; }
-        .intro-text { margin-bottom: 20px; text-align: justify; }
+        .details-box { margin-bottom: 25px; padding-left: 15px; border-left: 3px solid #f0f0f0; }
 
-        .details-box { 
-            margin-bottom: 25px; padding-left: 15px; border-left: 3px solid #f0f0f0; 
-        }
-
-        /* Memo Table */
+        /* Table Style */
         table.data-table { width: 100%; border-collapse: collapse; margin: 25px 0; }
         table.data-table th, table.data-table td { border: 1px solid black; padding: 10px 8px; text-align: center; font-size: 12px; }
-        table.data-table th { background: #f8f9fa; font-weight: bold; text-transform: uppercase; }
+        table.data-table th { background: #f8f9fa; font-weight: bold; }
 
-        /* Signature - Clean Left Align */
+        /* Signature - Regards */
         .signature-container { margin-top: 50px; text-align: left; font-size: 14px; }
         .sig-img { width: 180px; margin: 15px 0 10px -10px; display: block; }
 
@@ -98,7 +97,7 @@
     
     <div class="nav-buttons">
         <button class="btn btn-home" onclick="location.reload()">🏠 HOME</button>
-        <button class="btn btn-preview" onclick="alert('Preview Mode Aktif')">👁️ PREVIEW</button>
+        <button class="btn btn-preview" onclick="alert('Preview siap cetak.')">👁️ PREVIEW</button>
         <button class="btn btn-print" onclick="window.print()">🖨️ PRINT</button>
         <button class="btn btn-pdf" onclick="window.print()">📥 PDF</button>
     </div>
@@ -128,15 +127,6 @@
         <div class="input-group"><input type="number" id="inQty2" value="5000" placeholder="Qty (L)" oninput="update()"></div>
         <div class="input-group"><input type="text" id="inTera2" value="104.3" placeholder="Tera (cm)" oninput="update()"></div>
     </div>
-
-    <div class="section-title">Data Unit 3</div>
-    <div class="unit-card">
-        <input type="text" id="inTrans3" value="" placeholder="Transportir (Opsional)" oninput="update()" style="width:100%; margin-bottom:5px; font-size:11px; padding:4px;">
-        <div class="input-group"><input type="text" id="inNopol3" placeholder="No. Polisi" oninput="update()"></div>
-        <div class="input-group"><input type="text" id="inDriver3" placeholder="Driver" oninput="update()"></div>
-        <div class="input-group"><input type="number" id="inQty3" placeholder="Qty (L)" oninput="update()"></div>
-        <div class="input-group"><input type="text" id="inTera3" placeholder="Tera (cm)" oninput="update()"></div>
-    </div>
 </div>
 
 <div class="main-content">
@@ -144,19 +134,13 @@
         <div class="header">
             <div class="logo-container">
                 <img src="ide1.png" alt="Logo IDE">
-                <div class="company-name">INDO DHARMA ENERGI</div>
+                <div class="company-name">IndoDharma Energi</div>
             </div>
-          <div class="header">
-    <div class="logo-container">
-        <img src="ide1.png" alt="Logo IDE">
-        <div class="company-name">IndoDharma Energi</div>
-    </div>
-    <div class="header-address">
-        <strong>SUPLIER DAN TRANSPORTIR BAHAN BAKAR MINYAK RESMI</strong><br>
-        Jalan Natai Arahan RT 020 Kelurahan Baru, Kecamatan Arut Selatan,<br>
-        Kabupaten Kotawaringin Barat - Kalimantan Tengah.
-    </div>
-</div>
+            <div class="header-address">
+                <strong>SUPLIER DAN TRANSPORTIR BAHAN BAKAR MINYAK RESMI</strong><br>
+                Jalan Natai Arahan RT 020 Kelurahan Baru, Kecamatan Arut Selatan,<br>
+                Kabupaten Kotawaringin Barat - Kalimantan Tengah.
+            </div>
         </div>
 
         <div class="memo-meta">
@@ -171,7 +155,7 @@
             - di Pangkalan Bun
         </div>
 
-        <div class="intro-text">
+        <div style="margin-bottom: 20px;">
             Dengan Hormat,<br>
             Bersama ini kami sampaikan Realisasi Pengaliran BBM Solar Industri dari <b>PT. Sinarindo Sukses Selalu</b> dengan rincian sebagai berikut:
         </div>
@@ -198,7 +182,7 @@
             </thead>
             <tbody id="tableBody"></tbody>
             <tfoot>
-                <tr style="font-weight: bold; background: #f9f9f9; font-size: 13px;">
+                <tr style="font-weight: bold; background: #f9f9f9;">
                     <td colspan="4" style="text-align: right; padding-right: 20px;">TOTAL REALISASI</td>
                     <td id="outTotal"></td>
                     <td></td>
@@ -206,7 +190,7 @@
             </tfoot>
         </table>
 
-        <div class="intro-text" style="font-size: 13px; margin-top: 20px;">
+        <div style="font-size: 13px; margin-top: 20px;">
             Demikian memo ini dibuat tanpa paksaan dari pihak manapun, dengan keterangan yang sebenar-benarnya diatas agar dapat digunakan sebagaimana mestinya.
         </div>
 
@@ -214,14 +198,12 @@
             Regards,<br>
             <strong style="font-size: 15px;">PT. Indo Dharma Energi</strong><br>
             <img src="ttd_ide.png" alt="Tanda Tangan" class="sig-img">
-            <br>
         </div>
     </div>
 </div>
 
 <script>
     function update() {
-        // Sync Header & Info
         document.getElementById('outNomor').innerText = document.getElementById('inNomor').value;
         document.getElementById('outTglMemo').innerText = document.getElementById('inTglMemo').value;
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
@@ -232,39 +214,32 @@
         let total = 0;
         let tableHTML = "";
 
-        for (let i = 1; i <= 3; i++) {
+        for (let i = 1; i <= 2; i++) {
             const trans = document.getElementById('inTrans' + i).value;
             const nopol = document.getElementById('inNopol' + i).value;
             const driver = document.getElementById('inDriver' + i).value;
-            const qtyInput = document.getElementById('inQty' + i).value;
-            const qty = parseFloat(qtyInput) || 0;
+            const qty = parseFloat(document.getElementById('inQty' + i).value) || 0;
             const tera = document.getElementById('inTera' + i).value;
 
-            // Hanya tampilkan baris jika minimal ada Nopol atau Driver atau Qty
             if (nopol || driver || qty > 0) {
                 total += qty;
                 tableHTML += `
                     <tr>
                         <td>${i}.</td>
-                        <td style="text-align:left; padding-left:10px;">${trans || '-'}</td>
-                        <td>${nopol || '-'}</td>
-                        <td>${driver || '-'}</td>
-                        <td style="font-weight:bold;">${qty > 0 ? qty.toLocaleString('id-ID') : '-'}</td>
-                        <td>${tera || '-'}</td>
+                        <td style="text-align:left; padding-left:10px;">${trans}</td>
+                        <td>${nopol}</td>
+                        <td>${driver}</td>
+                        <td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td>
+                        <td>${tera}</td>
                     </tr>
                 `;
             }
         }
-        
         document.getElementById('tableBody').innerHTML = tableHTML;
-        document.getElementById('outTotal').innerText = total > 0 ? total.toLocaleString('id-ID') + " Liter" : "0 Liter";
+        document.getElementById('outTotal').innerText = total.toLocaleString('id-ID') + " Liter";
     }
-
-    // Initialize on load
     window.onload = update;
 </script>
 
 </body>
 </html>
-
-
