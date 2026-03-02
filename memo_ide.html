@@ -42,7 +42,7 @@
         .main-content { margin-left: 420px; flex-grow: 1; padding: 40px; display: flex; justify-content: center; }
         
         .memo-page { 
-            background: white; width: 210mm; min-height: 297mm; padding: 15mm 20mm; 
+            background: white; width: 210mm; min-height: 297mm; padding: 5mm 15mm 5mm 15mm; 
             box-shadow: 0 0 20px rgba(0,0,0,0.1); color: black; line-height: 1.5;
         }
 
@@ -55,9 +55,12 @@
         .logo-container { display: flex; align-items: center; gap: 15px; }
         .logo-container img { height: 80px; width: auto; } /* Tinggi logo disesuaikan */
         .logo-container .company-name { font-size: 28px; font-weight: bold; color: #000; }
-
-        .header-address { text-align: right; font-size: 9px; max-width: 380px; line-height: 1.4; color: #333; }
-
+        .header-address {
+            text-align: right; /* Menjaga teks tetap rata kanan */
+            font-size: 10px;   /* Ukuran font yang ideal untuk sub-header */
+            line-height: 1.5;  /* Memberikan ruang antar baris agar rapi   max-width: 400px;  /* Membatasi lebar agar teks tidak terlalu panjang ke kiri */
+    color: #333;
+}
         /* Meta Section - Improved Readability */
         .memo-meta { margin-bottom: 20px; font-size: 14px; }
         .meta-row { display: flex; margin-bottom: 4px; }
@@ -143,11 +146,17 @@
                 <img src="ide1.png" alt="Logo IDE">
                 <div class="company-name">INDO DHARMA ENERGI</div>
             </div>
-            <div class="header-address">
-                <strong>SUPLIER DAN TRANSPORTIR BAHAN BAKAR MINYAK RESMI</strong><br>
-                Jalan Natai Arahan RT 020 Kelurahan Baru, Kecamatan Arut Selatan,<br>
-                Kabupaten Kotawaringin Barat - Kalimantan Tengah.
-            </div>
+          <div class="header">
+    <div class="logo-container">
+        <img src="ide1.png" alt="Logo IDE">
+        <div class="company-name">IndoDharma Energi</div>
+    </div>
+    <div class="header-address">
+        <strong>SUPLIER DAN TRANSPORTIR BAHAN BAKAR MINYAK RESMI</strong><br>
+        Jalan Natai Arahan RT 020 Kelurahan Baru, Kecamatan Arut Selatan,<br>
+        Kabupaten Kotawaringin Barat - Kalimantan Tengah.
+    </div>
+</div>
         </div>
 
         <div class="memo-meta">
@@ -257,4 +266,5 @@
 
 </body>
 </html>
+
 
