@@ -6,37 +6,43 @@
     <title>Sistem Memo PT IndoDharma Energi</title>
     <style>
         * { box-sizing: border-box; }
-        body { font-family: 'Arial', sans-serif; background-color: #eef2f7; margin: 0; display: flex; }
+        :root {
+            --primary-blue: #0056b3; /* Biru sesuai logo */
+            --dark-sidebar: #1a252f;
+            --accent-blue: #3498db;
+        }
+
+        body { font-family: 'Arial', sans-serif; background-color: #f4f7f6; margin: 0; display: flex; }
         
-        /* Sidebar Input Panel */
+        /* Sidebar Input Panel - Tema Dark & Blue */
         .sidebar { 
-            width: 420px; background: #2c3e50; color: white; height: 100vh; 
+            width: 420px; background: var(--dark-sidebar); color: white; height: 100vh; 
             padding: 20px; overflow-y: auto; position: fixed; left: 0; top: 0;
             box-shadow: 4px 0 10px rgba(0,0,0,0.2);
             z-index: 100;
         }
-        .sidebar h2 { font-size: 18px; border-bottom: 1px solid #555; padding-bottom: 15px; margin-bottom: 20px; color: #ecf0f1; text-align: center; }
+        .sidebar h2 { font-size: 18px; border-bottom: 2px solid var(--primary-blue); padding-bottom: 15px; margin-bottom: 20px; color: #ecf0f1; text-align: center; }
         
         .nav-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 25px; }
         .btn { 
             padding: 10px; border: none; border-radius: 4px; cursor: pointer; 
             font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px;
         }
-        .btn-home { background: #95a5a6; color: white; }
-        .btn-print { background: #27ae60; color: white; }
-        .btn-preview { background: #3498db; color: white; }
-        .btn-pdf { background: #e74c3c; color: white; }
+        .btn-home { background: #7f8c8d; color: white; }
+        .btn-print { background: var(--primary-blue); color: white; }
+        .btn-preview { background: var(--accent-blue); color: white; }
+        .btn-pdf { background: #c0392b; color: white; }
 
-        .section-title { font-size: 11px; color: #3498db; font-weight: bold; margin: 15px 0 10px 0; text-transform: uppercase; border-left: 3px solid #3498db; padding-left: 10px; }
+        .section-title { font-size: 11px; color: var(--accent-blue); font-weight: bold; margin: 15px 0 10px 0; text-transform: uppercase; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
         
         .input-group { margin-bottom: 8px; }
         .input-group label { display: block; font-size: 10px; margin-bottom: 2px; color: #bdc3c7; }
         .input-group input { 
-            width: 100%; padding: 6px; border-radius: 4px; border: 1px solid #34495e; 
-            background: #34495e; color: white; font-size: 12px;
+            width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #2c3e50; 
+            background: #2c3e50; color: white; font-size: 12px;
         }
 
-        .unit-card { background: #3e5871; padding: 10px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #4f6f8f; }
+        .unit-card { background: #2c3e50; padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary-blue); }
 
         /* Main Preview Area */
         .main-content { margin-left: 420px; flex-grow: 1; padding: 40px; display: flex; justify-content: center; }
@@ -46,40 +52,44 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.1); color: black; line-height: 1.5;
         }
 
-        /* Header - Logo & Address Rapi */
+        /* Header - Logo & Blue Company Name */
         .header { 
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid black; padding-bottom: 15px; margin-bottom: 30px; 
+            border-bottom: 2px solid var(--primary-blue); padding-bottom: 15px; margin-bottom: 30px; 
         }
         
         .logo-container { display: flex; align-items: center; gap: 12px; }
-        .logo-container img { height: 55px; width: auto; }
-        .logo-container .company-name { font-size: 24px; font-weight: bold; color: #000; letter-spacing: -0.5px; }
+        .logo-container img { height: 60px; width: auto; }
+        .logo-container .company-name { 
+            font-size: 26px; font-weight: bold; color: var(--primary-blue); /* Warna Biru Logo */
+            letter-spacing: -0.5px;
+        }
 
         .header-address { 
             text-align: right; 
             font-size: 10px; 
             line-height: 1.5; 
             max-width: 400px; 
-            color: #000;
+            color: #333;
         }
 
         /* Meta Section */
         .memo-meta { margin-bottom: 20px; font-size: 14px; }
         .meta-row { display: flex; margin-bottom: 4px; }
-        .meta-label { width: 140px; }
+        .meta-label { width: 140px; color: #555; }
         .meta-colon { width: 20px; }
-        .meta-value { font-weight: bold; }
+        .meta-value { font-weight: bold; color: #000; }
 
         .recipient-block { margin-bottom: 25px; line-height: 1.6; }
-        .details-box { margin-bottom: 25px; padding-left: 15px; border-left: 3px solid #f0f0f0; }
+        .details-box { margin-bottom: 25px; padding: 15px; background: #f8f9fa; border-left: 4px solid var(--primary-blue); }
 
-        /* Table Style */
+        /* Table Style - Tema Biru */
         table.data-table { width: 100%; border-collapse: collapse; margin: 25px 0; }
-        table.data-table th, table.data-table td { border: 1px solid black; padding: 10px 8px; text-align: center; font-size: 12px; }
-        table.data-table th { background: #f8f9fa; font-weight: bold; }
+        table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 12px 8px; text-align: center; font-size: 12px; }
+        table.data-table th { background: var(--primary-blue); color: white; font-weight: bold; text-transform: uppercase; }
+        table.data-table tr:nth-child(even) { background-color: #f2f6fa; }
 
-        /* Signature - Regards */
+        /* Signature */
         .signature-container { margin-top: 50px; text-align: left; font-size: 14px; }
         .sig-img { width: 180px; margin: 15px 0 10px -10px; display: block; }
 
@@ -87,6 +97,7 @@
             .sidebar { display: none; }
             .main-content { margin-left: 0; padding: 0; }
             .memo-page { box-shadow: none; border: none; width: 100%; padding: 10mm; }
+            table.data-table th { background: var(--primary-blue) !important; color: white !important; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -97,7 +108,7 @@
     
     <div class="nav-buttons">
         <button class="btn btn-home" onclick="location.reload()">🏠 HOME</button>
-        <button class="btn btn-preview" onclick="alert('Preview siap cetak.')">👁️ PREVIEW</button>
+        <button class="btn btn-preview" onclick="alert('Tampilan Pratinjau Siap Cetak')">👁️ PREVIEW</button>
         <button class="btn btn-print" onclick="window.print()">🖨️ PRINT</button>
         <button class="btn btn-pdf" onclick="window.print()">📥 PDF</button>
     </div>
@@ -112,7 +123,7 @@
 
     <div class="section-title">Data Unit 1</div>
     <div class="unit-card">
-        <input type="text" id="inTrans1" value="PT. BERKAH SARANA MAKMUR BENUA" placeholder="Transportir" oninput="update()" style="width:100%; margin-bottom:5px; font-size:11px; padding:4px;">
+        <input type="text" id="inTrans1" value="PT. BERKAH SARANA MAKMUR BENUA" placeholder="Transportir" oninput="update()" style="width:100%; margin-bottom:8px; font-size:11px; padding:6px; border-radius:4px; border:none; background:#1a252f; color:#fff;">
         <div class="input-group"><input type="text" id="inNopol1" value="KH 8273 RM" placeholder="No. Polisi" oninput="update()"></div>
         <div class="input-group"><input type="text" id="inDriver1" value="FARID HABIBI" placeholder="Driver" oninput="update()"></div>
         <div class="input-group"><input type="number" id="inQty1" value="5000" placeholder="Qty (L)" oninput="update()"></div>
@@ -121,7 +132,7 @@
 
     <div class="section-title">Data Unit 2</div>
     <div class="unit-card">
-        <input type="text" id="inTrans2" value="PT. BERKAH SARANA MAKMUR BENUA" placeholder="Transportir" oninput="update()" style="width:100%; margin-bottom:5px; font-size:11px; padding:4px;">
+        <input type="text" id="inTrans2" value="PT. BERKAH SARANA MAKMUR BENUA" placeholder="Transportir" oninput="update()" style="width:100%; margin-bottom:8px; font-size:11px; padding:6px; border-radius:4px; border:none; background:#1a252f; color:#fff;">
         <div class="input-group"><input type="text" id="inNopol2" value="KH 8256 RM" placeholder="No. Polisi" oninput="update()"></div>
         <div class="input-group"><input type="text" id="inDriver2" value="RONNY PRASTIANSYAH" placeholder="Driver" oninput="update()"></div>
         <div class="input-group"><input type="number" id="inQty2" value="5000" placeholder="Qty (L)" oninput="update()"></div>
@@ -161,13 +172,13 @@
         </div>
 
         <div class="details-box">
-            <div class="meta-row"><div class="meta-label">No. PO</div><div class="meta-colon">:</div><div id="outPO"></div></div>
-            <div class="meta-row"><div class="meta-label">Tanggal PO</div><div class="meta-colon">:</div><div id="outTglPO"></div></div>
-            <div class="meta-row"><div class="meta-label">Tanggal Loading</div><div class="meta-colon">:</div><div id="outTglLoad"></div></div>
-            <div class="meta-row"><div class="meta-label">Lokasi Loading</div><div class="meta-colon">:</div><div id="outLokasi"></div></div>
+            <div class="meta-row"><div class="meta-label">No. PO</div><div class="meta-colon">:</div><div class="meta-value" id="outPO"></div></div>
+            <div class="meta-row"><div class="meta-label">Tanggal PO</div><div class="meta-colon">:</div><div class="meta-value" id="outTglPO"></div></div>
+            <div class="meta-row"><div class="meta-label">Tanggal Loading</div><div class="meta-colon">:</div><div class="meta-value" id="outTglLoad"></div></div>
+            <div class="meta-row"><div class="meta-label">Lokasi Loading</div><div class="meta-colon">:</div><div class="meta-value" id="outLokasi"></div></div>
         </div>
 
-        <p style="font-size: 13px; margin-bottom: 10px;">Data unit armada yang bertugas:</p>
+        <p style="font-size: 13px; margin-bottom: 10px; color: #555;">Data unit armada yang bertugas:</p>
 
         <table class="data-table">
             <thead>
@@ -182,21 +193,21 @@
             </thead>
             <tbody id="tableBody"></tbody>
             <tfoot>
-                <tr style="font-weight: bold; background: #f9f9f9;">
+                <tr style="font-weight: bold; background: #f1f4f9;">
                     <td colspan="4" style="text-align: right; padding-right: 20px;">TOTAL REALISASI</td>
-                    <td id="outTotal"></td>
+                    <td id="outTotal" style="color: var(--primary-blue);"></td>
                     <td></td>
                 </tr>
             </tfoot>
         </table>
 
-        <div style="font-size: 13px; margin-top: 20px;">
+        <div style="font-size: 13px; margin-top: 20px; text-align: justify;">
             Demikian memo ini dibuat tanpa paksaan dari pihak manapun, dengan keterangan yang sebenar-benarnya diatas agar dapat digunakan sebagaimana mestinya.
         </div>
 
         <div class="signature-container">
             Regards,<br>
-            <strong style="font-size: 15px;">PT. Indo Dharma Energi</strong><br>
+            <strong style="font-size: 15px; color: var(--primary-blue);">PT. Indo Dharma Energi</strong><br>
             <img src="ttd_ide.png" alt="Tanda Tangan" class="sig-img">
         </div>
     </div>
@@ -226,11 +237,11 @@
                 tableHTML += `
                     <tr>
                         <td>${i}.</td>
-                        <td style="text-align:left; padding-left:10px;">${trans}</td>
-                        <td>${nopol}</td>
-                        <td>${driver}</td>
+                        <td style="text-align:left; padding-left:10px;">${trans || '-'}</td>
+                        <td>${nopol || '-'}</td>
+                        <td>${driver || '-'}</td>
                         <td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td>
-                        <td>${tera}</td>
+                        <td>${tera || '-'}</td>
                     </tr>
                 `;
             }
