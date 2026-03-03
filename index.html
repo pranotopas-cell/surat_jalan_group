@@ -51,12 +51,6 @@
             position: relative;
         }
 
-        .login-card::before {
-            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
-            background: linear-gradient(45deg, var(--primary), transparent, var(--secondary));
-            z-index: -1; border-radius: 42px; opacity: 0.3;
-        }
-
         .login-card input {
             width: 100%; padding: 18px; border-radius: 16px; 
             border: 1px solid var(--glass-border);
@@ -103,7 +97,6 @@
             font-size: 0.85rem; font-weight: 600; transition: 0.3s;
         }
         .sub-item:hover { color: var(--primary); background: rgba(0, 242, 255, 0.05); transform: translateX(5px); }
-        .sub-item i { margin-right: 12px; width: 16px; }
 
         /* --- MAIN CONTENT --- */
         main { flex: 1; margin-left: 280px; padding: 4rem; min-height: 100vh; }
@@ -120,11 +113,12 @@
             border: 1px solid var(--glass-border);
             box-shadow: 0 25px 50px rgba(0,0,0,0.5);
             margin-top: 2rem;
+            overflow-x: auto;
         }
 
-        table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 12px; min-width: 800px; }
         th { padding: 15px 25px; color: var(--primary); font-size: 0.75rem; text-transform: uppercase; text-align: left; letter-spacing: 2px; }
-        td { padding: 20px 25px; background: rgba(255,255,255,0.03); font-weight: 500; font-size: 0.95rem; border-top: 1px solid rgba(255,255,255,0.05); }
+        td { padding: 20px 25px; background: rgba(255,255,255,0.03); font-weight: 500; font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.05); }
         td:first-child { border-radius: 16px 0 0 16px; color: var(--primary); font-weight: 800; }
         td:last-child { border-radius: 0 16px 16px 0; }
 
@@ -146,12 +140,6 @@
         }
 
         .hidden { display: none !important; }
-
-        @media (max-width: 768px) {
-            nav { transform: translateX(-100%); width: 260px; }
-            nav.mobile-open { transform: translateX(0); }
-            main { margin-left: 0; padding: 1.5rem; }
-        }
     </style>
 </head>
 <body>
@@ -164,7 +152,7 @@
             <h2 style="margin-bottom: 0.5rem; color: white; font-weight: 800; letter-spacing: 1px;">CORE ACCESS</h2>
             <p style="margin-bottom: 2.5rem; color: var(--text-dim); font-size: 0.8rem; letter-spacing: 2px;">SECURE LOGISTICS GATEWAY</p>
             
-            <input type="password" id="pass-input" placeholder="••••">
+            <input type="password" id="pass-input" placeholder="••••" onkeypress="if(event.key==='Enter') handleLogin()">
             <button onclick="handleLogin()" style="width: 100%; background: linear-gradient(to right, var(--secondary), var(--primary)); color: white; border: none; padding: 18px; border-radius: 18px; font-weight: 800; cursor: pointer; transition: 0.3s;">INITIALIZE SYSTEM</button>
         </div>
     </div>
@@ -183,8 +171,7 @@
                     <span>IKAEN</span> <i data-lucide="chevron-right" size="16"></i>
                 </div>
                 <div class="sub-menu" id="menu-ikaen">
-                    <div class="sub-item"><i data-lucide="file-text"></i> Surat Jalan</div>
-                    <div class="sub-item"><i data-lucide="activity"></i> Monitoring</div>
+                    <div class="sub-item" onclick="fetchManifests('ikaen')"><i data-lucide="file-text"></i> Surat Jalan</div>
                 </div>
             </div>
 
@@ -193,8 +180,7 @@
                     <span>IDE</span> <i data-lucide="chevron-right" size="16"></i>
                 </div>
                 <div class="sub-menu" id="menu-ide">
-                    <div class="sub-item"><i data-lucide="file-text"></i> Surat Jalan</div>
-                    <div class="sub-item"><i data-lucide="activity"></i> Monitoring</div>
+                    <div class="sub-item" onclick="fetchManifests('ide')"><i data-lucide="file-text"></i> Surat Jalan</div>
                 </div>
             </div>
 
@@ -203,8 +189,7 @@
                     <span>KSE</span> <i data-lucide="chevron-right" size="16"></i>
                 </div>
                 <div class="sub-menu" id="menu-kse">
-                    <div class="sub-item"><i data-lucide="file-text"></i> Surat Jalan</div>
-                    <div class="sub-item"><i data-lucide="activity"></i> Monitoring</div>
+                    <div class="sub-item" onclick="fetchManifests('kse')"><i data-lucide="file-text"></i> Surat Jalan</div>
                 </div>
             </div>
 
@@ -217,7 +202,7 @@
 
         <main>
             <div class="header-content">
-                <h1 id="view-title">Terminal IKAEN</h1>
+                <h1 id="view-title">Dashboard</h1>
                 <p style="color: var(--text-dim); margin-top: 8px;">
                     <span style="color: var(--primary)">✦</span> Terhubung ke Database Supabase Cloud
                 </p>
@@ -227,15 +212,16 @@
                 <table id="data-table">
                     <thead>
                         <tr>
-                            <th>Manifest ID</th>
-                            <th>Driver</th>
-                            <th>Destination</th>
-                            <th>Timestamp</th>
-                            <th>Status</th>
+                            <th>SJ / Memo</th>
+                            <th>Driver / Nopol</th>
+                            <th>Tujuan</th>
+                            <th>Qty</th>
+                            <th>Tanggal</th>
                         </tr>
                     </thead>
                     <tbody id="manifest-table">
-                        </tbody>
+                        <tr><td colspan="5" style="text-align:center; padding:4rem; color:var(--text-dim);">PILIH PT DI SIDEBAR UNTUK MELIHAT DATA</td></tr>
+                    </tbody>
                 </table>
             </div>
         </main>
@@ -243,13 +229,15 @@
 
     <script>
         // --- KONFIGURASI SUPABASE ---
-        const SB_URL = "ntaectphgoelmhzrkatp";
+        const SB_URL = "https://ntaectphgoelmhzrkatp.supabase.co"; // URL harus lengkap dengan https://
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg";
-        const supabase =维持.createClient(SB_URL, SB_KEY);
+        
+        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
         lucide.createIcons();
-        let currentDept = 'ikaen';
+        let currentDept = '';
 
+        // --- FUNGSI LOGIN ---
         function handleLogin() {
             const pass = document.getElementById('pass-input').value;
             if(pass === 'admin123') {
@@ -257,55 +245,59 @@
                 setTimeout(() => {
                     document.getElementById('login-overlay').classList.add('hidden');
                     document.getElementById('app-shell').classList.remove('hidden');
-                    toggleDept('ikaen');
+                    lucide.createIcons();
                 }, 500);
             } else {
-                alert('ACCESS DENIED: INVALID ENCRYPTION KEY');
+                alert('ACCESS DENIED: INVALID KEY');
             }
         }
 
+        // --- FUNGSI AMBIL DATA BERDASARKAN PT ---
         async function fetchManifests(dept) {
             const tableBody = document.getElementById('manifest-table');
-            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:4rem; color:var(--text-dim);">SYNCHRONIZING DATA...</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:4rem; color:var(--text-dim);">SYNCHRONIZING ${dept.toUpperCase()} DATA...</td></tr>`;
 
             try {
-                const { data, error } = await supabase
-                    .from('manifests') // Nama tabel di supabase Anda
+                // Menentukan tabel mana yang akan ditarik
+                const tableName = `data_${dept}`;
+                
+                const { data, error } = await supabaseClient
+                    .from(tableName)
                     .select('*')
-                    .eq('dept', dept)
-                    .order('created_at', { ascending: false })
-                    .limit(10);
+                    .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
                 if (!data || data.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:4rem; color:var(--text-dim); font-style:italic;">No active logs found for ${dept.toUpperCase()}</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:4rem; color:var(--text-dim);">Tidak ada data di tabel ${tableName}</td></tr>`;
                     return;
                 }
 
                 tableBody.innerHTML = data.map(item => `
                     <tr>
-                        <td>#${item.no_manifest}</td>
-                        <td style="color:white;">${item.driver_name}</td>
-                        <td>${item.destination}</td>
-                        <td style="font-family: monospace; font-size: 0.8rem; color:var(--text-dim);">
-                            ${new Date(item.created_at).toLocaleString('id-ID')}
+                        <td>
+                            <div style="font-weight:800; color:var(--primary)">SJ: ${item.no_surat_jalan || '-'}</div>
+                            <div style="font-size:0.7rem; color:var(--text-dim)">Memo: ${item.no_memo || '-'}</div>
                         </td>
                         <td>
-                            <div class="status-pulse">
-                                <div class="pulse-dot"></div>
-                                SECURE
-                            </div>
+                            <div style="color:white;">${item.nama_sopir}</div>
+                            <div style="font-size:0.75rem; color:var(--primary)">${item.nopol}</div>
+                        </td>
+                        <td>${item.tujuan}</td>
+                        <td style="font-weight:700; color:var(--primary)">${item.qty}</td>
+                        <td style="font-size: 0.8rem; color:var(--text-dim);">
+                            ${new Date(item.tanggal).toLocaleDateString('id-ID')}
                         </td>
                     </tr>
                 `).join('');
 
             } catch (err) {
                 console.error(err);
-                tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff3e3e;">DATABASE CONNECTION ERROR</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff3e3e;">DATABASE ERROR: Pastikan tabel 'data_${dept}' sudah dibuat di Supabase.</td></tr>`;
             }
         }
 
+        // --- NAVIGASI SIDEBAR ---
         function toggleDept(dept) {
             currentDept = dept;
             document.querySelectorAll('.sub-menu').forEach(m => m.classList.remove('show'));
@@ -317,13 +309,6 @@
             
             fetchManifests(dept);
         }
-
-        // Real-time listener (Optional: Supabase Realtime)
-        const channel = supabase.channel('schema-db-changes')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'manifests' }, (payload) => {
-                if(payload.new.dept === currentDept) fetchManifests(currentDept);
-            })
-            .subscribe();
     </script>
 </body>
 </html>
