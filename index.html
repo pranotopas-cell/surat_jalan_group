@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> DELIVERY | Cyber Logistics </title>
+    <title>DELIVERY | Cyber Logistics Suite</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
     <style>
         :root {
             --primary: #00f2ff; /* Electric Tosca */
-            --secondary: #0066ff;
+            --secondary: #0066ff; /* Deep Blue */
+            --accent: #7000ff;
             --bg-dark: #020617;
             --glass: rgba(7, 15, 30, 0.85);
             --glass-border: rgba(0, 242, 255, 0.15);
@@ -20,84 +23,160 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
+
+        body { 
+            min-height: 100vh;
+            color: var(--text-main);
+            background: radial-gradient(circle at 0% 0%, rgba(0, 242, 255, 0.05) 0%, transparent 35%),
+                        radial-gradient(circle at 100% 100%, rgba(0, 102, 255, 0.05) 0%, transparent 35%),
+                        var(--bg-dark);
+            overflow-x: hidden;
+        }
+
+        /* --- LOGIN OVERLAY --- */
+        #login-overlay {
+            position: fixed; inset: 0; 
+            background: var(--bg-dark);
+            display: flex; align-items: center; justify-content: center; z-index: 9999;
+            transition: 0.5s;
+        }
+
+        .login-card { 
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            padding: 3rem 2rem; border-radius: 40px; width: 100%; max-width: 400px; 
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.1);
+            text-align: center;
+        }
+
+        .login-card input {
+            width: 100%; padding: 18px; border-radius: 16px; 
+            border: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.4);
+            margin-bottom: 1.5rem; font-size: 1.2rem; text-align: center; 
+            font-weight: 700; color: var(--primary); letter-spacing: 6px;
+            outline: none;
+        }
+
+        .login-card button {
+            width: 100%; background: linear-gradient(to right, var(--secondary), var(--primary));
+            color: white; border: none; padding: 18px; border-radius: 18px;
+            font-weight: 800; cursor: pointer; transition: 0.3s;
+        }
 
         /* --- SIDEBAR --- */
         nav {
-            width: 280px; background: var(--glass); backdrop-filter: blur(20px);
-            border-right: 1px solid var(--glass-border); padding: 2rem 1rem; 
-            height: 100vh; position: fixed; z-index: 1000;
+            width: 280px; background: var(--glass); backdrop-filter: blur(30px);
+            border-right: 1px solid var(--glass-border); padding: 2.5rem 1.2rem; 
+            height: 100vh; position: fixed; display: flex; flex-direction: column;
+            z-index: 1000;
         }
 
-        .logo-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 3rem; font-weight: 800; color: var(--primary); }
+        .logo-nav { display: flex; align-items: center; gap: 12px; margin-bottom: 3.5rem; font-weight: 800; color: white; }
         
-        .dept-group { margin-bottom: 1rem; }
+        .dept-group { margin-bottom: 10px; }
         .dept-label { 
             display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 18px; cursor: pointer; border-radius: 12px;
+            padding: 16px 20px; cursor: pointer; border-radius: 18px;
             color: var(--text-dim); font-weight: 700; transition: 0.3s;
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
         }
-        .dept-label.active { color: var(--primary); background: rgba(0,242,255,0.05); border-left: 3px solid var(--primary); }
+        .dept-label.active { color: var(--primary); background: rgba(0, 242, 255, 0.1); border-left: 4px solid var(--primary); }
 
-        .sub-menu { padding-left: 10px; display: none; margin-top: 5px; }
+        .sub-menu { padding-left: 15px; margin-top: 5px; display: none; }
         .sub-menu.show { display: block; }
 
         .sub-item {
-            display: flex; align-items: center; padding: 10px 15px; margin-top: 2px;
-            cursor: pointer; border-radius: 8px; color: var(--text-dim);
-            font-size: 0.85rem; font-weight: 600; transition: 0.2s;
+            display: flex; align-items: center; padding: 12px 15px; cursor: pointer;
+            border-radius: 12px; color: var(--text-dim); font-size: 0.85rem; font-weight: 600;
         }
-        .sub-item:hover { color: var(--primary); background: rgba(0,242,255,0.05); transform: translateX(5px); }
-        .sub-item i { margin-right: 10px; width: 14px; }
+        .sub-item:hover { color: var(--primary); background: rgba(0, 242, 255, 0.05); }
 
-        /* --- CONTENT --- */
-        main { margin-left: 280px; padding: 3rem; }
-        .glass-panel {
-            background: var(--glass); border-radius: 24px; padding: 1.5rem; 
-            border: 1px solid var(--glass-border); overflow-x: auto;
-        }
-
-        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; min-width: 1000px; }
-        th { padding: 12px 15px; color: var(--primary); font-size: 0.65rem; text-transform: uppercase; text-align: left; letter-spacing: 1px; }
-        td { padding: 15px; background: rgba(255,255,255,0.02); font-size: 0.85rem; color: var(--text-main); border-top: 1px solid rgba(255,255,255,0.03); }
+        /* --- MAIN CONTENT --- */
+        main { flex: 1; margin-left: 280px; padding: 3rem; min-height: 100vh; }
         
-        .badge-qty { background: var(--secondary); color: white; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; }
-        .hidden { display: none; }
+        .glass-panel {
+            background: var(--glass); border-radius: 32px; padding: 2rem; 
+            border: 1px solid var(--glass-border); overflow-x: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; min-width: 1100px; }
+        th { padding: 15px; color: var(--primary); font-size: 0.7rem; text-transform: uppercase; text-align: left; letter-spacing: 2px; }
+        td { padding: 18px 15px; background: rgba(255,255,255,0.02); font-size: 0.85rem; }
+        td:first-child { border-radius: 15px 0 0 15px; color: var(--text-dim); }
+        td:last-child { border-radius: 0 15px 15px 0; }
+
+        .badge-qty { background: var(--secondary); color: white; padding: 5px 12px; border-radius: 8px; font-weight: 800; }
+        .nopol-box { background: #1e293b; border: 1px solid var(--glass-border); padding: 4px 10px; border-radius: 6px; font-weight: 700; color: var(--primary); }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="login-overlay" style="position:fixed; inset:0; background:var(--bg-dark); z-index:9999; display:flex; align-items:center; justify-content:center;">
-        <div style="text-align:center; background:var(--glass); padding:3rem; border-radius:30px; border:1px solid var(--glass-border); width:400px;">
-            <i data-lucide="lock" style="color:var(--primary); margin-bottom:1rem;"></i>
-            <h2 style="margin-bottom:1.5rem;">LOGISTICS ACCESS</h2>
-            <input type="password" id="pass-input" placeholder="PIN" style="width:100%; padding:15px; border-radius:12px; background:black; border:1px solid var(--glass-border); color:var(--primary); text-align:center; font-weight:800; margin-bottom:1rem;">
-            <button onclick="handleLogin()" style="width:100%; padding:15px; border-radius:12px; background:var(--primary); border:none; font-weight:800; cursor:pointer;">LOGIN SYSTEM</button>
+    <div id="login-overlay">
+        <div class="login-card">
+            <div style="background: var(--secondary); width: 60px; height: 60px; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <i data-lucide="shield-check" style="color: white;"></i>
+            </div>
+            <h2 style="margin-bottom: 2rem;">CORE ACCESS</h2>
+            <input type="password" id="pass-input" placeholder="••••" onkeypress="if(event.key === 'Enter') handleLogin()">
+            <button onclick="handleLogin()">INITIALIZE SYSTEM</button>
+            <p id="error-msg" style="color: #ff3e3e; margin-top: 1rem; font-weight: 700; font-size: 0.8rem; display: none;">ACCESS DENIED</p>
         </div>
     </div>
 
     <div id="app-shell" class="hidden">
         <nav>
-            <div class="logo-nav"><i data-lucide="box"></i> CYBER.SUITE</div>
+            <div class="logo-nav"><i data-lucide="box" style="color: var(--primary);"></i> CYBER.LOGISTICS</div>
             
-            <div id="nav-container"></div>
+            <div class="dept-group">
+                <div class="dept-label" id="label-ikaen" onclick="toggleDept('ikaen')"><span>IKAEN</span> <i data-lucide="chevron-right" size="16"></i></div>
+                <div class="sub-menu" id="menu-ikaen">
+                    <div class="sub-item" onclick="goTo('ikaen', 'sj')">Surat Jalan</div>
+                    <div class="sub-item" onclick="goTo('ikaen', 'ba_terima')">BA Terima</div>
+                    <div class="sub-item" onclick="goTo('ikaen', 'ba_oper')">BA Oper</div>
+                    <div class="sub-item" onclick="goTo('ikaen', 'memo')">Memo</div>
+                </div>
+            </div>
+
+            <div class="dept-group">
+                <div class="dept-label" id="label-ide" onclick="toggleDept('ide')"><span>IDE</span> <i data-lucide="chevron-right" size="16"></i></div>
+                <div class="sub-menu" id="menu-ide">
+                    <div class="sub-item" onclick="goTo('ide', 'sj')">Surat Jalan</div>
+                    <div class="sub-item" onclick="goTo('ide', 'ba_terima')">BA Terima</div>
+                    <div class="sub-item" onclick="goTo('ide', 'ba_oper')">BA Oper</div>
+                    <div class="sub-item" onclick="goTo('ide', 'memo')">Memo</div>
+                </div>
+            </div>
+
+            <div class="dept-group">
+                <div class="dept-label" id="label-kse" onclick="toggleDept('kse')"><span>KSE</span> <i data-lucide="chevron-right" size="16"></i></div>
+                <div class="sub-menu" id="menu-kse">
+                    <div class="sub-item" onclick="goTo('kse', 'sj')">Surat Jalan</div>
+                    <div class="sub-item" onclick="goTo('kse', 'ba_terima')">BA Terima</div>
+                    <div class="sub-item" onclick="goTo('kse', 'ba_oper')">BA Oper</div>
+                    <div class="sub-item" onclick="goTo('kse', 'memo')">Memo</div>
+                </div>
+            </div>
         </nav>
 
         <main>
-            <div style="margin-bottom: 2rem;">
-                <h1 id="view-title" style="font-size: 2rem;">Dashboard IKAEN</h1>
-                <p id="view-subtitle" style="color: var(--text-dim);">Monitoring Real-time Database Supabase</p>
+            <div style="margin-bottom: 2.5rem;">
+                <h1 id="view-title" style="font-size: 2.5rem; background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Dashboard IKAEN</h1>
+                <p style="color: var(--text-dim);">✦ Real-time Logistics Monitoring System</p>
             </div>
 
             <div class="glass-panel">
                 <table>
                     <thead>
                         <tr>
-                            <th>Tgl / Jam</th>
-                            <th>No. Manifest / SJ</th>
+                            <th>Waktu</th>
+                            <th>No. SJ/Manifest</th>
                             <th>No. Memo</th>
-                            <th>BA Oper / Terima</th>
+                            <th>BA Oper/Terima</th>
                             <th>Nopol</th>
                             <th>Sopir</th>
                             <th>Tujuan</th>
@@ -111,94 +190,88 @@
     </div>
 
     <script>
-        // --- KONFIGURASI ---
+        // --- KONFIGURASI SUPABASE ---
         const SB_URL = "URL_SUPABASE_ANDA";
         const SB_KEY = "ANON_KEY_ANDA";
-        const supabase =维持.createClient(SB_URL, SB_KEY);
-        
-        const depts = ['ikaen', 'ide', 'kse'];
+        const supabase = window.supabase.createClient(SB_URL, SB_KEY);
+
+        lucide.createIcons();
         let currentDept = 'ikaen';
 
-        // --- RENDER SIDEBAR ---
-        const navContainer = document.getElementById('nav-container');
-        depts.forEach(pt => {
-            navContainer.innerHTML += `
-                <div class="dept-group">
-                    <div class="dept-label" id="label-${pt}" onclick="toggleDept('${pt}')">
-                        <span>${pt.toUpperCase()}</span> <i data-lucide="chevron-down" size="14"></i>
-                    </div>
-                    <div class="sub-menu" id="menu-${pt}">
-                        <div class="sub-item" onclick="goTo('${pt}', 'sj')"><i data-lucide="file-text"></i> Surat Jalan</div>
-                        <div class="sub-item" onclick="goTo('${pt}', 'ba_terima')"><i data-lucide="check-circle"></i> BA Terima</div>
-                        <div class="sub-item" onclick="goTo('${pt}', 'ba_oper')"><i data-lucide="refresh-ccw"></i> BA Oper</div>
-                        <div class="sub-item" onclick="goTo('${pt}', 'memo')"><i data-lucide="mail"></i> Memo</div>
-                    </div>
-                </div>
-            `;
-        });
-        lucide.createIcons();
-
-        // --- FUNCTIONS ---
+        // --- LOGIN LOGIC ---
         function handleLogin() {
-            if(document.getElementById('pass-input').value === 'admin123') {
+            const pass = document.getElementById('pass-input').value;
+            if (pass === 'admin123') {
                 document.getElementById('login-overlay').classList.add('hidden');
                 document.getElementById('app-shell').classList.remove('hidden');
                 toggleDept('ikaen');
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
             }
         }
 
+        // --- NAVIGATION ---
         function toggleDept(pt) {
             currentDept = pt;
             document.querySelectorAll('.sub-menu').forEach(m => m.classList.remove('show'));
             document.querySelectorAll('.dept-label').forEach(l => l.classList.remove('active'));
+            
             document.getElementById(`menu-${pt}`).classList.add('show');
             document.getElementById(`label-${pt}`).classList.add('active');
-            document.getElementById('view-title').innerText = `Dashboard ${pt.toUpperCase()}`;
+            document.getElementById('view-title').innerText = "Dashboard " + pt.toUpperCase();
+            
             fetchData();
         }
 
         function goTo(pt, type) {
-            // Mengarah ke file sesuai permintaan: sj_ikaen.html, memo_ide.html, dll.
             window.location.href = `${type}_${pt}.html`;
         }
 
+        // --- FETCH DATA FROM SUPABASE ---
         async function fetchData() {
             const tableBody = document.getElementById('manifest-table');
-            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:3rem;">Loading encrypted data...</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:4rem; color:var(--primary);">SYNCHRONIZING DATA...</td></tr>`;
 
-            const { data, error } = await supabase
-                .from('manifests')
-                .select('*')
-                .eq('dept', currentDept)
-                .order('created_at', { ascending: false });
+            try {
+                const { data, error } = await supabase
+                    .from('manifests')
+                    .select('*')
+                    .eq('dept', currentDept)
+                    .order('created_at', { ascending: false });
 
-            if (error || !data) {
-                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Connection Error</td></tr>`;
-                return;
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:4rem; color:var(--text-dim); font-style:italic;">DATA SECTOR EMPTY</td></tr>`;
+                    return;
+                }
+
+                tableBody.innerHTML = data.map(item => `
+                    <tr>
+                        <td style="font-size:0.75rem;">${new Date(item.created_at).toLocaleString('id-ID')}</td>
+                        <td><b style="color:var(--primary)">${item.no_manifest || '-'}</b></td>
+                        <td>${item.no_memo || '-'}</td>
+                        <td style="font-size:0.75rem; line-height:1.4;">
+                            <div>OPR: ${item.no_ba_oper || '-'}</div>
+                            <div>TRM: ${item.no_ba_terima || '-'}</div>
+                        </td>
+                        <td><span class="nopol-box">${item.nopol || '-'}</span></td>
+                        <td style="color:white; font-weight:600;">${item.driver_name || '-'}</td>
+                        <td>${item.destination || '-'}</td>
+                        <td><span class="badge-qty">${item.qty || '0'}</span></td>
+                    </tr>
+                `).join('');
+
+            } catch (err) {
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#ff3e3e;">DATABASE ERROR</td></tr>`;
             }
-
-            tableBody.innerHTML = data.map(item => `
-                <tr>
-                    <td style="font-size:0.75rem; color:var(--text-dim)">${new Date(item.created_at).toLocaleString('id-ID')}</td>
-                    <td><b style="color:var(--primary)">${item.no_manifest || '-'}</b></td>
-                    <td>${item.no_memo || '-'}</td>
-                    <td>
-                        <div style="font-size:0.75rem">Opr: ${item.no_ba_oper || '-'}</div>
-                        <div style="font-size:0.75rem">Trm: ${item.no_ba_terima || '-'}</div>
-                    </td>
-                    <td><span style="background:#1e293b; padding:4px 8px; border-radius:5px;">${item.nopol || '-'}</span></td>
-                    <td style="color:white">${item.driver_name || '-'}</td>
-                    <td>${item.destination || '-'}</td>
-                    <td><span class="badge-qty">${item.qty || '0'}</span></td>
-                </tr>
-            `).join('');
         }
 
-        // Realtime Refresh
-        supabase.channel('custom-all-channel')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'manifests' }, () => {
+        // --- REALTIME UPDATE ---
+        supabase.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'manifests' }, () => {
             fetchData();
         }).subscribe();
+
     </script>
 </body>
 </html>
