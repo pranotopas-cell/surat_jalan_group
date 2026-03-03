@@ -3,292 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYBER SUITE | LOGISTICS ENGINE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title> DELIVERY | Cyber Logistics </title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
+    
     <style>
         :root {
-            --primary: #00f2ff;
+            --primary: #00f2ff; /* Electric Tosca */
             --secondary: #0066ff;
-            --neon-purple: #7000ff;
             --bg-dark: #020617;
-            --glass: rgba(7, 15, 30, 0.7);
-            --glass-border: rgba(0, 242, 255, 0.2);
+            --glass: rgba(7, 15, 30, 0.85);
+            --glass-border: rgba(0, 242, 255, 0.15);
             --text-main: #f1f5f9;
-            --text-dim: #64748b;
+            --text-dim: #94a3b8;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Space Grotesk', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
 
-        body { 
-            min-height: 100vh;
-            color: var(--text-main);
-            background: var(--bg-dark);
-            overflow-x: hidden;
-        }
-
-        /* --- HITECH BACKGROUND ANIMATION --- */
-        .grid-bg {
-            position: fixed; inset: 0;
-            background-image: linear-gradient(var(--glass-border) 1px, transparent 1px), linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
-            background-size: 50px 50px;
-            perspective: 1000px;
-            z-index: -1;
-            opacity: 0.2;
-        }
-
-        /* --- LOGIN OVERLAY --- */
-        #login-overlay {
-            position: fixed; inset: 0; background: var(--bg-dark);
-            display: flex; align-items: center; justify-content: center; z-index: 9999;
-            transition: 0.8s cubic-bezier(0.85, 0, 0.15, 1);
-        }
-
-        .login-card { 
-            background: var(--glass); backdrop-filter: blur(20px);
-            padding: 3rem; border-radius: 20px; width: 100%; max-width: 400px; 
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 50px rgba(0, 242, 255, 0.2);
-            text-align: center;
-        }
-
-        .login-card input {
-            width: 100%; padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border);
-            background: rgba(0,0,0,0.5); color: var(--primary);
-            font-size: 1.5rem; text-align: center; letter-spacing: 8px; outline: none; margin-bottom: 20px;
-        }
-
-        /* --- SIDEBAR RE-DESIGN --- */
+        /* --- SIDEBAR --- */
         nav {
-            width: 300px; background: var(--glass); backdrop-filter: blur(40px);
+            width: 280px; background: var(--glass); backdrop-filter: blur(20px);
             border-right: 1px solid var(--glass-border); padding: 2rem 1rem; 
             height: 100vh; position: fixed; z-index: 1000;
         }
 
-        .dept-card {
-            margin-bottom: 1rem; border-radius: 12px; overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05); transition: 0.3s;
-        }
-
-        .dept-trigger {
-            padding: 15px; background: rgba(255,255,255,0.03);
+        .logo-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 3rem; font-weight: 800; color: var(--primary); }
+        
+        .dept-group { margin-bottom: 1rem; }
+        .dept-label { 
             display: flex; align-items: center; justify-content: space-between;
-            cursor: pointer; font-weight: 700; color: var(--text-dim);
+            padding: 14px 18px; cursor: pointer; border-radius: 12px;
+            color: var(--text-dim); font-weight: 700; transition: 0.3s;
+            background: rgba(255,255,255,0.02);
         }
+        .dept-label.active { color: var(--primary); background: rgba(0,242,255,0.05); border-left: 3px solid var(--primary); }
 
-        .dept-trigger:hover, .dept-card.active .dept-trigger {
-            background: linear-gradient(90deg, rgba(0, 242, 255, 0.1), transparent);
-            color: var(--primary);
+        .sub-menu { padding-left: 10px; display: none; margin-top: 5px; }
+        .sub-menu.show { display: block; }
+
+        .sub-item {
+            display: flex; align-items: center; padding: 10px 15px; margin-top: 2px;
+            cursor: pointer; border-radius: 8px; color: var(--text-dim);
+            font-size: 0.85rem; font-weight: 600; transition: 0.2s;
         }
+        .sub-item:hover { color: var(--primary); background: rgba(0,242,255,0.05); transform: translateX(5px); }
+        .sub-item i { margin-right: 10px; width: 14px; }
 
-        .dropdown-content {
-            height: 0; overflow: hidden; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            background: rgba(0,0,0,0.2);
-        }
-
-        .dept-card.active .dropdown-content { height: 180px; }
-
-        .drop-item {
-            padding: 10px 20px 10px 45px; font-size: 0.85rem; color: var(--text-dim);
-            cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s;
-        }
-
-        .drop-item:hover { color: var(--primary); transform: translateX(5px); }
-
-        /* --- MAIN CONTENT --- */
-        main { margin-left: 300px; padding: 3rem; }
-
-        .scanline {
-            width: 100%; height: 2px; background: var(--primary);
-            position: absolute; top: 0; left: 0; opacity: 0.1;
-            animation: scan 4s linear infinite;
-        }
-
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-
+        /* --- CONTENT --- */
+        main { margin-left: 280px; padding: 3rem; }
         .glass-panel {
-            background: rgba(7, 15, 30, 0.4); border: 1px solid var(--glass-border);
-            border-radius: 20px; padding: 20px; position: relative; overflow: hidden;
+            background: var(--glass); border-radius: 24px; padding: 1.5rem; 
+            border: 1px solid var(--glass-border); overflow-x: auto;
         }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { padding: 20px; text-align: left; color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; }
-        td { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.9rem; }
-
-        .status-tag {
-            padding: 4px 10px; border-radius: 4px; font-size: 0.7rem;
-            background: rgba(0, 242, 255, 0.1); border: 1px solid var(--primary); color: var(--primary);
-        }
-
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; min-width: 1000px; }
+        th { padding: 12px 15px; color: var(--primary); font-size: 0.65rem; text-transform: uppercase; text-align: left; letter-spacing: 1px; }
+        td { padding: 15px; background: rgba(255,255,255,0.02); font-size: 0.85rem; color: var(--text-main); border-top: 1px solid rgba(255,255,255,0.03); }
+        
+        .badge-qty { background: var(--secondary); color: white; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="grid-bg"></div>
-
-    <div id="login-overlay">
-        <div class="login-card">
-            <h2 style="color: white; margin-bottom: 10px; letter-spacing: 3px;">SYSTEM AUTH</h2>
-            <p style="color: var(--text-dim); font-size: 0.7rem; margin-bottom: 30px;">ENCRYPTED TERMINAL ACCESS</p>
-            <input type="password" id="pass-input" placeholder="0000" onkeypress="if(event.key==='Enter') authSystem()">
-            <button onclick="authSystem()" style="width: 100%; padding: 15px; background: var(--primary); border: none; font-weight: 800; cursor: pointer;">CONNECT TO CORE</button>
+    <div id="login-overlay" style="position:fixed; inset:0; background:var(--bg-dark); z-index:9999; display:flex; align-items:center; justify-content:center;">
+        <div style="text-align:center; background:var(--glass); padding:3rem; border-radius:30px; border:1px solid var(--glass-border); width:400px;">
+            <i data-lucide="lock" style="color:var(--primary); margin-bottom:1rem;"></i>
+            <h2 style="margin-bottom:1.5rem;">LOGISTICS ACCESS</h2>
+            <input type="password" id="pass-input" placeholder="PIN" style="width:100%; padding:15px; border-radius:12px; background:black; border:1px solid var(--glass-border); color:var(--primary); text-align:center; font-weight:800; margin-bottom:1rem;">
+            <button onclick="handleLogin()" style="width:100%; padding:15px; border-radius:12px; background:var(--primary); border:none; font-weight:800; cursor:pointer;">LOGIN SYSTEM</button>
         </div>
     </div>
 
     <div id="app-shell" class="hidden">
         <nav>
-            <div style="margin-bottom: 3rem; display: flex; align-items: center; gap: 10px;">
-                <div style="width: 40px; height: 40px; border: 2px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                    <i data-lucide="cpu" style="color: var(--primary); width: 20px;"></i>
-                </div>
-                <h2 style="font-weight: 800; font-size: 1.2rem; letter-spacing: 2px;">CYBER<span style="color: var(--primary)">SUITE</span></h2>
-            </div>
-
-            <div id="sidebar-menu">
-                </div>
-
-            <div style="position: absolute; bottom: 20px; left: 20px; right: 20px;">
-                <div style="font-size: 0.6rem; color: var(--text-dim); margin-bottom: 10px;">SYSTEM STATUS: <span style="color: var(--primary);">ONLINE</span></div>
-                <button onclick="location.reload()" style="width: 100%; padding: 10px; background: transparent; border: 1px solid #ff3e3e; color: #ff3e3e; cursor: pointer; border-radius: 5px; font-size: 0.8rem;">TERMINATE SESSION</button>
-            </div>
+            <div class="logo-nav"><i data-lucide="box"></i> CYBER.SUITE</div>
+            
+            <div id="nav-container"></div>
         </nav>
 
         <main>
-            <header style="margin-bottom: 3rem;">
-                <h1 id="view-title" style="font-size: 3rem; font-weight: 300;">TERMINAL_ROOT</h1>
-                <p id="view-subtitle" style="color: var(--primary); letter-spacing: 5px; font-size: 0.8rem;">READY FOR DATA STREAM</p>
-            </header>
+            <div style="margin-bottom: 2rem;">
+                <h1 id="view-title" style="font-size: 2rem;">Dashboard IKAEN</h1>
+                <p id="view-subtitle" style="color: var(--text-dim);">Monitoring Real-time Database Supabase</p>
+            </div>
 
             <div class="glass-panel">
-                <div class="scanline"></div>
                 <table>
                     <thead>
                         <tr>
-                            <th>IDENTIFIER</th>
-                            <th>LOGISTICS INFO</th>
-                            <th>DESTINATION</th>
-                            <th>VOLUME</th>
-                            <th>TIMESTAMP</th>
+                            <th>Tgl / Jam</th>
+                            <th>No. Manifest / SJ</th>
+                            <th>No. Memo</th>
+                            <th>BA Oper / Terima</th>
+                            <th>Nopol</th>
+                            <th>Sopir</th>
+                            <th>Tujuan</th>
+                            <th>Qty (L)</th>
                         </tr>
                     </thead>
-                    <tbody id="main-data-stream">
-                        </tbody>
+                    <tbody id="manifest-table"></tbody>
                 </table>
             </div>
         </main>
     </div>
 
     <script>
-        const SB_URL = "https://ntaectphgoelmhzrkatp.supabase.co";
-        const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg";
-        const client = supabase.createClient(SB_URL, SB_KEY);
-
-        const companies = ['ikaen', 'ide', 'kse'];
-        const docTypes = [
-            { id: 'sj', label: 'Surat Jalan', icon: 'truck' },
-            { id: 'memo', label: 'Memo Internal', icon: 'file-text' },
-            { id: 'ba_oper', label: 'BA Oper Tangki', icon: 'refresh-cw' },
-            { id: 'ba_terima', label: 'BA Penerimaan', icon: 'check-square' }
-        ];
-
-        // --- AUTH SYSTEM ---
-        function authSystem() {
-            const val = document.getElementById('pass-input').value;
-            if(val === 'admin123') {
-                gsap.to("#login-overlay", { y: -1000, duration: 1, ease: "power4.inOut", onComplete: () => {
-                    document.getElementById('login-overlay').classList.add('hidden');
-                    document.getElementById('app-shell').classList.remove('hidden');
-                    initSidebar();
-                    lucide.createIcons();
-                }});
-            } else {
-                gsap.to(".login-card", { x: 20, repeat: 3, yoyo: true, duration: 0.05 });
-            }
-        }
+        // --- KONFIGURASI ---
+        const SB_URL = "URL_SUPABASE_ANDA";
+        const SB_KEY = "ANON_KEY_ANDA";
+        const supabase =维持.createClient(SB_URL, SB_KEY);
+        
+        const depts = ['ikaen', 'ide', 'kse'];
+        let currentDept = 'ikaen';
 
         // --- RENDER SIDEBAR ---
-        function initSidebar() {
-            const menu = document.getElementById('sidebar-menu');
-            companies.forEach(pt => {
-                const card = document.createElement('div');
-                card.className = `dept-card pt-${pt}`;
-                card.innerHTML = `
-                    <div class="dept-trigger" onclick="toggleAccordion('${pt}')">
-                        <span>${pt.toUpperCase()}</span>
-                        <i data-lucide="chevron-down" size="16"></i>
+        const navContainer = document.getElementById('nav-container');
+        depts.forEach(pt => {
+            navContainer.innerHTML += `
+                <div class="dept-group">
+                    <div class="dept-label" id="label-${pt}" onclick="toggleDept('${pt}')">
+                        <span>${pt.toUpperCase()}</span> <i data-lucide="chevron-down" size="14"></i>
                     </div>
-                    <div class="dropdown-content" id="drop-${pt}">
-                        ${docTypes.map(doc => `
-                            <div class="drop-item" onclick="loadData('${pt}', '${doc.id}')">
-                                <i data-lucide="${doc.icon}" size="14"></i> ${doc.label}
-                            </div>
-                        `).join('')}
+                    <div class="sub-menu" id="menu-${pt}">
+                        <div class="sub-item" onclick="goTo('${pt}', 'sj')"><i data-lucide="file-text"></i> Surat Jalan</div>
+                        <div class="sub-item" onclick="goTo('${pt}', 'ba_terima')"><i data-lucide="check-circle"></i> BA Terima</div>
+                        <div class="sub-item" onclick="goTo('${pt}', 'ba_oper')"><i data-lucide="refresh-ccw"></i> BA Oper</div>
+                        <div class="sub-item" onclick="goTo('${pt}', 'memo')"><i data-lucide="mail"></i> Memo</div>
                     </div>
-                `;
-                menu.appendChild(card);
-            });
-            lucide.createIcons();
-        }
+                </div>
+            `;
+        });
+        lucide.createIcons();
 
-        function toggleAccordion(pt) {
-            document.querySelectorAll('.dept-card').forEach(c => c.classList.remove('active'));
-            document.querySelector(`.pt-${pt}`).classList.add('active');
-        }
-
-        // --- FETCH DATA FROM SUPABASE (Sorted by Date) ---
-        async function loadData(pt, type) {
-            const tbody = document.getElementById('main-data-stream');
-            const title = document.getElementById('view-title');
-            
-            title.innerText = `${pt.toUpperCase()} / ${type.toUpperCase()}`;
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:50px;">INITIALIZING DATA STREAM...</td></tr>`;
-
-            try {
-                // Tarik data dari tabel spesifik, urutkan tanggal terbaru (desc)
-                const { data, error } = await client
-                    .from(`data_${pt}`)
-                    .select('*')
-                    .order('tanggal', { ascending: false });
-
-                if (error) throw error;
-
-                if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:50px; color:var(--text-dim);">NO DATA FOUND IN THIS NODE</td></tr>`;
-                    return;
-                }
-
-                tbody.innerHTML = data.map(item => {
-                    // Tampilkan nomor surat sesuai tipe yang diklik
-                    let docNum = "-";
-                    if(type === 'sj') docNum = item.no_surat_jalan;
-                    if(type === 'memo') docNum = item.no_memo;
-                    if(type === 'ba_oper') docNum = item.no_ba_oper_tangki;
-                    if(type === 'ba_terima') docNum = item.no_ba_terima;
-
-                    return `
-                        <tr style="opacity:0;" class="data-row">
-                            <td><span class="status-tag">${docNum || 'EMPTY'}</span></td>
-                            <td>
-                                <div style="font-weight:700;">${item.nama_sopir}</div>
-                                <div style="font-size:0.7rem; color:var(--primary)">${item.nopol}</div>
-                            </td>
-                            <td>${item.tujuan}</td>
-                            <td><span style="color:var(--primary)">${item.qty}</span> <span style="font-size:0.6rem">LTR</span></td>
-                            <td style="font-family:monospace; font-size:0.75rem;">${item.tanggal}</td>
-                        </tr>
-                    `;
-                }).join('');
-
-                gsap.to(".data-row", { opacity: 1, x: 0, stagger: 0.05, duration: 0.5 });
-
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ff3e3e;">NODE CONNECTION FAILURE</td></tr>`;
+        // --- FUNCTIONS ---
+        function handleLogin() {
+            if(document.getElementById('pass-input').value === 'admin123') {
+                document.getElementById('login-overlay').classList.add('hidden');
+                document.getElementById('app-shell').classList.remove('hidden');
+                toggleDept('ikaen');
             }
         }
+
+        function toggleDept(pt) {
+            currentDept = pt;
+            document.querySelectorAll('.sub-menu').forEach(m => m.classList.remove('show'));
+            document.querySelectorAll('.dept-label').forEach(l => l.classList.remove('active'));
+            document.getElementById(`menu-${pt}`).classList.add('show');
+            document.getElementById(`label-${pt}`).classList.add('active');
+            document.getElementById('view-title').innerText = `Dashboard ${pt.toUpperCase()}`;
+            fetchData();
+        }
+
+        function goTo(pt, type) {
+            // Mengarah ke file sesuai permintaan: sj_ikaen.html, memo_ide.html, dll.
+            window.location.href = `${type}_${pt}.html`;
+        }
+
+        async function fetchData() {
+            const tableBody = document.getElementById('manifest-table');
+            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:3rem;">Loading encrypted data...</td></tr>`;
+
+            const { data, error } = await supabase
+                .from('manifests')
+                .select('*')
+                .eq('dept', currentDept)
+                .order('created_at', { ascending: false });
+
+            if (error || !data) {
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Connection Error</td></tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = data.map(item => `
+                <tr>
+                    <td style="font-size:0.75rem; color:var(--text-dim)">${new Date(item.created_at).toLocaleString('id-ID')}</td>
+                    <td><b style="color:var(--primary)">${item.no_manifest || '-'}</b></td>
+                    <td>${item.no_memo || '-'}</td>
+                    <td>
+                        <div style="font-size:0.75rem">Opr: ${item.no_ba_oper || '-'}</div>
+                        <div style="font-size:0.75rem">Trm: ${item.no_ba_terima || '-'}</div>
+                    </td>
+                    <td><span style="background:#1e293b; padding:4px 8px; border-radius:5px;">${item.nopol || '-'}</span></td>
+                    <td style="color:white">${item.driver_name || '-'}</td>
+                    <td>${item.destination || '-'}</td>
+                    <td><span class="badge-qty">${item.qty || '0'}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Realtime Refresh
+        supabase.channel('custom-all-channel')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'manifests' }, () => {
+            fetchData();
+        }).subscribe();
     </script>
 </body>
 </html>
