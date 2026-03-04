@@ -60,7 +60,7 @@
         .other-note-container { width: 100%; border: 1px solid #000; border-top: none; padding: 6px 10px; font-size: 8pt; min-height: 45px; box-sizing: border-box; background: #fff; text-align: left; }
 
         /* Editor Panel */
-        .editor-panel { width: 380px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ddd; max-height: 95vh; overflow-y: auto; position: sticky; top: 20px; }
+        .editor-panel { width: 380px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ddd; max-height: 95vh; overflow-y: auto; position: sticky; top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .editor-panel h2 { margin: 18px 0 8px 0; color: var(--primary-red); font-size: 11pt; border-bottom: 2px solid var(--primary-blue); padding-bottom: 5px; }
         .field { display: flex; flex-direction: column; margin-bottom: 10px; }
         .field label { font-size: 8pt; font-weight: bold; margin-bottom: 4px; color: #444; }
@@ -73,7 +73,6 @@
         .btn-save { background: var(--success-green); grid-column: span 2; }
         .btn-print { background: var(--primary-red); }
         .btn-download { background: var(--primary-blue); }
-        .btn-preview { background: #777; grid-column: span 2; }
 
         @media print {
             .editor-panel { display: none; }
@@ -85,7 +84,7 @@
 <body>
 
 <div class="editor-panel">
-    <button class="btn btn-home" onclick="initSupabaseAndSync()">🏠 HOME (SINKRON NOMOR)</button>
+    <button class="btn btn-home" onclick="syncNomorSJ()">🏠 SINKRON NOMOR TERBARU</button>
     
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (Date)</label><input type="text" id="i-tgl"></div>
@@ -101,25 +100,24 @@
     <div class="field"><label>Nomor SO (SO Number)</label><input type="text" id="i-so-desc" value="-"></div>
     <div class="field"><label>Tanggal Pengaliran (Loading Date)</label><input type="text" id="i-load-date" value="-"></div>
     <div class="field"><label>Nomor Polisi (Plat No)</label><input type="text" id="i-plat" value="-"></div>
-    <div class="field"><label>Meter Awal / TC (mm)</label><input type="text" id="i-m1" value="-"></div>
-    <div class="field"><label>Meter Akhir / TC (mm)</label><input type="text" id="i-m2" value="-"></div>
     <div class="field"><label>Nomor Segel (Seal No)</label><input type="text" id="i-segel" value="-"></div>
-    <div class="field"><label>Tinggi Cairan (T2)</label><input type="text" id="i-t2" value="-"></div>
+    <div class="field"><label>Meter Awal (mm)</label><input type="text" id="i-m1" value="-"></div>
+    <div class="field"><label>Meter Akhir (mm)</label><input type="text" id="i-m2" value="-"></div>
+    <div class="field"><label>Tinggi Cairan / T2 (mm)</label><input type="text" id="i-t2" value="-"></div>
 
     <h2>3. Deskripsi Pesanan</h2>
     <div class="field"><label>Nomor Purchase Order (PO)</label><input type="text" id="i-po-num" value="-"></div>
     <div class="field"><label>PO Quantity (L)</label><input type="text" id="i-poqty" value="-"></div>
 
-    <h2>4. Pengesahan & Catatan Lain</h2>
+    <h2>4. Pengesahan & Catatan</h2>
     <div class="field"><label>Nama Pengemudi (Driver)</label><input type="text" id="i-driver" value="-"></div>
     <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="Admin Investama Kalimantan Energi"></div>
-    <div class="field"><label>Other Note (Catatan Tambahan)</label><textarea id="i-other-note" rows="2" placeholder="Tulis catatan tambahan di sini..."></textarea></div>
+    <div class="field"><label>Catatan Tambahan (Other Note)</label><textarea id="i-other-note" rows="2" placeholder="Tulis catatan tambahan di sini..."></textarea></div>
 
     <div class="action-group">
         <button class="btn btn-save" id="btn-save" onclick="saveData()">💾 SIMPAN KE DATABASE</button>
-        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PREVIEW</button>
-        <button class="btn btn-print" onclick="window.print()">PRINT / CETAK</button>
-        <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
+        <button class="btn btn-print" onclick="window.print()">🖨️ PRINT</button>
+        <button class="btn btn-download" onclick="downloadPDF()">📩 DOWNLOAD PDF</button>
     </div>
 </div>
 
@@ -184,7 +182,7 @@
             <td><div class="label-group"><span class="label-id">Meter Awal (TC)</span><span class="label-en">Initial Meter</span></div></td>
             <td>: <span class="val" id="v-m1">-</span> mm</td>
             <td><div class="label-group"><span class="label-id">Meter Akhir (TC)</span><span class="label-en">Final Meter</span></div></td>
-            <td>: <span class="val" id="v-m2">-</span></td>
+            <td>: <span class="val" id="v-m2">-</span> mm</td>
         </tr>
         <tr>
             <td><div class="label-group"><span class="label-id">Nomor Segel</span><span class="label-en">Seal Number</span></div></td>
@@ -193,7 +191,7 @@
             <td>: <span class="val" id="v-t2">-</span> mm</td>
         </tr>
         <tr>
-            <td><div class="label-group"><span class="label-id">Tujuan</span><span class="label-en">Destination</span></div></td>
+            <td><div class="label-group"><span class="label-id">Tujuan Akhir</span><span class="label-en">Destination</span></div></td>
             <td colspan="3">: <span class="val" id="v-dest-table">-</span></td>
         </tr>
     </table>
@@ -202,22 +200,19 @@
     <div class="desc-section">
         <table class="desc-table">
             <tr>
-                <td width="45%">
-                    <b>Purchase Order to:</b><br>
-                    <i style="font-size: 7.5pt;">Nomor PO / PO Number:</i>
-                </td>
+                <td width="45%"><b>Nomor PO / PO Number:</b></td>
                 <td>: <span class="val" id="v-po-num">-</span></td>
             </tr>
             <tr>
-                <td><b>Sales Order No.</b> / <i style="font-size: 7.5pt;">Nomor SO</i></td>
+                <td><b>Nomor SO / SO Number:</b></td>
                 <td>: <span class="val" id="v-so-desc">-</span></td>
             </tr>
             <tr>
-                <td><b>PO Quantity</b> / <i style="font-size: 7.5pt;">Jumlah Pesanan</i></td>
+                <td><b>Jumlah Pesanan / PO Qty:</b></td>
                 <td>: <span class="val" id="v-poqty">-</span> L</td>
             </tr>
         </table>
-        <div class="note-box" id="v-notetext">
+        <div class="note-box">
             Note: Dengan ditanda tanganinya surat ini, menandakan bahwa produk sudah diterima dalam keadaan kualitas dan kuantitas yang baik.
         </div>
     </div>
@@ -229,7 +224,7 @@
             <th><span class="label-id">Manager Operasional</span><br><span class="label-en">Operational Manager</span></th>
         </tr>
         <tr>
-            <td><span id="v-penerima">( . . . . . . . . . . . . . . . . )</span></td>
+            <td><br><br><span id="v-penerima">( . . . . . . . . . . . . . . . . )</span></td>
             <td><span id="v-driver">-</span></td>
             <td>
                 <img src="ike.png" alt="Stempel IKE" class="stamp-container">
@@ -258,7 +253,7 @@
 
 <script>
     // --- KONFIGURASI SUPABASE ---
-    const SUPABASE_URL = https://sb_publishable_MkPP_czXgS2y4H6whwfJIA_7UVHp3Eg.supabase.co';
+    const SUPABASE_URL = 'https://ntaecfphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -268,13 +263,11 @@
         return ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][month];
     }
 
-    // Fungsi Ambil Nomor Otomatis dari Supabase
+    // Fungsi Sinkron Nomor SJ Otomatis
     async function syncNomorSJ() {
         const now = new Date();
         const bulanRomawi = getRoman(now.getMonth());
         const tahun = now.getFullYear();
-        
-        // Format pencarian: /Bulan/Tahun
         const suffix = `/${bulanRomawi}/${tahun}`;
 
         try {
@@ -295,14 +288,12 @@
             const formattedNo = String(newCount).padStart(3, '0') + "/SJ-IKE" + suffix;
             document.getElementById('i-no').value = formattedNo;
             
-            // Set Tanggal Default jika kosong
             const tglStr = now.getDate() + " " + ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"][now.getMonth()] + " " + tahun;
-            document.getElementById('i-tgl').value = tglStr;
+            if(!document.getElementById('i-tgl').value) document.getElementById('i-tgl').value = tglStr;
             
             upd();
         } catch (e) {
             console.error("Gagal sinkronisasi nomor:", e);
-            document.getElementById('i-no').value = "001/SJ-IKE" + suffix;
         }
     }
 
@@ -316,11 +307,21 @@
             tanggal: document.getElementById('i-tgl').value,
             tujuan: document.getElementById('i-po-to').value,
             lokasi: document.getElementById('i-lokasi').value,
-            transportir: document.getElementById('i-trans').value,
             produk: document.getElementById('i-prod').value,
+            transportir: document.getElementById('i-trans').value,
+            no_do: document.getElementById('i-do-desc').value,
+            no_so: document.getElementById('i-so-desc').value,
             volume: document.getElementById('i-vol').value,
             plat_no: document.getElementById('i-plat').value,
-            driver: document.getElementById('i-driver').value
+            driver: document.getElementById('i-driver').value,
+            segel: document.getElementById('i-segel').value,
+            meter_awal: document.getElementById('i-m1').value,
+            meter_akhir: document.getElementById('i-m2').value,
+            tinggi_cairan: document.getElementById('i-t2').value,
+            po_number: document.getElementById('i-po-num').value,
+            po_qty: document.getElementById('i-poqty').value,
+            catatan: document.getElementById('i-other-note').value,
+            manager: document.getElementById('i-mgr').value
         };
 
         const { error } = await _supabase.from('data_ikaen').insert([payload]);
@@ -328,24 +329,11 @@
         if (error) {
             alert("Gagal menyimpan: " + error.message);
         } else {
-            alert("Data Berhasil Disimpan ke Supabase!");
+            alert("✅ Data Berhasil Disimpan ke Supabase!");
+            syncNomorSJ(); // Refresh nomor setelah simpan
         }
         btn.innerText = "💾 SIMPAN KE DATABASE";
         btn.disabled = false;
-    }
-
-    function initSupabaseAndSync() {
-        syncNomorSJ();
-    }
-
-    function fitText(el, defaultSize) {
-        if(!el) return;
-        let size = defaultSize;
-        el.style.fontSize = size + 'pt';
-        while (el.scrollWidth > el.offsetWidth && size > 5) {
-            size -= 0.5;
-            el.style.fontSize = size + 'pt';
-        }
     }
 
     function upd() {
@@ -375,8 +363,6 @@
         document.getElementById('v-mgr').innerText = document.getElementById('i-mgr').value;
         document.getElementById('v-other-note').innerText = document.getElementById('i-other-note').value;
         
-        document.querySelectorAll('.val').forEach(el => fitText(el, 9.5));
-        
         qrcode.clear();
         qrcode.makeCode("IKE-VERIFIED-" + document.getElementById('i-no').value);
     }
@@ -384,23 +370,18 @@
     function downloadPDF() {
         const element = document.getElementById('sj-container');
         const noSJ = document.getElementById('i-no').value.replace(/\//g, '-');
-        const ptTujuan = document.getElementById('i-po-to').value.replace(/\s/g, '_');
         window.scrollTo(0, 0);
-        const opt = {
+        html2pdf().set({
             margin: 0,
-            filename: 'Surat_Jalan_' + noSJ + '_' + ptTujuan + '.pdf',
+            filename: 'Surat_Jalan_' + noSJ + '.pdf',
             image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowHeight: element.scrollHeight },
+            html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(element).save();
+        }).from(element).save();
     }
 
     document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', upd));
-    
-    // Jalankan Sinkronisasi saat pertama kali buka
-    window.onload = initSupabaseAndSync;
+    window.onload = syncNomorSJ;
 </script>
 </body>
 </html>
-
