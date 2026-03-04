@@ -90,33 +90,27 @@
         <button class="btn btn-download" onclick="downloadPDF()">📩 PDF</button>
     </div>
     
-    <h2>1. Header Info</h2>
-    <div class="field"><label>Tanggal (Bisa Diedit)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor SJ (Dapat Diedit)</label><input type="text" id="i-no" style="color:#800000; font-weight:bold;"></div>
+    <h2>1. Data Utama (Dikirim ke DB)</h2>
+    <div class="field"><label>Tanggal</label><input type="text" id="i-tgl"></div>
+    <div class="field"><label>Nomor SJ</label><input type="text" id="i-no" style="color:#800000; font-weight:bold;"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
-    <div class="field"><label>Lokasi</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
+    <div class="field"><label>Nomor Polisi</label><input type="text" id="i-plat" value="-"></div>
+    <div class="field"><label>Nama Sopir / Driver</label><input type="text" id="i-driver" value="-"></div>
+    <div class="field"><label>Qty / Volume (L)</label><input type="text" id="i-vol" value="-"></div>
 
-    <h2>2. Detail Produk & Pengiriman</h2>
+    <h2>2. Data Tambahan (Hanya Tampilan)</h2>
+    <div class="field"><label>Lokasi</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
     <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="-"></div>
     <div class="field"><label>Produk</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
     <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
-    <div class="field"><label>Volume (L)</label><input type="text" id="i-vol" value="-"></div>
-    <div class="field"><label>Nomor Polisi</label><input type="text" id="i-plat" value="-"></div>
     <div class="field"><label>Nomor Segel</label><input type="text" id="i-segel" value="-"></div>
     <div class="field"><label>Tanggal Loading</label><input type="text" id="i-load-date" value="-"></div>
-
-    <h2>3. Meter & Teknis</h2>
     <div class="field"><label>Meter Awal (mm)</label><input type="text" id="i-m1" value="-"></div>
     <div class="field"><label>Meter Akhir (mm)</label><input type="text" id="i-m2" value="-"></div>
     <div class="field"><label>Tinggi Cairan / T2 (mm)</label><input type="text" id="i-t2" value="-"></div>
-
-    <h2>4. Dokumen Referensi</h2>
     <div class="field"><label>Nomor PO</label><input type="text" id="i-po-num" value="-"></div>
     <div class="field"><label>Nomor SO</label><input type="text" id="i-so-desc" value="-"></div>
     <div class="field"><label>PO Quantity (L)</label><input type="text" id="i-poqty" value="-"></div>
-
-    <h2>5. Pengesahan</h2>
-    <div class="field"><label>Driver</label><input type="text" id="i-driver" value="-"></div>
     <div class="field"><label>Note</label><textarea id="i-other-note" rows="2"></textarea></div>
 </div>
 
@@ -237,102 +231,61 @@
 </div>
 
 <script>
-    // Konfigurasi Supabase
     const SUPABASE_URL = 'https://ntaecfphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     
     const { createClient } = supabase;
     const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
     const qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
-    /**
-     * Sinkronisasi Tanggal & Generate Nomor Otomatis dari Supabase
-     */
     async function syncNomorSJ() {
         const now = new Date();
         const romawi = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][now.getMonth()];
         const suffix = `/${romawi}/${now.getFullYear()}`;
-
-        // Set Tanggal default
         const tglStr = now.getDate() + " " + ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"][now.getMonth()] + " " + now.getFullYear();
-        if(!document.getElementById('i-tgl').value) {
-            document.getElementById('i-tgl').value = tglStr;
-        }
+        
+        if(!document.getElementById('i-tgl').value) document.getElementById('i-tgl').value = tglStr;
 
         try {
-            // Ambil nomor SJ terakhir di database untuk bulan/tahun ini
-            const { data, error } = await _supabase
-                .from('data_ikaen')
-                .select('no_sj')
-                .ilike('no_sj', `%${suffix}`)
-                .order('no_sj', { ascending: false })
-                .limit(1);
-
-            if (error) throw error;
-
+            const { data, error } = await _supabase.from('data_ikaen').select('no_sj').ilike('no_sj', `%${suffix}`).order('no_sj', { ascending: false }).limit(1);
             let nextNum = 1;
             if (data && data.length > 0) {
-                const lastFullNo = data[0].no_sj;
-                const lastNum = parseInt(lastFullNo.split('/')[0]);
+                const lastNum = parseInt(data[0].no_sj.split('/')[0]);
                 if(!isNaN(lastNum)) nextNum = lastNum + 1;
             }
-
-            const formattedNo = String(nextNum).padStart(3, '0') + "/SJ-IKE" + suffix;
-            document.getElementById('i-no').value = formattedNo;
-            
+            document.getElementById('i-no').value = String(nextNum).padStart(3, '0') + "/SJ-IKE" + suffix;
             upd();
         } catch (e) {
-            console.error("Gagal Sync Nomor:", e.message);
-            const fallbackNo = "001/SJ-IKE" + suffix;
-            document.getElementById('i-no').value = fallbackNo;
+            document.getElementById('i-no').value = "001/SJ-IKE" + suffix;
             upd();
         }
     }
 
-    /**
-     * Simpan Data ke Supabase
-     */
     async function saveData() {
         const btn = document.getElementById('btn-save');
         const originalText = btn.innerText;
-        
         const noSj = document.getElementById('i-no').value;
-        if(!noSj || noSj === "-") {
-            alert("Nomor Surat Jalan wajib diisi.");
-            return;
-        }
+
+        if(!noSj || noSj === "-") { alert("Nomor SJ wajib ada."); return; }
 
         btn.innerText = "⏳ SIMPAN..."; 
         btn.disabled = true;
 
+        // DATA YANG DIKIRIM (Hanya 6 sesuai request)
         const payload = {
-            no_sj: noSj,
             tanggal: document.getElementById('i-tgl').value,
+            no_sj: noSj,
             tujuan: document.getElementById('i-po-to').value,
-            lokasi: document.getElementById('i-lokasi').value,
-            transportir: document.getElementById('i-trans').value,
-            produk: document.getElementById('i-prod').value,
-            no_do: document.getElementById('i-do-desc').value,
-            volume: document.getElementById('i-vol').value,
             no_polisi: document.getElementById('i-plat').value,
-            no_segel: document.getElementById('i-segel').value,
-            tgl_loading: document.getElementById('i-load-date').value,
-            meter_awal: document.getElementById('i-m1').value,
-            meter_akhir: document.getElementById('i-m2').value,
-            tinggi_cairan: document.getElementById('i-t2').value,
-            no_po: document.getElementById('i-po-num').value,
-            no_so: document.getElementById('i-so-desc').value,
-            po_qty: document.getElementById('i-poqty').value,
             driver: document.getElementById('i-driver').value,
-            note: document.getElementById('i-other-note').value
+            volume: document.getElementById('i-vol').value
         };
 
         try {
             const { error } = await _supabase.from('data_ikaen').insert([payload]);
             if (error) throw error;
-            alert("✅ Data Berhasil Disimpan!");
-            await syncNomorSJ(); // Refresh nomor otomatis setelah simpan
+            alert("✅ Data Berhasil Disimpan ke Supabase!");
+            await syncNomorSJ(); 
         } catch (e) {
             alert("❌ Gagal Simpan: " + (e.message || "Cek Koneksi"));
         } finally {
@@ -341,9 +294,6 @@
         }
     }
 
-    /**
-     * Update Tampilan Preview
-     */
     function upd() {
         const mapping = [
             ['i-no', 'v-no'], ['i-tgl', 'v-tgl'], ['i-lokasi', 'v-lokasi'],
@@ -356,39 +306,24 @@
             ['i-load-date', 'v-load'], ['i-po-to', 'v-po-to-header'],
             ['i-po-to', 'v-dest-table']
         ];
-
         mapping.forEach(([inputId, viewId]) => {
             const val = document.getElementById(inputId).value;
-            const viewEl = document.getElementById(viewId);
-            if(viewEl) viewEl.innerText = val || "-";
+            if(document.getElementById(viewId)) document.getElementById(viewId).innerText = val || "-";
         });
-
-        // Update QR Code secara dinamis berdasarkan input No SJ
         qrcode.makeCode("VERIFIED-IKE-" + document.getElementById('i-no').value);
     }
 
-    /**
-     * Download PDF
-     */
     function downloadPDF() {
         const element = document.getElementById('sj-container');
-        const rawNo = document.getElementById('i-no').value;
-        const fileName = 'SJ-' + rawNo.replace(/[/\\?%*:|"<>]/g, '-');
-        const opt = {
-            margin: 0,
-            filename: fileName + '.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
+        const fileName = 'SJ-' + document.getElementById('i-no').value.replace(/[/\\?%*:|"<>]/g, '-');
+        html2pdf().set({
+            margin: 0, filename: fileName + '.pdf', image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(element).save();
+        }).from(element).save();
     }
 
-    // Listener untuk setiap perubahan input
-    document.querySelectorAll('input, textarea').forEach(el => {
-        el.addEventListener('input', upd);
-    });
-
+    document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', upd));
     window.onload = syncNomorSJ;
 </script>
 </body>
