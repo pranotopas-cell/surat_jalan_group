@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root { 
@@ -20,15 +21,19 @@
         /* Auth Page */
         #login-page { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(rgba(13,33,55,0.85), rgba(21,101,192,0.85)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'); background-size: cover; }
         
-        /* Sidebar with Dropdown */
-        .sidebar { background: var(--ide-dark); height: 100vh; color: white; padding: 2rem 1.2rem; position: fixed; width: var(--sidebar-width); z-index: 1000; overflow-y: auto; }
-        .nav-link { color: rgba(255,255,255,0.7); margin-bottom: 0.2rem; border-radius: 0.75rem; padding: 0.8rem 1.2rem; text-decoration: none; display: flex; align-items: center; transition: 0.3s; cursor: pointer; }
+        /* Sidebar Styling */
+        .sidebar { background: var(--ide-dark); height: 100vh; color: white; padding: 1.5rem 1rem; position: fixed; width: var(--sidebar-width); z-index: 1000; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #333 transparent; }
+        .nav-link { color: rgba(255,255,255,0.7); margin-bottom: 0.1rem; border-radius: 0.5rem; padding: 0.7rem 1rem; text-decoration: none; display: flex; align-items: center; transition: 0.2s; cursor: pointer; font-size: 0.9rem; }
         .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.1); color: #00d2ff; }
-        .submenu { padding-left: 1rem; background: rgba(0,0,0,0.2); border-radius: 0.5rem; margin-bottom: 0.5rem; }
-        .submenu .nav-link { font-size: 0.85rem; padding: 0.5rem 1rem; }
+        
+        /* Dropdown Submenu */
+        .submenu { padding-left: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 0.5rem; margin-bottom: 0.5rem; margin-top: 0.2rem; }
+        .submenu .nav-link { font-size: 0.8rem; padding: 0.4rem 1rem; color: rgba(255,255,255,0.6); }
+        .submenu .nav-link:hover { color: #fff; }
+        .pt-label { font-size: 0.65rem; letter-spacing: 0.5px; opacity: 0.5; padding: 1rem 1rem 0.3rem; display: block; }
 
         .main-content { margin-left: var(--sidebar-width); padding: 2.5rem; min-height: 100vh; }
-        .data-card { background: white; border-radius: 1.2rem; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .data-card { background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #edf2f7; }
     </style>
 </head>
 <body>
@@ -45,39 +50,39 @@
 
 <div id="dashboard-page" style="display:none;">
     <aside class="sidebar d-flex flex-column">
-        <div class="mb-5 px-3 d-flex align-items-center">
+        <div class="mb-4 px-3 d-flex align-items-center">
             <i class="bi bi-hexagon-fill text-info fs-3 me-2"></i>
             <h5 class="fw-bold mb-0 text-white">IDE-SYSTEM</h5>
         </div>
         
         <nav class="flex-grow-1">
-            <a href="#" class="nav-link active mb-3"><i class="bi bi-grid-fill me-2"></i> Dashboard</a>
+            <a href="#" class="nav-link active mb-2"><i class="bi bi-grid-fill me-2"></i> Dashboard</a>
 
-            <div class="mb-2">
-                <small class="text-muted px-3 text-uppercase fw-bold" style="font-size: 0.6rem; opacity: 0.6;">PT. IKAEN BINA NUSANTARA</small>
-                <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2"></i> Ikaen Group</a>
-                <div class="collapse submenu" id="mIkaen">
-                    <a href="sj_ikaen.html" class="nav-link"><i class="bi bi-file-earmark-text me-2"></i> Surat Jalan</a>
-                    <a href="#" class="nav-link"><i class="bi bi-journal-text me-2"></i> Memo</a>
-                </div>
+            <small class="text-white pt-label fw-bold uppercase">PT. IKAEN BINA NUSANTARA</small>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2"></i> Ikaen Group <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <div class="collapse submenu" id="mIkaen">
+                <a href="sj_ikaen.html" class="nav-link"><i class="bi bi-file-earmark-text me-2"></i> Surat Jalan</a>
+                <a href="memo_ikaen.html" class="nav-link"><i class="bi bi-journal-text me-2"></i> Memo</a>
+                <a href="ba_penerimaan_ikaen.html" class="nav-link"><i class="bi bi-file-check me-2"></i> BA Penerimaan</a>
+                <a href="ba_oper_ikaen.html" class="nav-link"><i class="bi bi-truck-flatbed me-2"></i> BA Oper Muatan</a>
             </div>
 
-            <div class="mb-2">
-                <small class="text-muted px-3 text-uppercase fw-bold" style="font-size: 0.6rem; opacity: 0.6;">PT. INDO DHARMA ENERGI</small>
-                <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-lightning-charge me-2"></i> IDE Group</a>
-                <div class="collapse submenu" id="mIde">
-                    <a href="sj_ide.html" class="nav-link"><i class="bi bi-file-earmark-text me-2"></i> Surat Jalan</a>
-                    <a href="#" class="nav-link"><i class="bi bi-journal-text me-2"></i> Memo</a>
-                </div>
+            <small class="text-white pt-label fw-bold uppercase">PT. INDO DHARMA ENERGI</small>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-lightning-charge me-2"></i> IDE Group <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <div class="collapse submenu" id="mIde">
+                <a href="sj_ide.html" class="nav-link"><i class="bi bi-file-earmark-text me-2"></i> Surat Jalan</a>
+                <a href="memo_ide.html" class="nav-link"><i class="bi bi-journal-text me-2"></i> Memo</a>
+                <a href="ba_penerimaan_ide.html" class="nav-link"><i class="bi bi-file-check me-2"></i> BA Penerimaan</a>
+                <a href="ba_oper_ide.html" class="nav-link"><i class="bi bi-truck-flatbed me-2"></i> BA Oper Muatan</a>
             </div>
 
-            <div class="mb-2">
-                <small class="text-muted px-3 text-uppercase fw-bold" style="font-size: 0.6rem; opacity: 0.6;">PT. KALTENG SINERGI ENERGI</small>
-                <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-fire me-2"></i> KSE Group</a>
-                <div class="collapse submenu" id="mKse">
-                    <a href="sj_kse.html" class="nav-link"><i class="bi bi-file-earmark-text me-2"></i> Surat Jalan</a>
-                    <a href="#" class="nav-link"><i class="bi bi-journal-text me-2"></i> Memo</a>
-                </div>
+            <small class="text-white pt-label fw-bold uppercase">PT. KALTENG SINERGI ENERGI</small>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-fire me-2"></i> KSE Group <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <div class="collapse submenu" id="mKse">
+                <a href="sj_kse.html" class="nav-link"><i class="bi bi-file-earmark-text me-2"></i> Surat Jalan</a>
+                <a href="memo_kse.html" class="nav-link"><i class="bi bi-journal-text me-2"></i> Memo</a>
+                <a href="ba_penerimaan_kse.html" class="nav-link"><i class="bi bi-file-check me-2"></i> BA Penerimaan</a>
+                <a href="ba_oper_kse.html" class="nav-link"><i class="bi bi-truck-flatbed me-2"></i> BA Oper Muatan</a>
             </div>
         </nav>
 
@@ -89,31 +94,31 @@
     <main class="main-content">
         <div class="p-5 bg-white shadow-sm rounded-4 mb-4 text-white" style="background: linear-gradient(135deg, #0d2137, #1565c0);">
             <h1 class="fw-bold">Welcome, Admin</h1>
-            <p class="opacity-75">Monitoring Real-time Data Rilis Digital Delivery</p>
+            <p class="opacity-75">Monitoring Real-time Digital Delivery System</p>
         </div>
 
         <div class="data-card">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold mb-0">Data Rilis Terbaru (Live)</h5>
-                <button class="btn btn-sm btn-outline-primary px-3" onclick="fetchRilisData()">
-                    <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                <h5 class="fw-bold mb-0">Live Delivery Feed</h5>
+                <button class="btn btn-sm btn-primary px-3 rounded-pill" onclick="fetchRilisData()">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Sync Data
                 </button>
             </div>
             
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead>
-                        <tr>
+                        <tr class="text-muted small">
                             <th>TANGGAL & PT</th>
-                            <th>NO. SURAT JALAN</th>
-                            <th>DOKUMEN</th>
-                            <th>SOPIR / NOPOL</th>
+                            <th>NO. DOKUMEN</th>
+                            <th>REFERENSI</th>
+                            <th>LOGISTIK</th>
                             <th>TUJUAN</th>
                             <th>QTY</th>
                         </tr>
                     </thead>
                     <tbody id="rilis-table-body">
-                        <tr><td colspan="6" class="text-center py-5">Memuat data...</td></tr>
+                        <tr><td colspan="6" class="text-center py-5">Menghubungkan ke Supabase...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -124,8 +129,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // --- KOREKSI KONEKSI SUPABASE ---
-    // Pastikan URL dan Key ini sama dengan yang ada di file SJ IKAEN
     const SB_URL = "https://ntaecfphgoelmhzrkatp.supabase.co"; 
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg";
     const _supabase = supabase.createClient(SB_URL, SB_KEY);
@@ -134,7 +137,7 @@
         const tbody = document.getElementById('rilis-table-body');
         try {
             const { data, error } = await _supabase
-                .from('data_ikaen') // Pastikan nama tabel ini sesuai dengan yang kamu buat di SQL Editor
+                .from('data_ikaen') 
                 .select('*')
                 .order('created_at', { ascending: false });
 
@@ -142,18 +145,18 @@
 
             let html = '';
             if (data.length === 0) {
-                html = '<tr><td colspan="6" class="text-center py-4">Tidak ada data.</td></tr>';
+                html = '<tr><td colspan="6" class="text-center py-4 text-muted">Belum ada data terekam.</td></tr>';
             } else {
                 data.forEach(row => {
                     html += `
                         <tr>
                             <td>
                                 <div class="fw-bold">${row.tanggal || '-'}</div>
-                                <span class="badge bg-primary" style="font-size:0.6rem">IKAEN</span>
+                                <span class="badge bg-primary" style="font-size:0.6rem">PT. IKAEN</span>
                             </td>
                             <td><span class="text-primary fw-bold">${row.no_sj || '-'}</span></td>
                             <td>
-                                <div class="small text-muted">DO: ${row.no_do || '-'}</div>
+                                <div class="small">DO: ${row.no_do || '-'}</div>
                                 <div class="small text-muted">SO: ${row.no_so || '-'}</div>
                             </td>
                             <td>
@@ -167,15 +170,12 @@
             }
             tbody.innerHTML = html;
         } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: ${err.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Koneksi Error: ${err.message}</td></tr>`;
         }
     }
 
-    // --- AUTH LOGIC ---
     function handleLogin() {
-        const u = document.getElementById('user').value;
-        const p = document.getElementById('pass').value;
-        if(u === "admin" && p === "kse123") {
+        if(document.getElementById('user').value === "admin" && document.getElementById('pass').value === "kse123") {
             localStorage.setItem('ide_session', 'active');
             showDashboard();
         } else {
