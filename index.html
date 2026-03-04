@@ -3,247 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CORE LOGISTICS | Dashboard Suite</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>Logistik Dashboard - IKAEN/IDE/KSE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-    <style>
-        :root {
-            --primary: #00f2ff;
-            --secondary: #0066ff;
-            --bg-dark: #020617;
-            --glass: rgba(7, 15, 30, 0.85);
-            --glass-border: rgba(0, 242, 255, 0.15);
-            --text-main: #f1f5f9;
-            --text-dim: #94a3b8;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; min-height: 100vh; }
-
-        /* --- LOGIN OVERLAY --- */
-        #login-overlay {
-            position: fixed; inset: 0; background: var(--bg-dark);
-            display: flex; align-items: center; justify-content: center; z-index: 9999;
-            transition: 0.5s ease-in-out;
-        }
-
-        .login-card {
-            background: var(--glass); padding: 3rem; border-radius: 35px;
-            border: 1px solid var(--glass-border); width: 100%; max-width: 400px;
-            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-
-        .login-card input {
-            width: 100%; padding: 18px; border-radius: 15px; border: 1px solid var(--glass-border);
-            background: rgba(0,0,0,0.5); color: var(--primary); font-size: 1.5rem;
-            text-align: center; margin-bottom: 1.5rem; letter-spacing: 5px; outline: none;
-        }
-
-        .login-card button {
-            width: 100%; padding: 18px; border-radius: 15px; border: none;
-            background: linear-gradient(to right, var(--secondary), var(--primary));
-            color: white; font-weight: 800; cursor: pointer; transition: 0.3s;
-        }
-
-        /* --- SIDEBAR --- */
-        nav {
-            width: 280px; background: var(--glass); height: 100vh; position: fixed;
-            border-right: 1px solid var(--glass-border); padding: 2rem 1rem; z-index: 100;
-        }
-
-        .logo { display: flex; align-items: center; gap: 10px; color: var(--primary); font-weight: 800; margin-bottom: 3rem; }
-        
-        .dept-group { margin-bottom: 10px; }
-        .dept-btn {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 15px; cursor: pointer; border-radius: 12px; color: var(--text-dim);
-            font-weight: 700; transition: 0.3s; background: rgba(255,255,255,0.02);
-        }
-        .dept-btn.active { color: var(--primary); background: rgba(0,242,255,0.1); border-left: 4px solid var(--primary); }
-
-        .sub-menu { padding-left: 15px; margin-top: 5px; display: none; }
-        .sub-menu.active { display: block; }
-
-        .sub-item {
-            padding: 10px 15px; color: var(--text-dim); font-size: 0.85rem; cursor: pointer;
-            border-radius: 8px; transition: 0.2s; display: flex; align-items: center; gap: 8px;
-        }
-        .sub-item:hover { color: var(--primary); background: rgba(0,242,255,0.05); }
-
-        /* --- MAIN CONTENT --- */
-        main { margin-left: 280px; padding: 3rem; }
-        .glass-panel {
-            background: var(--glass); border-radius: 25px; padding: 1.5rem;
-            border: 1px solid var(--glass-border); overflow-x: auto;
-        }
-
-        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; min-width: 1100px; }
-        th { text-align: left; padding: 15px; color: var(--primary); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; }
-        td { padding: 15px; background: rgba(255,255,255,0.03); font-size: 0.85rem; vertical-align: middle; }
-        td:first-child { border-radius: 12px 0 0 12px; }
-        td:last-child { border-radius: 0 12px 12px 0; }
-
-        .nopol-box { background: #1e293b; padding: 5px 10px; border-radius: 6px; font-weight: 700; border: 1px solid #334155; }
-        .qty-badge { background: var(--secondary); color: white; padding: 4px 10px; border-radius: 6px; font-weight: 800; }
-        
-        .hidden { display: none !important; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
-    </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans" x-data="appData()">
 
-    <div id="login-overlay">
-        <div class="login-card" id="login-box">
-            <i data-lucide="lock" style="color: var(--primary); width: 48px; height: 48px; margin-bottom: 1rem;"></i>
-            <h2 style="margin-bottom: 2rem;">SYSTEM ACCESS</h2>
-            <input type="password" id="pin-input" placeholder="••••">
-            <button id="login-btn">LOGIN TO DASHBOARD</button>
-            <p id="error-msg" style="color: #ff3e3e; margin-top: 1rem; display: none; font-weight: 700;">INVALID PIN</p>
+    <template x-if="!isLoggedIn">
+        <div class="min-h-screen flex items-center justify-center bg-blue-900">
+            <div class="bg-white p-8 rounded-lg shadow-xl w-96">
+                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Sistem Logistik</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium">Username</label>
+                        <input type="text" x-model="loginForm.user" class="w-full border p-2 rounded mt-1">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Password</label>
+                        <input type="password" x-model="loginForm.pass" class="w-full border p-2 rounded mt-1">
+                    </div>
+                    <button @click="login()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Login</button>
+                    <p x-show="error" class="text-red-500 text-xs mt-2" x-text="error"></p>
+                </div>
+            </div>
         </div>
-    </div>
+    </template>
 
-    <div id="app-content" class="hidden">
-        <nav>
-            <div class="logo"><i data-lucide="layers"></i> CYBER.LOGISTICS</div>
-            
-            <div id="sidebar-menu">
-                <div class="dept-group">
-                    <div class="dept-btn" onclick="toggleDept('ikaen')"><span>IKAEN</span> <i data-lucide="chevron-right"></i></div>
-                    <div class="sub-menu" id="menu-ikaen">
-                        <div class="sub-item" onclick="openSJ('ikaen')"><i data-lucide="file-text" size="14"></i> Surat Jalan</div>
-                        <div class="sub-item" onclick="window.location.href='memo_ikaen.html'"><i data-lucide="mail" size="14"></i> Memo</div>
-                        <div class="sub-item" onclick="window.location.href='ba_ikaen.html'"><i data-lucide="clipboard-check" size="14"></i> Berita Acara</div>
+    <template x-if="isLoggedIn">
+        <div class="min-h-screen flex flex-col">
+            <nav class="bg-slate-800 text-white shadow-lg">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="flex justify-between items-center h-16">
+                        <div class="flex items-center space-x-8">
+                            <span class="font-bold text-xl tracking-wider text-blue-400">LOG-SYS</span>
+                            
+                            <template x-for="menu in menus" :key="menu">
+                                <div class="relative group" x-data="{ open: false }">
+                                    <button @click="open = !open" @click.away="open = false" class="hover:text-blue-300 px-3 py-2 rounded-md text-sm font-medium flex items-center">
+                                        <span x-text="menu"></span>
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                    <div x-show="open" class="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                                        <div class="py-1">
+                                            <template x-for="item in subMenus" :key="item">
+                                                <a href="#" @click="selectView(menu, item); open = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600" x-text="item"></a>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        <button @click="logout()" class="text-sm bg-red-600 px-4 py-1 rounded hover:bg-red-700">Logout</button>
                     </div>
                 </div>
+            </nav>
 
-                <div class="dept-group">
-                    <div class="dept-btn" onclick="toggleDept('ide')"><span>IDE</span> <i data-lucide="chevron-right"></i></div>
-                    <div class="sub-menu" id="menu-ide">
-                        <div class="sub-item" onclick="openSJ('ide')"><i data-lucide="file-text" size="14"></i> Surat Jalan</div>
-                        <div class="sub-item" onclick="window.location.href='memo_ide.html'"><i data-lucide="mail" size="14"></i> Memo</div>
-                        <div class="sub-item" onclick="window.location.href='ba_ide.html'"><i data-lucide="clipboard-check" size="14"></i> Berita Acara</div>
+            <main class="flex-1 p-6">
+                <div class="max-w-7xl mx-auto">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800" x-text="currentEntity"></h1>
+                            <p class="text-gray-500" x-text="'Data Laporan: ' + currentSubMenu"></p>
+                        </div>
+                        <button @click="fetchData()" class="bg-emerald-500 text-white px-4 py-2 rounded-md hover:bg-emerald-600 text-sm">Refresh Data</button>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. SJ / Memo</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nopol / Sopir</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tujuan</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status BA</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <template x-for="row in tableData" :key="row.id">
+                                        <tr class="hover:bg-gray-50 transition">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" x-text="row.tanggal"></td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-semibold text-gray-900" x-text="row.no_sj"></div>
+                                                <div class="text-xs text-gray-400" x-text="'Memo: ' + row.no_memo"></div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900" x-text="row.nopol"></div>
+                                                <div class="text-xs text-gray-500" x-text="row.nama_sopir"></div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" x-text="row.tujuan"></td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-bold" x-text="row.qty"></span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-xs">
+                                                <div class="text-gray-600" x-text="'Masuk: ' + row.ba_penerimaan"></div>
+                                                <div class="text-gray-600" x-text="'Muat: ' + row.ba_oper_muat"></div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                            <template x-if="tableData.length === 0">
+                                <div class="p-10 text-center text-gray-400">Memuat data dari Supabase...</div>
+                            </template>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </nav>
-
-        <main>
-            <div style="margin-bottom: 2rem;">
-                <h1 id="title-display" style="font-size: 2rem;">Dashboard IKAEN</h1>
-                <p style="color: var(--text-dim);">Monitoring Database Logistik Real-time</p>
-            </div>
-
-            <div class="glass-panel">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tanggal/Jam</th>
-                            <th>No. Surat Jalan</th>
-                            <th>No. Memo</th>
-                            <th>No. BA (Oper/Terima)</th>
-                            <th>Nopol</th>
-                            <th>Sopir</th>
-                            <th>Tujuan</th>
-                            <th>Qty (L)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="data-table">
-                        </tbody>
-                </table>
-            </div>
-        </main>
-    </div>
+            </main>
+        </div>
+    </template>
 
     <script>
-        // --- CONFIGURATION ---
-        const SUPABASE_URL = "URL_SUPABASE_ANDA";
-        const SUPABASE_KEY = "ANON_KEY_ANDA";
+        // --- KONFIGURASI SUPABASE ---
+        const SUPABASE_URL = 'https://YOUR_PROJECT_REF.supabase.co';
+        const SUPABASE_KEY = 'YOUR_ANON_PUBLIC_KEY';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
-        lucide.createIcons();
-        let currentDept = 'ikaen';
 
-        // --- LOGIN LOGIC ---
-        const loginBtn = document.getElementById('login-btn');
-        const pinInput = document.getElementById('pin-input');
-        const loginBox = document.getElementById('login-box');
+        function appData() {
+            return {
+                isLoggedIn: false,
+                loginForm: { user: '', pass: '' },
+                error: '',
+                currentEntity: 'IKAEN',
+                currentSubMenu: 'Surat Jalan',
+                menus: ['IKAEN', 'IDE', 'KSE'],
+                subMenus: ['Surat Jalan', 'Memo', 'BA Penerimaan', 'BA Oper Muat Tangki'],
+                tableData: [],
 
-        loginBtn.addEventListener('click', () => {
-            if (pinInput.value === 'admin123') {
-                document.getElementById('login-overlay').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('login-overlay').classList.add('hidden');
-                    document.getElementById('app-content').classList.remove('hidden');
-                    loadData();
-                }, 500);
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
-                loginBox.style.animation = "shake 0.3s ease";
-                pinInput.value = "";
-                setTimeout(() => loginBox.style.animation = "", 300);
-            }
-        });
+                login() {
+                    if (this.loginForm.user === 'admin' && this.loginForm.pass === 'admin123') {
+                        this.isLoggedIn = true;
+                        this.fetchData();
+                    } else {
+                        this.error = 'Login gagal! Cek username & password.';
+                    }
+                },
 
-        // --- NAVIGATION ---
-        function toggleDept(dept) {
-            currentDept = dept;
-            document.querySelectorAll('.sub-menu').forEach(m => m.classList.remove('active'));
-            document.querySelectorAll('.dept-btn').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById(`menu-${dept}`).classList.add('active');
-            event.currentTarget.classList.add('active');
-            document.getElementById('title-display').innerText = `Dashboard ${dept.toUpperCase()}`;
-            loadData();
-        }
+                logout() {
+                    this.isLoggedIn = false;
+                    this.loginForm = { user: '', pass: '' };
+                },
 
-        function openSJ(dept) {
-            window.location.href = `sj_${dept}.html`;
-        }
+                selectView(menu, sub) {
+                    this.currentEntity = menu;
+                    this.currentSubMenu = sub;
+                    this.fetchData();
+                },
 
-        // --- DATABASE FETCH ---
-        async function loadData() {
-            const tbody = document.getElementById('data-table');
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:3rem;">Memuat Data...</td></tr>`;
+                async fetchData() {
+                    // Logika filter data berdasarkan Entity (IKAEN/IDE/KSE)
+                    // Pastikan tabel di Supabase Anda memiliki kolom 'entitas' (IKAEN/IDE/KSE)
+                    try {
+                        let { data, error } = await supabase
+                            .from('logistik_data') // Nama tabel di supabase anda
+                            .select('*')
+                            .eq('entitas', this.currentEntity)
+                            .order('tanggal', { ascending: false });
 
-            try {
-                const { data, error } = await supabase
-                    .from('logistik') // Ganti dengan nama tabel Anda
-                    .select('*')
-                    .eq('dept', currentDept)
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:3rem; color:var(--text-dim);">Belum ada data untuk departemen ini.</td></tr>`;
-                    return;
+                        if (error) throw error;
+                        this.tableData = data || [];
+                    } catch (err) {
+                        console.error('Error fetching:', err.message);
+                        // Data dummy jika koneksi gagal untuk keperluan demo tampilan
+                        this.tableData = [
+                            { id: 1, tanggal: '2023-10-27', no_sj: 'SJ-001', no_memo: 'M-99', nopol: 'B 1234 ABC', tujuan: 'Jakarta', nama_sopir: 'Budi', qty: '5000L', ba_penerimaan: 'BA-RCV-01', ba_oper_muat: 'BA-LOAD-01' }
+                        ];
+                    }
                 }
-
-                tbody.innerHTML = data.map(item => `
-                    <tr>
-                        <td style="color:var(--text-dim); font-size:0.75rem;">${new Date(item.created_at).toLocaleString('id-ID')}</td>
-                        <td><b style="color:var(--primary)">${item.no_sj || '-'}</b></td>
-                        <td>${item.no_memo || '-'}</td>
-                        <td>
-                            <div style="font-size:0.7rem">OPR: ${item.no_ba_oper || '-'}</div>
-                            <div style="font-size:0.7rem; color:var(--primary)">TRM: ${item.no_ba_terima || '-'}</div>
-                        </td>
-                        <td><span class="nopol-box">${item.nopol || '-'}</span></td>
-                        <td style="color:white; font-weight:600;">${item.nama_sopir || '-'}</td>
-                        <td>${item.tujuan || '-'}</td>
-                        <td><span class="qty-badge">${item.qty || '0'}</span></td>
-                    </tr>
-                `).join('');
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#ff3e3e;">Gagal menyambung ke Supabase. Periksa URL/Key.</td></tr>`;
             }
         }
-
-        // Enter key for login
-        pinInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') loginBtn.click(); });
     </script>
 </body>
 </html>
