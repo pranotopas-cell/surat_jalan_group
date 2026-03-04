@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CORE LOGISTICS | Dashboard Suite</title>
+    <title>BBM TRANSPORTIR | Core System</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,6 +13,7 @@
         :root {
             --primary: #00f2ff;
             --secondary: #0066ff;
+            --accent: #facc15; /* BBM Gold/Yellow */
             --bg-dark: #020617;
             --glass: rgba(7, 15, 30, 0.85);
             --glass-border: rgba(0, 242, 255, 0.15);
@@ -25,7 +26,7 @@
 
         /* --- LOGIN OVERLAY --- */
         #login-overlay {
-            position: fixed; inset: 0; background: var(--bg-dark);
+            position: fixed; inset: 0; background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
             display: flex; align-items: center; justify-content: center; z-index: 9999;
             transition: 0.5s ease-in-out;
         }
@@ -33,7 +34,7 @@
         .login-card {
             background: var(--glass); padding: 3rem; border-radius: 35px;
             border: 1px solid var(--glass-border); width: 100%; max-width: 400px;
-            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center; box-shadow: 0 0 40px rgba(0, 242, 255, 0.1);
         }
 
         .login-card input {
@@ -54,22 +55,23 @@
             border-right: 1px solid var(--glass-border); padding: 2rem 1rem; z-index: 100;
         }
 
-        .logo { display: flex; align-items: center; gap: 10px; color: var(--primary); font-weight: 800; margin-bottom: 3rem; }
+        .logo { display: flex; align-items: center; gap: 10px; color: var(--primary); font-weight: 800; margin-bottom: 3rem; font-size: 1.2rem; }
         
-        .dept-group { margin-bottom: 10px; }
+        .dept-group { margin-bottom: 12px; }
         .dept-btn {
             display: flex; align-items: center; justify-content: space-between;
             padding: 15px; cursor: pointer; border-radius: 12px; color: var(--text-dim);
             font-weight: 700; transition: 0.3s; background: rgba(255,255,255,0.02);
         }
+        .dept-btn:hover { background: rgba(0,242,255,0.05); color: var(--text-main); }
         .dept-btn.active { color: var(--primary); background: rgba(0,242,255,0.1); border-left: 4px solid var(--primary); }
 
-        .sub-menu { padding-left: 15px; margin-top: 5px; display: none; }
+        .sub-menu { padding-left: 10px; margin-top: 5px; display: none; border-left: 1px dashed var(--glass-border); margin-left: 15px; }
         .sub-menu.active { display: block; }
 
         .sub-item {
-            padding: 10px 15px; color: var(--text-dim); font-size: 0.85rem; cursor: pointer;
-            border-radius: 8px; transition: 0.2s; display: flex; align-items: center; gap: 8px;
+            padding: 10px 15px; color: var(--text-dim); font-size: 0.8rem; cursor: pointer;
+            border-radius: 8px; transition: 0.2s; display: flex; align-items: center; gap: 10px;
         }
         .sub-item:hover { color: var(--primary); background: rgba(0,242,255,0.05); }
 
@@ -78,16 +80,17 @@
         .glass-panel {
             background: var(--glass); border-radius: 25px; padding: 1.5rem;
             border: 1px solid var(--glass-border); overflow-x: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; min-width: 1100px; }
-        th { text-align: left; padding: 15px; color: var(--primary); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; }
-        td { padding: 15px; background: rgba(255,255,255,0.03); font-size: 0.85rem; vertical-align: middle; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; min-width: 1000px; }
+        th { text-align: left; padding: 15px; color: var(--primary); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; }
+        td { padding: 15px; background: rgba(255,255,255,0.03); font-size: 0.85rem; vertical-align: middle; border-top: 1px solid rgba(255,255,255,0.05); }
         td:first-child { border-radius: 12px 0 0 12px; }
         td:last-child { border-radius: 0 12px 12px 0; }
 
-        .nopol-box { background: #1e293b; padding: 5px 10px; border-radius: 6px; font-weight: 700; border: 1px solid #334155; }
-        .qty-badge { background: var(--secondary); color: white; padding: 4px 10px; border-radius: 6px; font-weight: 800; }
+        .nopol-box { background: #1e293b; padding: 6px 12px; border-radius: 6px; font-weight: 700; border: 1px solid var(--glass-border); color: var(--accent); }
+        .qty-badge { background: linear-gradient(45deg, var(--secondary), var(--primary)); color: white; padding: 5px 12px; border-radius: 6px; font-weight: 800; }
         
         .hidden { display: none !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
@@ -97,57 +100,75 @@
 
     <div id="login-overlay">
         <div class="login-card" id="login-box">
-            <i data-lucide="lock" style="color: var(--primary); width: 48px; height: 48px; margin-bottom: 1rem;"></i>
-            <h2 style="margin-bottom: 2rem;">SYSTEM ACCESS</h2>
-            <input type="password" id="pin-input" placeholder="••••">
-            <button id="login-btn">LOGIN TO DASHBOARD</button>
-            <p id="error-msg" style="color: #ff3e3e; margin-top: 1rem; display: none; font-weight: 700;">INVALID PIN</p>
+            <i data-lucide="fuel" style="color: var(--primary); width: 64px; height: 64px; margin-bottom: 1rem;"></i>
+            <h2 style="margin-bottom: 0.5rem; letter-spacing: 2px;">BBM LOGISTICS</h2>
+            <p style="color: var(--text-dim); margin-bottom: 2rem; font-size: 0.8rem;">ADMINISTRATION PORTAL</p>
+            <input type="password" id="pin-input" placeholder="••••••">
+            <button id="login-btn">AUTHENTICATE</button>
+            <p id="error-msg" style="color: #ff3e3e; margin-top: 1rem; display: none; font-weight: 700; font-size: 0.8rem;">ACCESS DENIED: INVALID PIN</p>
         </div>
     </div>
 
     <div id="app-content" class="hidden">
         <nav>
-            <div class="logo"><i data-lucide="layers"></i> CYBER.LOGISTICS</div>
+            <div class="logo"><i data-lucide="shippable"></i> CORE.TRANSPORT</div>
             
             <div id="sidebar-menu">
                 <div class="dept-group">
                     <div class="dept-btn" onclick="toggleDept('ikaen')"><span>IKAEN</span> <i data-lucide="chevron-right"></i></div>
                     <div class="sub-menu" id="menu-ikaen">
-                        <div class="sub-item" onclick="openSJ('ikaen')"><i data-lucide="file-text" size="14"></i> Surat Jalan</div>
-                        <div class="sub-item" onclick="window.location.href='memo_ikaen.html'"><i data-lucide="mail" size="14"></i> Memo</div>
-                        <div class="sub-item" onclick="window.location.href='ba_ikaen.html'"><i data-lucide="clipboard-check" size="14"></i> Berita Acara</div>
+                        <div class="sub-item" onclick="navigate('sj', 'ikaen')"><i data-lucide="file-text" size="14"></i> Surat Jalan</div>
+                        <div class="sub-item" onclick="navigate('memo', 'ikaen')"><i data-lucide="mail" size="14"></i> Memo</div>
+                        <div class="sub-item" onclick="navigate('ba_oper', 'ikaen')"><i data-lucide="arrow-up-right" size="14"></i> BA Oper Muatan</div>
+                        <div class="sub-item" onclick="navigate('ba_penerimaan', 'ikaen')"><i data-lucide="arrow-down-left" size="14"></i> BA Penerimaan</div>
                     </div>
                 </div>
 
                 <div class="dept-group">
                     <div class="dept-btn" onclick="toggleDept('ide')"><span>IDE</span> <i data-lucide="chevron-right"></i></div>
                     <div class="sub-menu" id="menu-ide">
-                        <div class="sub-item" onclick="openSJ('ide')"><i data-lucide="file-text" size="14"></i> Surat Jalan</div>
-                        <div class="sub-item" onclick="window.location.href='memo_ide.html'"><i data-lucide="mail" size="14"></i> Memo</div>
-                        <div class="sub-item" onclick="window.location.href='ba_ide.html'"><i data-lucide="clipboard-check" size="14"></i> Berita Acara</div>
+                        <div class="sub-item" onclick="navigate('sj', 'ide')"><i data-lucide="file-text" size="14"></i> Surat Jalan</div>
+                        <div class="sub-item" onclick="navigate('memo', 'ide')"><i data-lucide="mail" size="14"></i> Memo</div>
+                        <div class="sub-item" onclick="navigate('ba_oper', 'ide')"><i data-lucide="arrow-up-right" size="14"></i> BA Oper Muatan</div>
+                        <div class="sub-item" onclick="navigate('ba_penerimaan', 'ide')"><i data-lucide="arrow-down-left" size="14"></i> BA Penerimaan</div>
+                    </div>
+                </div>
+
+                <div class="dept-group">
+                    <div class="dept-btn" onclick="toggleDept('kse')"><span>KSE</span> <i data-lucide="chevron-right"></i></div>
+                    <div class="sub-menu" id="menu-kse">
+                        <div class="sub-item" onclick="navigate('sj', 'kse')"><i data-lucide="file-text" size="14"></i> Surat Jalan</div>
+                        <div class="sub-item" onclick="navigate('memo', 'kse')"><i data-lucide="mail" size="14"></i> Memo</div>
+                        <div class="sub-item" onclick="navigate('ba_oper', 'kse')"><i data-lucide="arrow-up-right" size="14"></i> BA Oper Muatan</div>
+                        <div class="sub-item" onclick="navigate('ba_penerimaan', 'kse')"><i data-lucide="arrow-down-left" size="14"></i> BA Penerimaan</div>
                     </div>
                 </div>
             </div>
         </nav>
 
         <main>
-            <div style="margin-bottom: 2rem;">
-                <h1 id="title-display" style="font-size: 2rem;">Dashboard IKAEN</h1>
-                <p style="color: var(--text-dim);">Monitoring Database Logistik Real-time</p>
+            <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;">
+                <div>
+                    <h1 id="title-display" style="font-size: 2.2rem; font-weight: 800;">Dashboard IKAEN</h1>
+                    <p style="color: var(--text-dim);">Monitoring Pengiriman BBM Real-time</p>
+                </div>
+                <div style="text-align: right; color: var(--primary); font-size: 0.8rem; font-weight: 600;">
+                    <i data-lucide="refresh-cw" size="14" style="cursor:pointer" onclick="loadData()"></i> AUTO-SYNC ACTIVE
+                </div>
             </div>
 
             <div class="glass-panel">
                 <table>
                     <thead>
                         <tr>
-                            <th>Tanggal/Jam</th>
-                            <th>No. Surat Jalan</th>
+                            <th>Waktu Transaksi</th>
+                            <th>No. SJ</th>
                             <th>No. Memo</th>
-                            <th>No. BA (Oper/Terima)</th>
-                            <th>Nopol</th>
+                            <th>Berita Acara (OPR/TRM)</th>
+                            <th>Armada (Nopol)</th>
                             <th>Sopir</th>
-                            <th>Tujuan</th>
-                            <th>Qty (L)</th>
+                            <th>Tujuan / Site</th>
+                            <th>Volume (L)</th>
                         </tr>
                     </thead>
                     <tbody id="data-table">
@@ -172,7 +193,8 @@
         const loginBox = document.getElementById('login-box');
 
         loginBtn.addEventListener('click', () => {
-            if (pinInput.value === 'admin123') {
+            // Password diupdate ke 123456
+            if (pinInput.value === '123456') {
                 document.getElementById('login-overlay').style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('login-overlay').classList.add('hidden');
@@ -199,26 +221,29 @@
             loadData();
         }
 
-        function openSJ(dept) {
-            window.location.href = `sj_${dept}.html`;
+        function navigate(type, dept) {
+            // Redirect sesuai menu: sj_ikaen.html, memo_ikaen.html, ba_oper_ikaen.html, dll.
+            window.location.href = `${type}_${dept}.html`;
         }
 
         // --- DATABASE FETCH ---
         async function loadData() {
             const tbody = document.getElementById('data-table');
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:3rem;">Memuat Data...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:4rem;">
+                <div style="color:var(--primary); margin-bottom:10px;">Menarik data dari server...</div>
+            </td></tr>`;
 
             try {
                 const { data, error } = await supabase
-                    .from('logistik') // Ganti dengan nama tabel Anda
+                    .from('logistik') 
                     .select('*')
                     .eq('dept', currentDept)
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
-                if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:3rem; color:var(--text-dim);">Belum ada data untuk departemen ini.</td></tr>`;
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:4rem; color:var(--text-dim);">Tidak ada catatan pengiriman untuk ${currentDept.toUpperCase()} hari ini.</td></tr>`;
                     return;
                 }
 
@@ -228,21 +253,23 @@
                         <td><b style="color:var(--primary)">${item.no_sj || '-'}</b></td>
                         <td>${item.no_memo || '-'}</td>
                         <td>
-                            <div style="font-size:0.7rem">OPR: ${item.no_ba_oper || '-'}</div>
+                            <div style="font-size:0.7rem; opacity:0.8">OPR: ${item.no_ba_oper || '-'}</div>
                             <div style="font-size:0.7rem; color:var(--primary)">TRM: ${item.no_ba_terima || '-'}</div>
                         </td>
                         <td><span class="nopol-box">${item.nopol || '-'}</span></td>
                         <td style="color:white; font-weight:600;">${item.nama_sopir || '-'}</td>
-                        <td>${item.tujuan || '-'}</td>
-                        <td><span class="qty-badge">${item.qty || '0'}</span></td>
+                        <td style="font-size:0.8rem;">${item.tujuan || '-'}</td>
+                        <td><span class="qty-badge">${Number(item.qty).toLocaleString('id-ID')} L</span></td>
                     </tr>
                 `).join('');
             } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#ff3e3e;">Gagal menyambung ke Supabase. Periksa URL/Key.</td></tr>`;
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#ff3e3e; padding:3rem;">
+                    <b>KONEKSI GAGAL</b><br>Pastikan URL dan API Key Supabase sudah benar.
+                </td></tr>`;
             }
         }
 
-        // Enter key for login
         pinInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') loginBtn.click(); });
     </script>
 </body>
