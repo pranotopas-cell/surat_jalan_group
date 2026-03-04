@@ -3,178 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logistik Dashboard - IKAEN/IDE/KSE</title>
+    <title>Logistik Dashboard Fix</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-gray-100 font-sans" x-data="appData()">
+<body class="bg-slate-100" x-data="logistikApp()">
 
-    <template x-if="!isLoggedIn">
-        <div class="min-h-screen flex items-center justify-center bg-blue-900">
-            <div class="bg-white p-8 rounded-lg shadow-xl w-96">
-                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Sistem Logistik</h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium">Username</label>
-                        <input type="text" x-model="loginForm.user" class="w-full border p-2 rounded mt-1">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Password</label>
-                        <input type="password" x-model="loginForm.pass" class="w-full border p-2 rounded mt-1">
-                    </div>
-                    <button @click="login()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Login</button>
-                    <p x-show="error" class="text-red-500 text-xs mt-2" x-text="error"></p>
-                </div>
+    <div x-show="!isLoggedIn" class="min-h-screen flex items-center justify-center bg-slate-900">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
+            <h2 class="text-3xl font-bold mb-6 text-center text-slate-800">Admin Login</h2>
+            <div class="space-y-4">
+                <input type="text" x-model="loginForm.user" placeholder="Username" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="password" x-model="loginForm.pass" placeholder="Password" class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                <button @click="doLogin" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-300">MASUK</button>
+                <p x-show="error" class="text-red-500 text-sm text-center" x-text="error"></p>
             </div>
         </div>
-    </template>
+    </div>
 
-    <template x-if="isLoggedIn">
-        <div class="min-h-screen flex flex-col">
-            <nav class="bg-slate-800 text-white shadow-lg">
-                <div class="max-w-7xl mx-auto px-4">
-                    <div class="flex justify-between items-center h-16">
-                        <div class="flex items-center space-x-8">
-                            <span class="font-bold text-xl tracking-wider text-blue-400">LOG-SYS</span>
-                            
-                            <template x-for="menu in menus" :key="menu">
-                                <div class="relative group" x-data="{ open: false }">
-                                    <button @click="open = !open" @click.away="open = false" class="hover:text-blue-300 px-3 py-2 rounded-md text-sm font-medium flex items-center">
-                                        <span x-text="menu"></span>
-                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                    </button>
-                                    <div x-show="open" class="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                                        <div class="py-1">
-                                            <template x-for="item in subMenus" :key="item">
-                                                <a href="#" @click="selectView(menu, item); open = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600" x-text="item"></a>
-                                            </template>
-                                        </div>
+    <div x-show="isLoggedIn" x-cloak>
+        <nav class="bg-slate-800 text-white p-4 shadow-md">
+            <div class="container mx-auto flex justify-between items-center">
+                <div class="flex space-x-6 items-center">
+                    <span class="text-xl font-black text-blue-400">LOG-SYS</span>
+                    
+                    <template x-for="m in ['IKAEN', 'IDE', 'KSE']">
+                        <div class="relative group" x-data="{ open: false }">
+                            <button @click="open = !open" class="hover:text-blue-400 font-semibold px-2 py-1 flex items-center">
+                                <span x-text="m"></span>
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div x-show="open" @click.away="open = false" class="absolute left-0 mt-2 w-52 bg-white text-slate-800 rounded-lg shadow-xl z-50 py-2">
+                                <template x-for="sub in ['Surat Jalan', 'Memo', 'BA Penerimaan', 'BA Oper Muat Tangki']">
+                                    <a href="#" @click.prevent="changeView(m, sub); open = false" class="block px-4 py-2 hover:bg-blue-50 hover:text-blue-600 text-sm" x-text="sub"></a>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <button @click="isLoggedIn = false" class="bg-red-500 hover:bg-red-600 px-4 py-1 rounded text-sm transition">Logout</button>
+            </div>
+        </nav>
+
+        <div class="container mx-auto p-6">
+            <div class="mb-6 flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800" x-text="currentEntity"></h1>
+                    <p class="text-slate-500" x-text="currentSubMenu"></p>
+                </div>
+                <button @click="fetchData" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
+                    🔄 Refresh Data
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 border-b border-slate-200">
+                        <tr>
+                            <th class="p-4 text-xs font-bold text-slate-500 uppercase">Tanggal / No</th>
+                            <th class="p-4 text-xs font-bold text-slate-500 uppercase">Sopir / Nopol</th>
+                            <th class="p-4 text-xs font-bold text-slate-500 uppercase">Tujuan</th>
+                            <th class="p-4 text-xs font-bold text-slate-500 uppercase text-center">Qty</th>
+                            <th class="p-4 text-xs font-bold text-slate-500 uppercase">Status BA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="item in tableData" :key="item.id">
+                            <tr class="border-b hover:bg-slate-50 transition">
+                                <td class="p-4">
+                                    <div class="font-bold text-slate-800" x-text="item.tanggal"></div>
+                                    <div class="text-xs text-blue-600" x-text="'SJ: ' + item.no_sj"></div>
+                                    <div class="text-xs text-slate-400" x-text="'Memo: ' + item.no_memo"></div>
+                                </td>
+                                <td class="p-4">
+                                    <div class="font-medium text-slate-700" x-text="item.nama_sopir"></div>
+                                    <div class="text-xs text-slate-500" x-text="item.nopol"></div>
+                                </td>
+                                <td class="p-4 text-slate-600" x-text="item.tujuan"></td>
+                                <td class="p-4 text-center">
+                                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm font-bold" x-text="item.qty"></span>
+                                </td>
+                                <td class="p-4">
+                                    <div class="text-[10px] leading-tight text-slate-500">
+                                        Penerimaan: <span class="font-bold text-slate-700" x-text="item.ba_penerimaan"></span><br>
+                                        Oper Muat: <span class="font-bold text-slate-700" x-text="item.ba_oper_muat"></span>
                                     </div>
-                                </div>
-                            </template>
-                        </div>
-                        <button @click="logout()" class="text-sm bg-red-600 px-4 py-1 rounded hover:bg-red-700">Logout</button>
-                    </div>
-                </div>
-            </nav>
-
-            <main class="flex-1 p-6">
-                <div class="max-w-7xl mx-auto">
-                    <div class="flex justify-between items-end mb-6">
-                        <div>
-                            <h1 class="text-3xl font-bold text-gray-800" x-text="currentEntity"></h1>
-                            <p class="text-gray-500" x-text="'Data Laporan: ' + currentSubMenu"></p>
-                        </div>
-                        <button @click="fetchData()" class="bg-emerald-500 text-white px-4 py-2 rounded-md hover:bg-emerald-600 text-sm">Refresh Data</button>
-                    </div>
-
-                    <div class="bg-white rounded-xl shadow overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. SJ / Memo</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nopol / Sopir</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tujuan</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status BA</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    <template x-for="row in tableData" :key="row.id">
-                                        <tr class="hover:bg-gray-50 transition">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" x-text="row.tanggal"></td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-semibold text-gray-900" x-text="row.no_sj"></div>
-                                                <div class="text-xs text-gray-400" x-text="'Memo: ' + row.no_memo"></div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900" x-text="row.nopol"></div>
-                                                <div class="text-xs text-gray-500" x-text="row.nama_sopir"></div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600" x-text="row.tujuan"></td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-bold" x-text="row.qty"></span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-xs">
-                                                <div class="text-gray-600" x-text="'Masuk: ' + row.ba_penerimaan"></div>
-                                                <div class="text-gray-600" x-text="'Muat: ' + row.ba_oper_muat"></div>
-                                            </td>
-                                        </tr>
-                                    </template>
-                                </tbody>
-                            </table>
-                            <template x-if="tableData.length === 0">
-                                <div class="p-10 text-center text-gray-400">Memuat data dari Supabase...</div>
-                            </template>
-                        </div>
-                    </div>
-                </div>
-            </main>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <div x-show="loading" class="p-10 text-center text-slate-400">Mengambil data...</div>
+                <div x-show="!loading && tableData.length === 0" class="p-10 text-center text-slate-400">Tidak ada data untuk entitas ini.</div>
+            </div>
         </div>
-    </template>
+    </div>
 
     <script>
-        // --- KONFIGURASI SUPABASE ---
-        const SUPABASE_URL = 'https://YOUR_PROJECT_REF.supabase.co';
-        const SUPABASE_KEY = 'YOUR_ANON_PUBLIC_KEY';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // --- KONFIGURASI ---
+        const SB_URL = "https://GANTI_DENGAN_URL_SUPABASE_ANDA.supabase.co";
+        const SB_KEY = "GANTI_DENGAN_ANON_KEY_ANDA";
+        const supabase = window.supabase.createClient(SB_URL, SB_KEY);
 
-        function appData() {
+        function logistikApp() {
             return {
                 isLoggedIn: false,
+                loading: false,
                 loginForm: { user: '', pass: '' },
                 error: '',
                 currentEntity: 'IKAEN',
                 currentSubMenu: 'Surat Jalan',
-                menus: ['IKAEN', 'IDE', 'KSE'],
-                subMenus: ['Surat Jalan', 'Memo', 'BA Penerimaan', 'BA Oper Muat Tangki'],
                 tableData: [],
 
-                login() {
-                    if (this.loginForm.user === 'admin' && this.loginForm.pass === 'admin123') {
+                doLogin() {
+                    if(this.loginForm.user === 'admin' && this.loginForm.pass === 'admin123') {
                         this.isLoggedIn = true;
                         this.fetchData();
                     } else {
-                        this.error = 'Login gagal! Cek username & password.';
+                        this.error = "Username/Password Salah!";
                     }
                 },
 
-                logout() {
-                    this.isLoggedIn = false;
-                    this.loginForm = { user: '', pass: '' };
-                },
-
-                selectView(menu, sub) {
-                    this.currentEntity = menu;
+                changeView(ent, sub) {
+                    this.currentEntity = ent;
                     this.currentSubMenu = sub;
                     this.fetchData();
                 },
 
                 async fetchData() {
-                    // Logika filter data berdasarkan Entity (IKAEN/IDE/KSE)
-                    // Pastikan tabel di Supabase Anda memiliki kolom 'entitas' (IKAEN/IDE/KSE)
+                    this.loading = true;
                     try {
-                        let { data, error } = await supabase
-                            .from('logistik_data') // Nama tabel di supabase anda
+                        const { data, error } = await supabase
+                            .from('logistik_data') // Pastikan nama tabel persis sama di Supabase
                             .select('*')
-                            .eq('entitas', this.currentEntity)
-                            .order('tanggal', { ascending: false });
+                            .eq('entitas', this.currentEntity);
 
                         if (error) throw error;
                         this.tableData = data || [];
                     } catch (err) {
-                        console.error('Error fetching:', err.message);
-                        // Data dummy jika koneksi gagal untuk keperluan demo tampilan
-                        this.tableData = [
-                            { id: 1, tanggal: '2023-10-27', no_sj: 'SJ-001', no_memo: 'M-99', nopol: 'B 1234 ABC', tujuan: 'Jakarta', nama_sopir: 'Budi', qty: '5000L', ba_penerimaan: 'BA-RCV-01', ba_oper_muat: 'BA-LOAD-01' }
-                        ];
+                        console.error("Error:", err.message);
+                        alert("Gagal koneksi ke Supabase! Cek Console.");
+                    } finally {
+                        this.loading = false;
                     }
                 }
             }
         }
     </script>
+
+    <style> [x-cloak] { display: none !important; } </style>
 </body>
 </html>
