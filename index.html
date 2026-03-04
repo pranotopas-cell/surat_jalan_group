@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IDE System | Digital Delivery Dashboard</title>
+    <title>IDE System | Dashboard Multi-PT</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -16,38 +14,21 @@
             --ide-dark: #0d2137;
             --ide-primary: #1565c0;
             --sidebar-width: 280px;
-            --primary-red: #800000;
         }
-        body { font-family: 'Inter', sans-serif; background-color: #f4f7f9; margin: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: #f4f7f9; }
         
-        /* Login Page */
+        /* Auth Page */
         #login-page { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(rgba(13,33,55,0.85), rgba(21,101,192,0.85)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'); background-size: cover; }
         
-        /* Sidebar */
+        /* Sidebar with Dropdown */
         .sidebar { background: var(--ide-dark); height: 100vh; color: white; padding: 2rem 1.2rem; position: fixed; width: var(--sidebar-width); z-index: 1000; overflow-y: auto; }
         .nav-link { color: rgba(255,255,255,0.7); margin-bottom: 0.2rem; border-radius: 0.75rem; padding: 0.8rem 1.2rem; text-decoration: none; display: flex; align-items: center; transition: 0.3s; cursor: pointer; }
         .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.1); color: #00d2ff; }
-        .submenu { padding-left: 1.5rem; background: rgba(0,0,0,0.15); border-radius: 0.5rem; margin-bottom: 0.5rem; }
+        .submenu { padding-left: 1rem; background: rgba(0,0,0,0.2); border-radius: 0.5rem; margin-bottom: 0.5rem; }
+        .submenu .nav-link { font-size: 0.85rem; padding: 0.5rem 1rem; }
 
-        /* Content Area */
-        .main-content { margin-left: var(--sidebar-width); padding: 2.5rem; min-height: 100vh; display: none; }
-        .view-section { display: none; }
-        .view-section.active { display: block; }
-
-        /* Form SJ Styling */
-        .editor-panel { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        #sj-preview { width: 210mm; background: white; padding: 10mm; margin: 20px auto; box-shadow: 0 0 10px rgba(0,0,0,0.2); min-height: 297mm; font-size: 10pt; color: #000; }
-        .field { margin-bottom: 10px; }
-        .field label { font-size: 0.8rem; font-weight: bold; color: #555; }
-        
-        /* Table Styling */
+        .main-content { margin-left: var(--sidebar-width); padding: 2.5rem; min-height: 100vh; }
         .data-card { background: white; border-radius: 1.2rem; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-
-        @media print {
-            .sidebar, .editor-panel, .no-print { display: none !important; }
-            .main-content { margin-left: 0; padding: 0; }
-            #sj-preview { box-shadow: none; margin: 0; width: 100%; }
-        }
     </style>
 </head>
 <body>
@@ -62,190 +43,160 @@
     </div>
 </div>
 
-<aside class="sidebar d-flex flex-column" id="sidebar" style="display:none !important;">
-    <div class="mb-5 px-3 d-flex align-items-center">
-        <i class="bi bi-hexagon-fill text-info fs-3 me-2"></i>
-        <h5 class="fw-bold mb-0">IDE-SYSTEM</h5>
-    </div>
-    <nav class="flex-grow-1">
-        <a onclick="showSection('dashboard')" class="nav-link active" id="nav-dashboard"><i class="bi bi-grid-fill me-2"></i> Dashboard</a>
-        
-        <div class="mt-4 mb-2">
-            <small class="text-muted px-3 text-uppercase fw-bold" style="font-size: 0.65rem;">PT. IKAEN</small>
-            <a onclick="showSection('form-ikaen')" class="nav-link" id="nav-ikaen"><i class="bi bi-file-earmark-plus me-2"></i> Buat Surat Jalan</a>
+<div id="dashboard-page" style="display:none;">
+    <aside class="sidebar d-flex flex-column">
+        <div class="mb-5 px-3 d-flex align-items-center">
+            <i class="bi bi-hexagon-fill text-info fs-3 me-2"></i>
+            <h5 class="fw-bold mb-0 text-white">IDE-SYSTEM</h5>
         </div>
-    </nav>
-    <a href="javascript:void(0)" onclick="handleLogout()" class="nav-link text-danger border-top pt-3 mt-auto">
-        <i class="bi bi-box-arrow-left me-2"></i> Sign Out
-    </a>
-</aside>
+        
+        <nav class="flex-grow-1">
+            <a href="#" class="nav-link active mb-3"><i class="bi bi-grid-fill me-2"></i> Dashboard</a>
 
-<main class="main-content" id="main-content">
-    
-    <section id="dashboard" class="view-section active">
+            <div class="mb-2">
+                <small class="text-muted px-3 text-uppercase fw-bold" style="font-size: 0.6rem; opacity: 0.6;">PT. IKAEN BINA NUSANTARA</small>
+                <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2"></i> Ikaen Group</a>
+                <div class="collapse submenu" id="mIkaen">
+                    <a href="sj_ikaen.html" class="nav-link"><i class="bi bi-file-earmark-text me-2"></i> Surat Jalan</a>
+                    <a href="#" class="nav-link"><i class="bi bi-journal-text me-2"></i> Memo</a>
+                </div>
+            </div>
+
+            <div class="mb-2">
+                <small class="text-muted px-3 text-uppercase fw-bold" style="font-size: 0.6rem; opacity: 0.6;">PT. INDO DHARMA ENERGI</small>
+                <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-lightning-charge me-2"></i> IDE Group</a>
+                <div class="collapse submenu" id="mIde">
+                    <a href="sj_ide.html" class="nav-link"><i class="bi bi-file-earmark-text me-2"></i> Surat Jalan</a>
+                    <a href="#" class="nav-link"><i class="bi bi-journal-text me-2"></i> Memo</a>
+                </div>
+            </div>
+
+            <div class="mb-2">
+                <small class="text-muted px-3 text-uppercase fw-bold" style="font-size: 0.6rem; opacity: 0.6;">PT. KALTENG SINERGI ENERGI</small>
+                <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-fire me-2"></i> KSE Group</a>
+                <div class="collapse submenu" id="mKse">
+                    <a href="sj_kse.html" class="nav-link"><i class="bi bi-file-earmark-text me-2"></i> Surat Jalan</a>
+                    <a href="#" class="nav-link"><i class="bi bi-journal-text me-2"></i> Memo</a>
+                </div>
+            </div>
+        </nav>
+
+        <a href="javascript:void(0)" onclick="handleLogout()" class="nav-link text-danger border-top pt-3 mt-auto">
+            <i class="bi bi-box-arrow-left me-2"></i> Sign Out
+        </a>
+    </aside>
+
+    <main class="main-content">
         <div class="p-5 bg-white shadow-sm rounded-4 mb-4 text-white" style="background: linear-gradient(135deg, #0d2137, #1565c0);">
             <h1 class="fw-bold">Welcome, Admin</h1>
-            <p class="opacity-75">Monitoring Real-time Data Delivery</p>
+            <p class="opacity-75">Monitoring Real-time Data Rilis Digital Delivery</p>
         </div>
+
         <div class="data-card">
-            <div class="d-flex justify-content-between mb-4">
-                <h5 class="fw-bold">Data Rilis Terbaru</h5>
-                <button class="btn btn-sm btn-outline-primary" onclick="fetchRilisData()">Refresh</button>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0">Data Rilis Terbaru (Live)</h5>
+                <button class="btn btn-sm btn-outline-primary px-3" onclick="fetchRilisData()">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                </button>
             </div>
+            
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>TANGGAL</th>
-                            <th>NO. SJ</th>
+                            <th>TANGGAL & PT</th>
+                            <th>NO. SURAT JALAN</th>
                             <th>DOKUMEN</th>
-                            <th>SOPIR</th>
+                            <th>SOPIR / NOPOL</th>
                             <th>TUJUAN</th>
                             <th>QTY</th>
                         </tr>
                     </thead>
-                    <tbody id="rilis-table-body"></tbody>
+                    <tbody id="rilis-table-body">
+                        <tr><td colspan="6" class="text-center py-5">Memuat data...</td></tr>
+                    </tbody>
                 </table>
             </div>
         </div>
-    </section>
+    </main>
+</div>
 
-    <section id="form-ikaen" class="view-section">
-        <div class="row">
-            <div class="col-md-4 no-print">
-                <div class="editor-panel">
-                    <h5 class="fw-bold mb-3 text-primary">Input Data SJ</h5>
-                    <div class="d-flex gap-2 mb-3">
-                        <button class="btn btn-sm btn-dark flex-grow-1" onclick="syncNomorSJ()">🔄 Sync No</button>
-                        <button class="btn btn-sm btn-success flex-grow-1" id="btn-save" onclick="saveData()">💾 Simpan</button>
-                    </div>
-                    <div class="field"><label>Tanggal</label><input type="text" id="i-tgl" class="form-control form-control-sm"></div>
-                    <div class="field"><label>No SJ</label><input type="text" id="i-no" class="form-control form-control-sm" readonly></div>
-                    <div class="field"><label>Tujuan</label><input type="text" id="i-po-to" class="form-control form-control-sm" value="PT. "></div>
-                    <div class="field"><label>Sopir</label><input type="text" id="i-driver" class="form-control form-control-sm"></div>
-                    <div class="field"><label>Nopol</label><input type="text" id="i-plat" class="form-control form-control-sm"></div>
-                    <div class="field"><label>Volume (L)</label><input type="text" id="i-vol" class="form-control form-control-sm"></div>
-                    <div class="field"><label>No DO</label><input type="text" id="i-do-desc" class="form-control form-control-sm"></div>
-                    <hr>
-                    <button class="btn btn-danger w-100 mb-2" onclick="window.print()">🖨️ Cetak SJ</button>
-                </div>
-            </div>
-            
-            <div class="col-md-8">
-                <div id="sj-preview">
-                    <div class="text-center mb-4">
-                        <h4 class="fw-bold" style="color:var(--primary-red)">INVESTAMA KALIMANTAN ENERGI</h4>
-                        <p class="small">DELIVERY ORDER / SURAT JALAN</p>
-                    </div>
-                    <table class="table table-bordered small">
-                        <tr><td width="30%">No. Surat Jalan</td><td id="v-no">-</td></tr>
-                        <tr><td>Tanggal</td><td id="v-tgl">-</td></tr>
-                        <tr><td>Penerima</td><td id="v-po-to">-</td></tr>
-                        <tr><td>Sopir / Nopol</td><td><span id="v-driver">-</span> / <span id="v-plat">-</span></td></tr>
-                        <tr><td>Volume</td><td><span id="v-vol">-</span> Liter</td></tr>
-                    </table>
-                    <div id="qrcode" class="mt-4"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // --- CONFIG ---
-    const SB_URL = "https://ntaecfphgoelmhzrkatp.supabase.co";
+    // --- KOREKSI KONEKSI SUPABASE ---
+    // Pastikan URL dan Key ini sama dengan yang ada di file SJ IKAEN
+    const SB_URL = "https://ntaecfphgoelmhzrkatp.supabase.co"; 
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg";
     const _supabase = supabase.createClient(SB_URL, SB_KEY);
-    const qrcode = new QRCode(document.getElementById("qrcode"), { width: 60, height: 60 });
 
-    // --- NAVIGATION & AUTH ---
-    function handleLogin() {
-        if(document.getElementById('user').value === "admin" && document.getElementById('pass').value === "kse123") {
-            localStorage.setItem('ide_session', 'active');
-            initApp();
-        } else { document.getElementById('error-msg').style.display='block'; }
+    async function fetchRilisData() {
+        const tbody = document.getElementById('rilis-table-body');
+        try {
+            const { data, error } = await _supabase
+                .from('data_ikaen') // Pastikan nama tabel ini sesuai dengan yang kamu buat di SQL Editor
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            let html = '';
+            if (data.length === 0) {
+                html = '<tr><td colspan="6" class="text-center py-4">Tidak ada data.</td></tr>';
+            } else {
+                data.forEach(row => {
+                    html += `
+                        <tr>
+                            <td>
+                                <div class="fw-bold">${row.tanggal || '-'}</div>
+                                <span class="badge bg-primary" style="font-size:0.6rem">IKAEN</span>
+                            </td>
+                            <td><span class="text-primary fw-bold">${row.no_sj || '-'}</span></td>
+                            <td>
+                                <div class="small text-muted">DO: ${row.no_do || '-'}</div>
+                                <div class="small text-muted">SO: ${row.no_so || '-'}</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold">${row.driver || '-'}</div>
+                                <div class="small text-muted">${row.plat_no || '-'}</div>
+                            </td>
+                            <td><div class="text-truncate" style="max-width:150px;">${row.tujuan || '-'}</div></td>
+                            <td><span class="badge bg-light text-dark border">${row.volume || 0} L</span></td>
+                        </tr>`;
+                });
+            }
+            tbody.innerHTML = html;
+        } catch (err) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error: ${err.message}</td></tr>`;
+        }
     }
 
-    function initApp() {
+    // --- AUTH LOGIC ---
+    function handleLogin() {
+        const u = document.getElementById('user').value;
+        const p = document.getElementById('pass').value;
+        if(u === "admin" && p === "kse123") {
+            localStorage.setItem('ide_session', 'active');
+            showDashboard();
+        } else {
+            document.getElementById('error-msg').style.display = 'block';
+        }
+    }
+
+    function showDashboard() {
         document.getElementById('login-page').style.display = 'none';
-        document.getElementById('sidebar').style.setProperty('display', 'flex', 'important');
-        document.getElementById('main-content').style.display = 'block';
+        document.getElementById('dashboard-page').style.display = 'block';
         fetchRilisData();
     }
 
-    function showSection(id) {
-        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.getElementById('nav-' + (id.split('-')[1] || 'dashboard')).classList.add('active');
+    function handleLogout() {
+        localStorage.removeItem('ide_session');
+        location.reload();
     }
 
-    function handleLogout() { localStorage.removeItem('ide_session'); location.reload(); }
-
-    // --- DASHBOARD LOGIC ---
-    async function fetchRilisData() {
-        const tbody = document.getElementById('rilis-table-body');
-        const { data, error } = await _supabase.from('data_ikaen').select('*').order('created_at', { ascending: false });
-        if (error) return;
-        
-        tbody.innerHTML = data.map(row => `
-            <tr>
-                <td>${row.tanggal}</td>
-                <td class="fw-bold text-primary">${row.no_sj}</td>
-                <td class="small">DO: ${row.no_do || '-'}</td>
-                <td>${row.driver} (${row.plat_no})</td>
-                <td>${row.tujuan}</td>
-                <td><span class="badge bg-light text-dark border">${row.volume} L</span></td>
-            </tr>
-        `).join('');
-    }
-
-    // --- FORM LOGIC ---
-    async function syncNomorSJ() {
-        const now = new Date();
-        const suffix = `/${["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][now.getMonth()]}/${now.getFullYear()}`;
-        const { data } = await _supabase.from('data_ikaen').select('no_sj').ilike('no_sj', `%${suffix}`).order('created_at', { ascending: false }).limit(1);
-        
-        let next = 1;
-        if (data && data.length > 0) next = parseInt(data[0].no_sj.split('/')[0]) + 1;
-        const formatted = String(next).padStart(3, '0') + "/SJ-IKE" + suffix;
-        document.getElementById('i-no').value = formatted;
-        document.getElementById('i-tgl').value = now.getDate() + "-" + (now.getMonth()+1) + "-" + now.getFullYear();
-        updatePreview();
-    }
-
-    async function saveData() {
-        const btn = document.getElementById('btn-save');
-        btn.disabled = true;
-        
-        const payload = {
-            no_sj: document.getElementById('i-no').value,
-            tanggal: document.getElementById('i-tgl').value,
-            tujuan: document.getElementById('i-po-to').value,
-            driver: document.getElementById('i-driver').value,
-            plat_no: document.getElementById('i-plat').value,
-            volume: document.getElementById('i-vol').value,
-            no_do: document.getElementById('i-do-desc').value
-        };
-
-        const { error } = await _supabase.from('data_ikaen').insert(payload);
-        if (error) { alert("Gagal: " + error.message); } 
-        else { alert("✅ Berhasil Simpan!"); fetchRilisData(); showSection('dashboard'); }
-        btn.disabled = false;
-    }
-
-    function updatePreview() {
-        const fields = ['no','tgl','po-to','driver','plat','vol'];
-        fields.forEach(f => {
-            const val = document.getElementById('i-' + f).value;
-            document.getElementById('v-' + f).innerText = val || '-';
-        });
-        qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
-    }
-
-    document.querySelectorAll('input').forEach(i => i.addEventListener('input', updatePreview));
-    window.onload = () => { if(localStorage.getItem('ide_session') === 'active') initApp(); };
+    window.onload = function() {
+        if (localStorage.getItem('ide_session') === 'active') showDashboard();
+    };
 </script>
 </body>
 </html>
