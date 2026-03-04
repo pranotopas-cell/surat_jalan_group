@@ -21,20 +21,11 @@
         
         #sj-container { width: 210mm; height: 297mm; padding: 10mm 12mm; background: white; position: relative; box-sizing: border-box; box-shadow: 0 0 10px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
 
-        /* EDITOR PANEL & BUTTONS */
+        /* EDITOR PANEL */
         .editor-panel { width: 380px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ddd; max-height: 95vh; overflow-y: auto; position: sticky; top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         
         .action-header { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 5px; 
-            margin-bottom: 15px; 
-            position: sticky; 
-            top: 0; 
-            background: white; 
-            z-index: 10; 
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eee;
+            display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 15px; position: sticky; top: 0; background: white; z-index: 10; padding-bottom: 10px; border-bottom: 2px solid #eee;
         }
 
         .btn { padding: 10px 5px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 7.5pt; color: white; transition: 0.2s; flex: 1; min-width: 70px; }
@@ -93,15 +84,15 @@
 
 <div class="editor-panel">
     <div class="action-header">
-        <button class="btn btn-sync" onclick="syncNomorSJ()">SYNC</button>
-        <button class="btn btn-save" id="btn-save" onclick="saveData()"> SIMPAN</button>
-        <button class="btn btn-print" onclick="window.print()">PRINT</button>
-        <button class="btn btn-download" onclick="downloadPDF()"> PDF</button>
+        <button class="btn btn-sync" onclick="syncNomorSJ()">🔄 SYNC</button>
+        <button class="btn btn-save" id="btn-save" onclick="saveData()">💾 SIMPAN</button>
+        <button class="btn btn-print" onclick="window.print()">🖨️ PRINT</button>
+        <button class="btn btn-download" onclick="downloadPDF()">📩 PDF</button>
     </div>
     
     <h2>1. Header Info</h2>
-    <div class="field"><label>Tanggal</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor SJ (Auto)</label><input type="text" id="i-no" readonly style="background:#eee"></div>
+    <div class="field"><label>Tanggal (Bisa Diedit)</label><input type="text" id="i-tgl"></div>
+    <div class="field"><label>Nomor SJ (Auto)</label><input type="text" id="i-no" readonly style="background:#f0f0f0; color:#800000; font-weight:bold;"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -132,7 +123,7 @@
 <div id="sj-container">
     <div class="header">
         <div class="logo-area">
-            <img src="ikaen.png" alt="Logo" class="main-logo" onerror="this.style.display='none'">
+            <img src="ikaen.png" alt="Logo" class="main-logo" onerror="this.style.opacity='0'">
             <div class="logo-text">
                 <b><span>I</span><span>N</span><span>V</span><span>E</span><span>S</span><span>T</span><span>A</span><span>M</span><span>A</span></b>
                 <span>KALIMANTAN ENERGI</span>
@@ -226,7 +217,7 @@
             <td><br><br>( . . . . . . . . . . . . )</td>
             <td><span id="v-driver">-</span></td>
             <td>
-                <img src="ike.png" alt="Stamp" class="stamp-container" onerror="this.style.display='none'">
+                <img src="ike.png" alt="Stamp" class="stamp-container" onerror="this.style.opacity='0'">
                 <br><br>Admin IKAEN
             </td>
         </tr>
@@ -250,70 +241,64 @@
     const SUPABASE_URL = 'https://ntaecfphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     
-    // Inisialisasi Supabase Client
     const { createClient } = supabase;
     const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Inisialisasi QR Code
-    const qrcode = new QRCode(document.getElementById("qrcode"), { 
-        width: 45, 
-        height: 45,
-        correctLevel : QRCode.CorrectLevel.H 
-    });
+    const qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
     /**
-     * Mengambil nomor terakhir dari database dan membuat nomor SJ baru
+     * Sinkronisasi Tanggal Sistem & Generate Nomor Otomatis dari Database
      */
     async function syncNomorSJ() {
         const now = new Date();
         const romawi = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][now.getMonth()];
         const suffix = `/${romawi}/${now.getFullYear()}`;
 
+        // Set Tanggal Otomatis (Jika belum diisi user)
+        const tglStr = now.getDate() + " " + ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"][now.getMonth()] + " " + now.getFullYear();
+        if(!document.getElementById('i-tgl').value) {
+            document.getElementById('i-tgl').value = tglStr;
+        }
+
         try {
-            // Filter berdasarkan akhiran bulan/tahun untuk reset nomor setiap tahun jika diperlukan
+            // Ambil nomor terakhir dari database berdasarkan bulan & tahun saat ini
             const { data, error } = await _supabase
                 .from('data_ikaen')
                 .select('no_sj')
                 .ilike('no_sj', `%${suffix}`)
-                .order('created_at', { ascending: false })
+                .order('no_sj', { ascending: false })
                 .limit(1);
 
             if (error) throw error;
 
-            let next = 1;
+            let nextNum = 1;
             if (data && data.length > 0) {
-                // Mengambil angka depan (001, 002, dst)
+                // Ambil string nomor urut (bagian depan sebelum /)
                 const lastFullNo = data[0].no_sj;
                 const lastNum = parseInt(lastFullNo.split('/')[0]);
-                if (!isNaN(lastNum)) next = lastNum + 1;
+                if(!isNaN(lastNum)) nextNum = lastNum + 1;
             }
 
-            const formatted = String(next).padStart(3, '0') + "/SJ-IKE" + suffix;
-            document.getElementById('i-no').value = formatted;
+            const formattedNo = String(nextNum).padStart(3, '0') + "/SJ-IKE" + suffix;
+            document.getElementById('i-no').value = formattedNo;
             
-            const tglStr = now.getDate() + " " + ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"][now.getMonth()] + " " + now.getFullYear();
-            if(!document.getElementById('i-tgl').value) document.getElementById('i-tgl').value = tglStr;
-            
-            upd(); 
-        } catch (e) { 
-            console.error("Sync Error:", e.message); 
+            upd(); // Update preview
+        } catch (e) {
+            console.error("Gagal Sync Nomor:", e.message);
+            // Default jika gagal koneksi atau tabel kosong
+            const fallbackNo = "001/SJ-IKE" + suffix;
+            document.getElementById('i-no').value = fallbackNo;
+            upd();
         }
     }
 
     /**
-     * Menyimpan data ke tabel data_ikaen di Supabase
+     * Simpan Data ke Supabase
      */
     async function saveData() {
         const btn = document.getElementById('btn-save');
         const originalText = btn.innerText;
-        
-        // Validasi Sederhana
-        if(!document.getElementById('i-no').value) {
-            alert("Nomor SJ belum digenerate!");
-            return;
-        }
-
-        btn.innerText = "⏳ MENYIMPAN..."; 
+        btn.innerText = "⏳ SIMPAN..."; 
         btn.disabled = true;
 
         const payload = {
@@ -340,13 +325,11 @@
         try {
             const { error } = await _supabase.from('data_ikaen').insert([payload]);
             if (error) throw error;
-            
-            alert("✅ Data Berhasil Disimpan ke Database!");
-            // Update nomor untuk entri berikutnya
-            await syncNomorSJ(); 
+            alert("✅ Data Tersimpan Berhasil!");
+            // Refresh nomor otomatis untuk input berikutnya
+            await syncNomorSJ();
         } catch (e) {
-            alert("❌ Gagal menyimpan: " + (e.message || "Cek koneksi internet"));
-            console.error(e);
+            alert("❌ Gagal Simpan: " + (e.message || "Cek Koneksi"));
         } finally {
             btn.innerText = originalText;
             btn.disabled = false;
@@ -354,10 +337,10 @@
     }
 
     /**
-     * Sinkronisasi data dari input editor ke tampilan surat (Preview)
+     * Update Preview Visual
      */
     function upd() {
-        const ids = [
+        const mapping = [
             ['i-no', 'v-no'], ['i-tgl', 'v-tgl'], ['i-lokasi', 'v-lokasi'],
             ['i-prod', 'v-prod'], ['i-trans', 'v-trans'], ['i-vol', 'v-vol'],
             ['i-plat', 'v-plat'], ['i-segel', 'v-segel'], ['i-m1', 'v-m1'],
@@ -369,41 +352,38 @@
             ['i-po-to', 'v-dest-table']
         ];
 
-        ids.forEach(([inputId, viewId]) => {
+        mapping.forEach(([inputId, viewId]) => {
             const inputVal = document.getElementById(inputId).value;
             const viewEl = document.getElementById(viewId);
             if(viewEl) viewEl.innerText = inputVal || "-";
         });
 
-        // Update QR Code dengan data nomor SJ
-        const qrData = `IKE-VERIFIED-${document.getElementById('i-no').value}`;
-        qrcode.makeCode(qrData);
+        // Update QR Code
+        qrcode.makeCode("VERIFIED-IKE-" + document.getElementById('i-no').value);
     }
 
     /**
-     * Fungsi untuk export ke PDF
+     * Download ke PDF
      */
     function downloadPDF() {
         const element = document.getElementById('sj-container');
         const fileName = 'SJ-' + document.getElementById('i-no').value.replace(/\//g, '-');
-        
         const opt = {
             margin: 0,
             filename: fileName + '.pdf',
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
+            html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-        
         html2pdf().set(opt).from(element).save();
     }
 
-    // Event Listener untuk input real-time
+    // Input Listeners
     document.querySelectorAll('input, textarea').forEach(el => {
         el.addEventListener('input', upd);
     });
 
-    // Jalankan sinkronisasi saat pertama kali dimuat
+    // Inisialisasi saat load
     window.onload = syncNomorSJ;
 </script>
 </body>
