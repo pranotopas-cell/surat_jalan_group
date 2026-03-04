@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Surat Jalan Digital - Investama Kalimantan Energi</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -84,7 +85,7 @@
         @media print {
             .editor-panel { display: none; }
             body { background: none; padding: 0; display: block; }
-            #sj-container { box-shadow: none; margin: 0; }
+            #sj-container { box-shadow: none; margin: 0; border: none; }
         }
     </style>
 </head>
@@ -92,10 +93,10 @@
 
 <div class="editor-panel">
     <div class="action-header">
-        <button class="btn btn-sync" onclick="syncNomorSJ()">🔄 SYNC</button>
-        <button class="btn btn-save" id="btn-save" onclick="saveData()">💾 SIMPAN</button>
-        <button class="btn btn-print" onclick="window.print()">🖨️ PRINT</button>
-        <button class="btn btn-download" onclick="downloadPDF()">📩 PDF</button>
+        <button class="btn btn-sync" onclick="syncNomorSJ()">SYNC</button>
+        <button class="btn btn-save" id="btn-save" onclick="saveData()"> SIMPAN</button>
+        <button class="btn btn-print" onclick="window.print()">PRINT</button>
+        <button class="btn btn-download" onclick="downloadPDF()"> PDF</button>
     </div>
     
     <h2>1. Header Info</h2>
@@ -131,7 +132,7 @@
 <div id="sj-container">
     <div class="header">
         <div class="logo-area">
-            <img src="ikaen.png" alt="Logo" class="main-logo">
+            <img src="ikaen.png" alt="Logo" class="main-logo" onerror="this.style.display='none'">
             <div class="logo-text">
                 <b><span>I</span><span>N</span><span>V</span><span>E</span><span>S</span><span>T</span><span>A</span><span>M</span><span>A</span></b>
                 <span>KALIMANTAN ENERGI</span>
@@ -225,7 +226,7 @@
             <td><br><br>( . . . . . . . . . . . . )</td>
             <td><span id="v-driver">-</span></td>
             <td>
-                <img src="ike.png" alt="Stamp" class="stamp-container">
+                <img src="ike.png" alt="Stamp" class="stamp-container" onerror="this.style.display='none'">
                 <br><br>Admin IKAEN
             </td>
         </tr>
@@ -245,30 +246,46 @@
 </div>
 
 <script>
+    // Konfigurasi Supabase
     const SUPABASE_URL = 'https://ntaecfphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     
-    // Gunakan inisialisasi yang lebih aman
-    let _supabase;
-    try {
-        _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    } catch(e) { console.error("Supabase Init Error", e); }
+    // Inisialisasi Supabase Client
+    const { createClient } = supabase;
+    const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
+    // Inisialisasi QR Code
+    const qrcode = new QRCode(document.getElementById("qrcode"), { 
+        width: 45, 
+        height: 45,
+        correctLevel : QRCode.CorrectLevel.H 
+    });
 
+    /**
+     * Mengambil nomor terakhir dari database dan membuat nomor SJ baru
+     */
     async function syncNomorSJ() {
         const now = new Date();
         const romawi = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][now.getMonth()];
         const suffix = `/${romawi}/${now.getFullYear()}`;
 
         try {
-            const { data, error } = await _supabase.from('data_ikaen')
-                .select('no_sj').ilike('no_sj', `%${suffix}`)
-                .order('created_at', { ascending: false }).limit(1);
+            // Filter berdasarkan akhiran bulan/tahun untuk reset nomor setiap tahun jika diperlukan
+            const { data, error } = await _supabase
+                .from('data_ikaen')
+                .select('no_sj')
+                .ilike('no_sj', `%${suffix}`)
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+            if (error) throw error;
 
             let next = 1;
             if (data && data.length > 0) {
-                next = parseInt(data[0].no_sj.split('/')[0]) + 1;
+                // Mengambil angka depan (001, 002, dst)
+                const lastFullNo = data[0].no_sj;
+                const lastNum = parseInt(lastFullNo.split('/')[0]);
+                if (!isNaN(lastNum)) next = lastNum + 1;
             }
 
             const formatted = String(next).padStart(3, '0') + "/SJ-IKE" + suffix;
@@ -277,14 +294,26 @@
             const tglStr = now.getDate() + " " + ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"][now.getMonth()] + " " + now.getFullYear();
             if(!document.getElementById('i-tgl').value) document.getElementById('i-tgl').value = tglStr;
             
-            upd();
-        } catch (e) { console.error("Sync Error", e); }
+            upd(); 
+        } catch (e) { 
+            console.error("Sync Error:", e.message); 
+        }
     }
 
+    /**
+     * Menyimpan data ke tabel data_ikaen di Supabase
+     */
     async function saveData() {
         const btn = document.getElementById('btn-save');
         const originalText = btn.innerText;
-        btn.innerText = "⏳..."; 
+        
+        // Validasi Sederhana
+        if(!document.getElementById('i-no').value) {
+            alert("Nomor SJ belum digenerate!");
+            return;
+        }
+
+        btn.innerText = "⏳ MENYIMPAN..."; 
         btn.disabled = true;
 
         const payload = {
@@ -311,8 +340,10 @@
         try {
             const { error } = await _supabase.from('data_ikaen').insert([payload]);
             if (error) throw error;
-            alert("✅ Data Berhasil Disimpan!");
-            syncNomorSJ();
+            
+            alert("✅ Data Berhasil Disimpan ke Database!");
+            // Update nomor untuk entri berikutnya
+            await syncNomorSJ(); 
         } catch (e) {
             alert("❌ Gagal menyimpan: " + (e.message || "Cek koneksi internet"));
             console.error(e);
@@ -322,40 +353,58 @@
         }
     }
 
+    /**
+     * Sinkronisasi data dari input editor ke tampilan surat (Preview)
+     */
     function upd() {
-        const ids = ['no','tgl','lokasi','prod','trans','vol','plat','segel','m1','m2','t2','po-num','driver','other-note'];
-        ids.forEach(id => {
-            const el = document.getElementById('v-' + id);
-            if(el) el.innerText = document.getElementById('i-' + id).value;
-        });
-        
-        document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
-        document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
-        document.getElementById('v-do-top').innerText = document.getElementById('i-do-desc').value;
-        document.getElementById('v-so-top').innerText = document.getElementById('i-so-desc').value;
-        document.getElementById('v-so-desc').innerText = document.getElementById('i-so-desc').value;
-        document.getElementById('v-poqty').innerText = document.getElementById('i-poqty').value;
-        document.getElementById('v-load').innerText = document.getElementById('i-load-date').value;
+        const ids = [
+            ['i-no', 'v-no'], ['i-tgl', 'v-tgl'], ['i-lokasi', 'v-lokasi'],
+            ['i-prod', 'v-prod'], ['i-trans', 'v-trans'], ['i-vol', 'v-vol'],
+            ['i-plat', 'v-plat'], ['i-segel', 'v-segel'], ['i-m1', 'v-m1'],
+            ['i-m2', 'v-m2'], ['i-t2', 'v-t2'], ['i-po-num', 'v-po-num'],
+            ['i-driver', 'v-driver'], ['i-other-note', 'v-other-note'],
+            ['i-do-desc', 'v-do-top'], ['i-so-desc', 'v-so-top'],
+            ['i-so-desc', 'v-so-desc'], ['i-poqty', 'v-poqty'],
+            ['i-load-date', 'v-load'], ['i-po-to', 'v-po-to-header'],
+            ['i-po-to', 'v-dest-table']
+        ];
 
-        qrcode.clear();
-        qrcode.makeCode("IKE-VERIFIED-" + document.getElementById('i-no').value);
+        ids.forEach(([inputId, viewId]) => {
+            const inputVal = document.getElementById(inputId).value;
+            const viewEl = document.getElementById(viewId);
+            if(viewEl) viewEl.innerText = inputVal || "-";
+        });
+
+        // Update QR Code dengan data nomor SJ
+        const qrData = `IKE-VERIFIED-${document.getElementById('i-no').value}`;
+        qrcode.makeCode(qrData);
     }
 
+    /**
+     * Fungsi untuk export ke PDF
+     */
     function downloadPDF() {
         const element = document.getElementById('sj-container');
+        const fileName = 'SJ-' + document.getElementById('i-no').value.replace(/\//g, '-');
+        
         const opt = {
             margin: 0,
-            filename: 'SJ-' + document.getElementById('i-no').value.replace(/\//g, '-') + '.pdf',
+            filename: fileName + '.pdf',
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
+        
         html2pdf().set(opt).from(element).save();
     }
 
-    document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', upd));
+    // Event Listener untuk input real-time
+    document.querySelectorAll('input, textarea').forEach(el => {
+        el.addEventListener('input', upd);
+    });
+
+    // Jalankan sinkronisasi saat pertama kali dimuat
     window.onload = syncNomorSJ;
 </script>
 </body>
 </html>
-
