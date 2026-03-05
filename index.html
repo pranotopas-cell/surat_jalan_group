@@ -90,6 +90,7 @@
             <div class="collapse submenu" id="mIkaen">
                 <a href="sj_ikaen.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_ikaen.html" class="nav-link">Memo</a>
+                <a href="ba_oper_ikaen.html" class="nav-link">BA Oper Muatan</a>
                 <a href="ba_penerimaan_ikaen.html" class="nav-link">BA Penerimaan</a>
             </div>
 
@@ -98,6 +99,8 @@
             <div class="collapse submenu" id="mIde">
                 <a href="sj_ide.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_ide.html" class="nav-link">Memo</a>
+                <a href="ba_oper_ide.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_ide.html" class="nav-link">BA Penerimaan</a>
             </div>
 
             <small class="text-white pt-label fw-bold">PT. KHATULISTIWA SINAR ENERGI</small>
@@ -105,6 +108,8 @@
             <div class="collapse submenu" id="mKse">
                 <a href="sj_kse.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_kse.html" class="nav-link">Memo</a>
+                <a href="ba_oper_kse.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_kse.html" class="nav-link">BA Penerimaan</a>
             </div>
         </nav>
 
@@ -160,21 +165,18 @@
     async function fetchRilisData() {
         const tbody = document.getElementById('rilis-table-body');
         try {
-            // Fetch data from all 3 tables
             const [resIkaen, resIde, resKse] = await Promise.all([
                 _supabase.from('data_ikaen').select('*'),
                 _supabase.from('data_ide').select('*'),
                 _supabase.from('data_kse').select('*')
             ]);
 
-            // Combine and Label Data
             let allData = [
                 ...(resIkaen.data || []).map(item => ({...item, pt_name: 'PT. IKAEN', pt_class: 'bg-primary'})),
                 ...(resIde.data || []).map(item => ({...item, pt_name: 'PT. IDE', pt_class: 'bg-success'})),
                 ...(resKse.data || []).map(item => ({...item, pt_name: 'PT. KSE', pt_class: 'bg-warning text-dark'}))
             ];
 
-            // Sort by latest (assuming created_at exists)
             allData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
             let html = '';
