@@ -23,19 +23,17 @@
         .logo-img { height: 45px; width: auto; }
         .invoice-title { font-size: 32px; font-weight: 900; color: var(--kse-primary); font-style: italic; text-align: right; }
         .meta-table td { padding: 2px 0; vertical-align: top; line-height: 1.1; }
-        .sub-lang { font-size: 9px; color: #666; font-style: italic; display: block; margin-top: 1px; }
         .address-meta-row { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; }
         .content-body { margin-top: 40px; line-height: 1.5; }
         .table-main { width: 100%; border: 1.5px solid #000; border-collapse: collapse; margin: 15px 0; }
         .table-main th { background-color: var(--kse-primary) !important; color: white !important; border: 1px solid #000; padding: 8px 4px; text-align: center; font-size: 11px; }
         .table-main td { border: 1px solid #000; padding: 6px; vertical-align: middle; text-align: center; font-size: 11px; }
         .signature-area { margin-top: 30px; }
-        .ttd-img { height: 90px; width: auto; margin-top: 5px; }
         .footer-kse { position: absolute; bottom: 10mm; width: calc(100% - 40mm); border-top: 1px solid #000; padding-top: 10px; }
         @media print {
             .control-nav, .input-sidebar { display: none !important; }
             body { background: white; padding: 0; }
-            .document-canvas { margin: 0; box-shadow: none; width: 210mm; height: 297mm; padding: 10mm 15mm !important; }
+            .document-canvas { margin: 0; box-shadow: none; width: 100%; padding: 10mm 15mm !important; }
         }
     </style>
 </head>
@@ -58,7 +56,7 @@
             <h6 class="fw-bold mb-3 text-success border-bottom pb-2">DATA MEMO</h6>
             <div class="row g-2 mb-3">
                 <div class="col-12"><label class="small fw-bold">Tanggal Surat</label><input type="text" id="in_tgl_surat" class="form-control form-control-sm" oninput="updateView()"></div>
-                <div class="col-12"><label class="small fw-bold">No. Memo (Auto SQL)</label><input type="text" id="in_no_memo" class="form-control form-control-sm bg-light fw-bold text-primary" readonly placeholder="Loading nomor..."></div>
+                <div class="col-12"><label class="small fw-bold">No. Memo</label><input type="text" id="in_no_memo" class="form-control form-control-sm bg-light fw-bold text-primary" readonly></div>
                 <div class="col-12"><label class="small fw-bold">Perihal</label><input type="text" id="in_hal" value="Memo Pengaliran BBM" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">Kepada</label><input type="text" id="in_kepada" value="PT. Sinarindo Sukses Selalu" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">No. PO</label><input type="text" id="in_po" class="form-control form-control-sm" oninput="updateView()"></div>
@@ -95,15 +93,11 @@
                 </div>
 
                 <div class="address-meta-row">
-                    <div class="text-start">
-                        Kepada yang terhormat,<br>
-                        <b id="out_kepada" style="font-size: 13px;"></b><br>
-                        Di - Tempat
-                    </div>
+                    <div class="text-start">Kepada yang kami hormati,<br><b id="out_kepada"></b><br>Di - Tempat</div>
                     <div>
                         <table class="meta-table" style="margin-left: auto;">
                             <tr><td class="text-end">Tanggal</td><td width="15" class="text-center">:</td><td width="160"><span id="out_tgl_header"></span></td></tr>
-                            <tr><td class="text-end">Nomor</td><td class="text-center">:</td><td><span id="out_no_memo" class="fw-bold"></span></td></tr>
+                            <tr><td class="text-end">Nomor</td><td class="text-center">:</td><td><span id="out_no_memo" class="fw-bold">...</span></td></tr>
                             <tr><td class="text-end">Perihal</td><td class="text-center">:</td><td><b id="out_hal"></b></td></tr>
                         </table>
                     </div>
@@ -120,9 +114,7 @@
                         </table>
                     </div>
                     <table class="table-main">
-                        <thead>
-                            <tr><th>NO</th><th>TRANSPORTIR</th><th>NOMOR POLISI</th><th>DRIVER</th><th>QTY (LTR)</th><th>TERA UNIT</th></tr>
-                        </thead>
+                        <thead><tr><th>NO</th><th>TRANSPORTIR</th><th>NOMOR POLISI</th><th>DRIVER</th><th>QTY (LTR)</th><th>TERA UNIT</th></tr></thead>
                         <tbody id="table-body"></tbody>
                     </table>
                     <p>Demikian memo ini kami sampaikan untuk dipergunakan sebagaimana mestinya.</p>
@@ -142,44 +134,42 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // 1. SET TANGGAL OTOMATIS (Wajib lari duluan)
-    function setInitialDate() {
+    // INSTAN: Set tanggal hari ini tanpa menunggu database
+    function fastInit() {
         const now = new Date();
         const yyyy = now.getFullYear();
         const mm = String(now.getMonth() + 1).padStart(2, '0');
         const dd = String(now.getDate()).padStart(2, '0');
+        const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][now.getMonth()];
         const formattedDate = `${yyyy}/${mm}/${dd}`;
         
         document.getElementById('in_tgl_surat').value = formattedDate;
         document.getElementById('out_tgl_header').innerText = formattedDate;
+        
+        // Placeholder nomor instan agar user tidak melihat layar kosong
+        const placeholderNo = `.../MEMO-KSE/${roman}/${yyyy}`;
+        document.getElementById('in_no_memo').value = placeholderNo;
+        document.getElementById('out_no_memo').innerText = placeholderNo;
+
+        updateView();
+        
+        // Jalankan fetch database di background
+        fetchRealNumber(roman, yyyy);
     }
 
-    // 2. AMBIL NOMOR URUT DARI SQL (RPC)
-    async function fetchLatestNo() {
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][now.getMonth()];
-        
+    async function fetchRealNumber(roman, yyyy) {
         try {
             const { data, error } = await _supabase.rpc('get_next_memo_number');
             if (error) throw error;
-
+            
             const nextNo = (data && data[0] && data[0].next_no) ? data[0].next_no : 1;
             const fullNo = `${String(nextNo).padStart(3, '0')}/MEMO-KSE/${roman}/${yyyy}`;
             
-            // Tembak ke kedua tempat
             document.getElementById('in_no_memo').value = fullNo;
             document.getElementById('out_no_memo').innerText = fullNo;
         } catch (e) {
-            console.error("Gagal ambil nomor:", e);
-            document.getElementById('in_no_memo').value = `001/MEMO-KSE/${roman}/${yyyy}`;
+            console.error("DB Slow, using fallback");
         }
-    }
-
-    async function initPage() {
-        setInitialDate();
-        await fetchLatestNo();
-        updateView();
     }
 
     function updateView() {
@@ -200,7 +190,7 @@
             const d = document.getElementById(`in_driver_${i}`).value;
             const q = document.getElementById(`in_qty_${i}`).value;
             const tr = document.getElementById(`in_tera_${i}`).value;
-            if (n || d) {
+            if (n || d || q) {
                 h += `<tr><td>${i}</td><td>${t}</td><td>${n}</td><td>${d}</td><td>${Number(q).toLocaleString('id-ID')}</td><td>${tr}</td></tr>`;
             }
         }
@@ -210,7 +200,7 @@
     async function saveData() {
         const btn = document.getElementById('btnSave');
         btn.disabled = true;
-        btn.innerText = "Processing...";
+        btn.innerText = "Simpan...";
 
         const payload = {
             tanggal: document.getElementById('in_tgl_surat').value.replace(/\//g, '-'),
@@ -224,10 +214,10 @@
 
         const { error } = await _supabase.from('data_kse').insert([payload]);
         if(error) {
-            alert("Gagal Simpan: " + error.message);
+            alert("Gagal: " + error.message);
         } else {
-            alert("Data Tersimpan di Cloud!");
-            await initPage(); // Refresh nomor otomatis setelah simpan
+            alert("Data Berhasil Masuk Database!");
+            fastInit(); // Refresh instan
         }
         btn.disabled = false;
         btn.innerHTML = `<i class="bi bi-hdd"></i> SIMPAN DATA (DB)`;
@@ -235,12 +225,11 @@
 
     function downloadPDF() {
         const element = document.getElementById('pdf-area');
-        const name = `MEMO_${document.getElementById('in_no_memo').value.replace(/\//g,'-')}`;
-        html2pdf().set({ margin: 0, filename: name + '.pdf', html2canvas: { scale: 3 }, jsPDF: { unit: 'mm', format: 'a4' } }).from(element).save();
+        const filename = `MEMO_${document.getElementById('in_no_memo').value.replace(/\//g,'-')}.pdf`;
+        html2pdf().set({ margin: 0, filename: filename, html2canvas: { scale: 3 }, jsPDF: { unit: 'mm', format: 'a4' } }).from(element).save();
     }
 
-    // Jalankan saat halaman load
-    window.onload = initPage;
+    window.onload = fastInit;
 </script>
 </body>
 </html>
