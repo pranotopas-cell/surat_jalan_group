@@ -116,7 +116,6 @@
             text-align: left;
         }
 
-        /* EDITOR PANEL */
         .editor-panel { 
             width: 380px; 
             padding: 20px; 
@@ -153,7 +152,7 @@
 <div class="editor-panel">
     <h2>Database Settings</h2>
     <div class="field">
-        <label>Pilih Tabel Simpan</label>
+        <label>Pilih Tabel Simpan (Sesuai PT)</label>
         <select id="i-target-table" onchange="initPage()">
             <option value="data_kse">DATA KSE</option>
             <option value="data_ikaen">DATA IKAEN</option>
@@ -276,10 +275,7 @@
     <div class="desc-section">
         <table class="desc-table">
             <tr>
-                <td width="45%">
-                    <b>Purchase Order to:</b><br>
-                    <i style="font-size: 7.5pt;">Nomor PO / PO Number:</i>
-                </td>
+                <td width="45%"><b>Purchase Order to:</b><br><i style="font-size: 7.5pt;">Nomor PO / PO Number:</i></td>
                 <td>: <span class="val" id="v-po-num">-</span></td>
             </tr>
             <tr>
@@ -343,6 +339,7 @@
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
     }
 
+    // LOGIKA PENOMORAN OTOMATIS BERDASARKAN PT DAN JENIS DOKUMEN
     async function initPage() {
         const now = new Date();
         const panelDate = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
@@ -354,17 +351,24 @@
         const year = now.getFullYear();
 
         try {
-            // LOGIKA PENOMORAN: Menghitung baris di tabel terkait untuk urutan SJ
+            // Hitung hanya baris yang merupakan 'SURAT JALAN' di tabel terpilih
             const { count, error } = await _supabase
                 .from(table)
-                .select('*', { count: 'exact', head: true });
+                .select('*', { count: 'exact', head: true })
+                .eq('jenis_dokumen', 'SURAT JALAN');
             
             if (error) throw error;
 
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            document.getElementById('i-no').value = `${nextNo}/SJ-KSE/${month}/${year}`;
+            
+            // Format penomoran (bisa disesuaikan kode PT-nya jika perlu)
+            let ptCode = "KSE";
+            if(table.includes("ikaen")) ptCode = "IKAEN";
+            if(table.includes("ide")) ptCode = "IDE";
+
+            document.getElementById('i-no').value = `${nextNo}/SJ-${ptCode}/${month}/${year}`;
         } catch (e) {
-            console.error("Gagal fetch count:", e);
+            console.error("Gagal mengambil urutan nomor:", e);
             document.getElementById('i-no').value = `001/SJ-KSE/${month}/${year}`;
         }
         upd();
@@ -426,7 +430,7 @@
             alert('Gagal simpan: ' + error.message);
         } else {
             alert('Berhasil disimpan ke ' + table);
-            initPage(); // Refresh penomoran setelah simpan
+            initPage(); // Refresh penomoran otomatis setelah simpan
         }
         btn.innerText = 'SIMPAN DATA';
         btn.disabled = false;
