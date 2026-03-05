@@ -354,17 +354,23 @@
         const year = now.getFullYear();
 
         try {
-            const { count } = await _supabase.from(table).select('*', { count: 'exact', head: true });
+            // LOGIKA PENOMORAN: Menghitung baris di tabel terkait untuk urutan SJ
+            const { count, error } = await _supabase
+                .from(table)
+                .select('*', { count: 'exact', head: true });
+            
+            if (error) throw error;
+
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
             document.getElementById('i-no').value = `${nextNo}/SJ-KSE/${month}/${year}`;
         } catch (e) {
+            console.error("Gagal fetch count:", e);
             document.getElementById('i-no').value = `001/SJ-KSE/${month}/${year}`;
         }
         upd();
     }
 
     function upd() {
-        // Handle Tanggal Display
         const inputDate = document.getElementById('i-tgl').value;
         const dateParts = inputDate.split('/');
         if(dateParts.length === 3) {
@@ -420,7 +426,7 @@
             alert('Gagal simpan: ' + error.message);
         } else {
             alert('Berhasil disimpan ke ' + table);
-            initPage();
+            initPage(); // Refresh penomoran setelah simpan
         }
         btn.innerText = 'SIMPAN DATA';
         btn.disabled = false;
@@ -442,4 +448,3 @@
 </script>
 </body>
 </html>
-
