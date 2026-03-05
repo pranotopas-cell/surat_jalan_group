@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Jalan Digital - PT. Indo Dharma Energi</title>
+    <title>Digital Doc System - PT. Indo Dharma Energi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -149,19 +149,26 @@
 <body>
 
 <div class="editor-panel">
-    <h2>Database Settings</h2>
+    <h2>Database & Document Type</h2>
     <div class="field">
-        <label>Pilih Tabel Simpan</label>
+        <label>Pilih Perusahaan (Tabel)</label>
         <select id="i-target-table" onchange="initPage()">
-            <option value="data_ide">DATA IDE</option>
-            <option value="data_ikaen">DATA IKAEN</option>
-            <option value="data_kse">DATA KSE</option>
+            <option value="data_ide">PT. INDO DHARMA ENERGI (IDE)</option>
+            <option value="data_ikaen">PT. IKAEN (IKN)</option>
+            <option value="data_kse">PT. KSE</option>
+        </select>
+    </div>
+    <div class="field">
+        <label>Jenis Dokumen</label>
+        <select id="i-doc-type" onchange="initPage()">
+            <option value="SURAT JALAN">SURAT JALAN (SJ)</option>
+            <option value="MEMO">MEMO</option>
         </select>
     </div>
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no"></div>
+    <div class="field"><label>Nomor Dokumen (Otomatis)</label><input type="text" id="i-no" readonly style="background:#f0f0f0"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header (Location)</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -212,7 +219,7 @@
         <div class="meta-info-grid">
             <table>
                 <tr><td class="meta-label">Tanggal / <i style="font-weight:normal">Date</i></td><td>: <span id="v-tgl" class="meta-val"></span></td></tr>
-                <tr><td class="meta-label">No. Surat Jalan</td><td>: <span id="v-no" class="meta-val"></span></td></tr>
+                <tr><td class="meta-label">No. Dokumen</td><td>: <span id="v-no" class="meta-val"></span></td></tr>
                 <tr><td class="meta-label">Tujuan / <i style="font-weight:normal">To</i></td><td>: <span id="v-po-to-header" class="meta-val"></span></td></tr>
                 <tr><td class="meta-label">Lokasi / <i style="font-weight:normal">Location</i></td><td>: <span id="v-lokasi" class="meta-val"></span></td></tr>
             </table>
@@ -220,8 +227,8 @@
     </div>
 
     <div class="title-block">
-        <h1>DELIVERY ORDER</h1>
-        <p>SURAT JALAN</p>
+        <h1 id="v-title-main">DELIVERY ORDER</h1>
+        <p id="v-title-sub">SURAT JALAN</p>
     </div>
 
     <table class="main-table">
@@ -317,8 +324,8 @@
     <div class="system-qr-footer">
         <div id="qrcode"></div>
         <div class="system-info-text">
-            <b>E-System Surat Jalan IDE</b><br>
-            <i>Digital Verification Secure System</i>
+            <b>E-System Document IDE Group</b><br>
+            <i id="v-footer-info">Digital Verification Secure System</i>
         </div>
     </div>
     <div class="page-footer-border"></div>
@@ -344,15 +351,43 @@
         document.getElementById('i-tgl').value = panelDate;
 
         const table = document.getElementById('i-target-table').value;
+        const docType = document.getElementById('i-doc-type').value;
+        
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const month = roman[now.getMonth()];
         const year = now.getFullYear();
 
+        // Judul Visual Berdasarkan Jenis
+        if(docType === "MEMO") {
+            document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
+            document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
+        } else {
+            document.getElementById('v-title-main').innerText = "DELIVERY ORDER";
+            document.getElementById('v-title-sub').innerText = "SURAT JALAN";
+        }
+
         try {
-            const { count } = await _supabase.from(table).select('*', { count: 'exact', head: true });
+            // LOGIKA PENOMORAN TERPISAH: Filter berdasarkan JENIS_DOKUMEN dan TABEL
+            const { count, error } = await _supabase
+                .from(table)
+                .select('*', { count: 'exact', head: true })
+                .eq('jenis_dokumen', docType);
+
+            if (error) throw error;
+
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            document.getElementById('i-no').value = `${nextNo}/SJ-IDE/${month}/${year}`;
+            
+            // Kode Dokumen
+            let codeDoc = (docType === "MEMO") ? "MEMO" : "SJ";
+            
+            // Kode PT
+            let codePT = "IDE";
+            if(table === "data_ikaen") codePT = "IKN";
+            if(table === "data_kse") codePT = "KSE";
+
+            document.getElementById('i-no').value = `${nextNo}/${codeDoc}-${codePT}/${month}/${year}`;
         } catch (e) {
+            console.error(e);
             document.getElementById('i-no').value = `001/SJ-IDE/${month}/${year}`;
         }
         upd();
@@ -386,12 +421,14 @@
         document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
 
         qrcode.clear();
-        qrcode.makeCode("IDE-VERIFIED-" + document.getElementById('i-no').value);
+        qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
     }
 
     async function saveData() {
         const table = document.getElementById('i-target-table').value;
+        const docType = document.getElementById('i-doc-type').value;
         const btn = document.querySelector('.btn-save');
+        
         btn.innerText = 'SAVING...';
         btn.disabled = true;
 
@@ -401,7 +438,7 @@
         const payload = {
             tanggal: dbDate,
             no_dokumen: document.getElementById('i-no').value,
-            jenis_dokumen: "SURAT JALAN",
+            jenis_dokumen: docType, // Disimpan sesuai pilihan (SJ / MEMO)
             tujuan: document.getElementById('i-po-to').value,
             nopol: document.getElementById('i-plat').value,
             sopir: document.getElementById('i-driver').value,
@@ -413,7 +450,7 @@
         if (error) {
             alert('Gagal simpan: ' + error.message);
         } else {
-            alert('Berhasil disimpan ke ' + table);
+            alert('Berhasil disimpan sebagai ' + docType + ' di ' + table);
             initPage();
         }
         btn.innerText = 'SIMPAN DATA';
@@ -422,10 +459,10 @@
 
     function downloadPDF() {
         const element = document.getElementById('sj-container');
-        const noSJ = document.getElementById('i-no').value.replace(/\//g, '-');
+        const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
         html2pdf().set({
             margin: 0,
-            filename: 'SJ_IDE_'+noSJ+'.pdf',
+            filename: 'DOC_'+noDoc+'.pdf',
             html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(element).save();
@@ -436,4 +473,3 @@
 </script>
 </body>
 </html>
-
