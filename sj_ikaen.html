@@ -84,40 +84,40 @@
 
 <div class="editor-panel">
     <div class="action-header">
-        <button class="btn btn-sync" onclick="syncNomorSJ()">🔄 SYNC</button>
+        <button class="btn btn-sync" onclick="syncNomorSJ()">🔄 SYNC NO</button>
         <button class="btn btn-save" id="btn-save" onclick="saveData()">💾 SIMPAN</button>
         <button class="btn btn-print" onclick="window.print()">🖨️ PRINT</button>
         <button class="btn btn-download" onclick="downloadPDF()">📩 PDF</button>
     </div>
     
-    <h2>1. Data Utama (Dikirim ke DB)</h2>
+    <h2>1. Data Utama (Supabase)</h2>
     <div class="field"><label>Tanggal</label><input type="text" id="i-tgl"></div>
     <div class="field"><label>Nomor SJ</label><input type="text" id="i-no" style="color:#800000; font-weight:bold;"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Nomor Polisi</label><input type="text" id="i-plat" value="-"></div>
-    <div class="field"><label>Nama Sopir / Driver</label><input type="text" id="i-driver" value="-"></div>
-    <div class="field"><label>Qty / Volume (L)</label><input type="text" id="i-vol" value="-"></div>
+    <div class="field"><label>Nama Sopir</label><input type="text" id="i-driver" value="-"></div>
+    <div class="field"><label>Qty / Volume (L)</label><input type="number" id="i-vol" value="0"></div>
 
-    <h2>2. Data Tambahan (Hanya Tampilan)</h2>
-    <div class="field"><label>Lokasi</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
-    <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="-"></div>
-    <div class="field"><label>Produk</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
+    <h2>2. Data Dokumen (Tampilan)</h2>
     <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
+    <div class="field"><label>Nomor SO</label><input type="text" id="i-so-desc" value="-"></div>
+    <div class="field"><label>Nomor PO</label><input type="text" id="i-po-num" value="-"></div>
+    <div class="field"><label>Lokasi</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
+    <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="PT. IKAEN"></div>
+    <div class="field"><label>Produk</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
+    
+    <h2>3. Data Teknis (Loading)</h2>
     <div class="field"><label>Nomor Segel</label><input type="text" id="i-segel" value="-"></div>
-    <div class="field"><label>Tanggal Loading</label><input type="text" id="i-load-date" value="-"></div>
     <div class="field"><label>Meter Awal (mm)</label><input type="text" id="i-m1" value="-"></div>
     <div class="field"><label>Meter Akhir (mm)</label><input type="text" id="i-m2" value="-"></div>
     <div class="field"><label>Tinggi Cairan / T2 (mm)</label><input type="text" id="i-t2" value="-"></div>
-    <div class="field"><label>Nomor PO</label><input type="text" id="i-po-num" value="-"></div>
-    <div class="field"><label>Nomor SO</label><input type="text" id="i-so-desc" value="-"></div>
-    <div class="field"><label>PO Quantity (L)</label><input type="text" id="i-poqty" value="-"></div>
-    <div class="field"><label>Note</label><textarea id="i-other-note" rows="2"></textarea></div>
+    <div class="field"><label>Note Tambahan</label><textarea id="i-other-note" rows="2"></textarea></div>
 </div>
 
 <div id="sj-container">
     <div class="header">
         <div class="logo-area">
-            <img src="ikaen.png" alt="Logo" class="main-logo" onerror="this.style.opacity='0'">
+            <img src="https://via.placeholder.com/80x80?text=IKAEN" alt="Logo" class="main-logo">
             <div class="logo-text">
                 <b><span>I</span><span>N</span><span>V</span><span>E</span><span>S</span><span>T</span><span>A</span><span>M</span><span>A</span></b>
                 <span>KALIMANTAN ENERGI</span>
@@ -167,7 +167,7 @@
         </tr>
         <tr>
             <td><div class="label-group"><span class="label-id">Tgl Pengaliran</span><span class="label-en">Loading Date</span></div></td>
-            <td>: <span class="val" id="v-load">-</span></td>
+            <td>: <span class="val" id="v-tgl-load">-</span></td>
             <td><div class="label-group"><span class="label-id">Nomor Polisi</span><span class="label-en">Police Plat Number</span></div></td>
             <td>: <span class="val" id="v-plat">-</span></td>
         </tr>
@@ -194,7 +194,6 @@
         <table class="desc-table">
             <tr><td><b>Nomor PO:</b></td><td>: <span class="val" id="v-po-num">-</span></td></tr>
             <tr><td><b>Nomor SO:</b></td><td>: <span class="val" id="v-so-desc">-</span></td></tr>
-            <tr><td><b>PO Quantity:</b></td><td>: <span class="val" id="v-poqty">-</span> L</td></tr>
         </table>
         <div class="note-box">
             Note: Dengan ditanda tanganinya surat ini, menandakan bahwa produk sudah diterima dalam keadaan kualitas dan kuantitas yang baik.
@@ -210,10 +209,7 @@
         <tr>
             <td><br><br>( . . . . . . . . . . . . )</td>
             <td><span id="v-driver">-</span></td>
-            <td>
-                <img src="ike.png" alt="Stamp" class="stamp-container" onerror="this.style.opacity='0'">
-                <br><br>Admin IKAEN
-            </td>
+            <td><br><br>Admin IKAEN</td>
         </tr>
     </table>
 
@@ -238,91 +234,109 @@
     const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
     const qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
+    // Sinkronisasi Nomor SJ Otomatis dari Supabase
     async function syncNomorSJ() {
         const now = new Date();
         const romawi = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][now.getMonth()];
-        const suffix = `/${romawi}/${now.getFullYear()}`;
-        const tglStr = now.getDate() + " " + ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"][now.getMonth()] + " " + now.getFullYear();
+        const year = now.getFullYear();
+        const suffix = `/SJ-IKE/${romawi}/${year}`;
         
+        // Format Tanggal Hari Ini
+        const tglStr = now.getDate() + " " + ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"][now.getMonth()] + " " + now.getFullYear();
         if(!document.getElementById('i-tgl').value) document.getElementById('i-tgl').value = tglStr;
 
         try {
-            const { data, error } = await _supabase.from('data_ikaen').select('no_sj').ilike('no_sj', `%${suffix}`).order('no_sj', { ascending: false }).limit(1);
+            // Ambil nomor SJ terakhir dari tabel data_ikaen
+            const { data, error } = await _supabase
+                .from('data_ikaen')
+                .select('no_sj')
+                .ilike('no_sj', `%${suffix}`)
+                .order('no_sj', { ascending: false })
+                .limit(1);
+
             let nextNum = 1;
             if (data && data.length > 0) {
                 const lastNum = parseInt(data[0].no_sj.split('/')[0]);
                 if(!isNaN(lastNum)) nextNum = lastNum + 1;
             }
-            document.getElementById('i-no').value = String(nextNum).padStart(3, '0') + "/SJ-IKE" + suffix;
+            
+            document.getElementById('i-no').value = String(nextNum).padStart(3, '0') + suffix;
             upd();
         } catch (e) {
-            document.getElementById('i-no').value = "001/SJ-IKE" + suffix;
+            console.error(e);
+            document.getElementById('i-no').value = "001" + suffix;
             upd();
         }
     }
 
+    // Simpan Data ke Supabase
     async function saveData() {
         const btn = document.getElementById('btn-save');
-        const originalText = btn.innerText;
         const noSj = document.getElementById('i-no').value;
 
-        if(!noSj || noSj === "-") { alert("Nomor SJ wajib ada."); return; }
+        if(!noSj) { alert("Nomor SJ tidak boleh kosong!"); return; }
 
-        btn.innerText = "⏳ SIMPAN..."; 
+        btn.innerText = "⏳ MENYIMPAN..."; 
         btn.disabled = true;
 
-        // DATA YANG DIKIRIM (Hanya 6 sesuai request)
         const payload = {
             tanggal: document.getElementById('i-tgl').value,
             no_sj: noSj,
             tujuan: document.getElementById('i-po-to').value,
             no_polisi: document.getElementById('i-plat').value,
             driver: document.getElementById('i-driver').value,
-            volume: document.getElementById('i-vol').value
+            volume: parseFloat(document.getElementById('i-vol').value) || 0,
+            no_memo: document.getElementById('i-so-desc').value, // Menggunakan kolom no_memo untuk SO jika diperlukan
+            created_at: new Date().toISOString()
         };
 
         try {
             const { error } = await _supabase.from('data_ikaen').insert([payload]);
             if (error) throw error;
-            alert("✅ Data Berhasil Disimpan ke Supabase!");
-            await syncNomorSJ(); 
+            
+            alert("✅ Data Berhasil Disimpan ke Database!");
+            await syncNomorSJ(); // Refresh nomor SJ setelah simpan
         } catch (e) {
-            alert("❌ Gagal Simpan: " + (e.message || "Cek Koneksi"));
+            alert("❌ Gagal Simpan: " + e.message);
         } finally {
-            btn.innerText = originalText;
+            btn.innerText = "💾 SIMPAN";
             btn.disabled = false;
         }
     }
 
+    // Fungsi Update Tampilan Real-time
     function upd() {
         const mapping = [
-            ['i-no', 'v-no'], ['i-tgl', 'v-tgl'], ['i-lokasi', 'v-lokasi'],
-            ['i-prod', 'v-prod'], ['i-trans', 'v-trans'], ['i-vol', 'v-vol'],
-            ['i-plat', 'v-plat'], ['i-segel', 'v-segel'], ['i-m1', 'v-m1'],
-            ['i-m2', 'v-m2'], ['i-t2', 'v-t2'], ['i-po-num', 'v-po-num'],
-            ['i-driver', 'v-driver'], ['i-other-note', 'v-other-note'],
-            ['i-do-desc', 'v-do-top'], ['i-so-desc', 'v-so-top'],
-            ['i-so-desc', 'v-so-desc'], ['i-poqty', 'v-poqty'],
-            ['i-load-date', 'v-load'], ['i-po-to', 'v-po-to-header'],
-            ['i-po-to', 'v-dest-table']
+            ['i-no', 'v-no'], ['i-tgl', 'v-tgl'], ['i-tgl', 'v-tgl-load'],
+            ['i-lokasi', 'v-lokasi'], ['i-prod', 'v-prod'], ['i-trans', 'v-trans'], 
+            ['i-vol', 'v-vol'], ['i-plat', 'v-plat'], ['i-segel', 'v-segel'], 
+            ['i-m1', 'v-m1'], ['i-m2', 'v-m2'], ['i-t2', 'v-t2'], 
+            ['i-po-num', 'v-po-num'], ['i-driver', 'v-driver'], ['i-other-note', 'v-other-note'],
+            ['i-do-desc', 'v-do-top'], ['i-so-desc', 'v-so-top'], ['i-so-desc', 'v-so-desc'],
+            ['i-po-to', 'v-po-to-header'], ['i-po-to', 'v-dest-table']
         ];
+
         mapping.forEach(([inputId, viewId]) => {
             const val = document.getElementById(inputId).value;
             if(document.getElementById(viewId)) document.getElementById(viewId).innerText = val || "-";
         });
+        
         qrcode.makeCode("VERIFIED-IKE-" + document.getElementById('i-no').value);
     }
 
     function downloadPDF() {
         const element = document.getElementById('sj-container');
-        const fileName = 'SJ-' + document.getElementById('i-no').value.replace(/[/\\?%*:|"<>]/g, '-');
-        html2pdf().set({
-            margin: 0, filename: fileName + '.pdf', image: { type: 'jpeg', quality: 0.98 },
+        const opt = {
+            margin: 0,
+            filename: 'SJ_IKAEN_' + document.getElementById('i-no').value.replace(/\//g, '-') + '.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
+        };
+        html2pdf().set(opt).from(element).save();
     }
 
+    // Event Listeners
     document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', upd));
     window.onload = syncNomorSJ;
 </script>
