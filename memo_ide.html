@@ -60,7 +60,6 @@
             position: relative; overflow: hidden;
         }
 
-        /* Merapikan Header Agar Lebih Naik */
         .header { 
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 2px solid var(--primary-blue); padding-bottom: 10px; margin-bottom: 15px; 
@@ -77,7 +76,6 @@
             text-align: right; font-size: 9px; line-height: 1.4; max-width: 350px; color: #333;
         }
 
-        /* Meta Section */
         .memo-meta { margin-bottom: 15px; font-size: 13px; }
         .meta-row { display: flex; margin-bottom: 2px; }
         .meta-label { width: 120px; color: #555; }
@@ -87,13 +85,11 @@
         .recipient-block { margin-bottom: 15px; line-height: 1.4; font-size: 13px; }
         .details-box { margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-left: 4px solid var(--primary-blue); font-size: 13px; }
 
-        /* Table Style */
         table.data-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
         table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 8px 5px; text-align: center; font-size: 11px; }
         table.data-table th { background: var(--primary-blue); color: white; font-weight: bold; }
         table.data-table tr:nth-child(even) { background-color: #f2f6fa; }
 
-        /* Signature Area */
         .signature-container { margin-top: 30px; text-align: left; font-size: 13px; }
         .sig-img { width: 160px; margin: 10px 0 5px -10px; display: block; }
 
@@ -121,9 +117,11 @@
         <label>Tabel Tujuan</label>
         <select id="i-target-table" onchange="initPage()">
             <option value="data_ide">PT. INDO DHARMA ENERGI</option>
+            <option value="data_ikaen">PT. IKAEN</option>
+            <option value="data_kse">PT. KSE</option>
         </select>
     </div>
-    <div class="input-group"><label>Nomor Memo (Otomatis)</label><input type="text" id="inNomor"></div>
+    <div class="input-group"><label>Nomor Memo (Otomatis)</label><input type="text" id="inNomor" readonly style="background: #1a252f;"></div>
     <div class="input-group"><label>Tanggal Memo (YYYY/MM/DD)</label><input type="text" id="inTglMemo"></div>
 
     <div class="section-title">Informasi Loading</div>
@@ -228,7 +226,6 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // --- LOGIKA OTOMATIS TANGGAL & NOMOR ---
     function formatIndoDate(dateObj) {
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
@@ -245,19 +242,33 @@
         const table = document.getElementById('i-target-table').value;
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const monthRoman = roman[now.getMonth()];
+        const jenisDok = "MEMO PENGALIRAN";
 
         try {
-            const { count } = await _supabase.from(table).select('*', { count: 'exact', head: true });
+            // PENGHITUNGAN BERDASARKAN JENIS DOKUMEN AGAR TIDAK BENTROK DENGAN SJ
+            const { count, error } = await _supabase
+                .from(table)
+                .select('*', { count: 'exact', head: true })
+                .eq('jenis_dokumen', jenisDok);
+
+            if (error) throw error;
+
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            document.getElementById('inNomor').value = `${nextNo}/MEMO-IDE/${monthRoman}/${yyyy}`;
+            
+            // Kode PT Dinamis
+            let codePT = "IDE";
+            if(table === "data_ikaen") codePT = "IKN";
+            if(table === "data_kse") codePT = "KSE";
+
+            document.getElementById('inNomor').value = `${nextNo}/MEMO-${codePT}/${monthRoman}/${yyyy}`;
         } catch (e) {
+            console.error(e);
             document.getElementById('inNomor').value = `001/MEMO-IDE/${monthRoman}/${yyyy}`;
         }
         update();
     }
 
     function update() {
-        // Update Meta
         document.getElementById('outNomor').innerText = document.getElementById('inNomor').value;
         
         const rawDate = document.getElementById('inTglMemo').value;
@@ -274,7 +285,6 @@
         document.getElementById('outTglLoad').innerText = document.getElementById('inTglLoad').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
-        // Update Table
         let total = 0;
         let tableHTML = "";
         for (let i = 1; i <= 2; i++) {
@@ -303,30 +313,36 @@
     async function saveData() {
         const btn = document.getElementById('btnSave');
         const table = document.getElementById('i-target-table').value;
+        const jenisDok = "MEMO PENGALIRAN";
+        
         btn.innerText = "SIMPAN..."; btn.disabled = true;
+
+        const q1 = parseFloat(document.getElementById('inQty1').value) || 0;
+        const q2 = parseFloat(document.getElementById('inQty2').value) || 0;
 
         const payload = {
             tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
             no_dokumen: document.getElementById('inNomor').value,
-            jenis_dokumen: "MEMO PENGALIRAN",
+            jenis_dokumen: jenisDok,
             tujuan: "PT. Sinarindo Sukses Selalu",
-            nopol: document.getElementById('inNopol1').value, // Ambil nopol unit 1 sebagai referensi utama
-            qty: parseFloat(document.getElementById('inQty1').value) + parseFloat(document.getElementById('inQty2').value)
+            nopol: document.getElementById('inNopol1').value,
+            sopir: document.getElementById('inDriver1').value,
+            qty: q1 + q2
         };
 
         const { error } = await _supabase.from(table).insert([payload]);
         if(error) {
             alert("Gagal: " + error.message);
         } else {
-            alert("Data Berhasil Disimpan ke " + table);
-            initPage();
+            alert("Data Memo Berhasil Disimpan ke " + table);
+            initPage(); // Reset untuk nomor berikutnya
         }
         btn.innerText = "💾 SIMPAN"; btn.disabled = false;
     }
 
     function downloadPDF() {
         const element = document.getElementById('memo-area');
-        const filename = 'Memo_IDE_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf';
+        const filename = 'Memo_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf';
         html2pdf().set({
             margin: 0,
             filename: filename,
