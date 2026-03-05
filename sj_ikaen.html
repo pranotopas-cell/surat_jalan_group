@@ -110,8 +110,6 @@
         
         .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 25px; }
         .btn { padding: 12px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 9pt; color: white; transition: 0.3s; }
-        .btn-full { grid-column: span 2; }
-        .btn-home { background: #333; margin-bottom: 10px; }
         .btn-print { background: var(--primary-red); }
         .btn-preview { background: #6c757d; }
         .btn-download { background: var(--primary-blue); }
@@ -128,8 +126,6 @@
 <body>
 
 <div class="editor-panel">
-    <button class="btn btn-home btn-full" onclick="window.location.href='dashboard.html'">🏠 KEMBALI KE DASHBOARD</button>
-
     <h2>Database Settings</h2>
     <div class="field">
         <label>Pilih Tabel Simpan</label>
@@ -141,26 +137,26 @@
     </div>
 
     <h2>1. Informasi Header</h2>
-    <div class="field"><label>Tanggal Dokumen (Otomatis)</label><input type="text" id="i-tgl" readonly></div>
-    <div class="field"><label>Nomor Surat Jalan (Auto)</label><input type="text" id="i-no" readonly></div>
+    <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
+    <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header (Location)</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
     <h2>2. Tabel Rincian Utama</h2>
-    <div class="field"><label>Transportir (Transporter)</label><input type="text" id="i-trans" value="-"></div>
-    <div class="field"><label>Produk (Product)</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
-    <div class="field"><label>Nomor DO (DO Number)</label><input type="text" id="i-do-desc" value="-"></div>
-    <div class="field"><label>Volume / Kapasitas (L)</label><input type="text" id="i-vol" value="0"></div>
-    <div class="field"><label>Nomor SO (SO Number)</label><input type="text" id="i-so-desc" value="-"></div>
-    <div class="field"><label>Tanggal Pengaliran</label><input type="date" id="i-load-date"></div>
-    <div class="field"><label>Nomor Polisi (Plat No)</label><input type="text" id="i-plat" value="-"></div>
-    <div class="field"><label>Nomor Segel (Seal No)</label><input type="text" id="i-segel" value="-"></div>
+    <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="-"></div>
+    <div class="field"><label>Produk</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
+    <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
+    <div class="field"><label>Volume (L)</label><input type="text" id="i-vol" value="0"></div>
+    <div class="field"><label>Nomor SO</label><input type="text" id="i-so-desc" value="-"></div>
+    <div class="field"><label>Tgl Pengaliran</label><input type="date" id="i-load-date"></div>
+    <div class="field"><label>Plat Nomor</label><input type="text" id="i-plat" value="-"></div>
+    <div class="field"><label>Nomor Segel</label><input type="text" id="i-segel" value="-"></div>
     <div class="field"><label>Meter Awal (mm)</label><input type="text" id="i-m1" value="-"></div>
     <div class="field"><label>Meter Akhir (mm)</label><input type="text" id="i-m2" value="-"></div>
     <div class="field"><label>Tinggi Cairan (T2)</label><input type="text" id="i-t2" value="-"></div>
 
     <h2>3. Deskripsi Pesanan</h2>
-    <div class="field"><label>Nomor Purchase Order (PO)</label><input type="text" id="i-po-num" value="-"></div>
+    <div class="field"><label>Nomor PO</label><input type="text" id="i-po-num" value="-"></div>
     <div class="field"><label>PO Quantity (L)</label><input type="text" id="i-poqty" value="0"></div>
 
     <h2>4. Pengesahan & Catatan</h2>
@@ -270,7 +266,7 @@
                 <td>: <span class="val" id="v-poqty">-</span> L</td>
             </tr>
         </table>
-        <div class="note-box" id="v-notetext">
+        <div class="note-box">
             Note: Dengan ditanda tanganinya surat ini, menandakan bahwa produk sudah diterima dalam keadaan kualitas dan kuantitas yang baik.
         </div>
     </div>
@@ -310,20 +306,25 @@
 </div>
 
 <script>
-    // --- SUPABASE CONFIG ---
-    const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
+    // --- SUPABASE CONFIG (GANTI DENGAN KEY ANDA) ---
+    const SUPABASE_URL = 'https://URL_PROYEK_ANDA.supabase.co';
+    const SUPABASE_KEY = 'API_KEY_ANON_ANDA';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
-    async function initPage() {
-        // Set Tanggal
-        const now = new Date();
-        const options = { day: '2-digit', month: 'long', year: 'numeric' };
-        document.getElementById('i-tgl').value = now.toLocaleDateString('id-ID', options);
+    function formatDisplayDate(dateObj) {
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+    }
 
-        // Auto Numbering
+    async function initPage() {
+        const now = new Date();
+        
+        // Format Panel: 2026/03/05
+        const panelDate = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
+        document.getElementById('i-tgl').value = panelDate;
+
         const table = document.getElementById('i-target-table').value;
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const month = roman[now.getMonth()];
@@ -331,6 +332,7 @@
 
         try {
             const { count } = await _supabase.from(table).select('*', { count: 'exact', head: true });
+            // Mulai dari 1 jika kosong (count=0 + 1 = 1)
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
             document.getElementById('i-no').value = `${nextNo}/SJ-IKE/${month}/${year}`;
         } catch (e) {
@@ -340,8 +342,18 @@
     }
 
     function upd() {
+        // Logika Tanggal: Ambil dari panel (YYYY/MM/DD), ubah ke (DD Bulan YYYY) untuk tampilan SJ
+        const inputDate = document.getElementById('i-tgl').value;
+        const dateParts = inputDate.split('/');
+        if(dateParts.length === 3) {
+            const d = new Date(dateParts[0], dateParts[1]-1, dateParts[2]);
+            document.getElementById('v-tgl').innerText = isNaN(d) ? inputDate : formatDisplayDate(d);
+        } else {
+            document.getElementById('v-tgl').innerText = inputDate;
+        }
+
         const fields = [
-            ['v-no', 'i-no'], ['v-tgl', 'i-tgl'], ['v-lokasi', 'i-lokasi'],
+            ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'],
             ['v-trans', 'i-trans'], ['v-prod', 'i-prod'], ['v-do-top', 'i-do-desc'],
             ['v-vol', 'i-vol'], ['v-so-top', 'i-so-desc'], ['v-load', 'i-load-date'],
             ['v-plat', 'i-plat'], ['v-m1', 'i-m1'], ['v-m2', 'i-m2'],
@@ -351,8 +363,7 @@
         ];
 
         fields.forEach(pair => {
-            const val = document.getElementById(pair[1]).value;
-            document.getElementById(pair[0]).innerText = val || '-';
+            document.getElementById(pair[0]).innerText = document.getElementById(pair[1]).value || '-';
         });
 
         document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
@@ -369,7 +380,7 @@
         btn.disabled = true;
 
         const payload = {
-            tanggal: document.getElementById('i-tgl').value,
+            tanggal: document.getElementById('v-tgl').innerText, // Simpan format tampilan (05 Maret 2026)
             no_dokumen: document.getElementById('i-no').value,
             jenis_dokumen: "SURAT JALAN",
             tujuan: document.getElementById('i-po-to').value,
@@ -406,4 +417,3 @@
 </script>
 </body>
 </html>
-
