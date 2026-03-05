@@ -38,7 +38,7 @@
         input, textarea { padding: 6px; border: 1px solid #bbb; border-radius: 4px; font-size: 8.5pt; }
         .editor-panel h2 { margin: 12px 0 5px 0; color: var(--primary-red); font-size: 9pt; border-bottom: 1px solid #eee; }
 
-        /* SURAT JALAN STYLING (KEMBALI KE AWAL) */
+        /* SURAT JALAN STYLING */
         .val { font-weight: bold; font-size: 9.5pt; display: inline-block; margin-top: 2px; }
         .header { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .logo-area { display: flex; align-items: center; gap: 15px; }
@@ -218,13 +218,13 @@
 </div>
 
 <script>
-    // KONFIGURASI SUPABASE
-    const SB_URL = "https:/ntaectphgoelmhzrkatp.supabase.co";
+    // KONFIGURASI SUPABASE (DIREVISI)
+    const SB_URL = "https://ntaecfphgoelmhzrkatp.supabase.co";
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg";
     const _supabase = supabase.createClient(SB_URL, SB_KEY);
     const qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
-    // 1. SYNC NOMOR SJ (Cek ke database)
+    // 1. SYNC NOMOR SJ
     async function syncNomorSJ() {
         const now = new Date();
         const romawi = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][now.getMonth()];
@@ -233,14 +233,16 @@
         try {
             const { data, error } = await _supabase
                 .from('data_ikaen')
-                .select('no_sj')
-                .ilike('no_sj', `%${suffix}`)
-                .order('no_sj', { ascending: false })
+                .select('no_dokumen') // Ganti no_sj ke no_dokumen
+                .ilike('no_dokumen', `%${suffix}`)
+                .order('no_dokumen', { ascending: false })
                 .limit(1);
+
+            if (error) throw error;
 
             let nextNum = 1;
             if (data && data.length > 0) {
-                const lastNum = parseInt(data[0].no_sj.split('/')[0]);
+                const lastNum = parseInt(data[0].no_dokumen.split('/')[0]);
                 if(!isNaN(lastNum)) nextNum = lastNum + 1;
             }
             
@@ -248,7 +250,8 @@
             document.getElementById('i-tgl').value = now.getDate() + " " + ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"][now.getMonth()] + " " + now.getFullYear();
             upd();
         } catch (e) {
-            console.error("Gagal Sync:", e);
+            console.error("Gagal Sync:", e.message);
+            alert("Gagal Sync Nomor: " + e.message);
         }
     }
 
@@ -256,27 +259,34 @@
     async function saveData() {
         const btn = document.getElementById('btn-save');
         const noSj = document.getElementById('i-no').value;
+        const tgl = document.getElementById('i-tgl').value;
+        const tujuan = document.getElementById('i-po-to').value;
+        const qty = document.getElementById('i-vol').value;
 
-        if (!noSj || noSj === "-") { alert("Nomor SJ wajib diisi!"); return; }
+        // Validasi Otomatis (Request User: Gak ada data gak bisa masuk)
+        if (!noSj || !tgl || !tujuan || !qty || qty == 0) { 
+            alert("Gagal! Data Utama (No SJ, Tanggal, Tujuan, Qty) tidak boleh kosong."); 
+            return; 
+        }
 
         btn.innerText = "⏳ SEDANG MENYIMPAN..."; 
         btn.disabled = true;
 
         const payload = {
-            tanggal: document.getElementById('i-tgl').value,
-            no_sj: noSj,
-            tujuan: document.getElementById('i-po-to').value,
-            no_polisi: document.getElementById('i-plat').value,
-            driver: document.getElementById('i-driver').value,
-            volume: parseFloat(document.getElementById('i-vol').value) || 0
+            tanggal: tgl,
+            no_dokumen: noSj, // Ganti no_sj ke no_dokumen
+            jenis_dokumen: "Surat Jalan",
+            tujuan: tujuan,
+            nopol: document.getElementById('i-plat').value, // Ganti no_polisi ke nopol
+            sopir: document.getElementById('i-driver').value, // Ganti driver ke sopir
+            qty: parseFloat(qty) || 0 // Ganti volume ke qty
         };
 
         try {
             const { error } = await _supabase.from('data_ikaen').insert([payload]);
-
             if (error) throw error;
 
-            alert("✅ BERHASIL! Data telah tersimpan di database.");
+            alert("✅ BERHASIL! Data telah tersimpan di database IKAEN.");
             btn.innerText = "✅ TERSIMPAN";
             btn.className = "btn btn-secondary";
         } catch (e) {
@@ -287,7 +297,7 @@
         }
     }
 
-    // 3. FUNGSI UPDATE TAMPILAN (REAL-TIME)
+    // 3. FUNGSI UPDATE TAMPILAN
     function upd() {
         const mapping = [
             ['i-no', 'v-no'], ['i-tgl', 'v-tgl'], ['i-lokasi', 'v-lokasi'],
@@ -302,8 +312,9 @@
         ];
         
         mapping.forEach(([inputId, viewId]) => {
-            const val = document.getElementById(inputId).value;
-            if(document.getElementById(viewId)) document.getElementById(viewId).innerText = val || "-";
+            const elInput = document.getElementById(inputId);
+            const elView = document.getElementById(viewId);
+            if(elInput && elView) elView.innerText = elInput.value || "-";
         });
         
         qrcode.makeCode("VERIFIED-IKE-" + document.getElementById('i-no').value);
@@ -326,4 +337,3 @@
 </script>
 </body>
 </html>
-
