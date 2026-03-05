@@ -70,7 +70,7 @@
     <h2>Database & Document Type</h2>
     <div class="field">
         <label>Pilih Perusahaan (Tabel)</label>
-        <select id="i-target-table" onchange="initPage()">
+        <select id="i-target-table" onchange="generateAutoNumber()">
             <option value="data_kse">PT. KHATULISTIWA SINAR ENERGI (KSE)</option>
             <option value="data_ikaen">PT. IKAEN (IKN)</option>
             <option value="data_ide">PT. INDO DHARMA ENERGI (IDE)</option>
@@ -78,7 +78,7 @@
     </div>
     <div class="field">
         <label>Jenis Dokumen</label>
-        <select id="i-doc-type" onchange="initPage()">
+        <select id="i-doc-type" onchange="generateAutoNumber()">
             <option value="SURAT JALAN">SURAT JALAN (SJ)</option>
             <option value="MEMO">MEMO</option>
         </select>
@@ -86,7 +86,7 @@
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Dokumen (Manual)</label><input type="text" id="i-no"></div>
+    <div class="field"><label>Nomor Dokumen (Auto/Manual)</label><input type="text" id="i-no"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -247,24 +247,48 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
-    function initPage() {
+    async function generateAutoNumber() {
+        const table = document.getElementById('i-target-table').value;
+        const docType = document.getElementById('i-doc-type').value;
         const now = new Date();
+        
+        // 1. Set Tanggal Default ke hari ini jika kosong
         if(!document.getElementById('i-tgl').value) {
             document.getElementById('i-tgl').value = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         }
-        const docType = document.getElementById('i-doc-type').value;
-        const table = document.getElementById('i-target-table').value;
-        
-        document.getElementById('v-title-main').innerText = (docType === "MEMO") ? "INTERNAL MEMO" : "DELIVERY ORDER";
-        document.getElementById('v-title-sub').innerText = (docType === "MEMO") ? "MEMO PERUSAHAAN" : "SURAT JALAN";
 
+        // 2. Tentukan Label PT dan Label Dokumen
         let codePT = table === "data_ikaen" ? "IKN" : (table === "data_ide" ? "IDE" : "KSE");
         let codeDoc = docType === "MEMO" ? "MEMO" : "SJ";
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+        const monthRoman = roman[now.getMonth()];
+        const year = now.getFullYear();
 
-        if(!document.getElementById('i-no').value) {
-            document.getElementById('i-no').value = `000/${codeDoc}-${codePT}/${roman[now.getMonth()]}/${now.getFullYear()}`;
+        // 3. Tarik data terakhir dari database untuk menghitung urutan
+        const { data, error } = await _supabase
+            .from(table)
+            .select('no_dokumen')
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+        let nextNum = 1;
+        if (data && data.length > 0) {
+            // Ambil angka depan (misal: "005/SJ-KSE...") -> ambil "005"
+            const lastNo = data[0].no_dokumen;
+            const parts = lastNo.split('/');
+            const lastNum = parseInt(parts[0]);
+            if(!isNaN(lastNum)) {
+                nextNum = lastNum + 1;
+            }
         }
+
+        const formattedNum = nextNum.toString().padStart(3, '0');
+        document.getElementById('i-no').value = `${formattedNum}/${codeDoc}-${codePT}/${monthRoman}/${year}`;
+        
+        // Update tampilan judul di surat
+        document.getElementById('v-title-main').innerText = (docType === "MEMO") ? "INTERNAL MEMO" : "DELIVERY ORDER";
+        document.getElementById('v-title-sub').innerText = (docType === "MEMO") ? "MEMO PERUSAHAAN" : "SURAT JALAN";
+
         upd();
     }
 
@@ -277,10 +301,17 @@
             ['v-t2', 'i-t2'], ['v-po-num', 'i-po-num'], ['v-so-desc', 'i-so-desc'], 
             ['v-poqty-v', 'i-poqty'], ['v-driver', 'i-driver'], ['v-mgr', 'i-mgr'], ['v-other-note', 'i-other-note']
         ];
-        fields.forEach(p => document.getElementById(p[0]).innerText = document.getElementById(p[1]).value || '-');
+        fields.forEach(p => {
+            const displayEl = document.getElementById(p[0]);
+            const inputEl = document.getElementById(p[1]);
+            if(displayEl && inputEl) displayEl.innerText = inputEl.value || '-';
+        });
+        
         document.getElementById('v-tgl').innerText = document.getElementById('i-tgl').value;
         document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
         document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
+        
+        qrcode.clear();
         qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
     }
 
@@ -289,7 +320,6 @@
         const btn = document.querySelector('.btn-save');
         btn.innerText = 'SAVING...'; btn.disabled = true;
 
-        // PAYLOAD DISESUAIKAN DENGAN STRUKTUR SQL ANDA (Supaya KSE tidak error)
         const payload = {
             tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
             no_dokumen: document.getElementById('i-no').value,
@@ -297,15 +327,17 @@
             tujuan: document.getElementById('i-po-to').value,
             nopol: document.getElementById('i-plat').value,
             sopir: document.getElementById('i-driver').value,
-            qty: parseFloat(document.getElementById('i-vol').value) || 0 // i-vol dipetakan ke kolom 'qty'
+            qty: parseFloat(document.getElementById('i-vol').value) || 0
         };
 
         const { error } = await _supabase.from(table).insert([payload]);
 
         if (error) {
-            alert('Error Simpan ke ' + table + ': ' + error.message + '\n\nPastikan kolom "qty" ada di tabel KSE.');
+            alert('Error Simpan: ' + error.message);
         } else {
             alert('Data Berhasil Disimpan ke ' + table);
+            // Setelah simpan, refresh nomor untuk surat berikutnya
+            generateAutoNumber();
         }
         btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
     }
@@ -316,8 +348,11 @@
         html2pdf().set({ margin: 0, filename: 'DOC_'+noDoc+'.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save();
     }
 
+    // Event listener untuk update preview secara realtime
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
-    window.onload = initPage;
+    
+    // Jalankan auto number saat pertama kali buka
+    window.onload = generateAutoNumber;
 </script>
 </body>
 </html>
