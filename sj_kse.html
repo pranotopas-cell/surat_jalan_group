@@ -152,7 +152,7 @@
 <div class="editor-panel">
     <h2>Database Settings</h2>
     <div class="field">
-        <label>Pilih Tabel Simpan (Sesuai PT)</label>
+        <label>Pilih Tabel Simpan (Nama PT)</label>
         <select id="i-target-table" onchange="initPage()">
             <option value="data_kse">DATA KSE</option>
             <option value="data_ikaen">DATA IKAEN</option>
@@ -162,9 +162,9 @@
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no"></div>
+    <div class="field"><label>Nomor Surat Jalan (Auto)</label><input type="text" id="i-no"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
-    <div class="field"><label>Lokasi Header (Location)</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
+    <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
     <h2>2. Tabel Rincian Utama</h2>
     <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="-"></div>
@@ -184,7 +184,7 @@
     <div class="field"><label>PO Quantity (L)</label><input type="text" id="i-poqty" value="0"></div>
 
     <h2>4. Pengesahan & Catatan</h2>
-    <div class="field"><label>Nama Pengemudi (Driver)</label><input type="text" id="i-driver" value="-"></div>
+    <div class="field"><label>Nama Pengemudi</label><input type="text" id="i-driver" value="-"></div>
     <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="Admin Khatulistiwa Sinar Energi"></div>
     <div class="field"><label>Other Note</label><textarea id="i-other-note" rows="2"></textarea></div>
 
@@ -339,7 +339,7 @@
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
     }
 
-    // LOGIKA PENOMORAN OTOMATIS BERDASARKAN PT DAN JENIS DOKUMEN
+    // --- LOGIKA PENOMORAN (BERDASARKAN PT & JENIS DOKUMEN) ---
     async function initPage() {
         const now = new Date();
         const panelDate = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
@@ -351,17 +351,16 @@
         const year = now.getFullYear();
 
         try {
-            // Hitung hanya baris yang merupakan 'SURAT JALAN' di tabel terpilih
+            // Hitung hanya baris 'SURAT JALAN' di tabel terpilih
             const { count, error } = await _supabase
                 .from(table)
-                .select('*', { count: 'exact', head: true })
+                .select('no_dokumen', { count: 'exact', head: true })
                 .eq('jenis_dokumen', 'SURAT JALAN');
             
             if (error) throw error;
 
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
             
-            // Format penomoran (bisa disesuaikan kode PT-nya jika perlu)
             let ptCode = "KSE";
             if(table.includes("ikaen")) ptCode = "IKAEN";
             if(table.includes("ide")) ptCode = "IDE";
@@ -408,6 +407,8 @@
     async function saveData() {
         const table = document.getElementById('i-target-table').value;
         const btn = document.querySelector('.btn-save');
+        const currentNo = document.getElementById('i-no').value;
+
         btn.innerText = 'SAVING...';
         btn.disabled = true;
 
@@ -416,7 +417,7 @@
 
         const payload = {
             tanggal: dbDate,
-            no_dokumen: document.getElementById('i-no').value,
+            no_dokumen: currentNo,
             jenis_dokumen: "SURAT JALAN",
             tujuan: document.getElementById('i-po-to').value,
             nopol: document.getElementById('i-plat').value,
@@ -427,10 +428,11 @@
         const { error } = await _supabase.from(table).insert([payload]);
 
         if (error) {
+            console.error("Supabase Error:", error);
             alert('Gagal simpan: ' + error.message);
         } else {
-            alert('Berhasil disimpan ke ' + table);
-            initPage(); // Refresh penomoran otomatis setelah simpan
+            alert('Berhasil disimpan ke ' + table + '\nNo: ' + currentNo);
+            initPage(); // Refresh nomor urut otomatis
         }
         btn.innerText = 'SIMPAN DATA';
         btn.disabled = false;
