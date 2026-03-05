@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Doc System - KSE Group</title>
+    <title>Digital Doc System - PT. Khatulistiwa Sinar Energi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         :root {
-            --primary-green: #006400; 
-            --accent-tosca: #00af91;  
+            --primary-green: #006400; /* Hijau Tua */
+            --accent-tosca: #00af91;  /* Tosca */
             --light-bg: #f0f9f7;
             --success-green: #28a745;
-            --dark-gray: #525659;
         }
 
         body { 
@@ -22,7 +21,7 @@
             font-size: 10pt; 
             margin: 0; 
             padding: 20px; 
-            background-color: var(--dark-gray); 
+            background-color: #525659; 
             color: #000;
             display: flex; 
             gap: 20px;
@@ -56,7 +55,7 @@
 
         .page-footer-border { position: absolute; bottom: 0; left: 0; width: 100%; height: 12px; background: #222; }
         .accent-box { position: absolute; bottom: 0; right: 0; display: flex; }
-        .accent-green-bar { width: 45px; height: 12px; background: var(--primary-green); transform: skewX(-30deg); margin-right: -5px; }
+        .accent-green { width: 45px; height: 12px; background: var(--primary-green); transform: skewX(-30deg); margin-right: -5px; }
         .accent-tosca-bar { width: 45px; height: 12px; background: var(--accent-tosca); transform: skewX(-30deg); }
 
         .system-qr-footer { position: absolute; bottom: 25px; left: 12mm; display: flex; align-items: center; gap: 10px; }
@@ -74,7 +73,7 @@
         .meta-info-grid { 
             text-align: right; 
             font-size: 8.5pt; 
-            width: 40%; 
+            width: 45%; 
             margin-top: 8px;
         }
         .meta-info-grid table { width: auto; margin-left: auto; border-collapse: collapse; }
@@ -154,8 +153,8 @@
     <div class="field">
         <label>Pilih Perusahaan (Tabel)</label>
         <select id="i-target-table" onchange="initPage()">
-            <option value="data_kse" selected>PT. KSE (Khatulistiwa Sinar Energi)</option>
-            <option value="data_ide">PT. IDE (Indo Dharma Energi)</option>
+            <option value="data_kse" selected>PT. KHATULISTIWA SINAR ENERGI (KSE)</option>
+            <option value="data_ide">PT. INDO DHARMA ENERGI (IDE)</option>
             <option value="data_ikaen">PT. IKAEN (IKN)</option>
         </select>
     </div>
@@ -192,7 +191,7 @@
 
     <h2>4. Pengesahan & Catatan</h2>
     <div class="field"><label>Nama Pengemudi (Driver)</label><input type="text" id="i-driver" value="-"></div>
-    <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="RISKY DANDY SAPUTRA"></div>
+    <div class="field"><label>Nama Penanggung Jawab</label><input type="text" id="i-mgr" value=""></div>
     <div class="field"><label>Other Note</label><textarea id="i-other-note" rows="2"></textarea></div>
 
     <div class="action-group">
@@ -206,19 +205,16 @@
 <div id="sj-container">
     <div class="header">
         <div class="logo-area">
-            <img src="header1.png" alt="Logo" class="main-logo" id="v-logo">
-            <div class="logo-text">
-                <b id="v-co-name">KHATULISTIWA</b>
-                <span id="v-co-sub">SINAR ENERGI</span>
-            </div>
+            <img src="header1.png" alt="Logo PT KSE" class="main-logo">
+            <div class="logo-text"><b>KHATULISTIWA</b><span> SINAR ENERGI </span></div>
         </div>
     </div>
     
     <div class="header">
-        <div class="company-address" id="v-co-addr">
+        <div class="company-address">
             Jln. H.M Rafi'i Rt.24 Pangkalan Bun<br>
             Kotawaringin Barat, Kalimantan Tengah<br>
-            <span style="color:var(--primary-green); font-weight:bold; text-decoration:underline">pt.khatilistiwa sinar .energi@gmail.com</span>
+            <span style="color:var(--primary-green); font-weight:bold; text-decoration:underline">pt.khatulistiwasinarenergi@gmail.com</span>
         </div>
         <div class="meta-info-grid">
             <table>
@@ -312,10 +308,10 @@
             <td><span>( . . . . . . . . . . . . . . . . )</span></td>
             <td><span id="v-driver">-</span></td>
             <td>
-                <img src="stempel.png" alt="Stempel" class="stamp-container" id="v-stamp">
+                <img src="stempel.png" alt="Stempel KSE" class="stamp-container">
                 <div style="position:relative; z-index:2;">
                     <br><br>
-                    <span id="v-mgr">RISKY DANDY SAPUTRA</span>
+                    <span id="v-mgr">-</span>
                 </div>
             </td>
         </tr>
@@ -333,11 +329,10 @@
         </div>
     </div>
     <div class="page-footer-border"></div>
-    <div class="accent-box"><div class="accent-green-bar"></div><div class="accent-tosca-bar"></div></div>
+    <div class="accent-box"><div class="accent-green"></div><div class="accent-tosca-bar"></div></div>
 </div>
 
 <script>
-    // --- SUPABASE CONFIG (Identik dengan IDE) ---
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -361,21 +356,6 @@
         const month = roman[now.getMonth()];
         const year = now.getFullYear();
 
-        // Update Visual Berdasarkan PT
-        if(table === "data_kse") {
-            document.getElementById('v-logo').src = "header1.png";
-            document.getElementById('v-stamp').src = "stempel.png";
-            document.getElementById('v-co-name').innerText = "KHATULISTIWA";
-            document.getElementById('v-co-sub').innerText = "SINAR ENERGI";
-            document.getElementById('v-co-addr').innerHTML = "Jln. H.M Rafi'i Rt.24 Pangkalan Bun<br>Kotawaringin Barat, Kalimantan Tengah<br><span style='color:var(--primary-green); font-weight:bold; text-decoration:underline'>pt.khatilistiwa sinar .energi@gmail.com</span>";
-        } else if(table === "data_ide") {
-            document.getElementById('v-logo').src = "ide1.png";
-            document.getElementById('v-stamp').src = "ide.png";
-            document.getElementById('v-co-name').innerText = "INDO DHARMA";
-            document.getElementById('v-co-sub').innerText = "ENERGI";
-        }
-
-        // Judul Visual
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
@@ -435,7 +415,7 @@
         document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
 
         qrcode.clear();
-        qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
+        qrcode.makeCode("VERIFIED-KSE-" + document.getElementById('i-no').value);
     }
 
     async function saveData() {
@@ -476,7 +456,7 @@
         const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
         html2pdf().set({
             margin: 0,
-            filename: 'DOC_KSE_'+noDoc+'.pdf',
+            filename: 'KSE_DOC_'+noDoc+'.pdf',
             html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(element).save();
