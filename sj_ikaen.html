@@ -62,15 +62,15 @@
         .other-note-container { width: 100%; border: 1px solid #000; border-top: none; padding: 6px 10px; font-size: 8pt; min-height: 45px; box-sizing: border-box; background: #fff; }
 
         /* Editor Panel */
-        .editor-panel { width: 380px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ddd; max-height: 95vh; overflow-y: auto; position: sticky; top: 20px; }
+        .editor-panel { width: 400px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ddd; max-height: 95vh; overflow-y: auto; position: sticky; top: 20px; }
         .editor-panel h2 { margin: 18px 0 8px 0; color: var(--primary-red); font-size: 11pt; border-bottom: 2px solid var(--primary-blue); }
         .field { display: flex; flex-direction: column; margin-bottom: 10px; }
         .field label { font-size: 8pt; font-weight: bold; color: #444; }
         input, textarea { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; }
         
-        .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; }
-        .btn { padding: 12px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 9pt; color: white; transition: 0.3s; text-align: center; }
-        .btn-full { grid-column: span 2; }
+        /* Tombol Sebaris */
+        .action-group { display: flex; flex-wrap: nowrap; gap: 5px; margin-bottom: 20px; }
+        .btn { flex: 1; padding: 10px 5px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 7.5pt; color: white; transition: 0.3s; text-align: center; white-space: nowrap; }
         .btn-save { background: var(--success-green); }
         .btn-print { background: var(--primary-red); }
         .btn-preview { background: #555; }
@@ -83,11 +83,19 @@
 <body>
 
 <div class="editor-panel">
-    <button class="btn btn-home btn-full" onclick="location.reload()">🏠 HOME & SYNC DATA</button>
+    <div class="action-group">
+        <button class="btn btn-home" onclick="location.reload()">🏠 HOME</button>
+        <button class="btn btn-save" onclick="saveToSupabase()">💾 SIMPAN</button>
+        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">👁️ LIHAT</button>
+        <button class="btn btn-print" onclick="window.print()">🖨️ PRINT</button>
+        <button class="btn btn-download" onclick="downloadPDF()">📥 PDF</button>
+    </div>
     
+    <hr>
+
     <h2>1. Informasi Header (Auto)</h2>
-    <div class="field"><label>Tanggal Dokumen</label><input type="text" id="i-tgl" readonly style="background:#eee"></div>
-    <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no" readonly style="background:#eee"></div>
+    <div class="field"><label>Tanggal Dokumen</label><input type="text" id="i-tgl" readonly style="background:#f0f0f0"></div>
+    <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no" readonly style="background:#f0f0f0"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" placeholder="Contoh: PT. Sumber Makmur"></div>
 
     <h2>2. Tabel Rincian Utama</h2>
@@ -110,13 +118,6 @@
     </details>
 
     <div class="field"><label>Other Note</label><textarea id="i-other-note" rows="2"></textarea></div>
-
-    <div class="action-group">
-        <button class="btn btn-save btn-full" onclick="saveToSupabase()">💾 SIMPAN KE SUPABASE</button>
-        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">👁️ PREVIEW</button>
-        <button class="btn btn-print" onclick="window.print()">🖨️ PRINT</button>
-        <button class="btn btn-download btn-full" onclick="downloadPDF()">📥 DOWNLOAD PDF</button>
-    </div>
 </div>
 
 <div id="sj-container">
@@ -233,16 +234,14 @@
 </div>
 
 <script>
-    // --- KONFIGURASI SUPABASE ---
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
-    // --- AUTO GENERATE TANGGAL & NOMOR ---
     async function autoInit() {
-        // 1. Set Tanggal
+        // Set Tanggal Otomatis
         const now = new Date();
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         const romawi = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
@@ -250,22 +249,23 @@
         const dateStr = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
         document.getElementById('i-tgl').value = dateStr;
         
-        // 2. Set Nomor (Sync Supabase untuk hitung baris)
+        // Generate Nomor Otomatis dari Supabase
         try {
             const { count, error } = await supabase.from('surat_jalan').select('*', { count: 'exact', head: true });
+            if (error) throw error;
             const nextNo = (count || 0) + 1;
             const paddedNo = nextNo.toString().padStart(3, '0');
             const noSJ = `${paddedNo}/SJ-IKE/${romawi[now.getMonth()]}/${now.getFullYear()}`;
             document.getElementById('i-no').value = noSJ;
         } catch (e) {
-            document.getElementById('i-no').value = "001/SJ-IKE/MANUAL/2026";
+            console.error("Gagal ambil urutan:", e);
+            document.getElementById('i-no').value = "ERR/SJ-IKE/2026";
         }
         
         upd();
     }
 
     function upd() {
-        // Pemetaan ID input ke ID view
         const mapping = {
             'i-tgl': 'v-tgl', 'i-no': 'v-no', 'i-po-to': 'v-po-to-header', 
             'i-lokasi': 'v-lokasi', 'i-prod': 'v-prod', 'i-trans': 'v-trans',
@@ -280,7 +280,6 @@
             document.getElementById(mapping[inputId]).innerText = val || "-";
         }
         
-        // Khusus link field
         document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value || "-";
         document.getElementById('v-load').innerText = document.getElementById('i-tgl').value;
         document.getElementById('v-poqty').innerText = document.getElementById('i-vol').value;
@@ -292,7 +291,8 @@
 
     async function saveToSupabase() {
         const btn = document.querySelector('.btn-save');
-        btn.innerText = "⏳ MENYIMPAN...";
+        const oldText = btn.innerText;
+        btn.innerText = "⏳...";
         btn.disabled = true;
 
         const data = {
@@ -302,17 +302,17 @@
             tujuan: document.getElementById('i-po-to').value,
             nopol: document.getElementById('i-plat').value,
             sopir: document.getElementById('i-driver').value,
-            qty: parseFloat(document.getElementById('i-vol').value)
+            qty: parseFloat(document.getElementById('i-vol').value) || 0
         };
 
         const { error } = await supabase.from('surat_jalan').insert([data]);
 
         if (error) {
-            alert("Gagal: " + error.message);
+            alert("Gagal Simpan: " + error.message);
         } else {
-            alert("✅ Berhasil Disimpan!");
+            alert("✅ Data Berhasil Tersimpan!");
         }
-        btn.innerText = "💾 SIMPAN KE SUPABASE";
+        btn.innerText = oldText;
         btn.disabled = false;
     }
 
@@ -329,8 +329,7 @@
     }
 
     document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', upd));
-    autoInit(); // Jalankan saat load
+    window.onload = autoInit;
 </script>
 </body>
 </html>
-
