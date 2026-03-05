@@ -374,33 +374,38 @@
     }
 
     async function saveData() {
-        const table = document.getElementById('i-target-table').value;
-        const btn = document.querySelector('.btn-save');
-        btn.innerText = 'SAVING...';
-        btn.disabled = true;
+    const table = document.getElementById('i-target-table').value;
+    const btn = document.querySelector('.btn-save');
+    btn.innerText = 'SAVING...';
+    btn.disabled = true;
 
-        const payload = {
-            tanggal: document.getElementById('v-tgl').innerText, // Simpan format tampilan (05 Maret 2026)
-            no_dokumen: document.getElementById('i-no').value,
-            jenis_dokumen: "SURAT JALAN",
-            tujuan: document.getElementById('i-po-to').value,
-            nopol: document.getElementById('i-plat').value,
-            sopir: document.getElementById('i-driver').value,
-            qty: document.getElementById('i-poqty').value
-        };
+    // AMBIL TANGGAL DARI PANEL (Format: 2026/03/05)
+    // Lalu ubah / menjadi - agar menjadi 2026-03-05 (Standar Database)
+    const rawDate = document.getElementById('i-tgl').value;
+    const dbDate = rawDate.replace(/\//g, '-'); 
 
-        const { error } = await _supabase.from(table).insert([payload]);
+    const payload = {
+        tanggal: dbDate, // SEKARANG MENGIRIM FORMAT 2026-03-05 (Diterima tipe DATE)
+        no_dokumen: document.getElementById('i-no').value,
+        jenis_dokumen: "SURAT JALAN",
+        tujuan: document.getElementById('i-po-to').value,
+        nopol: document.getElementById('i-plat').value,
+        sopir: document.getElementById('i-driver').value,
+        qty: document.getElementById('i-poqty').value
+    };
 
-        if (error) {
-            alert('Gagal simpan: ' + error.message);
-        } else {
-            alert('Berhasil disimpan ke ' + table);
-            initPage();
-        }
-        btn.innerText = 'SIMPAN DATA';
-        btn.disabled = false;
+    const { error } = await _supabase.from(table).insert([payload]);
+
+    if (error) {
+        alert('Gagal simpan: ' + error.message);
+        console.error(error);
+    } else {
+        alert('Berhasil disimpan ke ' + table);
+        initPage();
     }
-
+    btn.innerText = 'SIMPAN DATA';
+    btn.disabled = false;
+}
     function downloadPDF() {
         const element = document.getElementById('sj-container');
         const noSJ = document.getElementById('i-no').value.replace(/\//g, '-');
@@ -417,4 +422,5 @@
 </script>
 </body>
 </html>
+
 
