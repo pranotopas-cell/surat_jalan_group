@@ -35,7 +35,7 @@
         @media print {
             .control-nav, .input-sidebar { display: none !important; }
             body { background: white; }
-            .document-canvas { margin: 0; box-shadow: none; width: 100%; }
+            .document-canvas { margin: 0; box-shadow: none; width: 100%; padding: 10mm 15mm !important; }
         }
     </style>
 </head>
@@ -43,7 +43,7 @@
 
 <div class="control-nav shadow-sm d-flex justify-content-between align-items-center">
     <div class="d-flex gap-2">
-        <button class="btn btn-outline-dark btn-sm" onclick="location.reload()"><i class="bi bi-arrow-clockwise"></i> REFRESH</button>
+        <button class="btn btn-outline-dark btn-sm" onclick="initPage()"><i class="bi bi-arrow-clockwise"></i> REFRESH NO</button>
         <button class="btn btn-dark btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> PRINT</button>
     </div>
     <div class="d-flex gap-2">
@@ -58,16 +58,15 @@
             <h6 class="fw-bold mb-3 text-success border-bottom pb-2">INPUT DATA MEMO</h6>
             <div class="row g-2 mb-3">
                 <div class="col-12"><label class="small fw-bold">Tanggal Surat</label><input type="text" id="in_tgl_surat" class="form-control form-control-sm" oninput="updateView()"></div>
-                <div class="col-12"><label class="small fw-bold">No. Memo (Hanya Kategori Memo)</label><input type="text" id="in_no_memo" class="form-control form-control-sm bg-warning-subtle fw-bold" readonly></div>
+                <div class="col-12"><label class="small fw-bold">No. Memo (Auto Incremental)</label><input type="text" id="in_no_memo" class="form-control form-control-sm bg-light fw-bold text-danger" readonly></div>
                 <div class="col-12"><label class="small fw-bold">Perihal</label><input type="text" id="in_hal" value="Memo Pengaliran BBM" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">Kepada</label><input type="text" id="in_kepada" value="PT. Sinarindo Sukses Selalu" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">No. PO</label><input type="text" id="in_po" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">Tanggal Muat</label><input type="text" id="in_tgl_muat" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">Lokasi Muat</label><input type="text" id="in_lokasi" class="form-control form-control-sm" oninput="updateView()"></div>
             </div>
-
             <h6 class="fw-bold mb-3 text-primary border-bottom pb-2">DATA UNIT</h6>
-            <div class="p-2 border mb-2 bg-light">
+            <div class="p-2 border mb-2 bg-light shadow-sm rounded">
                 <input type="text" id="in_trans_1" placeholder="Transportir" class="form-control form-control-sm mb-1" oninput="updateTable()">
                 <div class="row g-1">
                     <div class="col-6"><input type="text" id="in_nopol_1" placeholder="No Polisi" class="form-control form-control-sm" oninput="updateTable()"></div>
@@ -76,7 +75,7 @@
                     <div class="col-6"><input type="text" id="in_tera_1" placeholder="Tera" class="form-control form-control-sm" oninput="updateTable()"></div>
                 </div>
             </div>
-            <div class="p-2 border mb-2 bg-light">
+            <div class="p-2 border mb-2 bg-light shadow-sm rounded">
                 <input type="text" id="in_trans_2" placeholder="Transportir" class="form-control form-control-sm mb-1" oninput="updateTable()">
                 <div class="row g-1">
                     <div class="col-6"><input type="text" id="in_nopol_2" placeholder="No Polisi" class="form-control form-control-sm" oninput="updateTable()"></div>
@@ -94,38 +93,38 @@
                     <div class="invoice-title">MEMO</div>
                 </div>
                 <div class="address-meta-row">
-                    <div class="text-start">Kepada yang terhormat,<br><b id="out_kepada"></b><br>Di - Tempat</div>
+                    <div class="text-start">Kepada yang terhormat,<br><b id="out_kepada" style="font-size: 13px;"></b><br>Di - Tempat</div>
                     <div>
-                        <table class="meta-table">
-                            <tr><td class="text-end" width="90">Tanggal</td><td width="15" class="text-center">:</td><td width="160"><span id="out_tgl_header"></span></td></tr>
-                            <tr><td class="text-end">Nomor</td><td class="text-center">:</td><td><span id="out_no_memo"></span></td></tr>
-                            <tr><td class="text-end">Perihal</td><td class="text-center">:</td><td><b id="out_hal"></b></td></tr>
+                        <table class="meta-table" style="margin-left: auto;">
+                            <tr><td class="text-end" width="90">Tanggal<br><span class="sub-lang">Date</span></td><td width="15" class="text-center">:</td><td width="160"><span id="out_tgl_header"></span></td></tr>
+                            <tr><td class="text-end">Nomor<br><span class="sub-lang">Number</span></td><td class="text-center">:</td><td><span id="out_no_memo"></span></td></tr>
+                            <tr><td class="text-end">Perihal<br><span class="sub-lang">Subject</span></td><td class="text-center">:</td><td><b id="out_hal"></b></td></tr>
                         </table>
                     </div>
                 </div>
                 <div class="content-body">
                     <p>Dengan hormat,</p>
-                    <p>Bersama ini kami sampaikan rincian pengaliran BBM sebagai berikut:</p>
+                    <p>Bersama ini kami sampaikan Memo Pengaliran BBM Bio Solar Industri, mohon bantuan prosesnya dengan rincian sebagai berikut:</p>
                     <div class="ms-3 my-3">
                         <table class="meta-table">
-                            <tr><td width="140">Nomor PO</td><td width="15">:</td><td><span id="out_po" class="fw-bold"></span></td></tr>
-                            <tr><td>Tanggal Muat</td><td>:</td><td><span id="out_tgl_muat"></span></td></tr>
-                            <tr><td>Lokasi Muat</td><td>:</td><td><span id="out_lokasi"></span></td></tr>
+                            <tr><td width="140">Nomor PO<br><span class="sub-lang">PO Number</span></td><td width="15">:</td><td><span id="out_po" class="fw-bold"></span></td></tr>
+                            <tr><td>Tanggal Muat<br><span class="sub-lang">Loading Date</span></td><td>:</td><td><span id="out_tgl_muat"></span></td></tr>
+                            <tr><td>Lokasi Muat<br><span class="sub-lang">Loading Location</span></td><td>:</td><td><span id="out_lokasi"></span></td></tr>
                         </table>
                     </div>
                     <table class="table-main">
-                        <thead><tr><th>NO</th><th>TRANSPORTIR</th><th>NOMOR POLISI</th><th>DRIVER</th><th>QTY</th><th>TERA</th></tr></thead>
+                        <thead><tr><th width="5%">NO</th><th width="25%">TRANSPORTIR</th><th width="20%">NOMOR POLISI</th><th width="20%">DRIVER</th><th width="15%">QTY (LTR)</th><th width="15%">TERA UNIT</th></tr></thead>
                         <tbody id="table-body"></tbody>
                     </table>
+                    <p>Demikian memo ini kami sampaikan untuk dipergunakan sebagaimana mestinya. Atas kerjasamanya kami ucapkan terima kasih.</p>
                 </div>
                 <div class="signature-area">
-                    <p>Regard,<br><b>PT. Khatulistiwa Sinar Energi</b></p>
-                    <img src="ttd.png" class="ttd-img" onerror="this.src='https://via.placeholder.com/150x80/ffffff/000000?text=TTD'">
+                    <div style="width: 300px;"><p class="mb-1">Regard,</p><p class="mb-0"><b>PT. Khatulistiwa Sinar Energi</b></p><div class="mt-1"><img src="ttd.png" class="ttd-img" onerror="this.src='https://via.placeholder.com/150x80/ffffff/000000?text=TTD+STAMP'"></div></div>
                 </div>
                 <div class="footer-kse">
                     <div class="d-flex justify-content-between align-items-center">
                         <small>E-Form KSE System | Validated</small>
-                        <div class="text-end"><b>PT. KHATULISTIWA SINAR ENERGI</b></div>
+                        <div class="text-end"><b style="font-size: 11px; color: var(--kse-primary);">PT. KHATULISTIWA SINAR ENERGI</b></div>
                     </div>
                 </div>
             </div>
@@ -138,22 +137,30 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Fungsi mendapatkan nomor urut mandiri (Hanya kategori Memo)
-    async function fetchNextNumber() {
-        const jenisDok = "MEMO PENGALIRAN";
+    // LOGIKA AUTO GENERATE BARU
+    async function getLatestMemoNumber() {
         const table = "data_kse";
-        
         try {
-            // Kita hitung baris yang HANYA jenis_dokumen-nya "MEMO PENGALIRAN"
-            const { data, count, error } = await _supabase
+            // Mengambil data terakhir yang mengandung kata "MEMO-KSE" di kolom no_dokumen
+            const { data, error } = await _supabase
                 .from(table)
-                .select('id', { count: 'exact' })
-                .eq('jenis_dokumen', jenisDok);
+                .select('no_dokumen')
+                .ilike('no_dokumen', '%MEMO-KSE%')
+                .order('created_at', { ascending: false })
+                .limit(1);
 
             if (error) throw error;
-            return (count || 0) + 1;
+
+            if (data && data.length > 0) {
+                const lastNoFull = data[0].no_dokumen; // Contoh: "005/MEMO-KSE/III/2026"
+                const parts = lastNoFull.split('/');
+                const lastDigit = parseInt(parts[0]); // Mengambil "005" menjadi angka 5
+                return isNaN(lastDigit) ? 1 : lastDigit + 1;
+            } else {
+                return 1; // Jika belum ada memo sama sekali
+            }
         } catch (e) {
-            console.error("DB Error, menggunakan default 1", e);
+            console.error("Gagal mengambil nomor terakhir:", e);
             return 1;
         }
     }
@@ -166,11 +173,11 @@
         
         document.getElementById('in_tgl_surat').value = `${yyyy}/${mm}/${now.getDate().toString().padStart(2, '0')}`;
         
-        // Panggil fungsi penomoran mandiri
-        const nextIdx = await fetchNextNumber();
-        const nextNoStr = nextIdx.toString().padStart(3, '0');
+        // Eksekusi Logika Nomor Baru
+        const nextNum = await getLatestMemoNumber();
+        const formattedNum = nextNum.toString().padStart(3, '0');
         
-        document.getElementById('in_no_memo').value = `${nextNoStr}/MEMO-KSE/${roman}/${yyyy}`;
+        document.getElementById('in_no_memo').value = `${formattedNum}/MEMO-KSE/${roman}/${yyyy}`;
         
         updateView();
         updateTable();
@@ -179,12 +186,12 @@
     async function saveData() {
         const btn = document.getElementById('btnSave');
         btn.disabled = true;
-        btn.innerText = "PROSES...";
+        btn.innerText = "MENYIMPAN...";
 
         const payload = {
             tanggal: document.getElementById('in_tgl_surat').value.replace(/\//g, '-'),
             no_dokumen: document.getElementById('in_no_memo').value,
-            jenis_dokumen: "MEMO PENGALIRAN", // Identitas kunci agar tidak campur dengan SJ
+            jenis_dokumen: "MEMO PENGALIRAN",
             tujuan: document.getElementById('in_kepada').value,
             nopol: document.getElementById('in_nopol_1').value || "-",
             sopir: document.getElementById('in_driver_1').value || "-",
@@ -192,12 +199,11 @@
         };
 
         const { error } = await _supabase.from('data_kse').insert([payload]);
-        
         if(error) {
-            alert("Gagal simpan: " + error.message);
+            alert("Gagal: " + error.message);
         } else {
-            alert("Memo Berhasil Disimpan ke Database KSE!");
-            initPage(); // Refresh nomor
+            alert("Berhasil! Nomor Memo Berikutnya Akan Diperbarui.");
+            initPage();
         }
         btn.disabled = false;
         btn.innerHTML = `<i class="bi bi-hdd"></i> SIMPAN DATA (DB)`;
@@ -222,7 +228,7 @@
             const t = document.getElementById('in_trans_'+i).value;
             const tr = document.getElementById('in_tera_'+i).value;
             if(n || d || q) {
-                h += `<tr><td>${i}</td><td>${t}</td><td>${n}</td><td>${d}</td><td>${Number(q).toLocaleString()}</td><td>${tr}</td></tr>`;
+                h += `<tr><td>${i}</td><td>${t}</td><td>${n}</td><td>${d}</td><td>${Number(q).toLocaleString('id-ID')}</td><td>${tr}</td></tr>`;
             }
         }
         document.getElementById('table-body').innerHTML = h;
@@ -230,10 +236,12 @@
 
     function downloadPDF() {
         const element = document.getElementById('pdf-area');
+        const filename = `MEMO_KSE_${document.getElementById('in_no_memo').value.replace(/\//g,'-')}.pdf`;
         html2pdf().set({
             margin: 0,
-            filename: `MEMO_KSE_${document.getElementById('in_no_memo').value.replace(/\//g,'-')}.pdf`,
-            html2canvas: { scale: 2 },
+            filename: filename,
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 3, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(element).save();
     }
