@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Jalan Digital - Khatulistiwa Sinar Energi</title>
+    <title>Digital Doc System - KSE Group</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -64,7 +64,7 @@
 
         .header { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .logo-area { display: flex; align-items: center; gap: 15px; }
-        .main-logo { height: 50px; width: auto; }
+        .main-logo { height: 55px; width: auto; }
         
         .logo-text { display: flex; flex-direction: column; justify-content: center; }
         .logo-text b { font-size: 17pt; line-height: 1.1; color: var(--primary-green); text-align: left; }
@@ -84,7 +84,7 @@
         .meta-val { font-weight: bold; color: #000; }
 
         .title-block { text-align: center; margin: 35px 0 20px 0; color: #000; }
-        .title-block h1 { font-size: 20pt; margin: 0; text-decoration: underline; font-weight: bold; letter-spacing: 2px; color: #000; }
+        .title-block h1 { font-size: 20pt; margin: 0; text-decoration: underline; font-weight: bold; letter-spacing: 2px; }
         .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #333; }
 
         .main-table { width: 100%; border-top: 2.5px solid var(--primary-green); border-bottom: 2.5px solid var(--primary-green); border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
@@ -102,7 +102,7 @@
         .sig-table th, .sig-table td { border: 1px solid #000; text-align: center; padding: 5px; width: 33.33%; }
         .sig-table th { background: var(--light-bg); font-size: 9pt; padding: 8px 5px; }
         .sig-table td { height: 105px; vertical-align: bottom; font-weight: bold; font-size: 9.5pt; padding-bottom: 10px; position: relative; }
-        .stamp-container { position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 110px; z-index: 1; opacity: 0.85; pointer-events: none; }
+        .stamp-container { position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 115px; z-index: 1; opacity: 0.85; pointer-events: none; }
 
         .other-note-container { 
             width: 100%; 
@@ -150,20 +150,20 @@
 <body>
 
 <div class="editor-panel">
-    <h2>Database Settings</h2>
+    <h2>Database & Document Type</h2>
     <div class="field">
-        <label>Pilih Tabel Simpan (Nama PT)</label>
+        <label>Pilih Perusahaan (Tabel)</label>
         <select id="i-target-table" onchange="initPage()">
-            <option value="data_kse">DATA KSE</option>
-            <option value="data_ikaen">DATA IKAEN</option>
-            <option value="data_ide">DATA IDE</option>
+            <option value="data_kse">PT. KHATULISTIWA SINAR ENERGI (KSE)</option>
+            <option value="data_ide">PT. INDO DHARMA ENERGI (IDE)</option>
+            <option value="data_ikaen">PT. IKAEN (IKN)</option>
         </select>
     </div>
-    <input type="hidden" id="i-doc-type" value="SJ">
+    <input type="hidden" id="i-doc-type" value="SURAT JALAN">
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Surat Jalan (Auto)</label><input type="text" id="i-no"></div>
+    <div class="field"><label>Nomor Dokumen (Otomatis)</label><input type="text" id="i-no" readonly style="background:#f0f0f0"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -185,7 +185,7 @@
     <div class="field"><label>PO Quantity (L)</label><input type="text" id="i-poqty" value="0"></div>
 
     <h2>4. Pengesahan & Catatan</h2>
-    <div class="field"><label>Nama Pengemudi</label><input type="text" id="i-driver" value="-"></div>
+    <div class="field"><label>Nama Pengemudi (Driver)</label><input type="text" id="i-driver" value="-"></div>
     <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="Admin Khatulistiwa Sinar Energi"></div>
     <div class="field"><label>Other Note</label><textarea id="i-other-note" rows="2"></textarea></div>
 
@@ -303,7 +303,7 @@
             <td><span>( . . . . . . . . . . . . . . . . )</span></td>
             <td><span id="v-driver">-</span></td>
             <td>
-                <img src="stempel.png" alt="Stempel KSE" class="stamp-container">
+                <img src="stempel.png" alt="Stempel" class="stamp-container">
                 <div style="position:relative; z-index:2;">
                     <br><br>
                     <span id="v-mgr">Admin Khatulistiwa Sinar Energi</span>
@@ -319,8 +319,8 @@
     <div class="system-qr-footer">
         <div id="qrcode"></div>
         <div class="system-info-text">
-            <b>E-System Surat Jalan KSE</b><br>
-            <i>Digital Verification Secure System</i>
+            <b>E-System Document KSE Group</b><br>
+            <i id="v-footer-info">Digital Verification Secure System</i>
         </div>
     </div>
     <div class="page-footer-border"></div>
@@ -336,60 +336,50 @@
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
     function formatDisplayDate(dateObj) {
-        if (isNaN(dateObj)) return "-";
+        if (!dateObj || isNaN(dateObj.getTime())) return "-";
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
     }
 
+    // --- LOGIKA PENOMORAN OTOMATIS (IDENTIK INDO DHARMA) ---
     async function initPage() {
         const now = new Date();
         const panelDate = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         document.getElementById('i-tgl').value = panelDate;
 
         const table = document.getElementById('i-target-table').value;
-        const docType = document.getElementById('i-doc-type').value;
+        const docType = "SURAT JALAN"; 
         
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const month = roman[now.getMonth()];
         const year = now.getFullYear();
 
-        // Judul Visual Berdasarkan Jenis
-        const titleMain = document.getElementById('v-title-main');
-        const titleSub = document.getElementById('v-title-sub');
-        
-        if(docType === "MEMO") {
-            if(titleMain) titleMain.innerText = "INTERNAL MEMO";
-            if(titleSub) titleSub.innerText = "MEMO PERUSAHAAN";
-        } else {
-            if(titleMain) titleMain.innerText = "DELIVERY ORDER";
-            if(titleSub) titleSub.innerText = "SURAT JALAN";
-        }
-
         try {
+            // Hitung jumlah data di tabel tujuan (KSE/IDE/IKN)
             const { count, error } = await _supabase
                 .from(table)
                 .select('*', { count: 'exact', head: true })
-                .eq('jenis_dokumen', "SURAT JALAN");
+                .eq('jenis_dokumen', docType);
 
             if (error) throw error;
 
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
             
-            let codeDoc = (docType === "MEMO") ? "MEMO" : "SJ";
-            let codePT = "IDE";
+            // Penentuan Prefix PT
+            let codePT = "KSE";
             if(table === "data_ikaen") codePT = "IKN";
-            if(table === "data_kse") codePT = "KSE";
+            if(table === "data_ide") codePT = "IDE";
 
-            document.getElementById('i-no').value = `${nextNo}/${codeDoc}-${codePT}/${month}/${year}`;
+            document.getElementById('i-no').value = `${nextNo}/SJ-${codePT}/${month}/${year}`;
         } catch (e) {
             console.error(e);
-            document.getElementById('i-no').value = `001/SJ-IDE/${month}/${year}`;
+            document.getElementById('i-no').value = `001/SJ-KSE/${month}/${year}`;
         }
         upd();
     }
 
     function upd() {
-        // Handle Tanggal Dokumen
+        // Handle Tanggal
         const inputDate = document.getElementById('i-tgl').value;
         const dateParts = inputDate.split('/');
         if(dateParts.length === 3) {
@@ -399,14 +389,9 @@
             document.getElementById('v-tgl').innerText = inputDate;
         }
 
-        // Handle Tanggal Pengaliran (Input Type Date)
-        const loadDateVal = document.getElementById('i-load-date').value;
-        if(loadDateVal) {
-            const ld = new Date(loadDateVal);
-            document.getElementById('v-load').innerText = formatDisplayDate(ld);
-        } else {
-            document.getElementById('v-load').innerText = '-';
-        }
+        // Handle Tanggal Load
+        const loadVal = document.getElementById('i-load-date').value;
+        document.getElementById('v-load').innerText = loadVal ? formatDisplayDate(new Date(loadVal)) : '-';
 
         const fields = [
             ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'],
@@ -424,17 +409,21 @@
             if(target && source) target.innerText = source.value || '-';
         });
 
-        document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
-        document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
+        const dest = document.getElementById('i-po-to').value;
+        document.getElementById('v-po-to-header').innerText = dest;
+        document.getElementById('v-dest-table').innerText = dest;
 
         qrcode.clear();
         qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
     }
 
+    // --- LOGIKA SIMPAN DATA (IDENTIK INDO DHARMA) ---
     async function saveData() {
         const table = document.getElementById('i-target-table').value;
         const btn = document.querySelector('.btn-save');
         const currentNo = document.getElementById('i-no').value;
+
+        if(!confirm(`Simpan dokumen ${currentNo} ke tabel ${table}?`)) return;
 
         btn.innerText = 'SAVING...';
         btn.disabled = true;
@@ -455,10 +444,9 @@
         try {
             const { error } = await _supabase.from(table).insert([payload]);
             if (error) throw error;
-            alert('Berhasil disimpan ke ' + table + '\nNo: ' + currentNo);
+            alert('BERHASIL DISIMPAN!');
             initPage(); 
         } catch (error) {
-            console.error("Supabase Error:", error);
             alert('Gagal simpan: ' + error.message);
         } finally {
             btn.innerText = 'SIMPAN DATA';
@@ -468,10 +456,10 @@
 
     function downloadPDF() {
         const element = document.getElementById('sj-container');
-        const noSJ = document.getElementById('i-no').value.replace(/\//g, '-');
+        const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
         html2pdf().set({
             margin: 0,
-            filename: 'SJ_KSE_'+noSJ+'.pdf',
+            filename: 'SJ_'+noDoc+'.pdf',
             html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(element).save();
