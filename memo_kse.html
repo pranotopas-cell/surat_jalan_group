@@ -6,198 +6,223 @@
     <title>KSE - Memo Pengambilan BBM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        :root { --kse-primary: #06402B; }
-        body { background-color: #f4f7f6; font-family: 'Arial', sans-serif; font-size: 12px; }
+        :root { --kse-primary: #06402B; --dark-sidebar: #1a252f; }
+        body { background-color: #525659; font-family: 'Arial', sans-serif; font-size: 12px; margin: 0; display: flex; }
         
-        .control-nav { background: #fff; border-bottom: 2px solid #ddd; padding: 10px 20px; position: sticky; top: 0; z-index: 1000; }
-        .input-sidebar { background: #fff; height: calc(100vh - 60px); overflow-y: auto; padding: 20px; border-right: 1px solid #ddd; }
+        /* Sidebar Styles */
+        .sidebar { 
+            width: 400px; background: var(--dark-sidebar); color: white; height: 100vh; 
+            padding: 15px; overflow-y: auto; position: fixed; left: 0; top: 0;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.3); z-index: 1000;
+        }
+        .sidebar h2 { font-size: 16px; border-bottom: 2px solid var(--kse-primary); padding-bottom: 10px; margin-bottom: 15px; color: #ecf0f1; text-align: center; }
         
-        .document-canvas { 
-            background: white; width: 210mm; min-height: 296mm; 
-            margin: 10px auto; padding: 10mm 20mm; position: relative;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1); color: #000;
+        .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+        .btn-ctrl { 
+            padding: 10px; border: none; border-radius: 4px; cursor: pointer; 
+            font-weight: bold; font-size: 11px; color: white; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+        }
+        .btn-home { background: #7f8c8d; }
+        .btn-save { background: #28a745; }
+        .btn-preview { background: #3498db; }
+        .btn-download { background: #c0392b; }
+
+        .section-title { font-size: 10px; color: #2ecc71; font-weight: bold; margin: 15px 0 8px 0; text-transform: uppercase; border-left: 3px solid #2ecc71; padding-left: 10px; }
+        .input-group-custom { margin-bottom: 8px; }
+        .input-group-custom label { display: block; font-size: 9px; margin-bottom: 2px; color: #bdc3c7; }
+        .input-group-custom input, .input-group-custom select { 
+            width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #2c3e50; 
+            background: #2c3e50; color: white; font-size: 11px;
         }
 
-        .header-section { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
-        .logo-img { height: 45px; width: auto; }
-        .invoice-title { font-size: 32px; font-weight: 900; color: var(--kse-primary); font-style: italic; text-align: right; }
-        
-        .meta-table td { padding: 2px 0; vertical-align: top; line-height: 1.1; }
-        .sub-lang { font-size: 9px; color: #666; font-style: italic; display: block; margin-top: 1px; }
-        
-        /* Layout Sejajar Kepada & Meta (No/Tgl/Hal) */
-        .address-meta-row { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; }
+        /* Document Canvas */
+        .main-content { margin-left: 400px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
+        .document-canvas { 
+            background: white; width: 210mm; min-height: 297mm; 
+            padding: 10mm 15mm; position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5); color: #000;
+        }
 
-        .content-body { margin-top: 40px; line-height: 1.5; } /* Jarak diperlebar sesuai permintaan */
+        .header-section { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; border-bottom: 2px solid var(--kse-primary); padding-bottom: 10px;}
+        .logo-img { height: 50px; width: auto; }
+        .invoice-title { font-size: 32px; font-weight: 900; color: var(--kse-primary); font-style: italic; }
         
-        .table-main { width: 100%; border: 1.5px solid #000; border-collapse: collapse; margin: 15px 0; }
-        .table-main th { background-color: var(--kse-primary) !important; color: white !important; border: 1px solid #000; padding: 8px 4px; text-align: center; font-size: 11px; }
-        .table-main td { border: 1px solid #000; padding: 6px; vertical-align: middle; text-align: center; font-size: 11px; }
+        .meta-table td { padding: 1px 0; vertical-align: top; line-height: 1.1; font-size: 12px; }
+        .sub-lang { font-size: 8px; color: #666; font-style: italic; display: block; }
+        .address-meta-row { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 15px; }
+
+        .content-body { margin-top: 25px; line-height: 1.4; }
+        .table-main { width: 100%; border: 1.2px solid #000; border-collapse: collapse; margin: 12px 0; }
+        .table-main th { background-color: var(--kse-primary) !important; color: white !important; border: 1px solid #000; padding: 6px; text-align: center; }
+        .table-main td { border: 1px solid #000; padding: 5px; text-align: center; }
 
         .signature-area { margin-top: 30px; }
-        .ttd-img { height: 90px; width: auto; margin-top: 5px; }
-        .footer-kse { position: absolute; bottom: 10mm; width: calc(100% - 40mm); border-top: 1px solid #000; padding-top: 10px; }
+        .ttd-img { height: 85px; width: auto; }
+        .footer-kse { position: absolute; bottom: 10mm; width: calc(100% - 30mm); border-top: 1px solid #000; padding-top: 10px; }
 
         @media print {
-            @page { size: A4; margin: 0; }
-            .control-nav, .input-sidebar { display: none !important; }
-            body { background: white; padding: 0; }
-            .document-canvas { margin: 0; box-shadow: none; width: 210mm; height: 297mm; padding: 10mm 15mm !important; }
+            .sidebar { display: none !important; }
+            .main-content { margin-left: 0; padding: 0; background: none; }
+            .document-canvas { box-shadow: none; margin: 0; }
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
-<div class="control-nav shadow-sm d-flex justify-content-between align-items-center">
-    <div class="d-flex gap-2">
-        <a href="/" class="btn btn-outline-dark btn-sm"><i class="bi bi-house-door"></i> HOME</a>
-        <button class="btn btn-dark btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> PRINT / PREVIEW</button>
+<div class="sidebar">
+    <h2>KSE CONTROL PANEL</h2>
+    
+    <div class="action-group">
+        <button class="btn-ctrl btn-home" onclick="initPage()">🏠 HOME</button>
+        <button class="btn-ctrl btn-save" id="btnSave" onclick="saveData()">💾 SIMPAN</button>
+        <button class="btn-ctrl btn-preview" onclick="window.scrollTo(0,0)">👁️ PREVIEW</button>
+        <button class="btn-ctrl btn-download" onclick="downloadPDF()">📥 PDF</button>
     </div>
-    <div class="d-flex gap-2">
-        <button class="btn btn-primary btn-sm" onclick="saveToStorage()"><i class="bi bi-hdd"></i> SIMPAN DATA</button>
-        <button class="btn btn-success btn-sm fw-bold px-4" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> SIMPAN PDF</button>
+
+    <div class="section-title">Database & Meta</div>
+    <div class="input-group-custom">
+        <label>Tabel Database</label>
+        <select id="target_table" onchange="initPage()">
+            <option value="data_kse">PT. KHATULISTIWA SINAR ENERGI</option>
+        </select>
+    </div>
+    <div class="input-group-custom"><label>Tanggal Surat (YYYY/MM/DD)</label><input type="text" id="in_tgl_surat"></div>
+    <div class="input-group-custom"><label>Nomor Memo (Otomatis)</label><input type="text" id="in_no_memo"></div>
+    
+    <div class="section-title">Informasi Memo</div>
+    <div class="input-group-custom"><label>Perihal</label><input type="text" id="in_hal" value="Memo Pengambilan BBM"></div>
+    <div class="input-group-custom"><label>Kepada</label><input type="text" id="in_kepada" value="PT. SINARINDO SUKSES SELALU"></div>
+    <div class="input-group-custom"><label>No. PO</label><input type="text" id="in_po" value="025/PO-KSE/III/2026"></div>
+    <div class="input-group-custom"><label>Tanggal Muat</label><input type="text" id="in_tgl_muat" value="05 Maret 2026"></div>
+    <div class="input-group-custom"><label>Lokasi Muat</label><input type="text" id="in_lokasi" value="Pangkalan Bun - Kalteng"></div>
+
+    <div class="section-title">Data Unit Armada</div>
+    <div id="unit-inputs">
+        <script>
+            for(let i=1; i<=3; i++) {
+                document.write(`
+                    <div class="p-2 border border-secondary mb-2 bg-dark bg-opacity-25 rounded">
+                        <label class="small text-info fw-bold">Unit ${i}</label>
+                        <input type="text" placeholder="Transportir" class="form-control form-control-sm mb-1 bg-dark text-white border-secondary in-trans">
+                        <div class="row g-1">
+                            <div class="col-6"><input type="text" placeholder="No Polisi" class="form-control form-control-sm bg-dark text-white border-secondary in-nopol"></div>
+                            <div class="col-6"><input type="text" placeholder="Driver" class="form-control form-control-sm bg-dark text-white border-secondary in-driver"></div>
+                            <div class="col-6"><input type="number" placeholder="Qty (L)" class="form-control form-control-sm bg-dark text-white border-secondary in-qty"></div>
+                            <div class="col-6"><input type="text" placeholder="Tera Unit" class="form-control form-control-sm bg-dark text-white border-secondary in-tera"></div>
+                        </div>
+                    </div>
+                `);
+            }
+        </script>
     </div>
 </div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-3 input-sidebar shadow-sm">
-            <h6 class="fw-bold mb-3 text-success border-bottom pb-2">DATA MEMO</h6>
-            <div class="row g-2 mb-3">
-                <div class="col-12"><label class="small fw-bold">Tanggal Surat</label><input type="text" id="in_tgl_surat" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
-                <div class="col-12"><label class="small fw-bold">No. Memo</label><input type="text" id="in_no_memo" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
-                <div class="col-12"><label class="small fw-bold">Perihal</label><input type="text" id="in_hal" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
-                <div class="col-12"><label class="small fw-bold">Kepada</label><input type="text" id="in_kepada" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
-                <div class="col-12"><label class="small fw-bold">No. PO</label><input type="text" id="in_po" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
-                <div class="col-12"><label class="small fw-bold">Tanggal Muat</label><input type="text" id="in_tgl_muat" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
-                <div class="col-12"><label class="small fw-bold">Lokasi Muat</label><input type="text" id="in_lokasi" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
-            </div>
+<div class="main-content">
+    <div class="document-canvas" id="pdf-area">
+        <div class="header-section">
+            <img src="header1.png" class="logo-img" onerror="this.src='https://via.placeholder.com/180x60/ffffff/06402B?text=LOGO+KSE'">
+            <div class="invoice-title">MEMO</div>
+        </div>
 
-            <h6 class="fw-bold mb-3 text-primary border-bottom pb-2">DATA UNIT</h6>
-            <div id="unit-inputs">
-                <script>
-                    for(let i=1; i<=5; i++) {
-                        document.write(`
-                            <div class="p-2 border mb-2 bg-light">
-                                <small class="fw-bold">Baris ${i}</small>
-                                <input type="text" placeholder="Transportir" class="form-control form-control-sm mb-1 in-trans auto-save" oninput="updateTable()">
-                                <div class="row g-1">
-                                    <div class="col-6"><input type="text" placeholder="No Polisi" class="form-control form-control-sm in-nopol auto-save" oninput="updateTable()"></div>
-                                    <div class="col-6"><input type="text" placeholder="Driver" class="form-control form-control-sm in-driver auto-save" oninput="updateTable()"></div>
-                                    <div class="col-6"><input type="number" placeholder="Qty" class="form-control form-control-sm in-qty auto-save" oninput="updateTable()"></div>
-                                    <div class="col-6"><input type="text" placeholder="Tera" class="form-control form-control-sm in-tera auto-save" oninput="updateTable()"></div>
-                                </div>
-                            </div>
-                        `);
-                    }
-                </script>
+        <div class="address-meta-row">
+            <div class="text-start">
+                Kepada yang terhormat,<br>
+                <b id="out_kepada" style="font-size: 14px; text-decoration: underline;"></b><br>
+                Di - Tempat
+            </div>
+            <div>
+                <table class="meta-table" style="margin-left: auto;">
+                    <tr>
+                        <td class="text-end" width="100">Tanggal<br><span class="sub-lang">Date</span></td>
+                        <td width="15" class="text-center">:</td>
+                        <td width="150"><span id="out_tgl_header"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-end">Nomor<br><span class="sub-lang">Number</span></td>
+                        <td class="text-center">:</td>
+                        <td><span id="out_no_memo"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-end">Perihal<br><span class="sub-lang">Subject</span></td>
+                        <td class="text-center">:</td>
+                        <td><b id="out_hal"></b></td>
+                    </tr>
+                </table>
             </div>
         </div>
 
-        <div class="col-lg-9 p-0" id="pdf-area">
-            <div class="document-canvas">
-                <div class="header-section">
-                    <img src="header1.png" class="logo-img" onerror="this.src='https://via.placeholder.com/180x60/ffffff/06402B?text=LOGO+KSE'">
-                    <div class="invoice-title">MEMO</div>
+        <div class="content-body">
+            <p>Dengan hormat,</p>
+            <p>Bersama ini kami sampaikan Memo Pengambilan BBM Bio Solar, mohon bantuan prosesnya dengan rincian sebagai berikut:</p>
+            
+            <div class="ms-4 my-3">
+                <table class="meta-table">
+                    <tr>
+                        <td width="140">Nomor PO<br><span class="sub-lang">PO Number</span></td>
+                        <td width="15">:</td>
+                        <td><span id="out_po" class="fw-bold"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Tanggal Muat<br><span class="sub-lang">Loading Date</span></td>
+                        <td>:</td>
+                        <td><span id="out_tgl_muat"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Lokasi Muat<br><span class="sub-lang">Loading Location</span></td>
+                        <td>:</td>
+                        <td><span id="out_lokasi"></span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <p class="mb-2">Adapun data armada/unit adalah sebagai berikut:</p>
+            <table class="table-main">
+                <thead>
+                    <tr>
+                        <th width="5%">NO</th>
+                        <th width="28%">TRANSPORTIR</th>
+                        <th width="18%">NOMOR POLISI</th>
+                        <th width="18%">DRIVER</th>
+                        <th width="16%">QTY (LTR)</th>
+                        <th width="15%">TERA UNIT</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+
+            <p>Demikian memo ini kami sampaikan untuk dipergunakan sebagaimana mestinya. Atas kerjasamanya kami ucapkan terima kasih.</p>
+        </div>
+
+        <div class="signature-area">
+            <div style="width: 300px;">
+                <p class="mb-1">Regard,</p>
+                <p class="mb-0"><b>PT. Khatulistiwa Sinar Energi</b></p>
+                <div class="mt-1">
+                    <img src="ttd.png" class="ttd-img" onerror="this.src='https://via.placeholder.com/150x80/ffffff/000000?text=TTD+STAMP'">
                 </div>
+            </div>
+        </div>
 
-                <div class="address-meta-row">
-                    <div class="text-start">
-                        Kepada yang terhormat,<br>
-                        <b id="out_kepada" style="font-size: 13px;"></b><br>
-                        Di - Tempat
-                    </div>
-                    <div>
-                        <table class="meta-table" style="margin-left: auto;">
-                            <tr>
-                                <td class="text-end" width="90">Tanggal<br><span class="sub-lang">Date</span></td>
-                                <td width="15" class="text-center">:</td>
-                                <td width="160"><span id="out_tgl_header"></span></td>
-                            </tr>
-                            <tr>
-                                <td class="text-end">Nomor<br><span class="sub-lang">Number</span></td>
-                                <td class="text-center">:</td>
-                                <td><span id="out_no_memo"></span></td>
-                            </tr>
-                            <tr>
-                                <td class="text-end">Perihal<br><span class="sub-lang">Subject</span></td>
-                                <td class="text-center">:</td>
-                                <td><b id="out_hal"></b></td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="content-body">
-                    <p>Dengan hormat,</p>
-                    <p>Bersama ini kami sampaikan Memo Pengambilan BBM Bio Solar, mohon bantuan prosesnya dengan rincian sebagai berikut:</p>
-                    
-                    <div class="ms-3 my-3">
-                        <table class="meta-table">
-                            <tr>
-                                <td width="140">Nomor PO<br><span class="sub-lang">PO Number</span></td>
-                                <td width="15">:</td>
-                                <td><span id="out_po" class="fw-bold"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Tanggal Muat<br><span class="sub-lang">Loading Date</span></td>
-                                <td>:</td>
-                                <td><span id="out_tgl_muat"></span></td>
-                            </tr>
-                            <tr>
-                                <td>Lokasi Muat<br><span class="sub-lang">Loading Location</span></td>
-                                <td>:</td>
-                                <td><span id="out_lokasi"></span></td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <p class="mb-2">Adapun data armada/unit adalah sebagai berikut:</p>
-                    <table class="table-main">
-                        <thead>
-                            <tr>
-                                <th width="5%">NO</th>
-                                <th width="25%">TRANSPORTIR</th>
-                                <th width="20%">NOMOR POLISI</th>
-                                <th width="20%">DRIVER</th>
-                                <th width="15%">QTY (LTR)</th>
-                                <th width="15%">TERA UNIT</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body"></tbody>
-                    </table>
-
-                    <p>Demikian memo ini kami sampaikan untuk dipergunakan sebagaimana mestinya. Atas kerjasamanya kami ucapkan terima kasih.</p>
-                </div>
-
-                <div class="signature-area">
-                    <div style="width: 300px;">
-                        <p class="mb-1">Regard,</p>
-                        <p class="mb-0"><b>PT. Khatulistiwa Sinar Energi</b></p>
-                        <div class="mt-1">
-                            <img src="ttd.png" class="ttd-img" onerror="this.src='https://via.placeholder.com/150x80/ffffff/000000?text=TTD+STAMP'">
-                        </div>
+        <div class="footer-kse">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                     <img src="https://api.qrserver.com/v1/create-qr-code/?size=50x50&data=KSE-MEMO-VALID" width="35">
+                     <div style="font-size: 8px; color: #555; line-height: 1.2;">
+                        <b>Digital E-Form KSE System</b><br>
+                        Dokumen ini sah secara sistem digital<br>
+                        ID Dokumen: <span id="doc-id"></span>
                     </div>
                 </div>
-
-                <div class="footer-kse">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-2">
-                             <img src="https://api.qrserver.com/v1/create-qr-code/?size=50x50&data=KSE-SYSTEM-VALID" width="35">
-                             <div style="font-size: 8px; color: #555; line-height: 1.2;">
-                                <b>Digital E-Form KSE System</b><br>
-                                Dokumen ini sah & Divalidasi System<br>
-                                Scan QR untuk Validasi no Memo <span id="doc-id"></span>
-                            </div>
-                        </div>
-                        <div class="text-end">
-                            <b style="font-size: 11px; color: var(--kse-primary);">PT. KHATULISTIWA SINAR ENERGI</b><br>
-                            <span style="font-size: 9px; color: #444;">Mitra Penyalur dan Transportir BBM Industri</span><br>
-                            <span style="font-size: 8px; color: #777;">Jl. H.M. Rafi'i RT.24 Pangkalan Bun, Kalteng</span>
-                        </div>
-                    </div>
+                <div class="text-end">
+                    <b style="font-size: 11px; color: var(--kse-primary);">PT. KHATULISTIWA SINAR ENERGI</b><br>
+                    <span style="font-size: 9px; color: #444;">Mitra Penyalur dan Transportir BBM Industri</span><br>
+                    <span style="font-size: 8px; color: #777;">Jl. H.M. Rafi'i RT.24 Pangkalan Bun, Kalteng</span>
                 </div>
             </div>
         </div>
@@ -205,19 +230,58 @@
 </div>
 
 <script>
+    // --- SUPABASE CONFIG ---
+    const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // --- LOGIKA OTOMATIS TANGGAL & NOMOR ---
+    function formatIndoDate(dateObj) {
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+    }
+
+    async function initPage() {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+        const dd = now.getDate().toString().padStart(2, '0');
+        
+        document.getElementById('in_tgl_surat').value = `${yyyy}/${mm}/${dd}`;
+        document.getElementById('doc-id').innerText = Math.floor(1000 + Math.random() * 9000);
+        
+        const table = document.getElementById('target_table').value;
+        const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+        const monthRoman = roman[now.getMonth()];
+
+        try {
+            const { count } = await _supabase.from(table).select('*', { count: 'exact', head: true });
+            const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
+            document.getElementById('in_no_memo').value = `${nextNo}/MEMO-KSE/${monthRoman}/${yyyy}`;
+        } catch (e) {
+            document.getElementById('in_no_memo').value = `001/MEMO-KSE/${monthRoman}/${yyyy}`;
+        }
+        updateView();
+    }
+
     function updateView() {
-        const tgl = document.getElementById('in_tgl_surat').value;
-        document.getElementById('out_tgl_header').innerText = tgl;
+        const rawDate = document.getElementById('in_tgl_surat').value;
+        const dParts = rawDate.split('/');
+        if(dParts.length === 3) {
+            const d = new Date(dParts[0], dParts[1]-1, dParts[2]);
+            document.getElementById('out_tgl_header').innerText = isNaN(d) ? rawDate : formatIndoDate(d);
+        } else {
+            document.getElementById('out_tgl_header').innerText = rawDate;
+        }
+
         document.getElementById('out_no_memo').innerText = document.getElementById('in_no_memo').value;
         document.getElementById('out_hal').innerText = document.getElementById('in_hal').value;
         document.getElementById('out_kepada').innerText = document.getElementById('in_kepada').value;
         document.getElementById('out_po').innerText = document.getElementById('in_po').value;
         document.getElementById('out_tgl_muat').innerText = document.getElementById('in_tgl_muat').value;
         document.getElementById('out_lokasi').innerText = document.getElementById('in_lokasi').value;
-        saveToStorage();
-    }
 
-    function updateTable() {
+        // Update Table
         const trans = document.querySelectorAll('.in-trans');
         const nopol = document.querySelectorAll('.in-nopol');
         const driver = document.querySelectorAll('.in-driver');
@@ -225,62 +289,54 @@
         const tera = document.querySelectorAll('.in-tera');
         
         let html = '';
-        for(let i=0; i<5; i++) {
-            html += `<tr>
-                <td>${i+1}</td>
-                <td>${trans[i].value}</td>
-                <td>${nopol[i].value}</td>
-                <td>${driver[i].value}</td>
-                <td>${qty[i].value ? parseFloat(qty[i].value).toLocaleString('id-ID') : ''}</td>
-                <td>${tera[i].value}</td>
-            </tr>`;
-        }
-        document.getElementById('table-body').innerHTML = html;
-        saveToStorage();
-    }
-
-    function saveToStorage() {
-        const formData = {};
-        const inputs = document.querySelectorAll('.auto-save');
-        inputs.forEach(input => { if(input.id) formData[input.id] = input.value; });
-        const tableData = {
-            trans: Array.from(document.querySelectorAll('.in-trans')).map(i => i.value),
-            nopol: Array.from(document.querySelectorAll('.in-nopol')).map(i => i.value),
-            driver: Array.from(document.querySelectorAll('.in-driver')).map(i => i.value),
-            qty: Array.from(document.querySelectorAll('.in-qty')).map(i => i.value),
-            tera: Array.from(document.querySelectorAll('.in-tera')).map(i => i.value)
-        };
-        localStorage.setItem('kse_memo_data', JSON.stringify({meta: formData, table: tableData}));
-    }
-
-    function loadFromStorage() {
-        const saved = localStorage.getItem('kse_memo_data');
-        if (saved) {
-            const data = JSON.parse(saved);
-            for (let key in data.meta) { if(document.getElementById(key)) document.getElementById(key).value = data.meta[key]; }
-            const trans = document.querySelectorAll('.in-trans');
-            const nopol = document.querySelectorAll('.in-nopol');
-            const driver = document.querySelectorAll('.in-driver');
-            const qty = document.querySelectorAll('.in-qty');
-            const tera = document.querySelectorAll('.in-tera');
-            for(let i=0; i<5; i++) {
-                trans[i].value = data.table.trans[i] || "";
-                nopol[i].value = data.table.nopol[i] || "";
-                driver[i].value = data.table.driver[i] || "";
-                qty[i].value = data.table.qty[i] || "";
-                tera[i].value = data.table.tera[i] || "";
+        for(let i=0; i<3; i++) {
+            if(nopol[i].value || driver[i].value) {
+                html += `<tr>
+                    <td>${i+1}</td>
+                    <td class="text-start">${trans[i].value || '-'}</td>
+                    <td>${nopol[i].value || '-'}</td>
+                    <td>${driver[i].value || '-'}</td>
+                    <td class="fw-bold">${qty[i].value ? parseFloat(qty[i].value).toLocaleString('id-ID') : '-'}</td>
+                    <td>${tera[i].value || '-'}</td>
+                </tr>`;
             }
         }
+        document.getElementById('table-body').innerHTML = html || '<tr><td colspan="6">Belum ada data unit</td></tr>';
+    }
+
+    async function saveData() {
+        const btn = document.getElementById('btnSave');
+        const table = document.getElementById('target_table').value;
+        btn.innerText = "SIMPAN..."; btn.disabled = true;
+
+        const totalQty = Array.from(document.querySelectorAll('.in-qty'))
+                         .reduce((sum, el) => sum + (parseFloat(el.value) || 0), 0);
+
+        const payload = {
+            tanggal: document.getElementById('in_tgl_surat').value.replace(/\//g, '-'),
+            no_dokumen: document.getElementById('in_no_memo').value,
+            jenis_dokumen: "MEMO PENGAMBILAN",
+            tujuan: document.getElementById('in_kepada').value,
+            nopol: document.querySelector('.in-nopol').value,
+            qty: totalQty
+        };
+
+        const { error } = await _supabase.from(table).insert([payload]);
+        if(error) {
+            alert("Gagal: " + error.message);
+        } else {
+            alert("Data Berhasil Disimpan ke Supabase!");
+            initPage();
+        }
+        btn.innerText = "💾 SIMPAN"; btn.disabled = false;
     }
 
     function downloadPDF() {
         const element = document.getElementById('pdf-area');
         const noMemo = document.getElementById('in_no_memo').value.replace(/\//g, '-');
-        const namaPT = document.getElementById('in_kepada').value;
-        
         const opt = {
             margin: 0,
-            filename: `${noMemo} - ${namaPT}.pdf`,
+            filename: `Memo_KSE_${noMemo}.pdf`,
             image: { type: 'jpeg', quality: 1 },
             html2canvas: { scale: 3, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -288,12 +344,12 @@
         html2pdf().set(opt).from(element).save();
     }
 
-    window.onload = function() {
-        loadFromStorage();
-        document.getElementById('doc-id').innerText = Math.floor(1000 + Math.random() * 9000);
-        updateView();
-        updateTable();
-    };
+    // Event Listeners
+    document.querySelectorAll('input, select').forEach(el => {
+        el.addEventListener('input', updateView);
+    });
+
+    window.onload = initPage;
 </script>
 </body>
 </html>
