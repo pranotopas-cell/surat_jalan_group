@@ -339,36 +339,62 @@
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
     }
 
-    // --- LOGIKA PENOMORAN (BERDASARKAN PT & JENIS DOKUMEN) ---
+    // --- SUPABASE CONFIG ---
+    const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
+
+    function formatDisplayDate(dateObj) {
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+    }
+
     async function initPage() {
         const now = new Date();
         const panelDate = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         document.getElementById('i-tgl').value = panelDate;
 
         const table = document.getElementById('i-target-table').value;
+        const docType = document.getElementById('i-doc-type').value;
+        
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const month = roman[now.getMonth()];
         const year = now.getFullYear();
 
+        // Judul Visual Berdasarkan Jenis
+        if(docType === "MEMO") {
+            document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
+            document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
+        } else {
+            document.getElementById('v-title-main').innerText = "DELIVERY ORDER";
+            document.getElementById('v-title-sub').innerText = "SURAT JALAN";
+        }
+
         try {
-            // Hitung hanya baris 'SURAT JALAN' di tabel terpilih
+            // LOGIKA PENOMORAN TERPISAH: Filter berdasarkan JENIS_DOKUMEN dan TABEL
             const { count, error } = await _supabase
                 .from(table)
-                .select('no_dokumen', { count: 'exact', head: true })
-                .eq('jenis_dokumen', 'SURAT JALAN');
-            
+                .select('*', { count: 'exact', head: true })
+                .eq('jenis_dokumen', docType);
+
             if (error) throw error;
 
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
             
-            let ptCode = "KSE";
-            if(table.includes("ikaen")) ptCode = "IKAEN";
-            if(table.includes("ide")) ptCode = "IDE";
+            // Kode Dokumen
+            let codeDoc = (docType === "MEMO") ? "MEMO" : "SJ";
+            
+            // Kode PT
+            let codePT = "IDE";
+            if(table === "data_ikaen") codePT = "IKN";
+            if(table === "data_kse") codePT = "KSE";
 
-            document.getElementById('i-no').value = `${nextNo}/SJ-${ptCode}/${month}/${year}`;
+            document.getElementById('i-no').value = `${nextNo}/${codeDoc}-${codePT}/${month}/${year}`;
         } catch (e) {
-            console.error("Gagal mengambil urutan nomor:", e);
-            document.getElementById('i-no').value = `001/SJ-KSE/${month}/${year}`;
+            console.error(e);
+            document.getElementById('i-no').value = `001/SJ-IDE/${month}/${year}`;
         }
         upd();
     }
@@ -401,9 +427,8 @@
         document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
 
         qrcode.clear();
-        qrcode.makeCode("KSE-VERIFIED-" + document.getElementById('i-no').value);
+        qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
     }
-
     async function saveData() {
         const table = document.getElementById('i-target-table').value;
         const btn = document.querySelector('.btn-save');
@@ -454,3 +479,4 @@
 </script>
 </body>
 </html>
+
