@@ -26,10 +26,8 @@
         .meta-table td { padding: 2px 0; vertical-align: top; line-height: 1.1; }
         .sub-lang { font-size: 9px; color: #666; font-style: italic; display: block; margin-top: 1px; }
         
-        /* Layout Sejajar Kepada & Meta (No/Tgl/Hal) */
         .address-meta-row { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; }
-
-        .content-body { margin-top: 40px; line-height: 1.5; } /* Jarak diperlebar sesuai permintaan */
+        .content-body { margin-top: 40px; line-height: 1.5; }
         
         .table-main { width: 100%; border: 1.5px solid #000; border-collapse: collapse; margin: 15px 0; }
         .table-main th { background-color: var(--kse-primary) !important; color: white !important; border: 1px solid #000; padding: 8px 4px; text-align: center; font-size: 11px; }
@@ -67,7 +65,7 @@
             <h6 class="fw-bold mb-3 text-success border-bottom pb-2">DATA MEMO</h6>
             <div class="row g-2 mb-3">
                 <div class="col-12"><label class="small fw-bold">Tanggal Surat</label><input type="text" id="in_tgl_surat" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
-                <div class="col-12"><label class="small fw-bold">No. Memo</label><input type="text" id="in_no_memo" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
+                <div class="col-12"><label class="small fw-bold">No. Memo (Auto/Manual)</label><input type="text" id="in_no_memo" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">Perihal</label><input type="text" id="in_hal" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">Kepada</label><input type="text" id="in_kepada" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">No. PO</label><input type="text" id="in_po" class="form-control form-control-sm auto-save" oninput="updateView()"></div>
@@ -205,9 +203,36 @@
 </div>
 
 <script>
+    // FUNGSI AUTO GENERATE NOMOR MEMO
+    function generateMemoNumber() {
+        const saved = localStorage.getItem('kse_memo_data');
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        
+        let nextNumber = 1;
+
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                if (data.meta && data.meta.in_no_memo) {
+                    const parts = data.meta.in_no_memo.split('/');
+                    const lastNum = parseInt(parts[0]);
+                    if (!isNaN(lastNum)) {
+                        // Tetap gunakan nomor yang tersimpan agar tidak berubah otomatis tiap refresh
+                        // Jika ingin naik otomatis, ganti menjadi: nextNumber = lastNum + 1;
+                        nextNumber = lastNum; 
+                    }
+                }
+            } catch(e) { nextNumber = 1; }
+        }
+        
+        const formattedNum = nextNumber.toString().padStart(3, '0');
+        return `${formattedNum}/MEMO-KSE/${month}/${year}`;
+    }
+
     function updateView() {
-        const tgl = document.getElementById('in_tgl_surat').value;
-        document.getElementById('out_tgl_header').innerText = tgl;
+        document.getElementById('out_tgl_header').innerText = document.getElementById('in_tgl_surat').value;
         document.getElementById('out_no_memo').innerText = document.getElementById('in_no_memo').value;
         document.getElementById('out_hal').innerText = document.getElementById('in_hal').value;
         document.getElementById('out_kepada').innerText = document.getElementById('in_kepada').value;
@@ -257,26 +282,36 @@
         const saved = localStorage.getItem('kse_memo_data');
         if (saved) {
             const data = JSON.parse(saved);
-            for (let key in data.meta) { if(document.getElementById(key)) document.getElementById(key).value = data.meta[key]; }
+            for (let key in data.meta) { 
+                if(document.getElementById(key)) document.getElementById(key).value = data.meta[key]; 
+            }
             const trans = document.querySelectorAll('.in-trans');
             const nopol = document.querySelectorAll('.in-nopol');
             const driver = document.querySelectorAll('.in-driver');
             const qty = document.querySelectorAll('.in-qty');
             const tera = document.querySelectorAll('.in-tera');
             for(let i=0; i<5; i++) {
-                trans[i].value = data.table.trans[i] || "";
-                nopol[i].value = data.table.nopol[i] || "";
-                driver[i].value = data.table.driver[i] || "";
-                qty[i].value = data.table.qty[i] || "";
-                tera[i].value = data.table.tera[i] || "";
+                if(data.table) {
+                    trans[i].value = data.table.trans[i] || "";
+                    nopol[i].value = data.table.nopol[i] || "";
+                    driver[i].value = data.table.driver[i] || "";
+                    qty[i].value = data.table.qty[i] || "";
+                    tera[i].value = data.table.tera[i] || "";
+                }
             }
+        }
+
+        // Jika No Memo masih kosong setelah load, buat otomatis
+        const memoInput = document.getElementById('in_no_memo');
+        if(!memoInput.value) {
+            memoInput.value = generateMemoNumber();
         }
     }
 
     function downloadPDF() {
         const element = document.getElementById('pdf-area');
         const noMemo = document.getElementById('in_no_memo').value.replace(/\//g, '-');
-        const namaPT = document.getElementById('in_kepada').value;
+        const namaPT = document.getElementById('in_kepada').value || "MEMO";
         
         const opt = {
             margin: 0,
@@ -295,5 +330,6 @@
         updateTable();
     };
 </script>
+
 </body>
 </html>
