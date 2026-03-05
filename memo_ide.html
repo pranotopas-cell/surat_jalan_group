@@ -3,145 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Memo PT IndoDharma Energi</title>
+    <title>Sistem Memo PT Indo Dharma Energi</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
         * { box-sizing: border-box; }
         :root {
-            --primary-blue: #0056b3; /* Biru sesuai logo */
+            --primary-blue: #0056b3; 
             --dark-sidebar: #1a252f;
             --accent-blue: #3498db;
+            --success-green: #28a745;
         }
 
-        body { font-family: 'Arial', sans-serif; background-color: #f4f7f6; margin: 0; display: flex; }
+        body { font-family: 'Arial', sans-serif; background-color: #525659; margin: 0; display: flex; }
         
-        /* Sidebar Input Panel - Tema Dark & Blue */
+        /* Sidebar Input Panel */
         .sidebar { 
-            width: 420px; background: var(--dark-sidebar); color: white; height: 100vh; 
-            padding: 20px; overflow-y: auto; position: fixed; left: 0; top: 0;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.2);
+            width: 400px; background: var(--dark-sidebar); color: white; height: 100vh; 
+            padding: 15px; overflow-y: auto; position: fixed; left: 0; top: 0;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.3);
             z-index: 100;
         }
-        .sidebar h2 { font-size: 18px; border-bottom: 2px solid var(--primary-blue); padding-bottom: 15px; margin-bottom: 20px; color: #ecf0f1; text-align: center; }
+        .sidebar h2 { font-size: 16px; border-bottom: 2px solid var(--primary-blue); padding-bottom: 10px; margin-bottom: 15px; color: #ecf0f1; text-align: center; }
         
-        .nav-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 25px; }
+        /* Action Buttons Grid */
+        .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
         .btn { 
             padding: 10px; border: none; border-radius: 4px; cursor: pointer; 
-            font-weight: bold; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px;
+            font-weight: bold; font-size: 11px; color: white; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
         }
-        .btn-home { background: #7f8c8d; color: white; }
-        .btn-print { background: var(--primary-blue); color: white; }
-        .btn-preview { background: var(--accent-blue); color: white; }
-        .btn-pdf { background: #c0392b; color: white; }
+        .btn-home { background: #7f8c8d; }
+        .btn-save { background: var(--success-green); }
+        .btn-preview { background: var(--accent-blue); }
+        .btn-download { background: #c0392b; }
+        .btn:hover { opacity: 0.8; }
 
-        .section-title { font-size: 11px; color: var(--accent-blue); font-weight: bold; margin: 15px 0 10px 0; text-transform: uppercase; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
+        .section-title { font-size: 10px; color: var(--accent-blue); font-weight: bold; margin: 15px 0 8px 0; text-transform: uppercase; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
         
-        .input-group { margin-bottom: 8px; }
-        .input-group label { display: block; font-size: 10px; margin-bottom: 2px; color: #bdc3c7; }
-        .input-group input { 
-            width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #2c3e50; 
-            background: #2c3e50; color: white; font-size: 12px;
+        .input-group { margin-bottom: 6px; }
+        .input-group label { display: block; font-size: 9px; margin-bottom: 2px; color: #bdc3c7; }
+        .input-group input, .input-group select { 
+            width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #2c3e50; 
+            background: #2c3e50; color: white; font-size: 11px;
         }
 
-        .unit-card { background: #2c3e50; padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary-blue); }
+        .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid var(--primary-blue); }
 
         /* Main Preview Area */
-        .main-content { margin-left: 420px; flex-grow: 1; padding: 40px; display: flex; justify-content: center; }
+        .main-content { margin-left: 400px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
         
         .memo-page { 
-            background: white; width: 210mm; min-height: 297mm; padding: 15mm 20mm; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.1); color: black; line-height: 1.5;
+            background: white; width: 210mm; height: 297mm; padding: 10mm 15mm; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.5); color: black; line-height: 1.4;
+            position: relative; overflow: hidden;
         }
 
-        /* Header - Logo & Blue Company Name */
+        /* Merapikan Header Agar Lebih Naik */
         .header { 
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--primary-blue); padding-bottom: 15px; margin-bottom: 30px; 
+            border-bottom: 2px solid var(--primary-blue); padding-bottom: 10px; margin-bottom: 15px; 
         }
         
-        .logo-container { display: flex; align-items: center; gap: 12px; }
-        .logo-container img { height: 60px; width: auto; }
+        .logo-container { display: flex; align-items: center; gap: 10px; }
+        .logo-container img { height: 55px; width: auto; }
         .logo-container .company-name { 
-            font-size: 26px; font-weight: bold; color: var(--primary-blue); /* Warna Biru Logo */
+            font-size: 24px; font-weight: bold; color: var(--primary-blue); 
             letter-spacing: -0.5px;
         }
 
         .header-address { 
-            text-align: right; 
-            font-size: 10px; 
-            line-height: 1.5; 
-            max-width: 400px; 
-            color: #333;
+            text-align: right; font-size: 9px; line-height: 1.4; max-width: 350px; color: #333;
         }
 
         /* Meta Section */
-        .memo-meta { margin-bottom: 20px; font-size: 14px; }
-        .meta-row { display: flex; margin-bottom: 4px; }
-        .meta-label { width: 140px; color: #555; }
-        .meta-colon { width: 20px; }
+        .memo-meta { margin-bottom: 15px; font-size: 13px; }
+        .meta-row { display: flex; margin-bottom: 2px; }
+        .meta-label { width: 120px; color: #555; }
+        .meta-colon { width: 15px; }
         .meta-value { font-weight: bold; color: #000; }
 
-        .recipient-block { margin-bottom: 25px; line-height: 1.6; }
-        .details-box { margin-bottom: 25px; padding: 15px; background: #f8f9fa; border-left: 4px solid var(--primary-blue); }
+        .recipient-block { margin-bottom: 15px; line-height: 1.4; font-size: 13px; }
+        .details-box { margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-left: 4px solid var(--primary-blue); font-size: 13px; }
 
-        /* Table Style - Tema Biru */
-        table.data-table { width: 100%; border-collapse: collapse; margin: 25px 0; }
-        table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 12px 8px; text-align: center; font-size: 12px; }
-        table.data-table th { background: var(--primary-blue); color: white; font-weight: bold; text-transform: uppercase; }
+        /* Table Style */
+        table.data-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 8px 5px; text-align: center; font-size: 11px; }
+        table.data-table th { background: var(--primary-blue); color: white; font-weight: bold; }
         table.data-table tr:nth-child(even) { background-color: #f2f6fa; }
 
-        /* Signature */
-        .signature-container { margin-top: 50px; text-align: left; font-size: 14px; }
-        .sig-img { width: 180px; margin: 15px 0 10px -10px; display: block; }
+        /* Signature Area */
+        .signature-container { margin-top: 30px; text-align: left; font-size: 13px; }
+        .sig-img { width: 160px; margin: 10px 0 5px -10px; display: block; }
 
         @media print {
             .sidebar { display: none; }
-            .main-content { margin-left: 0; padding: 0; }
+            .main-content { margin-left: 0; padding: 0; background: none; }
             .memo-page { box-shadow: none; border: none; width: 100%; padding: 10mm; }
-            table.data-table th { background: var(--primary-blue) !important; color: white !important; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <h2>IDE CONTROL PANEL</h2>
+    <h2>IDE MEMO SYSTEM</h2>
     
-    <div class="nav-buttons">
-        <button class="btn btn-home" onclick="location.reload()">🏠 HOME</button>
-        <button class="btn btn-preview" onclick="alert('Tampilan Pratinjau Siap Cetak')">👁️ PREVIEW</button>
-        <button class="btn btn-print" onclick="window.print()">🖨️ PRINT</button>
-        <button class="btn btn-pdf" onclick="window.print()">📥 PDF</button>
+    <div class="action-group">
+        <button class="btn btn-home" onclick="initPage()">🏠 HOME</button>
+        <button class="btn btn-save" id="btnSave" onclick="saveData()">💾 SIMPAN</button>
+        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">👁️ PREVIEW</button>
+        <button class="btn btn-download" onclick="downloadPDF()">📥 PDF</button>
     </div>
 
-    <div class="section-title">Informasi Utama</div>
-    <div class="input-group"><label>Nomor Memo</label><input type="text" id="inNomor" value="002/MEMO-IDE/III/2026" oninput="update()"></div>
-    <div class="input-group"><label>Tanggal Memo</label><input type="text" id="inTglMemo" value="02 Maret 2026" oninput="update()"></div>
-    <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="10/PO-BBM/IDE/II/2026" oninput="update()"></div>
-    <div class="input-group"><label>Tgl PO</label><input type="text" id="inTglPO" value="24 Februari 2026" oninput="update()"></div>
-    <div class="input-group"><label>Tgl Loading</label><input type="text" id="inTglLoad" value="02 Maret 2026" oninput="update()"></div>
-    <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu - Kumai" oninput="update()"></div>
+    <div class="section-title">Database & Meta</div>
+    <div class="input-group">
+        <label>Tabel Tujuan</label>
+        <select id="i-target-table" onchange="initPage()">
+            <option value="data_ide">PT. INDO DHARMA ENERGI</option>
+        </select>
+    </div>
+    <div class="input-group"><label>Nomor Memo (Otomatis)</label><input type="text" id="inNomor"></div>
+    <div class="input-group"><label>Tanggal Memo (YYYY/MM/DD)</label><input type="text" id="inTglMemo"></div>
 
-    <div class="section-title">Data Unit 1</div>
+    <div class="section-title">Informasi Loading</div>
+    <div class="input-group"><label>No. Purchase Order (PO)</label><input type="text" id="inPO" value="10/PO-BBM/IDE/II/2026"></div>
+    <div class="input-group"><label>Tanggal PO</label><input type="text" id="inTglPO" value="24 Februari 2026"></div>
+    <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="02 Maret 2026"></div>
+    <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu - Kumai"></div>
+
+    <div class="section-title">Data Armada 1</div>
     <div class="unit-card">
-        <input type="text" id="inTrans1" value="PT. BERKAH SARANA MAKMUR BENUA" placeholder="Transportir" oninput="update()" style="width:100%; margin-bottom:8px; font-size:11px; padding:6px; border-radius:4px; border:none; background:#1a252f; color:#fff;">
-        <div class="input-group"><input type="text" id="inNopol1" value="KH 8273 RM" placeholder="No. Polisi" oninput="update()"></div>
-        <div class="input-group"><input type="text" id="inDriver1" value="FARID HABIBI" placeholder="Driver" oninput="update()"></div>
-        <div class="input-group"><input type="number" id="inQty1" value="5000" placeholder="Qty (L)" oninput="update()"></div>
-        <div class="input-group"><input type="text" id="inTera1" value="109.5" placeholder="Tera (cm)" oninput="update()"></div>
+        <input type="text" id="inTrans1" value="PT. BERKAH SARANA MAKMUR BENUA" placeholder="Transportir">
+        <div class="input-group"><input type="text" id="inNopol1" value="KH 8273 RM" placeholder="No. Polisi"></div>
+        <div class="input-group"><input type="text" id="inDriver1" value="FARID HABIBI" placeholder="Driver"></div>
+        <div class="input-group"><input type="number" id="inQty1" value="5000" placeholder="Qty"></div>
+        <div class="input-group"><input type="text" id="inTera1" value="109.5" placeholder="Tera"></div>
     </div>
 
-    <div class="section-title">Data Unit 2</div>
+    <div class="section-title">Data Armada 2</div>
     <div class="unit-card">
-        <input type="text" id="inTrans2" value="PT. BERKAH SARANA MAKMUR BENUA" placeholder="Transportir" oninput="update()" style="width:100%; margin-bottom:8px; font-size:11px; padding:6px; border-radius:4px; border:none; background:#1a252f; color:#fff;">
-        <div class="input-group"><input type="text" id="inNopol2" value="KH 8256 RM" placeholder="No. Polisi" oninput="update()"></div>
-        <div class="input-group"><input type="text" id="inDriver2" value="RONNY PRASTIANSYAH" placeholder="Driver" oninput="update()"></div>
-        <div class="input-group"><input type="number" id="inQty2" value="5000" placeholder="Qty (L)" oninput="update()"></div>
-        <div class="input-group"><input type="text" id="inTera2" value="104.3" placeholder="Tera (cm)" oninput="update()"></div>
+        <input type="text" id="inTrans2" value="PT. BERKAH SARANA MAKMUR BENUA" placeholder="Transportir">
+        <div class="input-group"><input type="text" id="inNopol2" value="KH 8256 RM" placeholder="No. Polisi"></div>
+        <div class="input-group"><input type="text" id="inDriver2" value="RONNY PRASTIANSYAH" placeholder="Driver"></div>
+        <div class="input-group"><input type="number" id="inQty2" value="5000" placeholder="Qty"></div>
+        <div class="input-group"><input type="text" id="inTera2" value="104.3" placeholder="Tera"></div>
     </div>
 </div>
 
 <div class="main-content">
-    <div class="memo-page">
+    <div class="memo-page" id="memo-area">
         <div class="header">
             <div class="logo-container">
                 <img src="ide1.png" alt="Logo IDE">
@@ -166,7 +177,7 @@
             - di Pangkalan Bun
         </div>
 
-        <div style="margin-bottom: 20px;">
+        <div style="margin-bottom: 15px; font-size: 13px;">
             Dengan Hormat,<br>
             Bersama ini kami sampaikan Realisasi Pengaliran BBM Solar Industri dari <b>PT. Sinarindo Sukses Selalu</b> dengan rincian sebagai berikut:
         </div>
@@ -178,12 +189,10 @@
             <div class="meta-row"><div class="meta-label">Lokasi Loading</div><div class="meta-colon">:</div><div class="meta-value" id="outLokasi"></div></div>
         </div>
 
-        <p style="font-size: 13px; margin-bottom: 10px; color: #555;">Data unit armada yang bertugas:</p>
-
         <table class="data-table">
             <thead>
                 <tr>
-                    <th style="width: 40px;">NO</th>
+                    <th style="width: 30px;">NO</th>
                     <th>TRANSPORTIR</th>
                     <th>NOMOR POLISI</th>
                     <th>DRIVER</th>
@@ -194,37 +203,80 @@
             <tbody id="tableBody"></tbody>
             <tfoot>
                 <tr style="font-weight: bold; background: #f1f4f9;">
-                    <td colspan="4" style="text-align: right; padding-right: 20px;">TOTAL REALISASI</td>
+                    <td colspan="4" style="text-align: right; padding-right: 15px;">TOTAL REALISASI</td>
                     <td id="outTotal" style="color: var(--primary-blue);"></td>
                     <td></td>
                 </tr>
             </tfoot>
         </table>
 
-        <div style="font-size: 13px; margin-top: 20px; text-align: justify;">
+        <div style="font-size: 12px; margin-top: 15px; text-align: justify; line-height: 1.4;">
             Demikian memo ini dibuat tanpa paksaan dari pihak manapun, dengan keterangan yang sebenar-benarnya diatas agar dapat digunakan sebagaimana mestinya.
         </div>
 
         <div class="signature-container">
             Regards,<br>
-            <strong style="font-size: 15px; color: var(--primary-blue);">PT. Indo Dharma Energi</strong><br>
+            <strong style="font-size: 14px; color: var(--primary-blue);">PT. Indo Dharma Energi</strong><br>
             <img src="ttd_ide.png" alt="Tanda Tangan" class="sig-img">
         </div>
     </div>
 </div>
 
 <script>
+    // --- SUPABASE CONFIG ---
+    const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // --- LOGIKA OTOMATIS TANGGAL & NOMOR ---
+    function formatIndoDate(dateObj) {
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+    }
+
+    async function initPage() {
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+        const dd = now.getDate().toString().padStart(2, '0');
+        
+        document.getElementById('inTglMemo').value = `${yyyy}/${mm}/${dd}`;
+        
+        const table = document.getElementById('i-target-table').value;
+        const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+        const monthRoman = roman[now.getMonth()];
+
+        try {
+            const { count } = await _supabase.from(table).select('*', { count: 'exact', head: true });
+            const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
+            document.getElementById('inNomor').value = `${nextNo}/MEMO-IDE/${monthRoman}/${yyyy}`;
+        } catch (e) {
+            document.getElementById('inNomor').value = `001/MEMO-IDE/${monthRoman}/${yyyy}`;
+        }
+        update();
+    }
+
     function update() {
+        // Update Meta
         document.getElementById('outNomor').innerText = document.getElementById('inNomor').value;
-        document.getElementById('outTglMemo').innerText = document.getElementById('inTglMemo').value;
+        
+        const rawDate = document.getElementById('inTglMemo').value;
+        const dParts = rawDate.split('/');
+        if(dParts.length === 3) {
+            const d = new Date(dParts[0], dParts[1]-1, dParts[2]);
+            document.getElementById('outTglMemo').innerText = isNaN(d) ? rawDate : formatIndoDate(d);
+        } else {
+            document.getElementById('outTglMemo').innerText = rawDate;
+        }
+
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
         document.getElementById('outTglPO').innerText = document.getElementById('inTglPO').value;
         document.getElementById('outTglLoad').innerText = document.getElementById('inTglLoad').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
+        // Update Table
         let total = 0;
         let tableHTML = "";
-
         for (let i = 1; i <= 2; i++) {
             const trans = document.getElementById('inTrans' + i).value;
             const nopol = document.getElementById('inNopol' + i).value;
@@ -234,25 +286,59 @@
 
             if (nopol || driver || qty > 0) {
                 total += qty;
-                tableHTML += `
-                    <tr>
-                        <td>${i}.</td>
-                        <td style="text-align:left; padding-left:10px;">${trans || '-'}</td>
-                        <td>${nopol || '-'}</td>
-                        <td>${driver || '-'}</td>
-                        <td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td>
-                        <td>${tera || '-'}</td>
-                    </tr>
-                `;
+                tableHTML += `<tr>
+                    <td>${i}</td>
+                    <td style="text-align:left;">${trans}</td>
+                    <td>${nopol}</td>
+                    <td>${driver}</td>
+                    <td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td>
+                    <td>${tera}</td>
+                </tr>`;
             }
         }
         document.getElementById('tableBody').innerHTML = tableHTML;
         document.getElementById('outTotal').innerText = total.toLocaleString('id-ID') + " Liter";
     }
-    window.onload = update;
+
+    async function saveData() {
+        const btn = document.getElementById('btnSave');
+        const table = document.getElementById('i-target-table').value;
+        btn.innerText = "SIMPAN..."; btn.disabled = true;
+
+        const payload = {
+            tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
+            no_dokumen: document.getElementById('inNomor').value,
+            jenis_dokumen: "MEMO PENGALIRAN",
+            tujuan: "PT. Sinarindo Sukses Selalu",
+            nopol: document.getElementById('inNopol1').value, // Ambil nopol unit 1 sebagai referensi utama
+            qty: parseFloat(document.getElementById('inQty1').value) + parseFloat(document.getElementById('inQty2').value)
+        };
+
+        const { error } = await _supabase.from(table).insert([payload]);
+        if(error) {
+            alert("Gagal: " + error.message);
+        } else {
+            alert("Data Berhasil Disimpan ke " + table);
+            initPage();
+        }
+        btn.innerText = "💾 SIMPAN"; btn.disabled = false;
+    }
+
+    function downloadPDF() {
+        const element = document.getElementById('memo-area');
+        const filename = 'Memo_IDE_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf';
+        html2pdf().set({
+            margin: 0,
+            filename: filename,
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(element).save();
+    }
+
+    document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', update));
+    window.onload = initPage;
 </script>
 
 </body>
 </html>
-
-
