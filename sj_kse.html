@@ -167,7 +167,7 @@
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Dokumen (Otomatis)</label><input type="text" id="i-no" readonly style="background:#f0f0f0"></div>
+    <div class="field"><label>Nomor Dokumen (Manual)</label><input type="text" id="i-no" placeholder="Contoh: 001/SJ-KSE/I/2026"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header (Location)</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -344,10 +344,15 @@
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
     }
 
-    async function initPage() {
+    // FUNGSI INIT YANG TELAH DIUBAH (Hapus penomoran otomatis)
+    function initPage() {
         const now = new Date();
         const panelDate = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
-        document.getElementById('i-tgl').value = panelDate;
+        
+        // Isi default tanggal jika kosong
+        if(!document.getElementById('i-tgl').value) {
+            document.getElementById('i-tgl').value = panelDate;
+        }
 
         const table = document.getElementById('i-target-table').value;
         const docType = document.getElementById('i-doc-type').value;
@@ -356,6 +361,7 @@
         const month = roman[now.getMonth()];
         const year = now.getFullYear();
 
+        // Ganti Judul
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
@@ -364,25 +370,16 @@
             document.getElementById('v-title-sub').innerText = "SURAT JALAN";
         }
 
-        try {
-            const { count, error } = await _supabase
-                .from(table)
-                .select('*', { count: 'exact', head: true })
-                .eq('jenis_dokumen', docType);
+        // Template Penomoran Manual (Hanya mengisi template jika input masih kosong)
+        let codeDoc = (docType === "MEMO") ? "MEMO" : "SJ";
+        let codePT = "KSE";
+        if(table === "data_ikaen") codePT = "IKN";
+        if(table === "data_ide") codePT = "IDE";
 
-            if (error) throw error;
-
-            const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            let codeDoc = (docType === "MEMO") ? "MEMO" : "SJ";
-            let codePT = "KSE";
-            if(table === "data_ikaen") codePT = "IKN";
-            if(table === "data_ide") codePT = "IDE";
-
-            document.getElementById('i-no').value = `${nextNo}/${codeDoc}-${codePT}/${month}/${year}`;
-        } catch (e) {
-            console.error(e);
-            document.getElementById('i-no').value = `001/SJ-KSE/${month}/${year}`;
+        if(!document.getElementById('i-no').value) {
+            document.getElementById('i-no').value = `000/${codeDoc}-${codePT}/${month}/${year}`;
         }
+        
         upd();
     }
 
@@ -426,7 +423,6 @@
         btn.innerText = 'SAVING...';
         btn.disabled = true;
 
-        // FORMAT TANGGAL KE YYYY-MM-DD
         const rawDate = document.getElementById('i-tgl').value;
         const dbDate = rawDate.replace(/\//g, '-'); 
 
@@ -440,17 +436,13 @@
             qty: parseFloat(document.getElementById('i-poqty').value) || 0
         };
 
-        console.log("Kirim data ke:", table);
-        console.table(payload);
-
         const { data, error } = await _supabase.from(table).insert([payload]);
 
         if (error) {
-            console.error("Supabase Error Details:", error);
-            alert('Gagal simpan!\nError: ' + error.message + '\n\nTips: Cek apakah nama kolom di Supabase sudah sesuai.');
+            alert('Gagal simpan!\nError: ' + error.message);
         } else {
             alert('Berhasil disimpan ke tabel ' + table);
-            initPage();
+            // Tidak memanggil initPage agar nomor tidak ter-reset
         }
         btn.innerText = 'SIMPAN DATA';
         btn.disabled = false;
