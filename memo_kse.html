@@ -14,7 +14,7 @@
         :root { --kse-primary: #06402B; }
         body { background-color: #f4f7f6; font-family: 'Arial', sans-serif; font-size: 12px; }
         
-        /* Tampilan Navigasi & Sidebar Orisinil */
+        /* Tampilan UI Tetap Semula */
         .control-nav { background: #fff; border-bottom: 2px solid #ddd; padding: 10px 20px; position: sticky; top: 0; z-index: 1000; }
         .input-sidebar { background: #fff; height: calc(100vh - 60px); overflow-y: auto; padding: 20px; border-right: 1px solid #ddd; }
         
@@ -54,12 +54,16 @@
 
 <div class="control-nav shadow-sm d-flex justify-content-between align-items-center">
     <div class="d-flex gap-2">
-        <button class="btn btn-outline-dark btn-sm" onclick="initPage()"><i class="bi bi-house-door"></i> HOME</button>
-        <button class="btn btn-dark btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> PRINT / PREVIEW</button>
+        <button class="btn btn-outline-dark btn-sm" onclick="location.reload()"><i class="bi bi-house-door"></i> RESET</button>
+        <button class="btn btn-dark btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> PRINT</button>
     </div>
     <div class="d-flex gap-2">
-        <button class="btn btn-primary btn-sm" id="btnSave" onclick="saveData()"><i class="bi bi-hdd"></i> SIMPAN DATA</button>
-        <button class="btn btn-success btn-sm fw-bold px-4" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> SIMPAN PDF</button>
+        <button class="btn btn-primary btn-sm fw-bold px-3" id="btnSave" onclick="saveToSupabase()">
+            <i class="bi bi-cloud-arrow-up"></i> SIMPAN DATA KE DATABASE
+        </button>
+        <button class="btn btn-success btn-sm fw-bold px-3" onclick="downloadPDF()">
+            <i class="bi bi-file-pdf"></i> SIMPAN PDF
+        </button>
     </div>
 </div>
 
@@ -70,14 +74,23 @@
             
             <div class="mb-3">
                 <label class="small fw-bold">Tabel Database</label>
-                <select id="target_table" class="form-select form-select-sm" onchange="initPage()">
+                <select id="target_table" class="form-select form-select-sm" onchange="initNumbering()">
                     <option value="data_kse">PT. KHATULISTIWA SINAR ENERGI</option>
                 </select>
             </div>
 
             <div class="row g-2 mb-3">
-                <div class="col-12"><label class="small fw-bold">Tanggal Surat (YYYY/MM/DD)</label><input type="text" id="in_tgl_surat" class="form-control form-control-sm"></div>
-                <div class="col-12"><label class="small fw-bold">No. Memo (Otomatis)</label><input type="text" id="in_no_memo" class="form-control form-control-sm"></div>
+                <div class="col-12">
+                    <label class="small fw-bold">Tanggal (YYYY-MM-DD)</label>
+                    <input type="date" id="in_tgl_surat" class="form-control form-control-sm">
+                </div>
+                <div class="col-12">
+                    <label class="small fw-bold">No. Memo (Otomatis)</label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" id="in_no_memo" class="form-control" placeholder="Loading...">
+                        <button class="btn btn-outline-secondary" onclick="initNumbering()"><i class="bi bi-arrow-clockwise"></i></button>
+                    </div>
+                </div>
                 <div class="col-12"><label class="small fw-bold">Perihal</label><input type="text" id="in_hal" class="form-control form-control-sm" value="Memo Pengambilan BBM"></div>
                 <div class="col-12"><label class="small fw-bold">Kepada</label><input type="text" id="in_kepada" class="form-control form-control-sm" value="PT. SINARINDO SUKSES SELALU"></div>
                 <div class="col-12"><label class="small fw-bold">No. PO</label><input type="text" id="in_po" class="form-control form-control-sm" value="025/PO-KSE/III/2026"></div>
@@ -215,35 +228,34 @@
 </div>
 
 <script>
-    // --- KONEKSI SUPABASE ---
+    // --- KONFIGURASI SUPABASE ---
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // --- FUNGSI TANGGAL INDO ---
-    function formatIndoDate(dateObj) {
+    // --- FUNGSI FORMAT TANGGAL ---
+    function formatIndoDate(dateStr) {
+        if(!dateStr) return "-";
+        const d = new Date(dateStr);
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+        return `${d.getDate().toString().padStart(2, '0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
     }
 
-    // --- LOGIKA AUTO NUMBER & TANGGAL (IKUT SJ IDE) ---
-    async function initPage() {
+    // --- LOGIKA AUTO NUMBERING (BERDASARKAN TOTAL DATA DI DB) ---
+    async function initNumbering() {
         const now = new Date();
         const yyyy = now.getFullYear();
-        const mm = (now.getMonth() + 1).toString().padStart(2, '0');
-        const dd = now.getDate().toString().padStart(2, '0');
-        
-        // Set tanggal input default
-        document.getElementById('in_tgl_surat').value = `${yyyy}/${mm}/${dd}`;
-        document.getElementById('doc-id').innerText = Math.floor(1000 + Math.random() * 9000);
-        
+        const monthRoman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][now.getMonth()];
         const table = document.getElementById('target_table').value;
-        const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
-        const monthRoman = roman[now.getMonth()];
+        
+        // Set Default Date Input jika kosong
+        if(!document.getElementById('in_tgl_surat').value) {
+            document.getElementById('in_tgl_surat').value = now.toISOString().split('T')[0];
+        }
 
         try {
-            // Logika Auto numbering dari database
-            const { count } = await _supabase.from(table).select('*', { count: 'exact', head: true });
+            // Hitung jumlah baris di tabel untuk menentukan nomor urut
+            const { count, error } = await _supabase.from(table).select('*', { count: 'exact', head: true });
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
             document.getElementById('in_no_memo').value = `${nextNo}/MEMO-KSE/${monthRoman}/${yyyy}`;
         } catch (e) {
@@ -252,25 +264,18 @@
         updateView();
     }
 
-    // --- UPDATE PREVIEW (TAMPILAN TETAP SEMULA) ---
+    // --- UPDATE TAMPILAN (REALTIME) ---
     function updateView() {
-        const rawDate = document.getElementById('in_tgl_surat').value;
-        const dParts = rawDate.split('/');
-        if(dParts.length === 3) {
-            const d = new Date(dParts[0], dParts[1]-1, dParts[2]);
-            document.getElementById('out_tgl_header').innerText = isNaN(d) ? rawDate : formatIndoDate(d);
-        } else {
-            document.getElementById('out_tgl_header').innerText = rawDate;
-        }
-
+        document.getElementById('out_tgl_header').innerText = formatIndoDate(document.getElementById('in_tgl_surat').value);
         document.getElementById('out_no_memo').innerText = document.getElementById('in_no_memo').value;
         document.getElementById('out_hal').innerText = document.getElementById('in_hal').value;
         document.getElementById('out_kepada').innerText = document.getElementById('in_kepada').value;
         document.getElementById('out_po').innerText = document.getElementById('in_po').value;
         document.getElementById('out_tgl_muat').innerText = document.getElementById('in_tgl_muat').value;
         document.getElementById('out_lokasi').innerText = document.getElementById('in_lokasi').value;
+        document.getElementById('doc-id').innerText = Math.floor(1000 + Math.random() * 9000);
 
-        // Update Tabel Unit
+        // Render Tabel Unit
         const trans = document.querySelectorAll('.in-trans');
         const nopol = document.querySelectorAll('.in-nopol');
         const driver = document.querySelectorAll('.in-driver');
@@ -291,41 +296,47 @@
         document.getElementById('table-body').innerHTML = html;
     }
 
-    // --- LOGIKA SIMPAN (IKUT SJ IDE) ---
-    async function saveData() {
+    // --- FUNGSI SIMPAN KE SUPABASE (LOGIKA SJ IDE) ---
+    async function saveToSupabase() {
         const btn = document.getElementById('btnSave');
         const table = document.getElementById('target_table').value;
-        btn.innerText = "SIMPAN..."; btn.disabled = true;
+        
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menyimpan...';
 
+        // Hitung total Qty dari semua unit
         const totalQty = Array.from(document.querySelectorAll('.in-qty'))
                          .reduce((sum, el) => sum + (parseFloat(el.value) || 0), 0);
 
         const payload = {
-            tanggal: document.getElementById('in_tgl_surat').value.replace(/\//g, '-'),
+            tanggal: document.getElementById('in_tgl_surat').value,
             no_dokumen: document.getElementById('in_no_memo').value,
             jenis_dokumen: "MEMO PENGAMBILAN",
             tujuan: document.getElementById('in_kepada').value,
-            nopol: document.querySelector('.in-nopol').value || '-',
+            nopol: document.querySelector('.in-nopol').value || '-', // Ambil nopol unit pertama sebagai perwakilan
             qty: totalQty
         };
 
-        const { error } = await _supabase.from(table).insert([payload]);
-        if(error) {
-            alert("Gagal Simpan: " + error.message);
+        const { data, error } = await _supabase.from(table).insert([payload]);
+
+        if (error) {
+            alert("Gagal menyimpan ke database: " + error.message);
         } else {
-            alert("Data Berhasil Disimpan ke Supabase!");
-            initPage(); // Refresh nomor surat
+            alert("BERHASIL! Data Memo telah tersimpan di Supabase.");
+            initNumbering(); // Reset nomor otomatis setelah simpan
         }
-        btn.innerHTML = '<i class="bi bi-hdd"></i> SIMPAN DATA'; 
+
         btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> SIMPAN DATA KE DATABASE';
     }
 
+    // --- FUNGSI DOWNLOAD PDF ---
     function downloadPDF() {
         const element = document.getElementById('pdf-area');
-        const noMemo = document.getElementById('in_no_memo').value.replace(/\//g, '-');
+        const filename = `Memo_KSE_${document.getElementById('in_no_memo').value.replace(/\//g, '-')}.pdf`;
         const opt = {
             margin: 0,
-            filename: `Memo_KSE_${noMemo}.pdf`,
+            filename: filename,
             image: { type: 'jpeg', quality: 1 },
             html2canvas: { scale: 3, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -333,12 +344,11 @@
         html2pdf().set(opt).from(element).save();
     }
 
-    // Listener otomatis update saat mengetik
-    document.querySelectorAll('input, select').forEach(el => {
-        el.addEventListener('input', updateView);
-    });
+    // Auto update saat mengetik
+    document.addEventListener('input', updateView);
 
-    window.onload = initPage;
+    // Jalankan saat halaman dibuka
+    window.onload = initNumbering;
 </script>
 </body>
 </html>
