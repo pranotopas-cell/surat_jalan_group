@@ -61,6 +61,7 @@
         .data-card { background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #edf2f7; }
         
         .table thead th { border-top: none; background: #f8fafc; text-transform: uppercase; font-size: 0.75rem; }
+        .spinner-container { padding: 50px; text-align: center; }
     </style>
 </head>
 <body>
@@ -126,7 +127,7 @@
 
         <div class="data-card">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold mb-0">Live Delivery Feed (All Companies)</h5>
+                <h5 class="fw-bold mb-0">Live Delivery Feed (Semua PT)</h5>
                 <button class="btn btn-sm btn-primary px-3 rounded-pill" onclick="fetchRilisData()">
                     <i class="bi bi-arrow-clockwise me-1"></i> Refresh Data
                 </button>
@@ -137,16 +138,15 @@
                     <thead>
                         <tr class="text-muted small">
                             <th>TANGGAL & PT</th>
-                            <th>NO. SURAT JALAN</th>
-                            <th>NO. MEMO</th>
-                            <th>BA OPER / PENERIMAAN</th>
+                            <th>NO. DOKUMEN</th>
+                            <th>JENIS DOKUMEN</th>
                             <th>TUJUAN</th>
                             <th>SOPIR / NOPOL</th>
                             <th>QTY</th>
                         </tr>
                     </thead>
                     <tbody id="rilis-table-body">
-                        <tr><td colspan="7" class="text-center py-5">Loading data from Supabase...</td></tr>
+                        <tr><td colspan="6" class="text-center py-5">Menghubungkan ke database...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -157,69 +157,77 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // Supabase Configuration
+    // Konfigurasi Supabase
     const SB_URL = "https://ntaecfphgoelmhzrkatp.supabase.co"; 
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg";
     const _supabase = supabase.createClient(SB_URL, SB_KEY);
 
+    // Fungsi Mengambil Data dari 3 Tabel Berbeda
     async function fetchRilisData() {
         const tbody = document.getElementById('rilis-table-body');
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><br>Memuat data...</td></tr>';
+
         try {
+            // Ambil data dari masing-masing tabel PT
             const [resIkaen, resIde, resKse] = await Promise.all([
                 _supabase.from('data_ikaen').select('*'),
                 _supabase.from('data_ide').select('*'),
                 _supabase.from('data_kse').select('*')
             ]);
 
+            // Gabungkan hasil dan beri penanda PT
             let allData = [
                 ...(resIkaen.data || []).map(item => ({...item, pt_name: 'PT. IKAEN', pt_class: 'bg-primary'})),
                 ...(resIde.data || []).map(item => ({...item, pt_name: 'PT. IDE', pt_class: 'bg-success'})),
                 ...(resKse.data || []).map(item => ({...item, pt_name: 'PT. KSE', pt_class: 'bg-warning text-dark'}))
             ];
 
+            // Urutkan berdasarkan waktu input terbaru
             allData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
             let html = '';
             if (allData.length === 0) {
-                html = '<tr><td colspan="7" class="text-center py-4 text-muted">No data found in any system.</td></tr>';
+                html = '<tr><td colspan="6" class="text-center py-4 text-muted">Belum ada data di semua tabel.</td></tr>';
             } else {
                 allData.forEach(row => {
+                    const displayQty = row.qty ? parseFloat(row.qty).toLocaleString() : '0';
+                    
                     html += `
                         <tr>
                             <td>
                                 <div class="fw-bold small">${row.tanggal || '-'}</div>
                                 <span class="badge ${row.pt_class}" style="font-size:0.6rem">${row.pt_name}</span>
                             </td>
-                            <td class="fw-bold text-primary">${row.no_sj || '-'}</td>
-                            <td class="text-secondary small">${row.no_memo || '-'}</td>
-                            <td class="small">
-                                <div><i class="bi bi-truck-flatbed me-1"></i><b>O:</b> ${row.no_ba_oper || '-'}</div>
-                                <div><i class="bi bi-file-check me-1"></i><b>P:</b> ${row.no_ba_penerimaan || '-'}</div>
-                            </td>
+                            <td class="fw-bold text-primary">${row.no_dokumen || '-'}</td>
+                            <td class="text-secondary small">${row.jenis_dokumen || '-'}</td>
                             <td><div class="text-truncate small" style="max-width:140px;">${row.tujuan || '-'}</div></td>
                             <td>
-                                <div class="fw-bold small">${row.driver || row.sopir || '-'}</div>
-                                <div class="text-muted small" style="font-size:0.75rem">${row.plat_no || row.nopol || '-'}</div>
+                                <div class="fw-bold small">${row.sopir || '-'}</div>
+                                <div class="text-muted small" style="font-size:0.75rem">${row.nopol || '-'}</div>
                             </td>
-                            <td><span class="badge bg-light text-dark border fw-bold">${(row.volume || row.qty || 0).toLocaleString()} L</span></td>
+                            <td><span class="badge bg-light text-dark border fw-bold">${displayQty}</span></td>
                         </tr>`;
                 });
             }
             tbody.innerHTML = html;
         } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">Error: ${err.message}</td></tr>`;
+            console.error("Fetch error:", err);
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Error: ${err.message}</td></tr>`;
         }
     }
 
-    // Auth Logic
+    // Logika Login Sederhana
     function handleLogin() {
         const u = document.getElementById('user').value;
         const p = document.getElementById('pass').value;
+        
+        // Kredensial sesuai permintaan Anda sebelumnya
         if(u === "admin" && p === "kse123") {
             localStorage.setItem('ide_session', 'active');
             showDashboard();
         } else {
-            document.getElementById('error-msg').style.display = 'block';
+            const errorMsg = document.getElementById('error-msg');
+            errorMsg.style.display = 'block';
         }
     }
 
@@ -234,9 +242,13 @@
         location.reload();
     }
 
+    // Cek Session saat halaman dibuka
     window.onload = function() {
-        if (localStorage.getItem('ide_session') === 'active') showDashboard();
+        if (localStorage.getItem('ide_session') === 'active') {
+            showDashboard();
+        }
     };
 </script>
+
 </body>
 </html>
