@@ -43,16 +43,7 @@
             flex-shrink: 0;
         }
 
-        .val { 
-            font-weight: bold; 
-            font-size: 9.5pt; 
-            display: inline-block; 
-            margin-top: 2px;
-            white-space: nowrap; 
-            overflow: hidden;
-            max-width: 100%;
-        }
-
+        .val { font-weight: bold; font-size: 9.5pt; display: inline-block; margin-top: 2px; white-space: nowrap; overflow: hidden; max-width: 100%; }
         .page-footer-border { position: absolute; bottom: 0; left: 0; width: 100%; height: 12px; background: #222; }
         .accent-box { position: absolute; bottom: 0; right: 0; display: flex; }
         .accent-green { width: 45px; height: 12px; background: var(--primary-green); transform: skewX(-30deg); margin-right: -5px; }
@@ -65,19 +56,12 @@
         .header { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .logo-area { display: flex; align-items: center; gap: 15px; }
         .main-logo { height: 55px; width: auto; }
-        
         .logo-text { display: flex; flex-direction: column; justify-content: center; }
         .logo-text b { font-size: 17pt; line-height: 1.1; color: var(--primary-green); text-align: left; }
         .logo-text span { font-size: 13pt; color: var(--accent-tosca); font-weight: bold; letter-spacing: 1px; text-align: left; }
-        
         .company-address { font-size: 8.5pt; margin-top: 8px; line-height: 1.4; width: 55%; }
         
-        .meta-info-grid { 
-            text-align: right; 
-            font-size: 8.5pt; 
-            width: 40%; 
-            margin-top: 8px;
-        }
+        .meta-info-grid { text-align: right; font-size: 8.5pt; width: 40%; margin-top: 8px; }
         .meta-info-grid table { width: auto; margin-left: auto; border-collapse: collapse; }
         .meta-info-grid td { vertical-align: top; padding: 2px 0; text-align: left; }
         .meta-label { font-weight: bold; width: 115px; }
@@ -104,29 +88,9 @@
         .sig-table td { height: 105px; vertical-align: bottom; font-weight: bold; font-size: 9.5pt; padding-bottom: 10px; position: relative; }
         .stamp-container { position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 115px; z-index: 1; opacity: 0.85; pointer-events: none; }
 
-        .other-note-container { 
-            width: 100%; 
-            border: 1px solid #000; 
-            border-top: none; 
-            padding: 6px 10px; 
-            font-size: 8pt; 
-            min-height: 45px; 
-            box-sizing: border-box;
-            background: #fff;
-            text-align: left;
-        }
+        .other-note-container { width: 100%; border: 1px solid #000; border-top: none; padding: 6px 10px; font-size: 8pt; min-height: 45px; box-sizing: border-box; background: #fff; text-align: left; }
 
-        .editor-panel { 
-            width: 380px; 
-            padding: 20px; 
-            background: #fff; 
-            border-radius: 8px; 
-            border: 1px solid #ddd;
-            max-height: 95vh;
-            overflow-y: auto;
-            position: sticky;
-            top: 20px;
-        }
+        .editor-panel { width: 380px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ddd; max-height: 95vh; overflow-y: auto; position: sticky; top: 20px; }
         .editor-panel h2 { margin: 18px 0 8px 0; color: var(--primary-green); font-size: 11pt; border-bottom: 2px solid var(--accent-tosca); padding-bottom: 5px; }
         .field { display: flex; flex-direction: column; margin-bottom: 10px; }
         .field label { font-size: 8pt; font-weight: bold; margin-bottom: 4px; color: #444; }
@@ -150,20 +114,19 @@
 <body>
 
 <div class="editor-panel">
-    <h2>Database & Document Type</h2>
+    <h2>Database Settings</h2>
     <div class="field">
-        <label>Pilih Perusahaan (Tabel)</label>
+        <label>Pilih Tabel Simpan (Nama PT)</label>
         <select id="i-target-table" onchange="initPage()">
             <option value="data_kse">PT. KHATULISTIWA SINAR ENERGI (KSE)</option>
             <option value="data_ide">PT. INDO DHARMA ENERGI (IDE)</option>
             <option value="data_ikaen">PT. IKAEN (IKN)</option>
         </select>
     </div>
-    <input type="hidden" id="i-doc-type" value="SURAT JALAN">
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Dokumen (Otomatis)</label><input type="text" id="i-no" readonly style="background:#f0f0f0"></div>
+    <div class="field"><label>Nomor Surat Jalan (Auto)</label><input type="text" id="i-no" readonly style="background:#f9f9f9"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -185,7 +148,7 @@
     <div class="field"><label>PO Quantity (L)</label><input type="text" id="i-poqty" value="0"></div>
 
     <h2>4. Pengesahan & Catatan</h2>
-    <div class="field"><label>Nama Pengemudi (Driver)</label><input type="text" id="i-driver" value="-"></div>
+    <div class="field"><label>Nama Pengemudi</label><input type="text" id="i-driver" value="-"></div>
     <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="Admin Khatulistiwa Sinar Energi"></div>
     <div class="field"><label>Other Note</label><textarea id="i-other-note" rows="2"></textarea></div>
 
@@ -225,8 +188,8 @@
     </div>
 
     <div class="title-block">
-        <h1 id="v-title-main">DELIVERY ORDER</h1>
-        <p id="v-title-sub">SURAT JALAN</p>
+        <h1>DELIVERY ORDER</h1>
+        <p>SURAT JALAN</p>
     </div>
 
     <table class="main-table">
@@ -320,7 +283,7 @@
         <div id="qrcode"></div>
         <div class="system-info-text">
             <b>E-System Document KSE Group</b><br>
-            <i id="v-footer-info">Digital Verification Secure System</i>
+            <i>Digital Verification Secure System</i>
         </div>
     </div>
     <div class="page-footer-border"></div>
@@ -341,45 +304,35 @@
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
     }
 
-    // --- LOGIKA PENOMORAN OTOMATIS (IDENTIK INDO DHARMA) ---
     async function initPage() {
         const now = new Date();
         const panelDate = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         document.getElementById('i-tgl').value = panelDate;
 
         const table = document.getElementById('i-target-table').value;
-        const docType = "SURAT JALAN"; 
-        
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const month = roman[now.getMonth()];
         const year = now.getFullYear();
 
         try {
-            // Hitung jumlah data di tabel tujuan (KSE/IDE/IKN)
             const { count, error } = await _supabase
                 .from(table)
                 .select('*', { count: 'exact', head: true })
-                .eq('jenis_dokumen', docType);
+                .eq('jenis_dokumen', "SURAT JALAN");
 
             if (error) throw error;
 
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            
-            // Penentuan Prefix PT
-            let codePT = "KSE";
-            if(table === "data_ikaen") codePT = "IKN";
-            if(table === "data_ide") codePT = "IDE";
+            let codePT = (table === "data_ikaen") ? "IKN" : (table === "data_ide") ? "IDE" : "KSE";
 
             document.getElementById('i-no').value = `${nextNo}/SJ-${codePT}/${month}/${year}`;
         } catch (e) {
-            console.error(e);
             document.getElementById('i-no').value = `001/SJ-KSE/${month}/${year}`;
         }
         upd();
     }
 
     function upd() {
-        // Handle Tanggal
         const inputDate = document.getElementById('i-tgl').value;
         const dateParts = inputDate.split('/');
         if(dateParts.length === 3) {
@@ -389,18 +342,16 @@
             document.getElementById('v-tgl').innerText = inputDate;
         }
 
-        // Handle Tanggal Load
         const loadVal = document.getElementById('i-load-date').value;
         document.getElementById('v-load').innerText = loadVal ? formatDisplayDate(new Date(loadVal)) : '-';
 
         const fields = [
-            ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'],
-            ['v-trans', 'i-trans'], ['v-prod', 'i-prod'], ['v-do-top', 'i-do-desc'],
-            ['v-vol', 'i-vol'], ['v-so-top', 'i-so-desc'],
-            ['v-plat', 'i-plat'], ['v-m1', 'i-m1'], ['v-m2', 'i-m2'],
-            ['v-segel', 'i-segel'], ['v-t2', 'i-t2'], ['v-po-num', 'i-po-num'],
-            ['v-so-desc', 'i-so-desc'], ['v-poqty', 'i-poqty'], ['v-driver', 'i-driver'],
-            ['v-mgr', 'i-mgr'], ['v-other-note', 'i-other-note']
+            ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'], ['v-trans', 'i-trans'], 
+            ['v-prod', 'i-prod'], ['v-do-top', 'i-do-desc'], ['v-vol', 'i-vol'], 
+            ['v-so-top', 'i-so-desc'], ['v-plat', 'i-plat'], ['v-m1', 'i-m1'], 
+            ['v-m2', 'i-m2'], ['v-segel', 'i-segel'], ['v-t2', 'i-t2'], 
+            ['v-po-num', 'i-po-num'], ['v-so-desc', 'i-so-desc'], ['v-poqty', 'i-poqty'], 
+            ['v-driver', 'i-driver'], ['v-mgr', 'i-mgr'], ['v-other-note', 'i-other-note']
         ];
 
         fields.forEach(pair => {
@@ -417,13 +368,15 @@
         qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
     }
 
-    // --- LOGIKA SIMPAN DATA (IDENTIK INDO DHARMA) ---
     async function saveData() {
         const table = document.getElementById('i-target-table').value;
         const btn = document.querySelector('.btn-save');
         const currentNo = document.getElementById('i-no').value;
+        
+        // Logika nomor urut untuk Indo Dharma (Ambil 3 angka depan)
+        const numOnly = currentNo.split('/')[0];
 
-        if(!confirm(`Simpan dokumen ${currentNo} ke tabel ${table}?`)) return;
+        if(!confirm(`Simpan dokumen ${currentNo} ke database ${table}?`)) return;
 
         btn.innerText = 'SAVING...';
         btn.disabled = true;
@@ -434,6 +387,7 @@
         const payload = {
             tanggal: dbDate,
             no_dokumen: currentNo,
+            nomor_urut: numOnly, // MENAMBAHKAN KOLOM NOMOR_URUT
             jenis_dokumen: "SURAT JALAN",
             tujuan: document.getElementById('i-po-to').value,
             nopol: document.getElementById('i-plat').value,
@@ -447,6 +401,7 @@
             alert('BERHASIL DISIMPAN!');
             initPage(); 
         } catch (error) {
+            console.error("Supabase Error:", error);
             alert('Gagal simpan: ' + error.message);
         } finally {
             btn.innerText = 'SIMPAN DATA';
