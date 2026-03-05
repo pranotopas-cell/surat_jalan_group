@@ -175,7 +175,7 @@
     <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="-"></div>
     <div class="field"><label>Produk</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
     <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
-    <div class="field"><label>Volume (L)</label><input type="text" id="i-vol" value="0"></div>
+    <div class="field"><label>Volume (L)</label><input type="number" id="i-vol" value="0"></div>
     <div class="field"><label>Nomor SO</label><input type="text" id="i-so-desc" value="-"></div>
     <div class="field"><label>Tgl Pengaliran</label><input type="date" id="i-load-date"></div>
     <div class="field"><label>Plat Nomor</label><input type="text" id="i-plat" value="-"></div>
@@ -186,7 +186,7 @@
 
     <h2>3. Deskripsi Pesanan</h2>
     <div class="field"><label>Nomor PO</label><input type="text" id="i-po-num" value="-"></div>
-    <div class="field"><label>PO Quantity (L)</label><input type="text" id="i-poqty" value="0"></div>
+    <div class="field"><label>PO Quantity (L)</label><input type="number" id="i-poqty" value="0"></div>
 
     <h2>4. Pengesahan & Catatan</h2>
     <div class="field"><label>Nama Pengemudi (Driver)</label><input type="text" id="i-driver" value="-"></div>
@@ -289,7 +289,7 @@
             </tr>
             <tr>
                 <td><b>PO Quantity</b> / <i style="font-size: 7.5pt;">Jumlah Pesanan</i></td>
-                <td>: <span class="val" id="v-poqty">-</span> L</td>
+                <td>: <span class="val" id="v-poqty-v">-</span> L</td>
             </tr>
         </table>
         <div class="note-box">
@@ -356,7 +356,6 @@
         const month = roman[now.getMonth()];
         const year = now.getFullYear();
 
-        // Judul Visual Berdasarkan Jenis
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
@@ -366,7 +365,6 @@
         }
 
         try {
-            // Logika Penomoran
             const { count, error } = await _supabase
                 .from(table)
                 .select('*', { count: 'exact', head: true })
@@ -375,10 +373,7 @@
             if (error) throw error;
 
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            
             let codeDoc = (docType === "MEMO") ? "MEMO" : "SJ";
-            
-            // Kode PT Default KSE
             let codePT = "KSE";
             if(table === "data_ikaen") codePT = "IKN";
             if(table === "data_ide") codePT = "IDE";
@@ -407,7 +402,7 @@
             ['v-vol', 'i-vol'], ['v-so-top', 'i-so-desc'], ['v-load', 'i-load-date'],
             ['v-plat', 'i-plat'], ['v-m1', 'i-m1'], ['v-m2', 'i-m2'],
             ['v-segel', 'i-segel'], ['v-t2', 'i-t2'], ['v-po-num', 'i-po-num'],
-            ['v-so-desc', 'i-so-desc'], ['v-poqty', 'i-poqty'], ['v-driver', 'i-driver'],
+            ['v-so-desc', 'i-so-desc'], ['v-poqty-v', 'i-poqty'], ['v-driver', 'i-driver'],
             ['v-mgr', 'i-mgr'], ['v-other-note', 'i-other-note']
         ];
 
@@ -431,6 +426,7 @@
         btn.innerText = 'SAVING...';
         btn.disabled = true;
 
+        // FORMAT TANGGAL KE YYYY-MM-DD
         const rawDate = document.getElementById('i-tgl').value;
         const dbDate = rawDate.replace(/\//g, '-'); 
 
@@ -441,15 +437,17 @@
             tujuan: document.getElementById('i-po-to').value,
             nopol: document.getElementById('i-plat').value,
             sopir: document.getElementById('i-driver').value,
-            qty: document.getElementById('i-poqty').value
+            qty: parseFloat(document.getElementById('i-poqty').value) || 0
         };
 
-        // KONEKSI UTAMA KE TABEL
-        const { error } = await _supabase.from(table).insert([payload]);
+        console.log("Kirim data ke:", table);
+        console.table(payload);
+
+        const { data, error } = await _supabase.from(table).insert([payload]);
 
         if (error) {
-            console.error("Supabase Error:", error);
-            alert('Gagal simpan: ' + error.message + '\n\nPastikan tabel "' + table + '" sudah ada di Supabase.');
+            console.error("Supabase Error Details:", error);
+            alert('Gagal simpan!\nError: ' + error.message + '\n\nTips: Cek apakah nama kolom di Supabase sudah sesuai.');
         } else {
             alert('Berhasil disimpan ke tabel ' + table);
             initPage();
