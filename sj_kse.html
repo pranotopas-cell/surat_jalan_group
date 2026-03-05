@@ -102,7 +102,7 @@
         .sig-table th, .sig-table td { border: 1px solid #000; text-align: center; padding: 5px; width: 33.33%; }
         .sig-table th { background: var(--light-bg); font-size: 9pt; padding: 8px 5px; }
         .sig-table td { height: 105px; vertical-align: bottom; font-weight: bold; font-size: 9.5pt; padding-bottom: 10px; position: relative; }
-        .stamp-container { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 135px; z-index: 1; opacity: 0.90; pointer-events: none; }
+        .stamp-container { position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 110px; z-index: 1; opacity: 0.85; pointer-events: none; }
 
         .other-note-container { 
             width: 100%; 
@@ -159,6 +159,7 @@
             <option value="data_ide">DATA IDE</option>
         </select>
     </div>
+    <input type="hidden" id="i-doc-type" value="SJ">
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
@@ -224,8 +225,8 @@
     </div>
 
     <div class="title-block">
-        <h1>DELIVERY ORDER</h1>
-        <p>SURAT JALAN</p>
+        <h1 id="v-title-main">DELIVERY ORDER</h1>
+        <p id="v-title-sub">SURAT JALAN</p>
     </div>
 
     <table class="main-table">
@@ -335,18 +336,7 @@
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
     function formatDisplayDate(dateObj) {
-        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
-    }
-
-    // --- SUPABASE CONFIG ---
-    const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
-
-    function formatDisplayDate(dateObj) {
+        if (isNaN(dateObj)) return "-";
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
     }
@@ -364,29 +354,28 @@
         const year = now.getFullYear();
 
         // Judul Visual Berdasarkan Jenis
+        const titleMain = document.getElementById('v-title-main');
+        const titleSub = document.getElementById('v-title-sub');
+        
         if(docType === "MEMO") {
-            document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
-            document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
+            if(titleMain) titleMain.innerText = "INTERNAL MEMO";
+            if(titleSub) titleSub.innerText = "MEMO PERUSAHAAN";
         } else {
-            document.getElementById('v-title-main').innerText = "DELIVERY ORDER";
-            document.getElementById('v-title-sub').innerText = "SURAT JALAN";
+            if(titleMain) titleMain.innerText = "DELIVERY ORDER";
+            if(titleSub) titleSub.innerText = "SURAT JALAN";
         }
 
         try {
-            // LOGIKA PENOMORAN TERPISAH: Filter berdasarkan JENIS_DOKUMEN dan TABEL
             const { count, error } = await _supabase
                 .from(table)
                 .select('*', { count: 'exact', head: true })
-                .eq('jenis_dokumen', docType);
+                .eq('jenis_dokumen', "SURAT JALAN");
 
             if (error) throw error;
 
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
             
-            // Kode Dokumen
             let codeDoc = (docType === "MEMO") ? "MEMO" : "SJ";
-            
-            // Kode PT
             let codePT = "IDE";
             if(table === "data_ikaen") codePT = "IKN";
             if(table === "data_kse") codePT = "KSE";
@@ -400,6 +389,7 @@
     }
 
     function upd() {
+        // Handle Tanggal Dokumen
         const inputDate = document.getElementById('i-tgl').value;
         const dateParts = inputDate.split('/');
         if(dateParts.length === 3) {
@@ -409,10 +399,19 @@
             document.getElementById('v-tgl').innerText = inputDate;
         }
 
+        // Handle Tanggal Pengaliran (Input Type Date)
+        const loadDateVal = document.getElementById('i-load-date').value;
+        if(loadDateVal) {
+            const ld = new Date(loadDateVal);
+            document.getElementById('v-load').innerText = formatDisplayDate(ld);
+        } else {
+            document.getElementById('v-load').innerText = '-';
+        }
+
         const fields = [
             ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'],
             ['v-trans', 'i-trans'], ['v-prod', 'i-prod'], ['v-do-top', 'i-do-desc'],
-            ['v-vol', 'i-vol'], ['v-so-top', 'i-so-desc'], ['v-load', 'i-load-date'],
+            ['v-vol', 'i-vol'], ['v-so-top', 'i-so-desc'],
             ['v-plat', 'i-plat'], ['v-m1', 'i-m1'], ['v-m2', 'i-m2'],
             ['v-segel', 'i-segel'], ['v-t2', 'i-t2'], ['v-po-num', 'i-po-num'],
             ['v-so-desc', 'i-so-desc'], ['v-poqty', 'i-poqty'], ['v-driver', 'i-driver'],
@@ -420,7 +419,9 @@
         ];
 
         fields.forEach(pair => {
-            document.getElementById(pair[0]).innerText = document.getElementById(pair[1]).value || '-';
+            const target = document.getElementById(pair[0]);
+            const source = document.getElementById(pair[1]);
+            if(target && source) target.innerText = source.value || '-';
         });
 
         document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
@@ -429,6 +430,7 @@
         qrcode.clear();
         qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
     }
+
     async function saveData() {
         const table = document.getElementById('i-target-table').value;
         const btn = document.querySelector('.btn-save');
@@ -450,17 +452,18 @@
             qty: document.getElementById('i-poqty').value
         };
 
-        const { error } = await _supabase.from(table).insert([payload]);
-
-        if (error) {
+        try {
+            const { error } = await _supabase.from(table).insert([payload]);
+            if (error) throw error;
+            alert('Berhasil disimpan ke ' + table + '\nNo: ' + currentNo);
+            initPage(); 
+        } catch (error) {
             console.error("Supabase Error:", error);
             alert('Gagal simpan: ' + error.message);
-        } else {
-            alert('Berhasil disimpan ke ' + table + '\nNo: ' + currentNo);
-            initPage(); // Refresh nomor urut otomatis
+        } finally {
+            btn.innerText = 'SIMPAN DATA';
+            btn.disabled = false;
         }
-        btn.innerText = 'SIMPAN DATA';
-        btn.disabled = false;
     }
 
     function downloadPDF() {
@@ -479,4 +482,3 @@
 </script>
 </body>
 </html>
-
