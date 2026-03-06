@@ -19,6 +19,7 @@
 
         body { font-family: 'Arial', sans-serif; background-color: #525659; margin: 0; display: flex; }
         
+        /* Sidebar Styles */
         .sidebar { 
             width: 400px; background: var(--dark-sidebar); color: white; height: 100vh; 
             padding: 15px; overflow-y: auto; position: fixed; left: 0; top: 0;
@@ -26,7 +27,6 @@
             z-index: 100;
         }
         .sidebar h2 { font-size: 16px; border-bottom: 2px solid var(--primary-kse); padding-bottom: 10px; margin-bottom: 15px; color: #ecf0f1; text-align: center; }
-        
         .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
         .btn { 
             padding: 10px; border: none; border-radius: 4px; cursor: pointer; 
@@ -38,72 +38,72 @@
         .btn-preview { background: var(--accent-blue); }
         .btn-download { background: #c0392b; }
         .btn:hover { opacity: 0.8; }
-
         .section-title { font-size: 10px; color: var(--accent-blue); font-weight: bold; margin: 15px 0 8px 0; text-transform: uppercase; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
-        
         .input-group { margin-bottom: 6px; }
         .input-group label { display: block; font-size: 9px; margin-bottom: 2px; color: #bdc3c7; }
         .input-group input { 
             width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #2c3e50; 
             background: #2c3e50; color: white; font-size: 11px;
         }
-
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid var(--primary-kse); }
 
+        /* Memo Canvas */
         .main-content { margin-left: 400px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
-        
         .memo-page { 
-            background: white; width: 210mm; height: 297mm; padding: 10mm 15mm; 
+            background: white; width: 210mm; height: 297mm; padding: 15mm 20mm; 
             box-shadow: 0 0 20px rgba(0,0,0,0.5); color: black; line-height: 1.4;
             position: relative; overflow: hidden; display: flex; flex-direction: column;
         }
 
         .header { 
-            display: flex; justify-content: space-between; align-items: center;
-            padding-bottom: 10px; margin-bottom: 30px; 
-            border-bottom: none; 
+            display: flex; justify-content: center; align-items: center;
+            padding-bottom: 10px; margin-bottom: 30px; border-bottom: 2px solid var(--primary-kse);
         }
-        
-        .logo-container img { height: 45px; width: auto; }
+        .logo-container img { height: 55px; width: auto; }
 
-        .memo-meta { margin-bottom: 15px; font-size: 13px; }
-        .meta-row { display: flex; margin-bottom: 2px; }
-        .meta-label { width: 120px; color: #555; font-weight: bold; }
-        .meta-colon { width: 15px; }
-        .meta-value { font-weight: bold; color: #000; }
+        /* New Layout: Left-Right Split */
+        .info-split-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            font-size: 12px;
+        }
 
-        .recipient-block { margin-bottom: 15px; line-height: 1.4; font-size: 13px; }
-        .details-box { margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-left: 4px solid var(--primary-kse); font-size: 13px; }
+        .recipient-side { width: 50%; }
+        .meta-side { width: 45%; }
+
+        .lang-sub { font-style: italic; color: #666; font-size: 11px; display: block; }
+
+        .meta-row { display: flex; margin-bottom: 4px; }
+        .meta-label { width: 80px; font-weight: bold; }
+        .meta-colon { width: 10px; }
+        .meta-value { font-weight: bold; flex: 1; }
+
+        /* Body Sections */
+        .opening-text { margin-bottom: 15px; font-size: 13px; }
+        .details-box { margin-bottom: 15px; padding: 12px; background: #f8f9fa; border: 1px solid #eee; border-left: 4px solid var(--primary-kse); font-size: 12px; }
 
         table.data-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
         table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 8px 5px; text-align: center; font-size: 11px; }
         table.data-table th { background: var(--primary-kse); color: white; font-weight: bold; }
         table.data-table tr:nth-child(even) { background-color: #f2f6fa; }
 
-        .signature-container { margin-top: 20px; text-align: left; font-size: 13px; flex-grow: 1; }
-        .sig-img { width: 85px; margin: 5px 0 0 -10px; display: block; }
+        .signature-container { margin-top: 30px; text-align: left; font-size: 13px; }
+        .sig-img { width: 100px; margin: 5px 0 5px -10px; display: block; }
 
-        /* Footer Style Updated */
         .footer-memo {
-            margin-top: auto;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 9px;
-            color: #666;
+            margin-top: auto; border-top: 1px solid #eee; padding-top: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 9px; color: #666;
         }
-        
         .qr-section { display: flex; align-items: center; gap: 8px; }
-        .qr-text { line-height: 1.2; font-size: 8px; font-style: italic; color: #888; }
         #qrcode { padding: 2px; background: white; border: 1px solid #eee; }
-        .footer-address { text-align: right; line-height: 1.3; }
 
         @media print {
             .sidebar { display: none; }
             .main-content { margin-left: 0; padding: 0; background: none; }
-            .memo-page { box-shadow: none; border: none; width: 100%; padding: 10mm; }
+            .memo-page { box-shadow: none; border: none; width: 100%; padding: 15mm; }
         }
     </style>
 </head>
@@ -119,13 +119,9 @@
         <button class="btn btn-download" onclick="downloadPDF()">📥 PDF</button>
     </div>
 
-    <div class="section-title">Meta & Database</div>
-    <div class="input-group">
-        <label>Tabel Tujuan</label>
-        <input type="text" value="data_kse" readonly style="background: #1a252f; color: #7f8c8d;">
-    </div>
-    <div class="input-group"><label>Number</label><input type="text" id="inNomor" readonly style="background: #1a252f;"></div>
-    <div class="input-group"><label>Date (YYYY/MM/DD)</label><input type="text" id="inTglMemo"></div>
+    <div class="section-title">Meta Data</div>
+    <div class="input-group"><label>Nomor</label><input type="text" id="inNomor" readonly style="background: #1a252f;"></div>
+    <div class="input-group"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="inTglMemo"></div>
 
     <div class="section-title">Informasi Loading</div>
     <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="05/PO-BBM/KSE/III/2026"></div>
@@ -133,7 +129,7 @@
     <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="06 Maret 2026"></div>
     <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu - Kumai"></div>
 
-    <div class="section-title">Data Armada 1</div>
+    <div class="section-title">Data Armada</div>
     <div class="unit-card">
         <input type="text" id="inTrans1" value="PT. KHATULISTIWA SINAR ENERGI" placeholder="Transportir">
         <div class="input-group"><input type="text" id="inNopol1" value="KH 0000 XX" placeholder="No. Polisi"></div>
@@ -151,59 +147,79 @@
             </div>
         </div>
 
-        <div class="memo-meta">
-            <div class="meta-row"><div class="meta-label">Number</div><div class="meta-colon">:</div><div class="meta-value" id="outNomor"></div></div>
-            <div class="meta-row"><div class="meta-label">Subject</div><div class="meta-colon">:</div><div class="meta-value">Memo Pengaliran BBM</div></div>
-            <div class="meta-row"><div class="meta-label">Date</div><div class="meta-colon">:</div><div class="meta-value" id="outTglMemo"></div></div>
+        <div class="info-split-container">
+            <div class="recipient-side">
+                <strong>Kepada yang kami hormati,</strong>
+                <span class="lang-sub">To our respected,</span>
+                <div style="margin-top: 8px; font-size: 14px;">
+                    <strong>PT. Sinarindo Sukses Selalu</strong><br>
+                    - di Pangkalan Bun
+                </div>
+            </div>
+
+            <div class="meta-side">
+                <div class="meta-row">
+                    <div class="meta-label">Nomor <br><span class="lang-sub" style="font-weight: normal;">Number</span></div>
+                    <div class="meta-colon">:</div>
+                    <div class="meta-value" id="outNomor"></div>
+                </div>
+                <div class="meta-row">
+                    <div class="meta-label">Perihal <br><span class="lang-sub" style="font-weight: normal;">Subject</span></div>
+                    <div class="meta-colon">:</div>
+                    <div class="meta-value">Memo Pengaliran BBM<br><span class="lang-sub" style="font-weight: normal;">Fuel Transfer Memo</span></div>
+                </div>
+                <div class="meta-row">
+                    <div class="meta-label">Tanggal <br><span class="lang-sub" style="font-weight: normal;">Date</span></div>
+                    <div class="meta-colon">:</div>
+                    <div class="meta-value" id="outTglMemo"></div>
+                </div>
+            </div>
         </div>
 
-        <div class="recipient-block">
-            Kepada yang kami hormati,<br>
-            <strong>PT. Sinarindo Sukses Selalu</strong><br>
-            - di Pangkalan Bun
-        </div>
-
-        <div style="margin-bottom: 10px; font-size: 13px;">
-            Dengan Hormat,<br>
+        <div class="opening-text">
+            Dengan Hormat / <i>Dear Sir/Madam,</i><br>
             Bersama ini kami sampaikan Realisasi Pengaliran BBM Solar Industri dari <b>PT. Sinarindo Sukses Selalu</b> dengan rincian sebagai berikut:
+            <span class="lang-sub">We hereby submit the realization of Industrial Diesel Fuel transfer from PT. Sinarindo Sukses Selalu with details as follows:</span>
         </div>
 
         <div class="details-box">
             <div class="meta-row"><div class="meta-label">No. PO</div><div class="meta-colon">:</div><div class="meta-value" id="outPO"></div></div>
-            <div class="meta-row"><div class="meta-label">Tanggal PO</div><div class="meta-colon">:</div><div class="meta-value" id="outTglPO"></div></div>
-            <div class="meta-row"><div class="meta-label">Tanggal Loading</div><div class="meta-colon">:</div><div class="meta-value" id="outTglLoad"></div></div>
-            <div class="meta-row"><div class="meta-label">Lokasi Loading</div><div class="meta-colon">:</div><div class="meta-value" id="outLokasi"></div></div>
+            <div class="meta-row"><div class="meta-label">Tgl. PO</div><div class="meta-colon">:</div><div class="meta-value" id="outTglPO"></div></div>
+            <div class="meta-row"><div class="meta-label">Tgl. Loading</div><div class="meta-colon">:</div><div class="meta-value" id="outTglLoad"></div></div>
+            <div class="meta-row"><div class="meta-label">Lokasi</div><div class="meta-colon">:</div><div class="meta-value" id="outLokasi"></div></div>
         </div>
 
         <table class="data-table">
             <thead>
                 <tr>
                     <th style="width: 30px;">NO</th>
-                    <th>TRANSPORTIR</th>
-                    <th>NOMOR POLISI</th>
-                    <th>DRIVER</th>
-                    <th>QTY (L)</th>
-                    <th>TERA (cm)</th>
+                    <th>TRANSPORTIR<br><small><i>Carrier</i></small></th>
+                    <th>NOMOR POLISI<br><small><i>License Plate</i></small></th>
+                    <th>DRIVER<br><small><i>Operator</i></small></th>
+                    <th>QTY (L)<br><small><i>Volume</i></small></th>
+                    <th>TERA (cm)<br><small><i>Measurement</i></small></th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
             <tfoot>
                 <tr style="font-weight: bold; background: #f1f4f9;">
-                    <td colspan="4" style="text-align: right; padding-right: 15px;">TOTAL REALISASI</td>
-                    <td id="outTotal" style="color: var(--primary-kse);"></td>
+                    <td colspan="4" style="text-align: right; padding-right: 15px;">TOTAL REALISASI <span class="lang-sub" style="display:inline; margin-left:5px;">(Total Realization)</span></td>
+                    <td id="outTotal" style="color: var(--primary-kse); font-size: 13px;"></td>
                     <td></td>
                 </tr>
             </tfoot>
         </table>
 
-        <div style="font-size: 12px; margin-top: 10px; text-align: justify;">
+        <div style="font-size: 11px; margin-top: 10px; text-align: justify; line-height: 1.3;">
             Demikian memo ini dibuat tanpa paksaan dari pihak manapun, dengan keterangan yang sebenar-benarnya diatas agar dapat digunakan sebagaimana mestinya.
+            <br><i>This memo is made without coercion from any party, with the actual information above to be used as appropriate.</i>
         </div>
 
         <div class="signature-container">
             Regards,<br>
             <strong style="font-size: 14px; color: var(--primary-kse);">PT. Khatulistiwa Sinar Energi</strong><br>
             <img src="ttd.png" alt="Tanda Tangan" class="sig-img">
+            <strong><u>Operational Department</u></strong>
         </div>
 
         <div class="footer-memo">
@@ -211,7 +227,8 @@
                 <div id="qrcode"></div>
                 <div class="qr-text">
                     <strong>Digital E-form KSE System</strong><br>
-                    Scan QR ini untuk validasi memo.
+                    Scan QR ini untuk validasi dokumen asli.<br>
+                    <i>Scan this QR for document validation.</i>
                 </div>
             </div>
             <div class="footer-address">
@@ -245,7 +262,6 @@
 
         try {
             const { count, error } = await _supabase.from("data_kse").select('*', { count: 'exact', head: true }).eq('jenis_dokumen', "MEMO PENGALIRAN");
-            if (error) throw error;
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
             document.getElementById('inNomor').value = `${nextNo}/MEMO-KSE/${monthRoman}/${yyyy}`;
         } catch (e) {
@@ -260,7 +276,7 @@
         
         const qrContainer = document.getElementById("qrcode");
         qrContainer.innerHTML = "";
-        new QRCode(qrContainer, { text: noSurat, width: 50, height: 50 }); // Ukuran diperkecil ke 50
+        new QRCode(qrContainer, { text: noSurat, width: 45, height: 45 });
 
         const rawDate = document.getElementById('inTglMemo').value;
         const dParts = rawDate.split('/');
@@ -276,17 +292,17 @@
 
         let total = 0;
         let tableHTML = "";
-        for (let i = 1; i <= 1; i++) { // Simple loop for example
-            const trans = document.getElementById('inTrans1').value;
-            const nopol = document.getElementById('inNopol1').value;
-            const driver = document.getElementById('inDriver1').value;
-            const qty = parseFloat(document.getElementById('inQty1').value) || 0;
-            const tera = document.getElementById('inTera1').value;
-
-            if (nopol || driver || qty > 0) {
-                total += qty;
-                tableHTML += `<tr><td>1</td><td style="text-align:left;">${trans}</td><td>${nopol}</td><td>${driver}</td><td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td><td>${tera}</td></tr>`;
-            }
+        const qty = parseFloat(document.getElementById('inQty1').value) || 0;
+        if (qty > 0) {
+            total = qty;
+            tableHTML = `<tr>
+                <td>1</td>
+                <td style="text-align:left;">${document.getElementById('inTrans1').value}</td>
+                <td>${document.getElementById('inNopol1').value}</td>
+                <td>${document.getElementById('inDriver1').value}</td>
+                <td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td>
+                <td>${document.getElementById('inTera1').value}</td>
+            </tr>`;
         }
         document.getElementById('tableBody').innerHTML = tableHTML;
         document.getElementById('outTotal').innerText = total.toLocaleString('id-ID') + " Liter";
@@ -294,7 +310,7 @@
 
     async function saveData() {
         const btn = document.getElementById('btnSave');
-        btn.innerText = "SIMPAN..."; btn.disabled = true;
+        btn.innerText = "MENYIMPAN..."; btn.disabled = true;
         const payload = {
             tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
             no_dokumen: document.getElementById('inNomor').value,
@@ -306,7 +322,7 @@
         };
         const { error } = await _supabase.from("data_kse").insert([payload]);
         if(error) alert("Gagal Simpan: " + error.message);
-        else { alert("Memo KSE Berhasil Disimpan!"); initPage(); }
+        else { alert("Memo Berhasil Disimpan!"); initPage(); }
         btn.innerText = "💾 SIMPAN"; btn.disabled = false;
     }
 
