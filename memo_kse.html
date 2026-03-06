@@ -6,6 +6,7 @@
     <title>Sistem Memo PT Khatulistiwa Sinar Energi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <style>
         * { box-sizing: border-box; }
@@ -57,20 +58,18 @@
         .memo-page { 
             background: white; width: 210mm; height: 297mm; padding: 10mm 15mm; 
             box-shadow: 0 0 20px rgba(0,0,0,0.5); color: black; line-height: 1.4;
-            position: relative; overflow: hidden;
+            position: relative; overflow: hidden; display: flex; flex-direction: column;
         }
 
+        /* Header Update: Hilangkan garis */
         .header { 
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--primary-kse); padding-bottom: 10px; margin-bottom: 15px; 
+            padding-bottom: 10px; margin-bottom: 15px; 
+            border-bottom: none; 
         }
         
         .logo-container { display: flex; align-items: center; gap: 10px; }
-        .logo-container img { height: 50px; width: auto; }
-
-        .header-address { 
-            text-align: right; font-size: 9px; line-height: 1.4; max-width: 400px; color: #333;
-        }
+        .logo-container img { height: 60px; width: auto; }
 
         .memo-meta { margin-bottom: 15px; font-size: 13px; }
         .meta-row { display: flex; margin-bottom: 2px; }
@@ -86,8 +85,22 @@
         table.data-table th { background: var(--primary-kse); color: white; font-weight: bold; }
         table.data-table tr:nth-child(even) { background-color: #f2f6fa; }
 
-        .signature-container { margin-top: 30px; text-align: left; font-size: 13px; }
-        .sig-img { width: 150px; margin: 5px 0 0 -10px; display: block; }
+        .signature-container { margin-top: 20px; text-align: left; font-size: 13px; flex-grow: 1; }
+        .sig-img { width: 140px; margin: 5px 0 0 -10px; display: block; }
+
+        /* Footer Style */
+        .footer-memo {
+            margin-top: auto;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 9px;
+            color: #666;
+        }
+        #qrcode { padding: 5px; background: white; }
+        .footer-address { text-align: right; line-height: 1.3; }
 
         @media print {
             .sidebar { display: none; }
@@ -110,14 +123,14 @@
 
     <div class="section-title">Meta & Database</div>
     <div class="input-group">
-        <label>Tabel Tujuan (Data KSE)</label>
+        <label>Tabel Tujuan</label>
         <input type="text" value="data_kse" readonly style="background: #1a252f; color: #7f8c8d;">
     </div>
-    <div class="input-group"><label>Nomor Memo (Otomatis)</label><input type="text" id="inNomor" readonly style="background: #1a252f;"></div>
-    <div class="input-group"><label>Tanggal Memo (YYYY/MM/DD)</label><input type="text" id="inTglMemo"></div>
+    <div class="input-group"><label>Nomor Memo</label><input type="text" id="inNomor" readonly style="background: #1a252f;"></div>
+    <div class="input-group"><label>Tanggal Memo</label><input type="text" id="inTglMemo"></div>
 
     <div class="section-title">Informasi Loading</div>
-    <div class="input-group"><label>No. Purchase Order (PO)</label><input type="text" id="inPO" value="05/PO-BBM/KSE/III/2026"></div>
+    <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="05/PO-BBM/KSE/III/2026"></div>
     <div class="input-group"><label>Tanggal PO</label><input type="text" id="inTglPO" value="02 Maret 2026"></div>
     <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="06 Maret 2026"></div>
     <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu - Kumai"></div>
@@ -130,15 +143,6 @@
         <div class="input-group"><input type="number" id="inQty1" value="5000" placeholder="Qty"></div>
         <div class="input-group"><input type="text" id="inTera1" value="100" placeholder="Tera"></div>
     </div>
-
-    <div class="section-title">Data Armada 2</div>
-    <div class="unit-card">
-        <input type="text" id="inTrans2" value="PT. KHATULISTIWA SINAR ENERGI" placeholder="Transportir">
-        <div class="input-group"><input type="text" id="inNopol2" placeholder="No. Polisi"></div>
-        <div class="input-group"><input type="text" id="inDriver2" placeholder="Driver"></div>
-        <div class="input-group"><input type="number" id="inQty2" placeholder="Qty"></div>
-        <div class="input-group"><input type="text" id="inTera2" placeholder="Tera"></div>
-    </div>
 </div>
 
 <div class="main-content">
@@ -146,8 +150,6 @@
         <div class="header">
             <div class="logo-container">
                 <img src="header1.png" alt="Logo KSE">
-            </div>
-            <div class="header-address">
             </div>
         </div>
 
@@ -163,7 +165,7 @@
             - di Pangkalan Bun
         </div>
 
-        <div style="margin-bottom: 15px; font-size: 13px;">
+        <div style="margin-bottom: 10px; font-size: 13px;">
             Dengan Hormat,<br>
             Bersama ini kami sampaikan Realisasi Pengaliran BBM Solar Industri dari <b>PT. Sinarindo Sukses Selalu</b> dengan rincian sebagai berikut:
         </div>
@@ -196,7 +198,7 @@
             </tfoot>
         </table>
 
-        <div style="font-size: 12px; margin-top: 15px; text-align: justify; line-height: 1.4;">
+        <div style="font-size: 12px; margin-top: 10px; text-align: justify;">
             Demikian memo ini dibuat tanpa paksaan dari pihak manapun, dengan keterangan yang sebenar-benarnya diatas agar dapat digunakan sebagaimana mestinya.
         </div>
 
@@ -205,6 +207,15 @@
             <strong style="font-size: 14px; color: var(--primary-kse);">PT. Khatulistiwa Sinar Energi</strong><br>
             <img src="ttd.png" alt="Tanda Tangan" class="sig-img">
         </div>
+
+        <div class="footer-memo">
+            <div id="qrcode"></div>
+            <div class="footer-address">
+                <strong>PT. KHATULISTIWA SINAR ENERGI</strong><br>
+                Jln. H.M Rafi'i RT 24 Pangkalan Bun<br>
+                Kotawaringin Barat - Kalimantan Tengah
+            </div>
+        </div>
     </div>
 </div>
 
@@ -212,6 +223,7 @@
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let qrcodeInstance = null;
 
     function formatIndoDate(dateObj) {
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -223,42 +235,36 @@
         const yyyy = now.getFullYear();
         const mm = (now.getMonth() + 1).toString().padStart(2, '0');
         const dd = now.getDate().toString().padStart(2, '0');
-        
         document.getElementById('inTglMemo').value = `${yyyy}/${mm}/${dd}`;
         
-        const table = "data_kse";
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const monthRoman = roman[now.getMonth()];
-        const jenisDok = "MEMO PENGALIRAN";
 
         try {
-            // Hitung nomor urut otomatis khusus MEMO
-            const { count, error } = await _supabase
-                .from(table)
-                .select('*', { count: 'exact', head: true })
-                .eq('jenis_dokumen', jenisDok);
-
+            const { count, error } = await _supabase.from("data_kse").select('*', { count: 'exact', head: true }).eq('jenis_dokumen', "MEMO PENGALIRAN");
             if (error) throw error;
-
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
             document.getElementById('inNomor').value = `${nextNo}/MEMO-KSE/${monthRoman}/${yyyy}`;
         } catch (e) {
-            console.error(e);
             document.getElementById('inNomor').value = `001/MEMO-KSE/${monthRoman}/${yyyy}`;
         }
         update();
     }
 
     function update() {
-        document.getElementById('outNomor').innerText = document.getElementById('inNomor').value;
+        const noSurat = document.getElementById('inNomor').value;
+        document.getElementById('outNomor').innerText = noSurat;
         
+        // Update QR Code
+        const qrContainer = document.getElementById("qrcode");
+        qrContainer.innerHTML = "";
+        new QRCode(qrContainer, { text: noSurat, width: 60, height: 60 });
+
         const rawDate = document.getElementById('inTglMemo').value;
         const dParts = rawDate.split('/');
         if(dParts.length === 3) {
             const d = new Date(dParts[0], dParts[1]-1, dParts[2]);
             document.getElementById('outTglMemo').innerText = isNaN(d) ? rawDate : formatIndoDate(d);
-        } else {
-            document.getElementById('outTglMemo').innerText = rawDate;
         }
 
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
@@ -269,22 +275,15 @@
         let total = 0;
         let tableHTML = "";
         for (let i = 1; i <= 2; i++) {
-            const trans = document.getElementById('inTrans' + i).value;
-            const nopol = document.getElementById('inNopol' + i).value;
-            const driver = document.getElementById('inDriver' + i).value;
-            const qty = parseFloat(document.getElementById('inQty' + i).value) || 0;
-            const tera = document.getElementById('inTera' + i).value;
+            const trans = document.getElementById('inTrans' + i)?.value || "";
+            const nopol = document.getElementById('inNopol' + i)?.value || "";
+            const driver = document.getElementById('inDriver' + i)?.value || "";
+            const qty = parseFloat(document.getElementById('inQty' + i)?.value) || 0;
+            const tera = document.getElementById('inTera' + i)?.value || "";
 
             if (nopol || driver || qty > 0) {
                 total += qty;
-                tableHTML += `<tr>
-                    <td>${i}</td>
-                    <td style="text-align:left;">${trans}</td>
-                    <td>${nopol}</td>
-                    <td>${driver}</td>
-                    <td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td>
-                    <td>${tera}</td>
-                </tr>`;
+                tableHTML += `<tr><td>${i}</td><td style="text-align:left;">${trans}</td><td>${nopol}</td><td>${driver}</td><td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td><td>${tera}</td></tr>`;
             }
         }
         document.getElementById('tableBody').innerHTML = tableHTML;
@@ -293,31 +292,24 @@
 
     async function saveData() {
         const btn = document.getElementById('btnSave');
-        const table = "data_kse";
-        const jenisDok = "MEMO PENGALIRAN";
-        
         btn.innerText = "SIMPAN..."; btn.disabled = true;
 
         const q1 = parseFloat(document.getElementById('inQty1').value) || 0;
-        const q2 = parseFloat(document.getElementById('inQty2').value) || 0;
+        const q2 = parseFloat(document.getElementById('inQty2')?.value) || 0;
 
         const payload = {
             tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
             no_dokumen: document.getElementById('inNomor').value,
-            jenis_dokumen: jenisDok,
+            jenis_dokumen: "MEMO PENGALIRAN",
             tujuan: "PT. Sinarindo Sukses Selalu",
             nopol: document.getElementById('inNopol1').value || "-",
             sopir: document.getElementById('inDriver1').value || "-",
             qty: q1 + q2
         };
 
-        const { error } = await _supabase.from(table).insert([payload]);
-        if(error) {
-            alert("Gagal Simpan: " + error.message);
-        } else {
-            alert("Memo KSE Berhasil Disimpan!");
-            initPage(); 
-        }
+        const { error } = await _supabase.from("data_kse").insert([payload]);
+        if(error) alert("Gagal Simpan: " + error.message);
+        else { alert("Memo KSE Berhasil Disimpan!"); initPage(); }
         btn.innerText = "💾 SIMPAN"; btn.disabled = false;
     }
 
@@ -325,11 +317,8 @@
         const element = document.getElementById('memo-area');
         const filename = 'Memo_KSE_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf';
         html2pdf().set({
-            margin: 0,
-            filename: filename,
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            margin: 0, filename: filename, image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(element).save();
     }
 
@@ -339,4 +328,3 @@
 
 </body>
 </html>
-
