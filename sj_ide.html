@@ -140,10 +140,13 @@
         .btn:hover { opacity: 0.8; }
 
         @media print {
-            .editor-panel { display: none; }
-            body { background: none; padding: 0; display: block; }
-            #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; }
-        }
+    body { padding: 0 !important; margin: 0 !important; }
+    #sj-container { 
+        margin: 0 !important; 
+        border: none !important; 
+        box-shadow: none !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -483,3 +486,4 @@
 </script>
 </body>
 </html>
+
