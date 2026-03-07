@@ -53,7 +53,7 @@
             max-width: 100%;
         }
 
-        .page-footer-border { position: absolute; bottom: 15; left: 0; width: 100%; height: 12px; background: #222; }
+        .page-footer-border { position: absolute; bottom: 0; left: 0; width: 100%; height: 12px; background: #222; }
         .accent-box { position: absolute; bottom: 0; right: 0; display: flex; }
         .accent-blue { width: 45px; height: 12px; background: var(--primary-blue); transform: skewX(-30deg); margin-right: -5px; }
         .accent-light { width: 45px; height: 12px; background: #80dfff; transform: skewX(-30deg); }
@@ -333,7 +333,6 @@
 </div>
 
 <script>
-    // --- SUPABASE CONFIG ---
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -357,7 +356,6 @@
         const month = roman[now.getMonth()];
         const year = now.getFullYear();
 
-        // Judul Visual Berdasarkan Jenis
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
@@ -367,7 +365,6 @@
         }
 
         try {
-            // LOGIKA PENOMORAN TERPISAH: Filter berdasarkan JENIS_DOKUMEN dan TABEL
             const { count, error } = await _supabase
                 .from(table)
                 .select('*', { count: 'exact', head: true })
@@ -376,11 +373,7 @@
             if (error) throw error;
 
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            
-            // Kode Dokumen
             let codeDoc = (docType === "MEMO") ? "MEMO" : "SJ";
-            
-            // Kode PT
             let codePT = "IDE";
             if(table === "data_ikaen") codePT = "IKN";
             if(table === "data_kse") codePT = "KSE";
@@ -438,7 +431,7 @@
         const payload = {
             tanggal: dbDate,
             no_dokumen: document.getElementById('i-no').value,
-            jenis_dokumen: docType, // Disimpan sesuai pilihan (SJ / MEMO)
+            jenis_dokumen: docType,
             tujuan: document.getElementById('i-po-to').value,
             nopol: document.getElementById('i-plat').value,
             sopir: document.getElementById('i-driver').value,
@@ -460,12 +453,29 @@
     function downloadPDF() {
         const element = document.getElementById('sj-container');
         const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
-        html2pdf().set({
+        
+        // Optimasi khusus untuk 1 halaman A4 (mm)
+        const opt = {
             margin: 0,
-            filename: 'DOC_'+noDoc+'.pdf',
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
+            filename: 'DOC_' + noDoc + '.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true, 
+                logging: false,
+                scrollX: 0,
+                scrollY: 0,
+                width: 793, // 210mm konversi ke px pada 96dpi
+                height: 1122 // 297mm konversi ke px pada 96dpi
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: 'a4', 
+                orientation: 'portrait' 
+            }
+        };
+
+        html2pdf().set(opt).from(element).save();
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
@@ -473,4 +483,3 @@
 </script>
 </body>
 </html>
-
