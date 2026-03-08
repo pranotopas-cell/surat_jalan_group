@@ -55,18 +55,20 @@
         .main-content { margin-left: 400px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
         
         .memo-page { 
-            background: white; width: 210mm; height: 297mm; padding: 10mm 15mm; 
+            background: white; width: 210mm; height: 297mm; padding: 15mm; 
             box-shadow: 0 0 20px rgba(0,0,0,0.5); color: black; line-height: 1.4;
             position: relative; overflow: hidden;
         }
 
+        /* Perbaikan Border Atas agar Muncul di PDF */
         .top-border {
-            height: 5px; background: var(--primary-blue); margin: -10mm -15mm 10mm -15mm;
+            position: absolute; top: 0; left: 0; right: 0;
+            height: 8px; background: var(--primary-blue);
         }
 
         .header { 
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 3px double var(--primary-blue); padding-bottom: 10px; margin-bottom: 20px; 
+            border-bottom: 3px double var(--primary-blue); padding-bottom: 10px; margin-top: 10px; margin-bottom: 20px; 
         }
         
         .logo-container { display: flex; align-items: center; gap: 10px; }
@@ -75,13 +77,13 @@
 
         .header-address { text-align: right; font-size: 9px; line-height: 1.4; max-width: 350px; color: #333; }
 
-        /* Split Layout Meta & Recipient */
+        /* Layout Swapped: Recipient Left, Meta Right */
         .meta-container { display: flex; justify-content: space-between; margin-bottom: 25px; align-items: flex-start; }
-        .meta-left { width: 55%; font-size: 12px; }
-        .meta-right { width: 40%; font-size: 12px; border-left: 1px solid #eee; padding-left: 20px; }
+        .meta-left-recipient { width: 45%; font-size: 12px; }
+        .meta-right-info { width: 50%; font-size: 12px; border-left: 1px solid #eee; padding-left: 20px; }
 
-        .meta-row { display: flex; margin-bottom: 4px; align-items: flex-start; }
-        .meta-label { width: 80px; font-weight: bold; color: #333; }
+        .meta-row { display: flex; margin-bottom: 6px; align-items: flex-start; }
+        .meta-label { width: 90px; font-weight: bold; color: #333; }
         .meta-colon { width: 10px; }
         .meta-value { font-weight: bold; flex: 1; }
         .lang-sub { display: block; font-size: 9px; font-style: italic; color: #666; font-weight: normal; margin-top: -2px; }
@@ -98,7 +100,7 @@
         @media print {
             .sidebar { display: none; }
             .main-content { margin-left: 0; padding: 0; background: none; }
-            .memo-page { box-shadow: none; border: none; width: 100%; padding: 10mm; }
+            .memo-page { box-shadow: none; border: none; width: 100%; padding: 0; }
         }
     </style>
 </head>
@@ -152,7 +154,13 @@
         </div>
 
         <div class="meta-container">
-            <div class="meta-left">
+            <div class="meta-left-recipient">
+                <div style="font-weight: bold; margin-bottom: 5px;">Kepada Yth. <span class="lang-sub" style="display:inline;">/ To:</span></div>
+                <strong style="font-size: 15px; color: var(--primary-blue);">PT. Sinarindo Sukses Selalu</strong><br>
+                <span>Pangkalan Bun</span>
+            </div>
+
+            <div class="meta-right-info">
                 <div class="meta-row">
                     <div class="meta-label">Nomor<span class="lang-sub">Number</span></div>
                     <div class="meta-colon">:</div>
@@ -168,12 +176,6 @@
                     <div class="meta-colon">:</div>
                     <div class="meta-value">Memo Pengaliran BBM<span class="lang-sub">Fuel Distribution Memo</span></div>
                 </div>
-            </div>
-
-            <div class="meta-right">
-                <div style="font-weight: bold; margin-bottom: 5px;">Kepada Yth. <span class="lang-sub" style="display:inline;">/ To:</span></div>
-                <strong style="font-size: 14px; color: var(--primary-blue);">PT. Sinarindo Sukses Selalu</strong><br>
-                <span>Pangkalan Bun</span>
             </div>
         </div>
 
@@ -319,7 +321,21 @@
     function downloadPDF() {
         const element = document.getElementById('memo-area');
         const filename = 'Memo_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf';
-        html2pdf().set({ margin: 0, filename: filename, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save();
+        
+        const opt = {
+            margin: 0,
+            filename: filename,
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true,
+                logging: false,
+                y: 0 
+            },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save();
     }
 
     document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', update));
