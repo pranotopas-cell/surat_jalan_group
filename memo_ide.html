@@ -60,11 +60,8 @@
             position: relative; overflow: hidden;
         }
 
-        /* Border Atas Seperti Surat Resmi */
         .top-border {
-            height: 4px;
-            background: var(--primary-blue);
-            margin: -10mm -15mm 10mm -15mm;
+            height: 5px; background: var(--primary-blue); margin: -10mm -15mm 10mm -15mm;
         }
 
         .header { 
@@ -74,28 +71,26 @@
         
         .logo-container { display: flex; align-items: center; gap: 10px; }
         .logo-container img { height: 60px; width: auto; }
-        .logo-container .company-name { 
-            font-size: 26px; font-weight: bold; color: var(--primary-blue); 
-            letter-spacing: -0.5px;
-        }
+        .logo-container .company-name { font-size: 26px; font-weight: bold; color: var(--primary-blue); letter-spacing: -0.5px; }
 
-        .header-address { 
-            text-align: right; font-size: 9px; line-height: 1.4; max-width: 350px; color: #333;
-        }
+        .header-address { text-align: right; font-size: 9px; line-height: 1.4; max-width: 350px; color: #333; }
 
-        .memo-meta { margin-bottom: 15px; font-size: 13px; }
-        .meta-row { display: flex; margin-bottom: 2px; }
-        .meta-label { width: 120px; color: #555; }
-        .meta-colon { width: 15px; }
-        .meta-value { font-weight: bold; color: #000; }
+        /* Split Layout Meta & Recipient */
+        .meta-container { display: flex; justify-content: space-between; margin-bottom: 25px; align-items: flex-start; }
+        .meta-left { width: 55%; font-size: 12px; }
+        .meta-right { width: 40%; font-size: 12px; border-left: 1px solid #eee; padding-left: 20px; }
 
-        .recipient-block { margin-bottom: 15px; line-height: 1.4; font-size: 13px; }
-        .details-box { margin-bottom: 15px; padding: 12px; background: #f8f9fa; border: 1px solid #ddd; border-left: 4px solid var(--primary-blue); font-size: 13px; }
+        .meta-row { display: flex; margin-bottom: 4px; align-items: flex-start; }
+        .meta-label { width: 80px; font-weight: bold; color: #333; }
+        .meta-colon { width: 10px; }
+        .meta-value { font-weight: bold; flex: 1; }
+        .lang-sub { display: block; font-size: 9px; font-style: italic; color: #666; font-weight: normal; margin-top: -2px; }
+
+        .details-box { margin-bottom: 15px; padding: 12px; background: #f8f9fa; border: 1px solid #ddd; border-left: 4px solid var(--primary-blue); font-size: 12px; }
 
         table.data-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 8px 5px; text-align: center; font-size: 11px; }
-        table.data-table th { background: var(--primary-blue); color: white; font-weight: bold; }
-        table.data-table tr:nth-child(even) { background-color: #f8f9fa; }
+        table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 6px 4px; text-align: center; font-size: 11px; }
+        table.data-table th { background: var(--primary-blue); color: white; }
 
         .signature-container { margin-top: 40px; text-align: left; font-size: 13px; }
         .sig-img { width: 160px; margin: 10px 0 5px -10px; display: block; }
@@ -111,7 +106,6 @@
 
 <div class="sidebar">
     <h2>IDE MEMO SYSTEM</h2>
-    
     <div class="action-group">
         <button class="btn btn-home" onclick="initPage()">🏠 HOME</button>
         <button class="btn btn-save" id="btnSave" onclick="saveData()">💾 SIMPAN</button>
@@ -128,7 +122,7 @@
             <option value="data_kse">PT. KSE</option>
         </select>
     </div>
-    <div class="input-group"><label>Nomor Memo (Otomatis)</label><input type="text" id="inNomor" readonly style="background: #1a252f;"></div>
+    <div class="input-group"><label>Nomor Memo (Otomatis)</label><input type="text" id="inNomor" readonly></div>
     <div class="input-group"><label>Tanggal Memo (YYYY/MM/DD)</label><input type="text" id="inTglMemo"></div>
 
     <div class="section-title">Informasi Loading</div>
@@ -137,10 +131,8 @@
     <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="02 Maret 2026"></div>
     <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu - Kumai"></div>
 
-    <div id="unit-inputs">
-        <div class="section-title">Data Armada</div>
-        <div id="armada-container"></div>
-    </div>
+    <div class="section-title">Data Armada</div>
+    <div id="armada-container"></div>
 </div>
 
 <div class="main-content">
@@ -153,58 +145,75 @@
             </div>
             <div class="header-address">
                 <strong>SUPLIER DAN TRANSPORTIR BAHAN BAKAR MINYAK RESMI</strong><br>
-                Jalan Natai Arahan RT 020 Kelurahan Baru, Kecamatan Arut Selatan,<br>
-                Kabupaten Kotawaringin Barat - Kalimantan Tengah.
+                <span style="font-style: italic; font-size: 8px;">Official Fuel Supplier and Transporter</span><br>
+                Jalan Natai Arahan RT 020 Kelurahan Baru, Arut Selatan,<br>
+                Kotawaringin Barat - Kalimantan Tengah.
             </div>
         </div>
 
-        <div class="memo-meta">
-            <div class="meta-row"><div class="meta-label">Nomor</div><div class="meta-colon">:</div><div class="meta-value" id="outNomor"></div></div>
-            <div class="meta-row"><div class="meta-label">Perihal</div><div class="meta-colon">:</div><div class="meta-value">Memo Pengaliran BBM</div></div>
-            <div class="meta-row"><div class="meta-label">Tanggal</div><div class="meta-colon">:</div><div class="meta-value" id="outTglMemo"></div></div>
+        <div class="meta-container">
+            <div class="meta-left">
+                <div class="meta-row">
+                    <div class="meta-label">Nomor<span class="lang-sub">Number</span></div>
+                    <div class="meta-colon">:</div>
+                    <div class="meta-value" id="outNomor"></div>
+                </div>
+                <div class="meta-row">
+                    <div class="meta-label">Tanggal<span class="lang-sub">Date</span></div>
+                    <div class="meta-colon">:</div>
+                    <div class="meta-value" id="outTglMemo"></div>
+                </div>
+                <div class="meta-row">
+                    <div class="meta-label">Perihal<span class="lang-sub">Subject</span></div>
+                    <div class="meta-colon">:</div>
+                    <div class="meta-value">Memo Pengaliran BBM<span class="lang-sub">Fuel Distribution Memo</span></div>
+                </div>
+            </div>
+
+            <div class="meta-right">
+                <div style="font-weight: bold; margin-bottom: 5px;">Kepada Yth. <span class="lang-sub" style="display:inline;">/ To:</span></div>
+                <strong style="font-size: 14px; color: var(--primary-blue);">PT. Sinarindo Sukses Selalu</strong><br>
+                <span>Pangkalan Bun</span>
+            </div>
         </div>
 
-        <div class="recipient-block">
-            Kepada Yth.<br>
-            <strong>PT. Sinarindo Sukses Selalu</strong><br>
-            - di Pangkalan Bun
-        </div>
-
-        <div style="margin-bottom: 15px; font-size: 13px;">
-            Dengan Hormat,<br>
-            Bersama ini kami sampaikan Realisasi Pengaliran BBM Solar Industri dari <b>PT. Sinarindo Sukses Selalu</b> dengan rincian sebagai berikut:
+        <div style="margin-bottom: 15px; font-size: 12px;">
+            Dengan Hormat, <span class="lang-sub" style="display:inline;">/ Respectfully,</span><br>
+            Bersama ini kami sampaikan Realisasi Pengaliran BBM Solar Industri dengan rincian sebagai berikut:<br>
+            <i style="font-size: 11px; color: #666;">Herewith we inform the realization of industrial diesel fuel distribution with the following details:</i>
         </div>
 
         <div class="details-box">
             <div class="meta-row"><div class="meta-label">No. PO</div><div class="meta-colon">:</div><div class="meta-value" id="outPO"></div></div>
             <div class="meta-row"><div class="meta-label">Tanggal PO</div><div class="meta-colon">:</div><div class="meta-value" id="outTglPO"></div></div>
-            <div class="meta-row"><div class="meta-label">Tanggal Loading</div><div class="meta-colon">:</div><div class="meta-value" id="outTglLoad"></div></div>
-            <div class="meta-row"><div class="meta-label">Lokasi Loading</div><div class="meta-colon">:</div><div class="meta-value" id="outLokasi"></div></div>
+            <div class="meta-row"><div class="meta-label">Tgl. Load</div><div class="meta-colon">:</div><div class="meta-value" id="outTglLoad"></div></div>
+            <div class="meta-row"><div class="meta-label">Lokasi</div><div class="meta-colon">:</div><div class="meta-value" id="outLokasi"></div></div>
         </div>
 
         <table class="data-table">
             <thead>
                 <tr>
-                    <th style="width: 30px;">NO</th>
-                    <th>TRANSPORTIR</th>
-                    <th>NOMOR POLISI</th>
-                    <th>DRIVER</th>
-                    <th>QTY (L)</th>
-                    <th>TERA (cm)</th>
+                    <th>NO</th>
+                    <th>TRANSPORTIR<br><i style="font-size: 9px; font-weight: normal;">Transporter</i></th>
+                    <th>NO. POLISI<br><i style="font-size: 9px; font-weight: normal;">License Plate</i></th>
+                    <th>DRIVER<br><i style="font-size: 9px; font-weight: normal;">Driver Name</i></th>
+                    <th>QTY (L)<br><i style="font-size: 9px; font-weight: normal;">Quantity</i></th>
+                    <th>TERA (cm)<br><i style="font-size: 9px; font-weight: normal;">Measurement</i></th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
             <tfoot>
                 <tr style="font-weight: bold; background: #f1f4f9;">
-                    <td colspan="4" style="text-align: right; padding-right: 15px;">TOTAL REALISASI</td>
+                    <td colspan="4" style="text-align: right;">TOTAL REALISASI <i style="font-size: 9px; font-weight: normal;">(Total Realization)</i></td>
                     <td id="outTotal" style="color: var(--primary-blue);"></td>
                     <td></td>
                 </tr>
             </tfoot>
         </table>
 
-        <div style="font-size: 12px; margin-top: 20px; text-align: justify; line-height: 1.5;">
-            Demikian memo ini dibuat tanpa paksaan dari pihak manapun, dengan keterangan yang sebenar-benarnya diatas agar dapat digunakan sebagaimana mestinya.
+        <div style="font-size: 11px; margin-top: 20px; text-align: justify; line-height: 1.4;">
+            Demikian memo ini dibuat tanpa paksaan dari pihak manapun, dengan keterangan yang sebenar-benarnya diatas agar dapat digunakan sebagaimana mestinya.<br>
+            <i style="color: #666;">This memo is made voluntarily, with the actual information above to be used as appropriate.</i>
         </div>
 
         <div class="signature-container">
@@ -220,7 +229,6 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Generate Input Cards for 5 Armada
     function generateArmadaInputs() {
         let html = "";
         for(let i=1; i<=5; i++) {
@@ -235,8 +243,6 @@
             </div>`;
         }
         document.getElementById('armada-container').innerHTML = html;
-        
-        // Add event listeners to new inputs
         document.querySelectorAll('.unit-card input').forEach(el => el.addEventListener('input', update));
     }
 
@@ -247,77 +253,43 @@
 
     async function initPage() {
         generateArmadaInputs();
-        
         const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = (now.getMonth() + 1).toString().padStart(2, '0');
-        const dd = now.getDate().toString().padStart(2, '0');
-        
-        document.getElementById('inTglMemo').value = `${yyyy}/${mm}/${dd}`;
+        document.getElementById('inTglMemo').value = `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')}`;
         
         const table = document.getElementById('i-target-table').value;
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
-        const monthRoman = roman[now.getMonth()];
-        const jenisDok = "MEMO PENGALIRAN";
-
         try {
-            const { count, error } = await _supabase
-                .from(table)
-                .select('*', { count: 'exact', head: true })
-                .eq('jenis_dokumen', jenisDok);
-
-            if (error) throw error;
-
+            const { count } = await _supabase.from(table).select('*', { count: 'exact', head: true }).eq('jenis_dokumen', 'MEMO PENGALIRAN');
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            let codePT = "IDE";
-            if(table === "data_ikaen") codePT = "IKN";
-            if(table === "data_kse") codePT = "KSE";
-
-            document.getElementById('inNomor').value = `${nextNo}/MEMO-${codePT}/${monthRoman}/${yyyy}`;
+            let codePT = table === "data_ikaen" ? "IKN" : (table === "data_kse" ? "KSE" : "IDE");
+            document.getElementById('inNomor').value = `${nextNo}/MEMO-${codePT}/${roman[now.getMonth()]}/${now.getFullYear()}`;
         } catch (e) {
-            document.getElementById('inNomor').value = `001/MEMO-IDE/${monthRoman}/${yyyy}`;
+            document.getElementById('inNomor').value = `001/MEMO-IDE/${roman[now.getMonth()]}/${now.getFullYear()}`;
         }
         update();
     }
 
     function update() {
         document.getElementById('outNomor').innerText = document.getElementById('inNomor').value;
-        
         const rawDate = document.getElementById('inTglMemo').value;
         const dParts = rawDate.split('/');
         if(dParts.length === 3) {
             const d = new Date(dParts[0], dParts[1]-1, dParts[2]);
             document.getElementById('outTglMemo').innerText = isNaN(d) ? rawDate : formatIndoDate(d);
-        } else {
-            document.getElementById('outTglMemo').innerText = rawDate;
-        }
+        } else { document.getElementById('outTglMemo').innerText = rawDate; }
 
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
         document.getElementById('outTglPO').innerText = document.getElementById('inTglPO').value;
         document.getElementById('outTglLoad').innerText = document.getElementById('inTglLoad').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
-        let total = 0;
-        let tableHTML = "";
-        let rowCount = 1;
-
+        let total = 0, tableHTML = "", rowCount = 1;
         for (let i = 1; i <= 5; i++) {
-            const trans = document.getElementById('inTrans' + i).value;
             const nopol = document.getElementById('inNopol' + i).value;
-            const driver = document.getElementById('inDriver' + i).value;
             const qty = parseFloat(document.getElementById('inQty' + i).value) || 0;
-            const tera = document.getElementById('inTera' + i).value;
-
-            if (nopol || driver || qty > 0) {
+            if (nopol || qty > 0) {
                 total += qty;
-                tableHTML += `<tr>
-                    <td>${rowCount++}</td>
-                    <td style="text-align:left;">${trans}</td>
-                    <td>${nopol}</td>
-                    <td>${driver}</td>
-                    <td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td>
-                    <td>${tera}</td>
-                </tr>`;
+                tableHTML += `<tr><td>${rowCount++}</td><td style="text-align:left;">${document.getElementById('inTrans'+i).value}</td><td>${nopol}</td><td>${document.getElementById('inDriver'+i).value}</td><td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td><td>${document.getElementById('inTera'+i).value}</td></tr>`;
             }
         }
         document.getElementById('tableBody').innerHTML = tableHTML;
@@ -328,47 +300,30 @@
         const btn = document.getElementById('btnSave');
         const table = document.getElementById('i-target-table').value;
         btn.innerText = "SIMPAN..."; btn.disabled = true;
-
         let totalQty = 0;
-        for(let i=1; i<=5; i++) {
-            totalQty += parseFloat(document.getElementById('inQty' + i).value) || 0;
-        }
+        for(let i=1; i<=5; i++) totalQty += parseFloat(document.getElementById('inQty' + i).value) || 0;
 
-        const payload = {
+        const { error } = await _supabase.from(table).insert([{
             tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
             no_dokumen: document.getElementById('inNomor').value,
             jenis_dokumen: "MEMO PENGALIRAN",
             tujuan: "PT. Sinarindo Sukses Selalu",
-            nopol: document.getElementById('inNopol1').value, // Primary nopol
-            sopir: document.getElementById('inDriver1').value,
             qty: totalQty
-        };
+        }]);
 
-        const { error } = await _supabase.from(table).insert([payload]);
-        if(error) {
-            alert("Gagal: " + error.message);
-        } else {
-            alert("Data Berhasil Disimpan!");
-            initPage();
-        }
+        if(error) alert("Gagal: " + error.message);
+        else { alert("Data Tersimpan!"); initPage(); }
         btn.innerText = "💾 SIMPAN"; btn.disabled = false;
     }
 
     function downloadPDF() {
         const element = document.getElementById('memo-area');
         const filename = 'Memo_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf';
-        html2pdf().set({
-            margin: 0,
-            filename: filename,
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
+        html2pdf().set({ margin: 0, filename: filename, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save();
     }
 
-    document.querySelectorAll('#inTglMemo, #inPO, #inTglPO, #inTglLoad, #inLokasi, #i-target-table').forEach(el => el.addEventListener('input', update));
+    document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', update));
     window.onload = initPage;
 </script>
-
 </body>
 </html>
