@@ -27,7 +27,6 @@
         }
         .sidebar h2 { font-size: 16px; border-bottom: 2px solid var(--primary-blue); padding-bottom: 10px; margin-bottom: 15px; color: #ecf0f1; text-align: center; }
         
-        /* Action Buttons Grid */
         .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
         .btn { 
             padding: 10px; border: none; border-radius: 4px; cursor: pointer; 
@@ -50,6 +49,7 @@
         }
 
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid var(--primary-blue); }
+        .unit-card h4 { margin: 0 0 5px 0; font-size: 10px; color: #ecf0f1; }
 
         /* Main Preview Area */
         .main-content { margin-left: 400px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
@@ -60,15 +60,22 @@
             position: relative; overflow: hidden;
         }
 
+        /* Border Atas Seperti Surat Resmi */
+        .top-border {
+            height: 4px;
+            background: var(--primary-blue);
+            margin: -10mm -15mm 10mm -15mm;
+        }
+
         .header { 
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--primary-blue); padding-bottom: 10px; margin-bottom: 15px; 
+            border-bottom: 3px double var(--primary-blue); padding-bottom: 10px; margin-bottom: 20px; 
         }
         
         .logo-container { display: flex; align-items: center; gap: 10px; }
-        .logo-container img { height: 55px; width: auto; }
+        .logo-container img { height: 60px; width: auto; }
         .logo-container .company-name { 
-            font-size: 24px; font-weight: bold; color: var(--primary-blue); 
+            font-size: 26px; font-weight: bold; color: var(--primary-blue); 
             letter-spacing: -0.5px;
         }
 
@@ -83,14 +90,14 @@
         .meta-value { font-weight: bold; color: #000; }
 
         .recipient-block { margin-bottom: 15px; line-height: 1.4; font-size: 13px; }
-        .details-box { margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-left: 4px solid var(--primary-blue); font-size: 13px; }
+        .details-box { margin-bottom: 15px; padding: 12px; background: #f8f9fa; border: 1px solid #ddd; border-left: 4px solid var(--primary-blue); font-size: 13px; }
 
         table.data-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
         table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 8px 5px; text-align: center; font-size: 11px; }
         table.data-table th { background: var(--primary-blue); color: white; font-weight: bold; }
-        table.data-table tr:nth-child(even) { background-color: #f2f6fa; }
+        table.data-table tr:nth-child(even) { background-color: #f8f9fa; }
 
-        .signature-container { margin-top: 30px; text-align: left; font-size: 13px; }
+        .signature-container { margin-top: 40px; text-align: left; font-size: 13px; }
         .sig-img { width: 160px; margin: 10px 0 5px -10px; display: block; }
 
         @media print {
@@ -130,27 +137,15 @@
     <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="02 Maret 2026"></div>
     <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu - Kumai"></div>
 
-    <div class="section-title">Data Armada 1</div>
-    <div class="unit-card">
-        <input type="text" id="inTrans1" value="PT. BERKAH SARANA MAKMUR BENUA" placeholder="Transportir">
-        <div class="input-group"><input type="text" id="inNopol1" value="KH 8273 RM" placeholder="No. Polisi"></div>
-        <div class="input-group"><input type="text" id="inDriver1" value="FARID HABIBI" placeholder="Driver"></div>
-        <div class="input-group"><input type="number" id="inQty1" value="5000" placeholder="Qty"></div>
-        <div class="input-group"><input type="text" id="inTera1" value="109.5" placeholder="Tera"></div>
-    </div>
-
-    <div class="section-title">Data Armada 2</div>
-    <div class="unit-card">
-        <input type="text" id="inTrans2" value="PT. BERKAH SARANA MAKMUR BENUA" placeholder="Transportir">
-        <div class="input-group"><input type="text" id="inNopol2" value="KH 8256 RM" placeholder="No. Polisi"></div>
-        <div class="input-group"><input type="text" id="inDriver2" value="RONNY PRASTIANSYAH" placeholder="Driver"></div>
-        <div class="input-group"><input type="number" id="inQty2" value="5000" placeholder="Qty"></div>
-        <div class="input-group"><input type="text" id="inTera2" value="104.3" placeholder="Tera"></div>
+    <div id="unit-inputs">
+        <div class="section-title">Data Armada</div>
+        <div id="armada-container"></div>
     </div>
 </div>
 
 <div class="main-content">
     <div class="memo-page" id="memo-area">
+        <div class="top-border"></div>
         <div class="header">
             <div class="logo-container">
                 <img src="ide1.png" alt="Logo IDE">
@@ -208,7 +203,7 @@
             </tfoot>
         </table>
 
-        <div style="font-size: 12px; margin-top: 15px; text-align: justify; line-height: 1.4;">
+        <div style="font-size: 12px; margin-top: 20px; text-align: justify; line-height: 1.5;">
             Demikian memo ini dibuat tanpa paksaan dari pihak manapun, dengan keterangan yang sebenar-benarnya diatas agar dapat digunakan sebagaimana mestinya.
         </div>
 
@@ -221,10 +216,29 @@
 </div>
 
 <script>
-    // --- SUPABASE CONFIG ---
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Generate Input Cards for 5 Armada
+    function generateArmadaInputs() {
+        let html = "";
+        for(let i=1; i<=5; i++) {
+            html += `
+            <div class="unit-card">
+                <h4>Unit ${i}</h4>
+                <div class="input-group"><input type="text" id="inTrans${i}" placeholder="Transportir" value="${i<=2 ? 'PT. BERKAH SARANA MAKMUR BENUA' : ''}"></div>
+                <div class="input-group"><input type="text" id="inNopol${i}" placeholder="No. Polisi"></div>
+                <div class="input-group"><input type="text" id="inDriver${i}" placeholder="Driver"></div>
+                <div class="input-group"><input type="number" id="inQty${i}" placeholder="Qty (Liter)"></div>
+                <div class="input-group"><input type="text" id="inTera${i}" placeholder="Tera (cm)"></div>
+            </div>`;
+        }
+        document.getElementById('armada-container').innerHTML = html;
+        
+        // Add event listeners to new inputs
+        document.querySelectorAll('.unit-card input').forEach(el => el.addEventListener('input', update));
+    }
 
     function formatIndoDate(dateObj) {
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -232,6 +246,8 @@
     }
 
     async function initPage() {
+        generateArmadaInputs();
+        
         const now = new Date();
         const yyyy = now.getFullYear();
         const mm = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -245,7 +261,6 @@
         const jenisDok = "MEMO PENGALIRAN";
 
         try {
-            // PENGHITUNGAN BERDASARKAN JENIS DOKUMEN AGAR TIDAK BENTROK DENGAN SJ
             const { count, error } = await _supabase
                 .from(table)
                 .select('*', { count: 'exact', head: true })
@@ -254,15 +269,12 @@
             if (error) throw error;
 
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            
-            // Kode PT Dinamis
             let codePT = "IDE";
             if(table === "data_ikaen") codePT = "IKN";
             if(table === "data_kse") codePT = "KSE";
 
             document.getElementById('inNomor').value = `${nextNo}/MEMO-${codePT}/${monthRoman}/${yyyy}`;
         } catch (e) {
-            console.error(e);
             document.getElementById('inNomor').value = `001/MEMO-IDE/${monthRoman}/${yyyy}`;
         }
         update();
@@ -287,7 +299,9 @@
 
         let total = 0;
         let tableHTML = "";
-        for (let i = 1; i <= 2; i++) {
+        let rowCount = 1;
+
+        for (let i = 1; i <= 5; i++) {
             const trans = document.getElementById('inTrans' + i).value;
             const nopol = document.getElementById('inNopol' + i).value;
             const driver = document.getElementById('inDriver' + i).value;
@@ -297,7 +311,7 @@
             if (nopol || driver || qty > 0) {
                 total += qty;
                 tableHTML += `<tr>
-                    <td>${i}</td>
+                    <td>${rowCount++}</td>
                     <td style="text-align:left;">${trans}</td>
                     <td>${nopol}</td>
                     <td>${driver}</td>
@@ -313,29 +327,29 @@
     async function saveData() {
         const btn = document.getElementById('btnSave');
         const table = document.getElementById('i-target-table').value;
-        const jenisDok = "MEMO PENGALIRAN";
-        
         btn.innerText = "SIMPAN..."; btn.disabled = true;
 
-        const q1 = parseFloat(document.getElementById('inQty1').value) || 0;
-        const q2 = parseFloat(document.getElementById('inQty2').value) || 0;
+        let totalQty = 0;
+        for(let i=1; i<=5; i++) {
+            totalQty += parseFloat(document.getElementById('inQty' + i).value) || 0;
+        }
 
         const payload = {
             tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
             no_dokumen: document.getElementById('inNomor').value,
-            jenis_dokumen: jenisDok,
+            jenis_dokumen: "MEMO PENGALIRAN",
             tujuan: "PT. Sinarindo Sukses Selalu",
-            nopol: document.getElementById('inNopol1').value,
+            nopol: document.getElementById('inNopol1').value, // Primary nopol
             sopir: document.getElementById('inDriver1').value,
-            qty: q1 + q2
+            qty: totalQty
         };
 
         const { error } = await _supabase.from(table).insert([payload]);
         if(error) {
             alert("Gagal: " + error.message);
         } else {
-            alert("Data Memo Berhasil Disimpan ke " + table);
-            initPage(); // Reset untuk nomor berikutnya
+            alert("Data Berhasil Disimpan!");
+            initPage();
         }
         btn.innerText = "💾 SIMPAN"; btn.disabled = false;
     }
@@ -352,7 +366,7 @@
         }).from(element).save();
     }
 
-    document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', update));
+    document.querySelectorAll('#inTglMemo, #inPO, #inTglPO, #inTglLoad, #inLokasi, #i-target-table').forEach(el => el.addEventListener('input', update));
     window.onload = initPage;
 </script>
 
