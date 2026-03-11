@@ -140,13 +140,14 @@
         .btn:hover { opacity: 0.8; }
 
         @media print {
-    body { padding: 0 !important; margin: 0 !important; }
-    #sj-container { 
-        margin: 0 !important; 
-        border: none !important; 
-        box-shadow: none !important;
-    }
-}
+            body { padding: 0 !important; margin: 0 !important; background: none !important; }
+            .editor-panel { display: none !important; }
+            #sj-container { 
+                margin: 0 !important; 
+                border: none !important; 
+                box-shadow: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -154,11 +155,11 @@
 <div class="editor-panel">
     <h2>Database & Document Type</h2>
     <div class="field">
-        <label>Pilih Perusahaan (Tabel)</label>
-        <select id="i-target-table" onchange="initPage()">
-            <option value="data_ide">PT. INDO DHARMA ENERGI (IDE)</option>
-            <option value="data_ikaen">PT. IKAEN (IKN)</option>
-            <option value="data_kse">PT. KSE</option>
+        <label>Pilih Perusahaan (PT)</label>
+        <select id="i-pt-select" onchange="initPage()">
+            <option value="ide">PT. INDO DHARMA ENERGI (IDE)</option>
+            <option value="ikaen">PT. IKAEN (IKN)</option>
+            <option value="kse">PT. KSE</option>
         </select>
     </div>
     <div class="field">
@@ -171,7 +172,7 @@
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Dokumen (Otomatis)</label><input type="text" id="i-no" readonly style="background:#f0f0f0"></div>
+    <div class="field"><label>Nomor Dokumen (Otomatis)</label><input type="text" id="i-no" readonly placeholder="Otomatis saat simpan" style="background:#f0f0f0"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header (Location)</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -222,7 +223,7 @@
         <div class="meta-info-grid">
             <table>
                 <tr><td class="meta-label">Tanggal / <i style="font-weight:normal">Date</i></td><td>: <span id="v-tgl" class="meta-val"></span></td></tr>
-                <tr><td class="meta-label">No. Dokumen</td><td>: <span id="v-no" class="meta-val"></span></td></tr>
+                <tr><td class="meta-label">No. Dokumen</td><td>: <span id="v-no" class="meta-val">-</span></td></tr>
                 <tr><td class="meta-label">Tujuan / <i style="font-weight:normal">To</i></td><td>: <span id="v-po-to-header" class="meta-val"></span></td></tr>
                 <tr><td class="meta-label">Lokasi / <i style="font-weight:normal">Location</i></td><td>: <span id="v-lokasi" class="meta-val"></span></td></tr>
             </table>
@@ -347,44 +348,18 @@
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
     }
 
-    async function initPage() {
+    function initPage() {
         const now = new Date();
         const panelDate = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         document.getElementById('i-tgl').value = panelDate;
 
-        const table = document.getElementById('i-target-table').value;
         const docType = document.getElementById('i-doc-type').value;
-        
-        const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
-        const month = roman[now.getMonth()];
-        const year = now.getFullYear();
-
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
         } else {
             document.getElementById('v-title-main').innerText = "DELIVERY ORDER";
             document.getElementById('v-title-sub').innerText = "SURAT JALAN";
-        }
-
-        try {
-            const { count, error } = await _supabase
-                .from(table)
-                .select('*', { count: 'exact', head: true })
-                .eq('jenis_dokumen', docType);
-
-            if (error) throw error;
-
-            const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            let codeDoc = (docType === "MEMO") ? "MEMO" : "SJ";
-            let codePT = "IDE";
-            if(table === "data_ikaen") codePT = "IKN";
-            if(table === "data_kse") codePT = "KSE";
-
-            document.getElementById('i-no').value = `${nextNo}/${codeDoc}-${codePT}/${month}/${year}`;
-        } catch (e) {
-            console.error(e);
-            document.getElementById('i-no').value = `001/SJ-IDE/${month}/${year}`;
         }
         upd();
     }
@@ -395,8 +370,6 @@
         if(dateParts.length === 3) {
             const d = new Date(dateParts[0], dateParts[1]-1, dateParts[2]);
             document.getElementById('v-tgl').innerText = isNaN(d) ? inputDate : formatDisplayDate(d);
-        } else {
-            document.getElementById('v-tgl').innerText = inputDate;
         }
 
         const fields = [
@@ -410,7 +383,8 @@
         ];
 
         fields.forEach(pair => {
-            document.getElementById(pair[0]).innerText = document.getElementById(pair[1]).value || '-';
+            const inputEl = document.getElementById(pair[1]);
+            document.getElementById(pair[0]).innerText = inputEl ? (inputEl.value || '-') : '-';
         });
 
         document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
@@ -421,9 +395,9 @@
     }
 
     async function saveData() {
-        const table = document.getElementById('i-target-table').value;
-        const docType = document.getElementById('i-doc-type').value;
         const btn = document.querySelector('.btn-save');
+        const pt = document.getElementById('i-pt-select').value;
+        const docType = document.getElementById('i-doc-type').value;
         
         btn.innerText = 'SAVING...';
         btn.disabled = true;
@@ -433,21 +407,30 @@
 
         const payload = {
             tanggal: dbDate,
-            no_dokumen: document.getElementById('i-no').value,
-            jenis_dokumen: docType,
+            pt: pt, 
+            jenis_dokumen: docType.toLowerCase(),
             tujuan: document.getElementById('i-po-to').value,
             nopol: document.getElementById('i-plat').value,
             sopir: document.getElementById('i-driver').value,
-            qty: document.getElementById('i-poqty').value
+            qty: parseFloat(document.getElementById('i-vol').value) || 0
         };
 
-        const { error } = await _supabase.from(table).insert([payload]);
+        // Menggunakan tabel data_logistik (sama seperti ikaen)
+        const { data, error } = await _supabase
+            .from('data_logistik')
+            .insert([payload])
+            .select();
 
         if (error) {
             alert('Gagal simpan: ' + error.message);
+            console.error(error);
         } else {
-            alert('Berhasil disimpan sebagai ' + docType + ' di ' + table);
-            initPage();
+            if (data && data[0]) {
+                // Trigger SQL akan mengisi no_surat secara otomatis
+                document.getElementById('i-no').value = data[0].no_surat;
+                upd();
+                alert('Berhasil disimpan! No Dokumen: ' + data[0].no_surat);
+            }
         }
         btn.innerText = 'SIMPAN DATA';
         btn.disabled = false;
@@ -456,29 +439,12 @@
     function downloadPDF() {
         const element = document.getElementById('sj-container');
         const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
-        
-        // Optimasi khusus untuk 1 halaman A4 (mm)
-        const opt = {
+        html2pdf().set({
             margin: 0,
-            filename: 'DOC_' + noDoc + '.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true, 
-                logging: false,
-                scrollX: 0,
-                scrollY: 0,
-                width: 793, // 210mm konversi ke px pada 96dpi
-                height: 1125 // 297mm konversi ke px pada 96dpi
-            },
-            jsPDF: { 
-                unit: 'mm', 
-                format: 'a4', 
-                orientation: 'portrait' 
-            }
-        };
-
-        html2pdf().set(opt).from(element).save();
+            filename: 'DOC_'+noDoc+'.pdf',
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(element).save();
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
@@ -486,5 +452,3 @@
 </script>
 </body>
 </html>
-
-
