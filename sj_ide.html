@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Doc System - PT. Indo Dharma Energi</title>
+    <title>Digital Doc System - IDE Group</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -390,8 +390,12 @@
         document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
         document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
 
+        // Update QR Code
+        const currentNo = document.getElementById('i-no').value;
         qrcode.clear();
-        qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
+        if(currentNo && currentNo !== "") {
+            qrcode.makeCode("VERIFIED-" + currentNo);
+        }
     }
 
     async function saveData() {
@@ -415,33 +419,36 @@
             qty: parseFloat(document.getElementById('i-vol').value) || 0
         };
 
-        // Menggunakan tabel data_logistik (sama seperti ikaen)
-        const { data, error } = await _supabase
-            .from('data_logistik')
-            .insert([payload])
-            .select();
+        try {
+            const { data, error } = await _supabase
+                .from('data_logistik')
+                .insert([payload])
+                .select();
 
-        if (error) {
-            alert('Gagal simpan: ' + error.message);
-            console.error(error);
-        } else {
+            if (error) throw error;
+
             if (data && data[0]) {
-                // Trigger SQL akan mengisi no_surat secara otomatis
+                // Alur KSE: Nomor otomatis dari DB ditampilkan ke panel baru
                 document.getElementById('i-no').value = data[0].no_surat;
                 upd();
                 alert('Berhasil disimpan! No Dokumen: ' + data[0].no_surat);
             }
+        } catch (err) {
+            alert('Gagal simpan: ' + err.message);
+            console.error(err);
+        } finally {
+            btn.innerText = 'SIMPAN DATA';
+            btn.disabled = false;
         }
-        btn.innerText = 'SIMPAN DATA';
-        btn.disabled = false;
     }
 
     function downloadPDF() {
         const element = document.getElementById('sj-container');
-        const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
+        const noDoc = document.getElementById('i-no').value || 'DRAFT';
+        const cleanNo = noDoc.replace(/\//g, '-');
         html2pdf().set({
             margin: 0,
-            filename: 'DOC_'+noDoc+'.pdf',
+            filename: 'DOC_'+cleanNo+'.pdf',
             html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(element).save();
