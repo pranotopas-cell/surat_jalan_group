@@ -89,11 +89,11 @@
 <div class="editor-panel">
     <h2>Database & Document Type</h2>
     <div class="field">
-        <label>Pilih Perusahaan (Tabel)</label>
-        <select id="i-target-table" onchange="generateAutoNumber()">
-            <option value="data_kse">PT. KHATULISTIWA SINAR ENERGI (KSE)</option>
-            <option value="data_ikaen">PT. IKNVESTAMA KALIMANTAN ENERGI (IKN)</option>
-            <option value="data_ide">PT. INDO DHARMA ENERGI (IDE)</option>
+        <label>Pilih Perusahaan</label>
+        <select id="i-target-company" onchange="generateAutoNumber()">
+            <option value="KSE">PT. KHATULISTIWA SINAR ENERGI (KSE)</option>
+            <option value="IKAEN">PT. IKNVESTAMA KALIMANTAN ENERGI (IKN)</option>
+            <option value="IDE">PT. INDO DHARMA ENERGI (IDE)</option>
         </select>
     </div>
     <div class="field">
@@ -276,7 +276,7 @@
     }
 
     async function generateAutoNumber() {
-        const table = document.getElementById('i-target-table').value;
+        const companyCode = document.getElementById('i-target-company').value;
         const docType = document.getElementById('i-doc-type').value;
         const now = new Date();
         
@@ -284,13 +284,21 @@
             document.getElementById('i-tgl').value = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         }
 
-        let codePT = table === "data_ikaen" ? "IKN" : (table === "data_ide" ? "IDE" : "KSE");
         let codeDoc = docType === "MEMO" ? "MEMO" : "SJ";
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const monthRoman = roman[now.getMonth()];
         const year = now.getFullYear();
 
-        const { data } = await _supabase.from(table).select('no_dokumen').order('created_at', { ascending: false }).limit(1);
+        // Cari nomor terakhir di tabel data_logistik khusus untuk PT tersebut
+        let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
+        if (companyCode === "IKAEN") namaPT = "PT. IKNVESTAMA KALIMANTAN ENERGI";
+        else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
+
+        const { data } = await _supabase.from('data_logistik')
+            .select('no_dokumen')
+            .eq('pt', namaPT)
+            .order('created_at', { ascending: false })
+            .limit(1);
 
         let nextNum = 1;
         if (data && data.length > 0 && data[0].no_dokumen) {
@@ -300,7 +308,7 @@
         }
 
         const formattedNum = nextNum.toString().padStart(3, '0');
-        document.getElementById('i-no').value = `${formattedNum}/${codeDoc}-${codePT}/${monthRoman}/${year}`;
+        document.getElementById('i-no').value = `${formattedNum}/${codeDoc}-${companyCode}/${monthRoman}/${year}`;
         
         document.getElementById('v-title-main').innerText = (docType === "MEMO") ? "INTERNAL MEMO" : "DELIVERY ORDER";
         document.getElementById('v-title-sub').innerText = (docType === "MEMO") ? "MEMO PERUSAHAAN" : "SURAT JALAN";
@@ -334,14 +342,14 @@
     }
 
     async function saveData() {
-        const table = document.getElementById('i-target-table').value;
+        const companyCode = document.getElementById('i-target-company').value;
         const btn = document.querySelector('.btn-save');
         btn.innerText = 'SAVING...'; btn.disabled = true;
 
-        // Logika pengisian kolom "pt" supaya tidak error null
+        // Logika penentuan nama PT untuk kolom "pt" di tabel pusat data_logistik
         let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
-        if (table === "data_ikaen") namaPT = "PT. IKNVESTAMA KALIMANTAN ENERGI";
-        else if (table === "data_ide") namaPT = "PT. INDO DHARMA ENERGI";
+        if (companyCode === "IKAEN") namaPT = "PT. IKNVESTAMA KALIMANTAN ENERGI";
+        else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
         const payload = {
             tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
@@ -351,15 +359,16 @@
             nopol: document.getElementById('i-plat').value,
             sopir: document.getElementById('i-driver').value,
             qty: parseFloat(document.getElementById('i-vol').value) || 0,
-            pt: namaPT // Field wajib di database data_logistik
+            pt: namaPT // Selalu mengisi kolom pt agar tidak null
         };
 
-        const { error } = await _supabase.from(table).insert([payload]);
+        // SEKARANG SEMUA DISIMPAN KE TABEL data_logistik
+        const { error } = await _supabase.from('data_logistik').insert([payload]);
 
         if (error) {
             alert('Gagal Simpan: ' + error.message);
         } else {
-            alert('Sukses! Data Berhasil Disimpan ke ' + table.toUpperCase());
+            alert('Sukses! Data Berhasil Disimpan ke LOGISTIK PUSAT (' + companyCode + ')');
             generateAutoNumber();
         }
         btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
