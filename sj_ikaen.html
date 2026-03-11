@@ -45,7 +45,6 @@
 
         .val { font-weight: bold; font-size: 9.5pt; display: inline-block; margin-top: 2px; white-space: nowrap; overflow: hidden; max-width: 100%; }
 
-        /* Footer Borders */
         .page-footer-border { position: absolute; bottom: 0; left: 0; width: 100%; height: 12px; background: #222; }
         .accent-box { position: absolute; bottom: 0; right: 0; display: flex; }
         .accent-red-bar { width: 45px; height: 12px; background: var(--primary-red); transform: skewX(-30deg); margin-right: -5px; }
@@ -101,7 +100,6 @@
 
         .other-note-container { width: 100%; border: 1px solid #000; border-top: none; padding: 6px 10px; font-size: 8pt; min-height: 45px; box-sizing: border-box; background: #fff; text-align: left; }
 
-        /* EDITOR PANEL */
         .editor-panel { width: 380px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ddd; max-height: 95vh; overflow-y: auto; position: sticky; top: 20px; }
         .editor-panel h2 { margin: 18px 0 8px 0; color: var(--primary-red); font-size: 11pt; border-bottom: 2px solid var(--primary-blue); padding-bottom: 5px; }
         .field { display: flex; flex-direction: column; margin-bottom: 10px; }
@@ -116,11 +114,7 @@
         .btn-save { background: var(--success-green); }
         .btn:hover { opacity: 0.8; }
 
-        @media print {
-            .editor-panel { display: none; }
-            body { background: none; padding: 0; display: block; }
-            #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; }
-        }
+        @media print { .editor-panel { display: none; } body { background: none; padding: 0; display: block; } #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; } }
     </style>
 </head>
 <body>
@@ -128,19 +122,19 @@
 <div class="editor-panel">
     <h2>Database Settings</h2>
     <div class="field">
-        <label>Kategori PT / Perusahaan</label>
-        <select id="i-pt-select" onchange="upd()">
-            <option value="ikaen">PT. IKAEN</option>
-            <option value="ide">PT. IDE</option>
-            <option value="kse">PT. KSE</option>
+        <label>Pilih Perusahaan</label>
+        <select id="i-pt-select" onchange="generateNumberPreview()">
+            <option value="IKAEN">PT. IKNVESTAMA KALIMANTAN ENERGI</option>
+            <option value="IDE">PT. INDO DHARMA ENERGI</option>
+            <option value="KSE">PT. KHATULISTIWA SINAR ENERGI</option>
         </select>
     </div>
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no" readonly placeholder="Otomatis setelah Simpan"></div>
+    <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no" readonly placeholder="Otomatis saat simpan"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
-    <div class="field"><label>Lokasi Header (Location)</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
+    <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
     <h2>2. Tabel Rincian Utama</h2>
     <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="-"></div>
@@ -160,7 +154,7 @@
     <div class="field"><label>PO Quantity (L)</label><input type="text" id="i-poqty" value="0"></div>
 
     <h2>4. Pengesahan & Catatan</h2>
-    <div class="field"><label>Nama Pengemudi (Driver)</label><input type="text" id="i-driver" value="-"></div>
+    <div class="field"><label>Nama Pengemudi</label><input type="text" id="i-driver" value="-"></div>
     <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="RISKY DANDY SAPUTRA"></div>
     <div class="field"><label>Other Note</label><textarea id="i-other-note" rows="2"></textarea></div>
 
@@ -191,10 +185,10 @@
         </div>
         <div class="meta-info-grid">
             <table>
-                <tr><td class="meta-label">Tanggal / <i style="font-weight:normal">Date</i></td><td>: <span id="v-tgl" class="meta-val"></span></td></tr>
+                <tr><td class="meta-label">Tanggal / Date</td><td>: <span id="v-tgl" class="meta-val"></span></td></tr>
                 <tr><td class="meta-label">No. Surat Jalan</td><td>: <span id="v-no" class="meta-val">-</span></td></tr>
-                <tr><td class="meta-label">Tujuan / <i style="font-weight:normal">To</i></td><td>: <span id="v-po-to-header" class="meta-val"></span></td></tr>
-                <tr><td class="meta-label">Lokasi / <i style="font-weight:normal">Location</i></td><td>: <span id="v-lokasi" class="meta-val"></span></td></tr>
+                <tr><td class="meta-label">Tujuan / To</td><td>: <span id="v-po-to-header" class="meta-val"></span></td></tr>
+                <tr><td class="meta-label">Lokasi / Location</td><td>: <span id="v-lokasi" class="meta-val"></span></td></tr>
             </table>
         </div>
     </div>
@@ -247,167 +241,158 @@
         </tr>
     </table>
 
-    <div style="font-weight:bold; font-size:9.5pt; margin-top:5px; margin-bottom: 5px;">DESCRIPTION NOTE / <i style="font-weight: normal;">Catatan Keterangan</i></div>
+    <div style="font-weight:bold; font-size:9.5pt; margin-top:5px; margin-bottom: 5px;">DESCRIPTION NOTE / Catatan Keterangan</div>
     <div class="desc-section">
         <table class="desc-table">
             <tr>
-                <td width="45%">
-                    <b>Purchase Order to:</b><br>
-                    <i style="font-size: 7.5pt;">Nomor PO / PO Number:</i>
-                </td>
+                <td width="45%"><b>Purchase Order to:</b><br><i style="font-size: 7.5pt;">Nomor PO:</i></td>
                 <td>: <span class="val" id="v-po-num">-</span></td>
             </tr>
             <tr>
-                <td><b>Sales Order No.</b> / <i style="font-size: 7.5pt;">Nomor SO</i></td>
+                <td><b>Sales Order No.</b> / Nomor SO</td>
                 <td>: <span class="val" id="v-so-desc">-</span></td>
             </tr>
             <tr>
-                <td><b>PO Quantity</b> / <i style="font-size: 7.5pt;">Jumlah Pesanan</i></td>
+                <td><b>PO Quantity</b> / Jumlah Pesanan</td>
                 <td>: <span class="val" id="v-poqty">-</span> L</td>
             </tr>
         </table>
-        <div class="note-box">
-            Note: Dengan ditanda tanganinya surat ini, menandakan bahwa produk sudah diterima dalam keadaan kualitas dan kuantitas yang baik.
-        </div>
+        <div class="note-box">Note: Dengan ditanda tanganinya surat ini, menandakan bahwa produk sudah diterima dalam keadaan kualitas dan kuantitas yang baik.</div>
     </div>
 
     <table class="sig-table">
         <tr>
-            <th><span class="label-id">Penerima</span><br><span class="label-en">Received By</span></th>
-            <th><span class="label-id">Pengemudi</span><br><span class="label-en">Driver</span></th>
-            <th><span class="label-id">Manager Operasional</span><br><span class="label-en">Operational Manager</span></th>
+            <th>Penerima<br>Received By</th>
+            <th>Pengemudi<br>Driver</th>
+            <th>Manager Operasional<br>Operational Manager</th>
         </tr>
         <tr>
-            <td><span>( . . . . . . . . . . . . . . . . )</span></td>
+            <td>( . . . . . . . . . . . . . . . . )</td>
             <td><span id="v-driver">-</span></td>
             <td>
                 <img src="ike.png" alt="Stempel" class="stamp-container">
-                <div style="position:relative; z-index:2;">
-                    <br><br>
-                    <span id="v-mgr">RISKY DANDY SAPUTRA</span>
-                </div>
+                <div style="position:relative; z-index:2;"><br><br><span id="v-mgr">RISKY DANDY SAPUTRA</span></div>
             </td>
         </tr>
     </table>
 
-    <div class="other-note-container">
-        <b>Other Note:</b> <span id="v-other-note"></span>
-    </div>
+    <div class="other-note-container"><b>Other Note:</b> <span id="v-other-note"></span></div>
 
     <div class="system-qr-footer">
         <div id="qrcode"></div>
-        <div class="system-info-text">
-            <b>E-System Surat Jalan IKE</b><br>
-            <i>Digital Verification Secure System</i>
-        </div>
+        <div class="system-info-text"><b>E-System Surat Jalan IKE</b><br><i>Digital Verification Secure System</i></div>
     </div>
     <div class="page-footer-border"></div>
     <div class="accent-box"><div class="accent-red-bar"></div><div class="accent-blue-bar"></div></div>
 </div>
 
 <script>
-    // --- SUPABASE CONFIG ---
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
-    function formatDisplayDate(dateObj) {
-        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+    function formatTanggalIndonesia(dateStr) {
+        if(!dateStr) return '-';
+        const parts = dateStr.split('/');
+        if(parts.length !== 3) return dateStr;
+        const bulanIndo = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        return `${parts[2]} ${bulanIndo[parseInt(parts[1]) - 1]} ${parts[0]}`;
     }
 
-    function initPage() {
+    async function generateNumberPreview() {
+        const ptCode = document.getElementById('i-pt-select').value;
         const now = new Date();
-        const panelDate = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
-        document.getElementById('i-tgl').value = panelDate;
+        const year = now.getFullYear();
+        const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+        const monthRoman = roman[now.getMonth()];
+
+        // Cari nomor terakhir di DB untuk PT tersebut
+        const { data } = await _supabase.from('data_logistik')
+            .select('no_dokumen')
+            .eq('pt', ptCode === 'IKAEN' ? 'PT. IKNVESTAMA KALIMANTAN ENERGI' : (ptCode === 'IDE' ? 'PT. INDO DHARMA ENERGI' : 'PT. KHATULISTIWA SINAR ENERGI'))
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+        let nextNum = 1;
+        if (data && data.length > 0 && data[0].no_dokumen) {
+            const lastNo = data[0].no_dokumen;
+            const lastNum = parseInt(lastNo.split('/')[0]);
+            if(!isNaN(lastNum)) nextNum = lastNum + 1;
+        }
+
+        const formattedNum = nextNum.toString().padStart(3, '0');
+        const finalNo = `${formattedNum}/SJ-${ptCode}/${monthRoman}/${year}`;
+        document.getElementById('i-no').value = finalNo;
         upd();
     }
 
     function upd() {
-        const inputDate = document.getElementById('i-tgl').value;
-        const dateParts = inputDate.split('/');
-        if(dateParts.length === 3) {
-            const d = new Date(dateParts[0], dateParts[1]-1, dateParts[2]);
-            document.getElementById('v-tgl').innerText = isNaN(d) ? inputDate : formatDisplayDate(d);
-        }
-
         const fields = [
-            ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'],
-            ['v-trans', 'i-trans'], ['v-prod', 'i-prod'], ['v-do-top', 'i-do-desc'],
-            ['v-vol', 'i-vol'], ['v-so-top', 'i-so-desc'], ['v-load', 'i-load-date'],
-            ['v-plat', 'i-plat'], ['v-m1', 'i-m1'], ['v-m2', 'i-m2'],
-            ['v-segel', 'i-segel'], ['v-t2', 'i-t2'], ['v-po-num', 'i-po-num'],
-            ['v-so-desc', 'i-so-desc'], ['v-poqty', 'i-poqty'], ['v-driver', 'i-driver'],
-            ['v-mgr', 'i-mgr'], ['v-other-note', 'i-other-note']
+            ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'], ['v-trans', 'i-trans'], 
+            ['v-prod', 'i-prod'], ['v-do-top', 'i-do-desc'], ['v-vol', 'i-vol'], 
+            ['v-so-top', 'i-so-desc'], ['v-load', 'i-load-date'], ['v-plat', 'i-plat'], 
+            ['v-m1', 'i-m1'], ['v-m2', 'i-m2'], ['v-segel', 'i-segel'], 
+            ['v-t2', 'i-t2'], ['v-po-num', 'i-po-num'], ['v-so-desc', 'i-so-desc'], 
+            ['v-poqty', 'i-poqty'], ['v-driver', 'i-driver'], ['v-mgr', 'i-mgr'], ['v-other-note', 'i-other-note']
         ];
-
-        fields.forEach(pair => {
-            const inputEl = document.getElementById(pair[1]);
-            document.getElementById(pair[0]).innerText = inputEl ? (inputEl.value || '-') : '-';
+        
+        fields.forEach(p => {
+            const displayEl = document.getElementById(p[0]);
+            const inputEl = document.getElementById(p[1]);
+            if(displayEl && inputEl) displayEl.innerText = inputEl.value || '-';
         });
-
+        
+        const tglInput = document.getElementById('i-tgl').value;
+        document.getElementById('v-tgl').innerText = formatTanggalIndonesia(tglInput);
         document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
         document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
-
+        
         qrcode.clear();
         qrcode.makeCode("IKE-VERIFIED-" + document.getElementById('i-no').value);
     }
 
     async function saveData() {
+        const ptCode = document.getElementById('i-pt-select').value;
         const btn = document.querySelector('.btn-save');
-        const pt = document.getElementById('i-pt-select').value;
-        
-        btn.innerText = 'SAVING...';
-        btn.disabled = true;
+        btn.innerText = 'SAVING...'; btn.disabled = true;
 
-        const rawDate = document.getElementById('i-tgl').value;
-        const dbDate = rawDate.replace(/\//g, '-'); 
+        let namaPT = ptCode === 'IKAEN' ? 'PT. IKNVESTAMA KALIMANTAN ENERGI' : (ptCode === 'IDE' ? 'PT. INDO DHARMA ENERGI' : 'PT. KHATULISTIWA SINAR ENERGI');
 
         const payload = {
-            tanggal: dbDate,
-            pt: pt, 
+            tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
+            no_dokumen: document.getElementById('i-no').value,
             jenis_dokumen: 'surat jalan',
             tujuan: document.getElementById('i-po-to').value,
             nopol: document.getElementById('i-plat').value,
             sopir: document.getElementById('i-driver').value,
-            qty: parseFloat(document.getElementById('i-vol').value) || 0
+            qty: parseFloat(document.getElementById('i-vol').value) || 0,
+            pt: namaPT
         };
 
-        const { data, error } = await _supabase
-            .from('data_logistik')
-            .insert([payload])
-            .select();
+        const { error } = await _supabase.from('data_logistik').insert([payload]);
 
         if (error) {
             alert('Gagal simpan: ' + error.message);
-            console.error(error);
         } else {
-            // Update Nomor Surat ke layar dari hasil Database (Trigger SQL)
-            if (data && data[0]) {
-                document.getElementById('i-no').value = data[0].no_surat;
-                upd();
-                alert('Berhasil disimpan! No Surat: ' + data[0].no_surat);
-            }
+            alert('Berhasil disimpan!');
+            generateNumberPreview(); // Refresh nomor otomatis untuk input selanjutnya
         }
-        btn.innerText = 'SIMPAN DATA';
-        btn.disabled = false;
+        btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
     }
 
     function downloadPDF() {
         const element = document.getElementById('sj-container');
         const noSJ = document.getElementById('i-no').value.replace(/\//g, '-');
-        html2pdf().set({
-            margin: 0,
-            filename: 'SJ_'+noSJ+'.pdf',
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
+        html2pdf().set({ margin: 0, filename: 'SJ_'+noSJ+'.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save();
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
-    window.onload = initPage;
+    window.onload = () => {
+        const now = new Date();
+        document.getElementById('i-tgl').value = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
+        generateNumberPreview();
+    };
 </script>
 </body>
 </html>
