@@ -45,6 +45,7 @@
 
         .val { font-weight: bold; font-size: 9.5pt; display: inline-block; margin-top: 2px; white-space: nowrap; overflow: hidden; max-width: 100%; }
 
+        /* Footer Dekorasi */
         .page-footer-border { position: absolute; bottom: 0; left: 0; width: 100%; height: 12px; background: #222; }
         .accent-box { position: absolute; bottom: 0; right: 0; display: flex; }
         .accent-blue { width: 45px; height: 12px; background: var(--primary-blue); transform: skewX(-30deg); margin-right: -5px; }
@@ -54,6 +55,7 @@
         #qrcode { background: white; padding: 2px; border: 1px solid #eee; }
         .system-info-text { font-size: 7pt; line-height: 1.2; color: #333; }
 
+        /* Header */
         .header { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .logo-area { display: flex; align-items: center; gap: 15px; }
         .main-logo { height: 75px; width: auto; }
@@ -72,6 +74,7 @@
         .title-block h1 { font-size: 20pt; margin: 0; text-decoration: underline; font-weight: bold; letter-spacing: 2px; }
         .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #333; }
 
+        /* Table Rincian */
         .main-table { width: 100%; border-top: 2.5px solid var(--dark-blue); border-bottom: 2.5px solid var(--dark-blue); border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
         .main-table td { padding: 6px 4px; vertical-align: top; border-bottom: 0.5px solid #eee; overflow: hidden; }
         .label-group { display: flex; flex-direction: column; }
@@ -83,6 +86,7 @@
         .desc-table td { border: 1px solid #ccc; padding: 6px; background: #fcfcfc; font-size: 8.5pt; overflow: hidden; }
         .note-box { width: 40%; font-size: 8pt; font-style: italic; line-height: 1.4; border: 1px dashed var(--primary-blue); padding: 10px; background: #f0faff; }
 
+        /* Tanda Tangan */
         .sig-table { width: 100%; border-collapse: collapse; margin-top: 30px; table-layout: fixed; }
         .sig-table th, .sig-table td { border: 1px solid #000; text-align: center; padding: 5px; width: 33.33%; }
         .sig-table th { background: var(--accent-bg); font-size: 9pt; padding: 8px 5px; }
@@ -91,6 +95,7 @@
 
         .other-note-container { width: 100%; border: 1px solid #000; border-top: none; padding: 6px 10px; font-size: 8pt; min-height: 45px; box-sizing: border-box; background: #fff; text-align: left; }
 
+        /* EDITOR PANEL */
         .editor-panel { width: 380px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ddd; max-height: 95vh; overflow-y: auto; position: sticky; top: 20px; }
         .editor-panel h2 { margin: 18px 0 8px 0; color: var(--dark-blue); font-size: 11pt; border-bottom: 2px solid var(--primary-blue); padding-bottom: 5px; }
         .field { display: flex; flex-direction: column; margin-bottom: 10px; }
@@ -133,7 +138,7 @@
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Dokumen (Otomatis)</label><input type="text" id="i-no" readonly placeholder="Menunggu simpan..." style="background:#f9f9f9; font-weight: bold; color: var(--dark-blue);"></div>
+    <div class="field"><label>Nomor Dokumen (Tampil Otomatis)</label><input type="text" id="i-no" readonly placeholder="Menunggu simpan..." style="background:#f0f0f0; font-weight: bold; color: var(--dark-blue);"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header (Location)</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -313,13 +318,6 @@
     }
 
     function upd() {
-        const inputDate = document.getElementById('i-tgl').value;
-        const dateParts = inputDate.split('/');
-        if(dateParts.length === 3) {
-            const d = new Date(dateParts[0], dateParts[1]-1, dateParts[2]);
-            document.getElementById('v-tgl').innerText = isNaN(d) ? inputDate : formatDisplayDate(d);
-        }
-
         const fields = [
             ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'], ['v-trans', 'i-trans'], 
             ['v-prod', 'i-prod'], ['v-do-top', 'i-do-desc'], ['v-vol', 'i-vol'], 
@@ -333,24 +331,25 @@
             const el = document.getElementById(p[0]);
             const val = document.getElementById(p[1]).value;
             el.innerText = val || '-';
-            if(p[0] === 'v-no' && (!val || val === '')) { 
-                el.innerText = '[DRAFT]'; 
-                el.style.color = 'red'; 
-            } else if(p[0] === 'v-no') { 
-                el.style.color = 'black'; 
-            }
         });
+
+        const inputDate = document.getElementById('i-tgl').value;
+        const dParts = inputDate.split('/');
+        if(dParts.length === 3) {
+            const d = new Date(dParts[0], dParts[1]-1, dParts[2]);
+            document.getElementById('v-tgl').innerText = isNaN(d) ? inputDate : formatDisplayDate(d);
+        }
 
         document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
         document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
 
         qrcode.clear();
-        qrcode.makeCode(document.getElementById('i-no').value ? "VERIFIED-" + document.getElementById('i-no').value : "DRAFT");
+        qrcode.makeCode(document.getElementById('i-no').value || "DRAFT");
     }
 
     async function saveData() {
         const btn = document.querySelector('.btn-save');
-        btn.innerText = 'SIMPAN DATA...';
+        btn.innerText = 'SAVING...';
         btn.disabled = true;
 
         const payload = {
@@ -364,25 +363,24 @@
         };
 
         try {
-            // Perbaikan Utama: Meminta spesifik no_dokumen setelah insert
+            // LOGIKA PENYELARASAN: Mengambil no_dokumen setelah insert
             const { data, error } = await _supabase
                 .from('data_logistik')
                 .insert([payload])
-                .select('no_dokumen'); // Ambil hanya kolom no_dokumen
+                .select('no_dokumen');
 
             if (error) throw error;
 
             if (data && data.length > 0 && data[0].no_dokumen) {
-                const generatedNo = data[0].no_dokumen;
-                document.getElementById('i-no').value = generatedNo;
-                upd(); // Refresh tampilan surat
-                alert('Berhasil Disimpan!\nNo Dokumen: ' + generatedNo);
+                // Tampilkan nomor surat ke PANEL INPUT (i-no)
+                document.getElementById('i-no').value = data[0].no_dokumen;
+                upd(); // Refresh preview surat
+                alert('Data Berhasil Disimpan!\nNo Dokumen: ' + data[0].no_dokumen);
             } else {
-                alert('Data masuk ke database, tapi nomor dokumen tidak terbaca. Silakan cek dashboard atau ulangi.');
+                alert('Data tersimpan, tapi nomor gagal di-generate secara otomatis.');
             }
         } catch (err) {
-            alert('Gagal Simpan: ' + err.message);
-            console.error(err);
+            alert('Gagal: ' + err.message);
         } finally {
             btn.innerText = 'SIMPAN DATA';
             btn.disabled = false;
@@ -391,14 +389,12 @@
 
     function downloadPDF() {
         const element = document.getElementById('sj-container');
-        const opt = {
+        html2pdf().from(element).set({
             margin: 0,
             filename: 'IDE_'+(document.getElementById('i-no').value || 'DRAFT')+'.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().from(element).set(opt).save();
+        }).save();
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
