@@ -374,9 +374,9 @@
             alert('Gagal: ' + error.message);
         } else {
             // LOGIKA PENTING: Nomor dari database langsung masuk ke panel editor
-            document.getElementById('i-no').value = data[0].no_surat;
+            document.getElementById('i-no').value = data[0].no_dokumen;
             upd(); // Re-render preview surat
-            alert('Berhasil! No Dokumen: ' + data[0].no_surat);
+            alert('Berhasil! No Dokumen: ' + data[0].no_dokumen);
         }
         btn.innerText = 'SIMPAN DATA';
         btn.disabled = false;
@@ -397,3 +397,4 @@
 </script>
 </body>
 </html>
+
