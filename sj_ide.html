@@ -342,7 +342,7 @@
             const el = document.getElementById(p[0]);
             const val = document.getElementById(p[1]).value;
             el.innerText = val || '-';
-            if(p[0] === 'v-no' && !val) { el.innerText = '[001/SJ-IDE/III/2026]'; el.style.color = 'red'; }
+            if(p[0] === 'v-no' && !val) { el.innerText = '[DRAFT]'; el.style.color = 'red'; }
             else if(p[0] === 'v-no') { el.style.color = 'black'; }
         });
 
@@ -350,7 +350,7 @@
         document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
 
         qrcode.clear();
-        qrcode.makeCode(document.getElementById('i-no').value ? "VERIFIED-" + document.getElementById('i-no').value : "001/SJ-IDE/III/2026");
+        qrcode.makeCode(document.getElementById('i-no').value ? "VERIFIED-" + document.getElementById('i-no').value : "DRAFT");
     }
 
     async function saveData() {
@@ -368,14 +368,15 @@
             qty: parseFloat(document.getElementById('i-vol').value) || 0
         };
 
+        // Update Logika: Kolom tujuan ke no_dokumen
         const { data, error } = await _supabase.from('data_logistik').insert([payload]).select();
 
         if (error) {
             alert('Gagal: ' + error.message);
         } else {
-            // LOGIKA PENTING: Nomor dari database langsung masuk ke panel editor
+            // Mapping hasil simpan dari kolom no_dokumen ke panel editor
             document.getElementById('i-no').value = data[0].no_dokumen;
-            upd(); // Re-render preview surat
+            upd(); 
             alert('Berhasil! No Dokumen: ' + data[0].no_dokumen);
         }
         btn.innerText = 'SIMPAN DATA';
@@ -397,5 +398,3 @@
 </script>
 </body>
 </html>
-
-
