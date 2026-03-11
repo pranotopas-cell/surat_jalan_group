@@ -91,9 +91,9 @@
     <div class="field">
         <label>Pilih Perusahaan (Tabel)</label>
         <select id="i-target-table" onchange="generateAutoNumber()">
-            <option value="data_logistik">PT. KHATULISTIWA SINAR ENERGI (KSE)</option>
-            <option value="data_logistik">PT. IKNVESTAMA KALIMANTAN ENERGI (IKN)</option>
-            <option value="data_logistik">PT. INDO DHARMA ENERGI (IDE)</option>
+            <option value="data_kse">PT. KHATULISTIWA SINAR ENERGI (KSE)</option>
+            <option value="data_ikaen">PT. IKNVESTAMA KALIMANTAN ENERGI (IKN)</option>
+            <option value="data_ide">PT. INDO DHARMA ENERGI (IDE)</option>
         </select>
     </div>
     <div class="field">
@@ -106,7 +106,7 @@
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Dokumen (Auto/Manual)</label><input type="text" id="i-no" readonly></div>
+    <div class="field"><label>Nomor Dokumen</label><input type="text" id="i-no" readonly></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -290,13 +290,12 @@
         const monthRoman = roman[now.getMonth()];
         const year = now.getFullYear();
 
-        // Ambil nomor terakhir dari tabel yang dipilih
         const { data } = await _supabase.from(table).select('no_dokumen').order('created_at', { ascending: false }).limit(1);
 
         let nextNum = 1;
         if (data && data.length > 0 && data[0].no_dokumen) {
-            const parts = data[0].no_dokumen.split('/');
-            const lastNum = parseInt(parts[0]);
+            const lastNo = data[0].no_dokumen;
+            const lastNum = parseInt(lastNo.split('/')[0]);
             if(!isNaN(lastNum)) nextNum = lastNum + 1;
         }
 
@@ -339,6 +338,11 @@
         const btn = document.querySelector('.btn-save');
         btn.innerText = 'SAVING...'; btn.disabled = true;
 
+        // Logika pengisian kolom "pt" supaya tidak error null
+        let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
+        if (table === "data_ikaen") namaPT = "PT. IKNVESTAMA KALIMANTAN ENERGI";
+        else if (table === "data_ide") namaPT = "PT. INDO DHARMA ENERGI";
+
         const payload = {
             tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
             no_dokumen: document.getElementById('i-no').value,
@@ -346,7 +350,8 @@
             tujuan: document.getElementById('i-po-to').value,
             nopol: document.getElementById('i-plat').value,
             sopir: document.getElementById('i-driver').value,
-            qty: parseFloat(document.getElementById('i-vol').value) || 0
+            qty: parseFloat(document.getElementById('i-vol').value) || 0,
+            pt: namaPT // Field wajib di database data_logistik
         };
 
         const { error } = await _supabase.from(table).insert([payload]);
@@ -354,8 +359,8 @@
         if (error) {
             alert('Gagal Simpan: ' + error.message);
         } else {
-            alert('Sukses! Data disimpan ke ' + table.toUpperCase());
-            generateAutoNumber(); // Update nomor untuk antrean berikutnya
+            alert('Sukses! Data Berhasil Disimpan ke ' + table.toUpperCase());
+            generateAutoNumber();
         }
         btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
     }
@@ -371,4 +376,3 @@
 </script>
 </body>
 </html>
-
