@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Jalan Digital - Investama Kalimantan Energi</title>
+    <title>Surat Jalan Digital - IKE Group</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -128,17 +128,17 @@
 <div class="editor-panel">
     <h2>Database Settings</h2>
     <div class="field">
-        <label>Pilih Tabel Simpan</label>
-        <select id="i-target-table" onchange="initPage()">
-            <option value="data_logistik">DATA IKAEN</option>
-            <option value="data_logistik">DATA IDE</option>
-            <option value="data_logistik>DATA KSE</option>
+        <label>Kategori PT / Perusahaan</label>
+        <select id="i-pt-select" onchange="upd()">
+            <option value="ikaen">PT. IKAEN</option>
+            <option value="ide">PT. IDE</option>
+            <option value="kse">PT. KSE</option>
         </select>
     </div>
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no"></div>
+    <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no" readonly placeholder="Otomatis setelah Simpan"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header (Location)</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -146,7 +146,7 @@
     <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="-"></div>
     <div class="field"><label>Produk</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
     <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
-    <div class="field"><label>Volume (L)</label><input type="text" id="i-vol" value="0"></div>
+    <div class="field"><label>Volume (L)</label><input type="number" id="i-vol" value="0"></div>
     <div class="field"><label>Nomor SO</label><input type="text" id="i-so-desc" value="-"></div>
     <div class="field"><label>Tgl Pengaliran</label><input type="date" id="i-load-date"></div>
     <div class="field"><label>Plat Nomor</label><input type="text" id="i-plat" value="-"></div>
@@ -175,7 +175,7 @@
 <div id="sj-container">
     <div class="header">
         <div class="logo-area">
-            <img src="ikaen.png" alt="Logo IKAEN" class="main-logo">
+            <img src="ikaen.png" alt="Logo" class="main-logo">
             <div class="logo-text">
                 <b><span>I</span><span>N</span><span>V</span><span>E</span><span>S</span><span>T</span><span>A</span><span>M</span><span>A</span></b>
                 <span>KALIMANTAN ENERGI</span>
@@ -192,7 +192,7 @@
         <div class="meta-info-grid">
             <table>
                 <tr><td class="meta-label">Tanggal / <i style="font-weight:normal">Date</i></td><td>: <span id="v-tgl" class="meta-val"></span></td></tr>
-                <tr><td class="meta-label">No. Surat Jalan</td><td>: <span id="v-no" class="meta-val"></span></td></tr>
+                <tr><td class="meta-label">No. Surat Jalan</td><td>: <span id="v-no" class="meta-val">-</span></td></tr>
                 <tr><td class="meta-label">Tujuan / <i style="font-weight:normal">To</i></td><td>: <span id="v-po-to-header" class="meta-val"></span></td></tr>
                 <tr><td class="meta-label">Lokasi / <i style="font-weight:normal">Location</i></td><td>: <span id="v-lokasi" class="meta-val"></span></td></tr>
             </table>
@@ -281,7 +281,7 @@
             <td><span>( . . . . . . . . . . . . . . . . )</span></td>
             <td><span id="v-driver">-</span></td>
             <td>
-                <img src="ike.png" alt="Stempel IKE" class="stamp-container">
+                <img src="ike.png" alt="Stempel" class="stamp-container">
                 <div style="position:relative; z-index:2;">
                     <br><br>
                     <span id="v-mgr">RISKY DANDY SAPUTRA</span>
@@ -306,7 +306,7 @@
 </div>
 
 <script>
-    // --- SUPABASE CONFIG (GANTI DENGAN KEY ANDA) ---
+    // --- SUPABASE CONFIG ---
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -318,38 +318,19 @@
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
     }
 
-    async function initPage() {
+    function initPage() {
         const now = new Date();
-        
-        // Format Panel: 2026/03/05
         const panelDate = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         document.getElementById('i-tgl').value = panelDate;
-
-        const table = document.getElementById('i-target-table').value;
-        const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
-        const month = roman[now.getMonth()];
-        const year = now.getFullYear();
-
-        try {
-            const { count } = await _supabase.from(table).select('*', { count: 'exact', head: true });
-            // Mulai dari 1 jika kosong (count=0 + 1 = 1)
-            const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            document.getElementById('i-no').value = `${nextNo}/SJ-IKE/${month}/${year}`;
-        } catch (e) {
-            document.getElementById('i-no').value = `001/SJ-IKE/${month}/${year}`;
-        }
         upd();
     }
 
     function upd() {
-        // Logika Tanggal: Ambil dari panel (YYYY/MM/DD), ubah ke (DD Bulan YYYY) untuk tampilan SJ
         const inputDate = document.getElementById('i-tgl').value;
         const dateParts = inputDate.split('/');
         if(dateParts.length === 3) {
             const d = new Date(dateParts[0], dateParts[1]-1, dateParts[2]);
             document.getElementById('v-tgl').innerText = isNaN(d) ? inputDate : formatDisplayDate(d);
-        } else {
-            document.getElementById('v-tgl').innerText = inputDate;
         }
 
         const fields = [
@@ -363,7 +344,8 @@
         ];
 
         fields.forEach(pair => {
-            document.getElementById(pair[0]).innerText = document.getElementById(pair[1]).value || '-';
+            const inputEl = document.getElementById(pair[1]);
+            document.getElementById(pair[0]).innerText = inputEl ? (inputEl.value || '-') : '-';
         });
 
         document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
@@ -374,38 +356,45 @@
     }
 
     async function saveData() {
-    const table = document.getElementById('i-target-table').value;
-    const btn = document.querySelector('.btn-save');
-    btn.innerText = 'SAVING...';
-    btn.disabled = true;
+        const btn = document.querySelector('.btn-save');
+        const pt = document.getElementById('i-pt-select').value;
+        
+        btn.innerText = 'SAVING...';
+        btn.disabled = true;
 
-    // AMBIL TANGGAL DARI PANEL (Format: 2026/03/05)
-    // Lalu ubah / menjadi - agar menjadi 2026-03-05 (Standar Database)
-    const rawDate = document.getElementById('i-tgl').value;
-    const dbDate = rawDate.replace(/\//g, '-'); 
+        const rawDate = document.getElementById('i-tgl').value;
+        const dbDate = rawDate.replace(/\//g, '-'); 
 
-    const payload = {
-        tanggal: dbDate, // SEKARANG MENGIRIM FORMAT 2026-03-05 (Diterima tipe DATE)
-        no_dokumen: document.getElementById('i-no').value,
-        jenis_dokumen: "SURAT JALAN",
-        tujuan: document.getElementById('i-po-to').value,
-        nopol: document.getElementById('i-plat').value,
-        sopir: document.getElementById('i-driver').value,
-        qty: document.getElementById('i-poqty').value
-    };
+        const payload = {
+            tanggal: dbDate,
+            pt: pt, 
+            jenis_dokumen: 'surat jalan',
+            tujuan: document.getElementById('i-po-to').value,
+            nopol: document.getElementById('i-plat').value,
+            sopir: document.getElementById('i-driver').value,
+            qty: parseFloat(document.getElementById('i-vol').value) || 0
+        };
 
-    const { error } = await _supabase.from(table).insert([payload]);
+        const { data, error } = await _supabase
+            .from('data_logistik')
+            .insert([payload])
+            .select();
 
-    if (error) {
-        alert('Gagal simpan: ' + error.message);
-        console.error(error);
-    } else {
-        alert('Berhasil disimpan ke ' + table);
-        initPage();
+        if (error) {
+            alert('Gagal simpan: ' + error.message);
+            console.error(error);
+        } else {
+            // Update Nomor Surat ke layar dari hasil Database (Trigger SQL)
+            if (data && data[0]) {
+                document.getElementById('i-no').value = data[0].no_surat;
+                upd();
+                alert('Berhasil disimpan! No Surat: ' + data[0].no_surat);
+            }
+        }
+        btn.innerText = 'SIMPAN DATA';
+        btn.disabled = false;
     }
-    btn.innerText = 'SIMPAN DATA';
-    btn.disabled = false;
-}
+
     function downloadPDF() {
         const element = document.getElementById('sj-container');
         const noSJ = document.getElementById('i-no').value.replace(/\//g, '-');
@@ -422,6 +411,3 @@
 </script>
 </body>
 </html>
-
-
-
