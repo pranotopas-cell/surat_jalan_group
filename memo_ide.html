@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Memo PT Indo Dharma Energi</title>
+    <title>Sistem Memo Terintegrasi - IDE Group</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -55,12 +55,11 @@
         .main-content { margin-left: 400px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
         
         .memo-page { 
-            background: white; width: 210mm; height: 297mm; padding: 15mm; 
+            background: white; width: 210mm; min-height: 297mm; padding: 15mm; 
             box-shadow: 0 0 20px rgba(0,0,0,0.5); color: black; line-height: 1.4;
             position: relative; overflow: hidden;
         }
 
-        /* Perbaikan Border Atas agar Muncul di PDF */
         .top-border {
             position: absolute; top: 0; left: 0; right: 0;
             height: 8px; background: var(--primary-blue);
@@ -77,7 +76,6 @@
 
         .header-address { text-align: right; font-size: 9px; line-height: 1.4; max-width: 350px; color: #333; }
 
-        /* Layout Swapped: Recipient Left, Meta Right */
         .meta-container { display: flex; justify-content: space-between; margin-bottom: 25px; align-items: flex-start; }
         .meta-left-recipient { width: 45%; font-size: 12px; }
         .meta-right-info { width: 50%; font-size: 12px; border-left: 1px solid #eee; padding-left: 20px; }
@@ -107,12 +105,12 @@
 <body>
 
 <div class="sidebar">
-    <h2>IDE MEMO SYSTEM</h2>
+    <h2>MEMO SYSTEM</h2>
     <div class="action-group">
-        <button class="btn btn-home" onclick="initPage()">🏠 HOME</button>
-        <button class="btn btn-save" id="btnSave" onclick="saveData()">💾 SIMPAN</button>
-        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">👁️ PREVIEW</button>
-        <button class="btn btn-download" onclick="downloadPDF()">📥 PDF</button>
+        <button class="btn btn-home" onclick="location.reload()"> HOME</button>
+        <button class="btn btn-save" id="btnSave" onclick="saveData()"> SIMPAN</button>
+        <button class="btn btn-preview" onclick="window.scrollTo(0,0)>"PRINT PREVIEW'</button>
+        <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
     </div>
 
     <div class="section-title">Database & Meta</div>
@@ -142,8 +140,8 @@
         <div class="top-border"></div>
         <div class="header">
             <div class="logo-container">
-                <img src="ide1.png" alt="Logo IDE">
-                <div class="company-name">Indo Dharma Energi</div>
+                <img src="ide1.png" alt="Logo IDE" onerror="this.style.display='none'">
+                <div class="company-name" id="outCompanyName">Indo Dharma Energi</div>
             </div>
             <div class="header-address">
                 <strong>SUPLIER DAN TRANSPORTIR BAHAN BAKAR MINYAK RESMI</strong><br>
@@ -220,8 +218,8 @@
 
         <div class="signature-container">
             Regards,<br>
-            <strong style="font-size: 14px; color: var(--primary-blue);">PT. Indo Dharma Energi</strong><br>
-            <img src="ttd_ide.png" alt="Tanda Tangan" class="sig-img">
+            <strong style="font-size: 14px; color: var(--primary-blue);" id="outSigCompany">PT. Indo Dharma Energi</strong><br>
+            <img src="ttd_ide.png" alt="Tanda Tangan" class="sig-img" onerror="this.style.display='none'">
         </div>
     </div>
 </div>
@@ -237,7 +235,7 @@
             html += `
             <div class="unit-card">
                 <h4>Unit ${i}</h4>
-                <div class="input-group"><input type="text" id="inTrans${i}" placeholder="Transportir" value="${i<=2 ? 'PT. BERKAH SARANA MAKMUR BENUA' : ''}"></div>
+                <div class="input-group"><input type="text" id="inTrans${i}" placeholder="Transportir" value="${i<=1 ? 'PT. BERKAH SARANA MAKMUR BENUA' : ''}"></div>
                 <div class="input-group"><input type="text" id="inNopol${i}" placeholder="No. Polisi"></div>
                 <div class="input-group"><input type="text" id="inDriver${i}" placeholder="Driver"></div>
                 <div class="input-group"><input type="number" id="inQty${i}" placeholder="Qty (Liter)"></div>
@@ -260,13 +258,22 @@
         
         const table = document.getElementById('i-target-table').value;
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+        
+        // Update Nama Perusahaan di Template
+        let companyText = "Indo Dharma Energi";
+        let codePT = "IDE";
+        if(table === "data_ikaen") { companyText = "Ikaen"; codePT = "IKN"; }
+        if(table === "data_kse") { companyText = "Khatulistiwa Sinar Energi"; codePT = "KSE"; }
+        
+        document.getElementById('outCompanyName').innerText = companyText;
+        document.getElementById('outSigCompany').innerText = "PT. " + companyText;
+
         try {
             const { count } = await _supabase.from(table).select('*', { count: 'exact', head: true }).eq('jenis_dokumen', 'MEMO PENGALIRAN');
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            let codePT = table === "data_ikaen" ? "IKN" : (table === "data_kse" ? "KSE" : "IDE");
             document.getElementById('inNomor').value = `${nextNo}/MEMO-${codePT}/${roman[now.getMonth()]}/${now.getFullYear()}`;
         } catch (e) {
-            document.getElementById('inNomor').value = `001/MEMO-IDE/${roman[now.getMonth()]}/${now.getFullYear()}`;
+            document.getElementById('inNomor').value = `001/MEMO-${codePT}/${roman[now.getMonth()]}/${now.getFullYear()}`;
         }
         update();
     }
@@ -301,21 +308,47 @@
     async function saveData() {
         const btn = document.getElementById('btnSave');
         const table = document.getElementById('i-target-table').value;
+        const noMemo = document.getElementById('inNomor').value;
+        const tglMemo = document.getElementById('inTglMemo').value.replace(/\//g, '-');
+        
         btn.innerText = "SIMPAN..."; btn.disabled = true;
-        let totalQty = 0;
-        for(let i=1; i<=5; i++) totalQty += parseFloat(document.getElementById('inQty' + i).value) || 0;
 
-        const { error } = await _supabase.from(table).insert([{
-            tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
-            no_dokumen: document.getElementById('inNomor').value,
-            jenis_dokumen: "MEMO PENGALIRAN",
-            tujuan: "PT. Sinarindo Sukses Selalu",
-            qty: totalQty
-        }]);
+        const payloads = [];
+        for (let i = 1; i <= 5; i++) {
+            const nopol = document.getElementById('inNopol' + i).value;
+            const qty = parseFloat(document.getElementById('inQty' + i).value) || 0;
+            const transportir = document.getElementById('inTrans' + i).value;
+            const driver = document.getElementById('inDriver' + i).value;
 
-        if(error) alert("Gagal: " + error.message);
-        else { alert("Data Tersimpan!"); initPage(); }
-        btn.innerText = "💾 SIMPAN"; btn.disabled = false;
+            if (nopol || qty > 0) {
+                payloads.push({
+                    tanggal: tglMemo,
+                    no_dokumen: noMemo,
+                    jenis_dokumen: "MEMO PENGALIRAN",
+                    tujuan: "PT. Sinarindo Sukses Selalu",
+                    nopol: nopol,
+                    sopir: driver,
+                    qty: qty,
+                    keterangan: "PO: " + document.getElementById('inPO').value + " | Trans: " + transportir
+                });
+            }
+        }
+
+        if (payloads.length === 0) {
+            alert("Isi data armada terlebih dahulu.");
+            btn.innerText = " SIMPAN"; btn.disabled = false;
+            return;
+        }
+
+        const { error } = await _supabase.from(table).insert(payloads);
+
+        if(error) {
+            alert("Gagal: " + error.message);
+        } else {
+            alert("Data Berhasil Tersimpan!");
+            initPage();
+        }
+        btn.innerText = " SIMPAN"; btn.disabled = false;
     }
 
     function downloadPDF() {
@@ -326,12 +359,7 @@
             margin: 0,
             filename: filename,
             image: { type: 'jpeg', quality: 1 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true,
-                logging: false,
-                y: 0 
-            },
+            html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
