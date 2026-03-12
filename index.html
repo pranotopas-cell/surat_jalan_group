@@ -3,150 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Integrated System Delivery</title>
+    <title>Enterprise Logistics Monitoring</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root { 
-            --ide-dark: #0d2137;
-            --ide-primary: #1565c0;
+            --tech-dark: #060b28;
+            --tech-card: #ffffff;
+            --tech-accent: #007bff;
+            --tech-glow: rgba(0, 123, 255, 0.5);
             --sidebar-width: 280px;
         }
-        body { font-family: 'Inter', sans-serif; background-color: #f4f7f9; }
-        
-        /* Auth Page */
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f0f2f5; 
+            color: #1e293b;
+        }
+
+        /* Login Page Neon Effect */
         #login-page { 
             height: 100vh; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            background: linear-gradient(rgba(13,33,55,0.85), rgba(21,101,192,0.85)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'); 
-            background-size: cover; 
+            background: radial-gradient(circle at top right, #1e293b, #060b28);
         }
-        
-        /* Sidebar Styling */
+
+        /* Sidebar Glassmorphism */
         .sidebar { 
-            background: var(--ide-dark); 
+            background: linear-gradient(180deg, #0f172a 0%, #060b28 100%);
             height: 100vh; 
             color: white; 
             padding: 1.5rem 1rem; 
             position: fixed; 
             width: var(--sidebar-width); 
-            z-index: 1000; 
-            overflow-y: auto; 
+            z-index: 1000;
+            border-right: 1px solid rgba(255,255,255,0.1);
         }
-        .nav-link { 
-            color: rgba(255,255,255,0.7); 
-            margin-bottom: 0.1rem; 
-            border-radius: 0.5rem; 
-            padding: 0.7rem 1rem; 
-            text-decoration: none; 
-            display: flex; 
-            align-items: center; 
-            transition: 0.2s; 
-            cursor: pointer; 
-            font-size: 0.9rem; 
-        }
-        .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.1); color: #00d2ff; }
-        
-        .submenu { padding-left: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 0.5rem; margin-bottom: 0.5rem; margin-top: 0.2rem; }
-        .submenu .nav-link { font-size: 0.8rem; padding: 0.4rem 1rem; color: rgba(255,255,255,0.6); }
-        .pt-label { font-size: 0.65rem; letter-spacing: 0.5px; opacity: 0.5; padding: 1rem 1rem 0.3rem; display: block; }
 
-        .main-content { margin-left: var(--sidebar-width); padding: 2.5rem; min-height: 100vh; }
-        .data-card { background: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #edf2f7; }
-        
-        .table thead th { border-top: none; background: #f8fafc; text-transform: uppercase; font-size: 0.75rem; }
-        .spinner-container { padding: 50px; text-align: center; }
+        .nav-link { 
+            color: rgba(255,255,255,0.6); 
+            border-radius: 12px; 
+            padding: 0.8rem 1rem; 
+            margin-bottom: 0.3rem;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active { 
+            background: rgba(255,255,255,0.1); 
+            color: #38bdf8; 
+            box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.2);
+        }
+
+        .main-content { margin-left: var(--sidebar-width); padding: 2rem; }
+
+        /* Dashboard Header */
+        .hero-section {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .hero-section::after {
+            content: ""; position: absolute; top: -50%; right: -10%;
+            width: 400px; height: 400px; background: var(--tech-glow);
+            filter: blur(120px); opacity: 0.2;
+        }
+
+        /* Data Card Hi-Tech */
+        .data-card { 
+            background: var(--tech-card); 
+            border-radius: 20px; 
+            padding: 2rem; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .table thead th { 
+            background: #f8fafc; 
+            color: #64748b; 
+            font-weight: 700; 
+            font-size: 0.7rem; 
+            letter-spacing: 1px;
+            border: none;
+            padding: 1.2rem;
+        }
+
+        .status-pill {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .badge-kse { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .badge-ide { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .badge-ikaen { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
     </style>
 </head>
 <body>
 
 <div id="login-page">
-    <div class="card p-5 border-0 shadow-lg text-center" style="max-width: 400px; border-radius: 2rem;">
-        <h3 class="fw-bold text-dark mb-4">ADMIN ACCESS</h3>
-        <input type="text" id="user" class="form-control mb-3" placeholder="Username">
-        <input type="password" id="pass" class="form-control mb-4" placeholder="Password">
-        <button class="btn btn-primary w-100 py-2 fw-bold" onclick="handleLogin()">LOGIN</button>
-        <p id="error-msg" class="text-danger mt-3 small" style="display:none;">Akses Ditolak! Periksa kembali kredensial Anda.</p>
+    <div class="card p-5 border-0 shadow-lg text-center bg-white" style="width: 100%; max-width: 400px; border-radius: 24px;">
+        <div class="mb-4 text-primary"><i class="bi bi-shield-lock-fill fs-1"></i></div>
+        <h3 class="fw-bold mb-1">Command Center</h3>
+        <p class="text-muted small mb-4">Silakan masuk untuk akses dashboard</p>
+        <input type="text" id="user" class="form-control mb-3 py-2 px-3 rounded-3" placeholder="Username">
+        <input type="password" id="pass" class="form-control mb-4 py-2 px-3 rounded-3" placeholder="Password">
+        <button class="btn btn-primary w-100 py-2 fw-bold shadow" onclick="handleLogin()">AUTHENTICATE</button>
+        <p id="error-msg" class="text-danger mt-3 small" style="display:none;">Access Denied: Invalid Credentials</p>
     </div>
 </div>
 
 <div id="dashboard-page" style="display:none;">
     <aside class="sidebar d-flex flex-column">
-        <div class="mb-4 px-3 d-flex align-items-center">
-            <i class="bi bi-hexagon-fill text-info fs-3 me-2"></i>
-            <h5 class="fw-bold mb-0 text-white">INTEGRATED SYSTEM DELIVERY</h5>
+        <div class="mb-5 px-3 d-flex align-items-center">
+            <div class="bg-primary rounded-3 p-2 me-3 shadow-primary">
+                <i class="bi bi-cpu text-white fs-4"></i>
+            </div>
+            <div>
+                <h6 class="fw-bold mb-0 text-white">CORE SYSTEM</h6>
+                <small class="text-info" style="font-size: 0.6rem; letter-spacing: 1px;">V2.0 ENTERPRISE</small>
+            </div>
         </div>
         
         <nav class="flex-grow-1">
-            <a href="#" class="nav-link active mb-2"><i class="bi bi-grid-fill me-2"></i> Dashboard Live</a>
-
-            <small class="text-white pt-label fw-bold">PT. INVESTAMA KALIMANTAN ENERGI</small>
-            <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2"></i> IKAEN <i class="bi bi-chevron-down ms-auto small"></i></a>
-            <div class="collapse submenu" id="mIkaen">
-                <a href="sj_ikaen.html" class="nav-link">Surat Jalan</a>
-                <a href="memo_ikaen.html" class="nav-link">Memo</a>
-                <a href="ba_oper_ikaen.html" class="nav-link">BA Oper Muatan</a>
-                <a href="ba_penerimaan_ikaen.html" class="nav-link">BA Penerimaan</a>
+            <a href="#" class="nav-link active"><i class="bi bi-speedometer2 me-3"></i> Live Monitoring</a>
+            
+            <div class="mt-4 px-3 mb-2"><small class="text-uppercase text-muted fw-bold" style="font-size: 0.65rem;">Logistics Unit</small></div>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-layers me-3"></i> IKAEN Group</a>
+            <div class="collapse" id="mIkaen">
+                <div class="ps-4 mt-2">
+                    <a href="sj_ikaen.html" class="nav-link small py-1">Delivery Orders</a>
+                    <a href="memo_ikaen.html" class="nav-link small py-1">Internal Memo</a>
+                </div>
             </div>
-
-            <small class="text-white pt-label fw-bold">PT. INDO DHARMA ENERGI</small>
-            <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-lightning-charge me-2"></i> IDE  <i class="bi bi-chevron-down ms-auto small"></i></a>
-            <div class="collapse submenu" id="mIde">
-                <a href="sj_ide.html" class="nav-link">Surat Jalan</a>
-                <a href="memo_ide.html" class="nav-link">Memo</a>
-                <a href="ba_oper_ide.html" class="nav-link">BA Oper Muatan</a>
-                <a href="ba_penerimaan_ide.html" class="nav-link">BA Penerimaan</a>
-            </div>
-
-            <small class="text-white pt-label fw-bold">PT. KHATULISTIWA SINAR ENERGI</small>
-            <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-fire me-2"></i> KSE  <i class="bi bi-chevron-down ms-auto small"></i></a>
-            <div class="collapse submenu" id="mKse">
-                <a href="sj_kse.html" class="nav-link">Surat Jalan</a>
-                <a href="memo_kse.html" class="nav-link">Memo</a>
-                <a href="ba_oper_kse.html" class="nav-link">BA Oper Muatan</a>
-                <a href="ba_penerimaan_kse.html" class="nav-link">BA Penerimaan</a>
-            </div>
+            
+            <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-fuel-pump me-3"></i> IDE Logistics</a>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-lightning me-3"></i> KSE Energy</a>
         </nav>
 
-        <a href="javascript:void(0)" onclick="handleLogout()" class="nav-link text-danger border-top pt-3 mt-auto">
-            <i class="bi bi-box-arrow-left me-2"></i> Sign Out
+        <a href="javascript:void(0)" onclick="handleLogout()" class="nav-link text-danger mt-auto border-top border-secondary pt-3">
+            <i class="bi bi-power me-3"></i> Terminasi Sesi
         </a>
     </aside>
 
     <main class="main-content">
-        <div class="p-5 bg-white shadow-sm rounded-4 mb-4 text-white" style="background: linear-gradient(135deg, #0d2137, #1565c0);">
-            <h1 class="fw-bold">Welcome, To Monitoring Real time Digital Delivery System</h1>
-            <p class="opacity-75">Integrated rilis Documents)</p>
+        <div class="hero-section text-white">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-6 fw-bold">Integrated Logistics Feed</h1>
+                    <p class="opacity-75 mb-0">Real-time data synchronization from Cloud Database (Supabase)</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div id="clock" class="fs-4 fw-bold">00:00:00</div>
+                    <div class="small opacity-50" id="date-now">Kamis, 12 Maret 2026</div>
+                </div>
+            </div>
         </div>
 
         <div class="data-card">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold mb-0">Delivery Feed</h5>
-                <button class="btn btn-sm btn-primary px-3 rounded-pill" onclick="fetchRilisData()">
-                    <i class="bi bi-arrow-clockwise me-1"></i> Refresh Data
+                <div>
+                    <h5 class="fw-bold mb-1">Global Data Logistik</h5>
+                    <span class="badge bg-soft-primary text-primary" style="font-size: 0.7rem;">LIVE STREAMING ACTIVE</span>
+                </div>
+                <button class="btn btn-outline-primary border-2 rounded-pill px-4 fw-bold btn-sm" onclick="fetchLogistikData()">
+                    <i class="bi bi-arrow-repeat me-2"></i> SYNC DATABASE
                 </button>
             </div>
             
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead>
-                        <tr class="text-muted small">
-                            <th>TANGGAL & PT</th>
-                            <th>NO. DOKUMEN</th>
-                            <th>JENIS DOKUMEN</th>
-                            <th>TUJUAN</th>
-                            <th>SOPIR / NOPOL</th>
-                            <th>QTY</th>
+                        <tr>
+                            <th>IDENTITAS PT & TANGGAL</th>
+                            <th>NO. REFERENSI</th>
+                            <th>DOKUMEN</th>
+                            <th>DESTINASI</th>
+                            <th>PERSONIL & UNIT</th>
+                            <th class="text-end">VOLUME (L)</th>
                         </tr>
                     </thead>
-                    <tbody id="rilis-table-body">
-                        <tr><td colspan="6" class="text-center py-5">Menghubungkan ke database...</td></tr>
+                    <tbody id="logistik-table-body">
+                        <tr><td colspan="6" class="text-center py-5 text-muted">Menginisialisasi koneksi aman...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -154,87 +203,77 @@
     </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
     // Konfigurasi Supabase
     const SB_URL = "https://ntaectphgoelmhzrkatp.supabase.co"; 
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg";
     const _supabase = supabase.createClient(SB_URL, SB_KEY);
 
-    // Fungsi Mengambil Data dari 3 Tabel Berbeda
-    async function fetchRilisData() {
-        const tbody = document.getElementById('rilis-table-body');
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><br>Memuat data...</td></tr>';
+    // Ambil Data dari tabel tunggal: data_logistik
+    async function fetchLogistikData() {
+        const tbody = document.getElementById('logistik-table-body');
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5"><div class="spinner-grow text-primary" role="status"></div></td></tr>';
 
         try {
-            // Ambil data dari masing-masing tabel PT
-            const [resIkaen, resIde, resKse] = await Promise.all([
-                _supabase.from('data_ikaen').select('*'),
-                _supabase.from('data_ide').select('*'),
-                _supabase.from('data_kse').select('*')
-            ]);
+            const { data, error } = await _supabase
+                .from('data_logistik') // Tabel Baru Sesuai Request
+                .select('*')
+                .order('created_at', { ascending: false });
 
-            // Gabungkan hasil dan beri penanda PT
-            let allData = [
-                ...(resIkaen.data || []).map(item => ({...item, pt_name: 'PT. IKAEN', pt_class: 'bg-primary'})),
-                ...(resIde.data || []).map(item => ({...item, pt_name: 'PT. IDE', pt_class: 'bg-success'})),
-                ...(resKse.data || []).map(item => ({...item, pt_name: 'PT. KSE', pt_class: 'bg-warning text-dark'}))
-            ];
-
-            // Urutkan berdasarkan waktu input terbaru
-            allData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            if (error) throw error;
 
             let html = '';
-            if (allData.length === 0) {
-                html = '<tr><td colspan="6" class="text-center py-4 text-muted">Belum ada data di semua tabel.</td></tr>';
+            if (data.length === 0) {
+                html = '<tr><td colspan="6" class="text-center py-5">Sistem siap, namun belum ada data masuk di tabel data_logistik.</td></tr>';
             } else {
-                allData.forEach(row => {
-                    const displayQty = row.qty ? parseFloat(row.qty).toLocaleString() : '0';
-                    
+                data.forEach(row => {
+                    // Logika Penentuan Badge PT (Bisa disesuaikan dengan kolom 'pt' di DB Anda)
+                    const ptClass = row.pt === 'KSE' ? 'badge-kse' : (row.pt === 'IDE' ? 'badge-ide' : 'badge-ikaen');
+                    const formattedQty = row.qty ? parseFloat(row.qty).toLocaleString('id-ID') : '0';
+
                     html += `
                         <tr>
                             <td>
-                                <div class="fw-bold small">${row.tanggal || '-'}</div>
-                                <span class="badge ${row.pt_class}" style="font-size:0.6rem">${row.pt_name}</span>
+                                <div class="fw-bold mb-1">${row.tanggal || '-'}</div>
+                                <span class="status-pill ${ptClass}">${row.pt || 'N/A'}</span>
                             </td>
-                            <td class="fw-bold text-primary">${row.no_dokumen || '-'}</td>
-                            <td class="text-secondary small">${row.jenis_dokumen || '-'}</td>
-                            <td><div class="text-truncate small" style="max-width:140px;">${row.tujuan || '-'}</div></td>
+                            <td><code class="fw-bold text-primary" style="font-size:0.9rem">${row.no_dokumen || '-'}</code></td>
+                            <td><div class="text-uppercase small fw-bold text-secondary">${row.jenis_dokumen || '-'}</div></td>
+                            <td><div class="text-truncate" style="max-width:180px; font-size:0.85rem">${row.tujuan || '-'}</div></td>
                             <td>
                                 <div class="fw-bold small">${row.sopir || '-'}</div>
-                                <div class="text-muted small" style="font-size:0.75rem">${row.nopol || '-'}</div>
+                                <div class="text-muted" style="font-size:0.7rem">${row.nopol || '-'}</div>
                             </td>
-                            <td><span class="badge bg-light text-dark border fw-bold">${displayQty}</span></td>
+                            <td class="text-end">
+                                <span class="badge bg-dark px-3 py-2" style="font-size:0.85rem">${formattedQty}</span>
+                            </td>
                         </tr>`;
                 });
             }
             tbody.innerHTML = html;
         } catch (err) {
-            console.error("Fetch error:", err);
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Error: ${err.message}</td></tr>`;
+            console.error("Critical Sync Error:", err);
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Gagal sinkronisasi: ${err.message}</td></tr>`;
         }
     }
 
-    // Logika Login Sederhana
+    // Auth & Utilities
     function handleLogin() {
         const u = document.getElementById('user').value;
         const p = document.getElementById('pass').value;
-        
-        // Kredensial sesuai permintaan Anda sebelumnya
         if(u === "admin" && p === "kse123") {
             localStorage.setItem('ide_session', 'active');
             showDashboard();
         } else {
-            const errorMsg = document.getElementById('error-msg');
-            errorMsg.style.display = 'block';
+            document.getElementById('error-msg').style.display = 'block';
         }
     }
 
     function showDashboard() {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('dashboard-page').style.display = 'block';
-        fetchRilisData();
+        fetchLogistikData();
+        startTime();
     }
 
     function handleLogout() {
@@ -242,16 +281,17 @@
         location.reload();
     }
 
-    // Cek Session saat halaman dibuka
-    window.onload = function() {
-        if (localStorage.getItem('ide_session') === 'active') {
-            showDashboard();
-        }
+    function startTime() {
+        const today = new Date();
+        document.getElementById('clock').innerHTML = today.toLocaleTimeString('id-ID');
+        setTimeout(startTime, 1000);
+    }
+
+    window.onload = () => {
+        if (localStorage.getItem('ide_session') === 'active') showDashboard();
     };
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
-
