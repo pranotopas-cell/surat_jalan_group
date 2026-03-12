@@ -15,6 +15,10 @@
             --ide-dark: #0f172a;
             --ide-primary: #3b82f6;
             --sidebar-width: 280px;
+            /* Custom Brand Colors */
+            --color-ikaen: #dc3545; /* Merah */
+            --color-ide: #0d6efd;   /* Biru */
+            --color-kse: #14532d;   /* Hijau Tua */
         }
 
         body { 
@@ -78,7 +82,6 @@
 
         .main-content { margin-left: var(--sidebar-width); padding: 2.5rem; min-height: 100vh; }
 
-        /* Header Visual */
         .hero-banner {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border-radius: 20px;
@@ -96,18 +99,28 @@
             border: 1px solid #edf2f7; 
         }
 
-        /* Table Styling */
+        /* Table Text Tuning */
+        .table { font-size: 0.75rem; } /* Perkecil teks tabel */
         .table thead th { 
             background: #f1f5f9; 
             text-transform: uppercase; 
-            font-size: 0.7rem; 
+            font-size: 0.65rem; 
             font-weight: 700; 
-            letter-spacing: 0.5px;
-            padding: 1rem;
+            padding: 0.75rem;
             border: none;
+            white-space: nowrap;
         }
 
-        .badge-pt { font-size: 0.6rem; padding: 4px 8px; border-radius: 6px; font-weight: 700; }
+        .badge-pt { font-size: 0.6rem; padding: 4px 8px; border-radius: 6px; font-weight: 800; }
+        
+        /* Forced Colors */
+        .txt-ikaen { color: var(--color-ikaen) !important; }
+        .txt-ide { color: var(--color-ide) !important; }
+        .txt-kse { color: var(--color-kse) !important; }
+        
+        .bg-ikaen { background-color: var(--color-ikaen) !important; color: white !important; }
+        .bg-ide { background-color: var(--color-ide) !important; color: white !important; }
+        .bg-kse { background-color: var(--color-kse) !important; color: white !important; }
     </style>
 </head>
 <body>
@@ -167,14 +180,14 @@
 
     <main class="main-content">
         <div class="hero-banner text-white">
-            <h1 class="fw-bold mb-1">Real-time Monitoring</h1>
-            <p class="opacity-75">Digital Logistics Delivery System & Document Synchronization</p>
+            <h1 class="fw-bold mb-1" style="font-size: 1.75rem;">Real-time Monitoring</h1>
+            <p class="opacity-75 small">Digital Logistics Delivery System & Document Synchronization</p>
         </div>
 
         <div class="data-card">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold mb-0"><i class="bi bi-rss me-2 text-primary"></i>Delivery Feed Logistik</h5>
-                <button class="btn btn-sm btn-primary px-4 rounded-pill fw-bold" onclick="fetchLogistikData()">
+                <h6 class="fw-bold mb-0"><i class="bi bi-rss me-2 text-primary"></i>Delivery Feed Logistik</h6>
+                <button class="btn btn-sm btn-primary px-3 rounded-pill fw-bold" style="font-size: 0.7rem;" onclick="fetchLogistikData()">
                     <i class="bi bi-arrow-clockwise me-1"></i> Sync Data
                 </button>
             </div>
@@ -209,10 +222,9 @@
 
     async function fetchLogistikData() {
         const tbody = document.getElementById('logistik-table-body');
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5"><div class="spinner-border text-primary spinner-border-sm" role="status"></div></td></tr>';
 
         try {
-            // Mengambil data dari tabel tunggal data_logistik
             const { data, error } = await _supabase
                 .from('data_logistik')
                 .select('*')
@@ -222,24 +234,40 @@
 
             let html = '';
             if (!data || data.length === 0) {
-                html = '<tr><td colspan="6" class="text-center py-5 text-muted">Belum ada data di tabel data_logistik.</td></tr>';
+                html = '<tr><td colspan="6" class="text-center py-5 text-muted">Belum ada data.</td></tr>';
             } else {
                 data.forEach(row => {
-                    const ptColor = row.pt === 'KSE' ? 'bg-warning text-dark' : (row.pt === 'IDE' ? 'bg-success text-white' : 'bg-primary text-white');
+                    let ptBadge = 'bg-secondary';
+                    let docColor = 'text-dark';
+                    
+                    // Normalisasi teks untuk perbandingan (menghapus spasi dan huruf besar semua)
+                    const checkPT = (row.pt || '').trim().toUpperCase();
+
+                    if (checkPT === 'IKAEN') {
+                        ptBadge = 'bg-ikaen';
+                        docColor = 'txt-ikaen';
+                    } else if (checkPT === 'IDE') {
+                        ptBadge = 'bg-ide';
+                        docColor = 'txt-ide';
+                    } else if (checkPT === 'KSE') {
+                        ptBadge = 'bg-kse';
+                        docColor = 'txt-kse';
+                    }
+
                     const qtyDisp = row.qty ? parseFloat(row.qty).toLocaleString('id-ID') : '0';
 
                     html += `
                         <tr>
-                            <td>
-                                <div class="fw-bold small">${row.tanggal || '-'}</div>
-                                <span class="badge badge-pt ${ptColor}">${row.pt || 'N/A'}</span>
+                            <td style="white-space: nowrap;">
+                                <div class="fw-bold" style="font-size: 0.7rem;">${row.tanggal || '-'}</div>
+                                <span class="badge badge-pt ${ptBadge}">${checkPT || 'N/A'}</span>
                             </td>
-                            <td class="fw-bold text-primary">${row.no_dokumen || '-'}</td>
-                            <td class="text-secondary small fw-bold">${row.jenis_dokumen || '-'}</td>
-                            <td><div class="text-truncate small" style="max-width:150px;">${row.tujuan || '-'}</div></td>
+                            <td class="fw-bold ${docColor}">${row.no_dokumen || '-'}</td>
+                            <td class="text-secondary fw-bold">${row.jenis_dokumen || '-'}</td>
+                            <td><div class="text-truncate" style="max-width:140px;">${row.tujuan || '-'}</div></td>
                             <td>
-                                <div class="fw-bold small">${row.sopir || '-'}</div>
-                                <div class="text-muted" style="font-size:0.75rem">${row.nopol || '-'}</div>
+                                <div class="fw-bold">${row.sopir || '-'}</div>
+                                <div class="text-muted" style="font-size:0.65rem">${row.nopol || '-'}</div>
                             </td>
                             <td class="text-end"><span class="badge bg-light text-dark border fw-bold">${qtyDisp}</span></td>
                         </tr>`;
@@ -252,7 +280,6 @@
         }
     }
 
-    // Login logic
     function handleLogin() {
         const u = document.getElementById('user').value;
         const p = document.getElementById('pass').value;
