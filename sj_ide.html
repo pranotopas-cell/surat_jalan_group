@@ -117,15 +117,15 @@
     <h2>Database & Document Type</h2>
     <div class="field">
         <label>Pilih Perusahaan (PT)</label>
-        <select id="i-pt-select" onchange="initPage()">
-            <option value="ide">PT. INDO DHARMA ENERGI (IDE)</option>
-            <option value="ikaen">PT. IKAEN (IKN)</option>
-            <option value="kse">PT. KSE</option>
+        <select id="i-pt-select" onchange="generateNumberPreview()">
+            <option value="IDE">PT. INDO DHARMA ENERGI (IDE)</option>
+            <option value="IKAEN">PT. IKAEN (IKN)</option>
+            <option value="KSE">PT. KSE</option>
         </select>
     </div>
     <div class="field">
         <label>Jenis Dokumen</label>
-        <select id="i-doc-type" onchange="initPage()">
+        <select id="i-doc-type" onchange="generateNumberPreview()">
             <option value="SURAT JALAN">SURAT JALAN (SJ)</option>
             <option value="MEMO">MEMO</option>
         </select>
@@ -133,7 +133,7 @@
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Dokumen</label><input type="text" id="i-no" readonly placeholder="Menunggu simpan..." style="background:#f9f9f9; font-weight: bold; color: var(--dark-blue);"></div>
+    <div class="field"><label>Nomor Dokumen</label><input type="text" id="i-no" readonly placeholder="Otomatis saat simpan" style="background:#f9f9f9; font-weight: bold; color: var(--dark-blue);"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header (Location)</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -303,12 +303,40 @@
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
     }
 
-    function initPage() {
-        const now = new Date();
-        document.getElementById('i-tgl').value = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
+    async function generateNumberPreview() {
+        const ptCode = document.getElementById('i-pt-select').value;
         const docType = document.getElementById('i-doc-type').value;
+        const now = new Date();
+        const year = now.getFullYear();
+        const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+        const monthRoman = roman[now.getMonth()];
+
+        // Update Title Preview
         document.getElementById('v-title-main').innerText = docType === "MEMO" ? "INTERNAL MEMO" : "DELIVERY ORDER";
         document.getElementById('v-title-sub').innerText = docType === "MEMO" ? "MEMO PERUSAHAAN" : "SURAT JALAN";
+
+        // Map nama PT sesuai database
+        let namaPT = ptCode === 'IKAEN' ? 'PT. IKNVESTAMA KALIMANTAN ENERGI' : (ptCode === 'IDE' ? 'PT. INDO DHARMA ENERGI' : 'PT. KHATULISTIWA SINAR ENERGI');
+
+        // Cari nomor terakhir di DB
+        const { data } = await _supabase.from('data_logistik')
+            .select('no_dokumen')
+            .eq('pt', namaPT)
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+        let nextNum = 1;
+        if (data && data.length > 0 && data[0].no_dokumen) {
+            const lastNo = data[0].no_dokumen;
+            const lastNum = parseInt(lastNo.split('/')[0]);
+            if(!isNaN(lastNum)) nextNum = lastNum + 1;
+        }
+
+        const formattedNum = nextNum.toString().padStart(3, '0');
+        const suffix = docType === "MEMO" ? "MEMO" : "SJ";
+        const finalNo = `${formattedNum}/${suffix}-${ptCode}/${monthRoman}/${year}`;
+        
+        document.getElementById('i-no').value = finalNo;
         upd();
     }
 
@@ -325,12 +353,13 @@
         fields.forEach(p => {
             const el = document.getElementById(p[0]);
             const val = document.getElementById(p[1]).value;
-            
-            if(p[0] === 'v-no') {
-                el.innerText = val || '[DRAFT]';
-                el.style.color = val ? 'black' : 'red';
-            } else {
-                el.innerText = val || '-';
+            if(el) {
+                if(p[0] === 'v-no') {
+                    el.innerText = val || '[DRAFT]';
+                    el.style.color = val ? 'black' : 'red';
+                } else {
+                    el.innerText = val || '-';
+                }
             }
         });
 
@@ -350,15 +379,19 @@
     }
 
     async function saveData() {
+        const ptCode = document.getElementById('i-pt-select').value;
         const btn = document.querySelector('.btn-save');
         if(btn.disabled) return;
 
         btn.innerText = 'SAVING...';
         btn.disabled = true;
 
+        let namaPT = ptCode === 'IKAEN' ? 'PT. IKNVESTAMA KALIMANTAN ENERGI' : (ptCode === 'IDE' ? 'PT. INDO DHARMA ENERGI' : 'PT. KHATULISTIWA SINAR ENERGI');
+
         const payload = {
             tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
-            pt: document.getElementById('i-pt-select').value,
+            no_dokumen: document.getElementById('i-no').value,
+            pt: namaPT,
             jenis_dokumen: document.getElementById('i-doc-type').value.toLowerCase(),
             tujuan: document.getElementById('i-po-to').value,
             nopol: document.getElementById('i-plat').value,
@@ -366,36 +399,22 @@
             qty: parseFloat(document.getElementById('i-vol').value) || 0
         };
 
-        try {
-            // Perbaikan Logika: Mengambil no_dokumen setelah insert menggunakan .select().single()
-            const { data, error } = await _supabase
-                .from('data_logistik')
-                .insert([payload])
-                .select('no_dokumen')
-                .single();
+        const { error } = await _supabase.from('data_logistik').insert([payload]);
 
-            if (error) throw error;
-
-            if (data && data.no_dokumen) {
-                // Tampilkan nomor surat ke PANEL INPUT (i-no) agar terbaca oleh fungsi upd()
-                document.getElementById('i-no').value = data.no_dokumen;
-                upd(); // Refresh tampilan preview surat dan QR Code
-                alert('Data Berhasil Disimpan!\nNomor Dokumen: ' + data.no_dokumen);
-            } else {
-                alert('Data tersimpan, tapi database tidak mengembalikan nomor dokumen.');
-            }
-        } catch (err) {
-            console.error(err);
-            alert('Gagal: ' + err.message);
-        } finally {
-            btn.innerText = 'SIMPAN DATA';
-            btn.disabled = false;
+        if (error) {
+            alert('Gagal simpan: ' + error.message);
+        } else {
+            alert('Berhasil disimpan!');
+            generateNumberPreview(); // Update nomor otomatis untuk input berikutnya
         }
+        
+        btn.innerText = 'SIMPAN DATA';
+        btn.disabled = false;
     }
 
     function downloadPDF() {
         const element = document.getElementById('sj-container');
-        const docNo = document.getElementById('i-no').value || 'DRAFT';
+        const docNo = document.getElementById('i-no').value.replace(/\//g, '-') || 'DRAFT';
         html2pdf().from(element).set({
             margin: 0,
             filename: 'DOC_' + docNo + '.pdf',
@@ -405,7 +424,11 @@
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
-    window.onload = initPage;
+    window.onload = () => {
+        const now = new Date();
+        document.getElementById('i-tgl').value = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
+        generateNumberPreview();
+    };
 </script>
 </body>
 </html>
