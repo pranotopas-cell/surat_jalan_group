@@ -15,10 +15,10 @@
             --ide-dark: #0f172a;
             --ide-primary: #3b82f6;
             --sidebar-width: 280px;
-            /* Definisi Warna Baru */
-            --color-ikaen: #dc3545; /* Merah */
-            --color-ide: #0d6efd;   /* Biru */
-            --color-kse: #14532d;   /* Hijau Tua */
+            /* Warna Identitas PT */
+            --ikaen-red: #dc3545;
+            --ide-blue: #0d6efd;
+            --kse-green: #14532d;
         }
 
         body { 
@@ -27,7 +27,6 @@
             color: #1e293b;
         }
 
-        /* Sidebar Styling (Kembali ke semula) */
         .sidebar { 
             background: var(--ide-dark); 
             height: 100vh; 
@@ -94,7 +93,7 @@
             border: 1px solid #edf2f7; 
         }
 
-        /* Tabel & Teks Kecil (Satu Kolom) */
+        /* Table Styling */
         .table { font-size: 0.75rem; }
         .table thead th { 
             background: #f1f5f9; 
@@ -102,19 +101,19 @@
             font-size: 0.65rem; 
             font-weight: 700; 
             padding: 1rem;
-            border: none;
         }
 
         .badge-pt { font-size: 0.6rem; padding: 4px 8px; border-radius: 6px; font-weight: 700; color: white !important; }
         
-        /* CSS Khusus Warna yang Dipaksa */
-        .force-ikaen { color: var(--color-ikaen) !important; }
-        .force-ide { color: var(--color-ide) !important; }
-        .force-kse { color: var(--color-kse) !important; }
+        /* Custom Document Text Colors */
+        .doc-ikaen { color: var(--ikaen-red) !important; }
+        .doc-ide { color: var(--ide-blue) !important; }
+        .doc-kse { color: var(--kse-green) !important; }
         
-        .bg-ikaen { background-color: var(--color-ikaen) !important; }
-        .bg-ide { background-color: var(--color-ide) !important; }
-        .bg-kse { background-color: var(--color-kse) !important; }
+        /* Background PT Colors */
+        .bg-ikaen { background-color: var(--ikaen-red) !important; }
+        .bg-ide { background-color: var(--ide-blue) !important; }
+        .bg-kse { background-color: var(--kse-green) !important; }
     </style>
 </head>
 <body>
@@ -144,6 +143,8 @@
             <div class="collapse submenu show" id="mIkaen">
                 <a href="sj_ikaen.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_ikaen.html" class="nav-link">Memo</a>
+                <a href="ba_oper_ikaen.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_ikaen.html" class="nav-link">BA Penerimaan</a>
             </div>
 
             <small class="pt-label">PT. INDO DHARMA ENERGI</small>
@@ -151,6 +152,8 @@
             <div class="collapse submenu" id="mIde">
                 <a href="sj_ide.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_ide.html" class="nav-link">Memo</a>
+                <a href="ba_oper_ide.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_ide.html" class="nav-link">BA Penerimaan</a>
             </div>
 
             <small class="pt-label">PT. KHATULISTIWA SINAR ENERGI</small>
@@ -158,6 +161,8 @@
             <div class="collapse submenu" id="mKse">
                 <a href="sj_kse.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_kse.html" class="nav-link">Memo</a>
+                <a href="ba_oper_kse.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_kse.html" class="nav-link">BA Penerimaan</a>
             </div>
         </nav>
 
@@ -213,20 +218,19 @@
             let html = '';
             data.forEach(row => {
                 let badgeClass = 'bg-secondary';
-                let textClass = 'text-primary';
+                let docColorClass = 'text-primary';
                 
-                // Logika Deteksi PT yang Lebih Akurat
                 const valPT = (row.pt || '').toUpperCase();
                 
                 if (valPT.includes('IKAEN')) {
                     badgeClass = 'bg-ikaen';
-                    textClass = 'force-ikaen';
+                    docColorClass = 'doc-ikaen';
                 } else if (valPT.includes('IDE')) {
                     badgeClass = 'bg-ide';
-                    textClass = 'force-ide';
+                    docColorClass = 'doc-ide';
                 } else if (valPT.includes('KSE')) {
                     badgeClass = 'bg-kse';
-                    textClass = 'force-kse';
+                    docColorClass = 'doc-kse';
                 }
 
                 html += `
@@ -235,7 +239,7 @@
                             <div class="fw-bold small">${row.tanggal || '-'}</div>
                             <span class="badge badge-pt ${badgeClass}">${valPT}</span>
                         </td>
-                        <td class="fw-bold ${textClass}">${row.no_dokumen || '-'}</td>
+                        <td class="fw-bold ${docColorClass}">${row.no_dokumen || '-'}</td>
                         <td class="text-secondary small fw-bold">${row.jenis_dokumen || '-'}</td>
                         <td><div class="text-truncate small" style="max-width:140px;">${row.tujuan || '-'}</div></td>
                         <td>
