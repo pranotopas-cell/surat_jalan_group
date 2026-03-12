@@ -117,9 +117,9 @@
     <div class="input-group">
         <label>Tabel Tujuan</label>
         <select id="i-target-table" onchange="initPage()">
-            <option value="data_ide">PT. INDO DHARMA ENERGI</option>
-            <option value="data_ikaen">PT. IKAEN</option>
-            <option value="data_kse">PT. KSE</option>
+            <option value="data_logistik">PT. INDO DHARMA ENERGI</option>
+            <option value="data_logistik">PT. IKAEN</option>
+            <option value="data_logistik">PT. KSE</option>
         </select>
     </div>
     <div class="input-group"><label>Nomor Memo (Otomatis)</label><input type="text" id="inNomor" readonly></div>
@@ -262,8 +262,8 @@
         // Update Nama Perusahaan di Template
         let companyText = "Indo Dharma Energi";
         let codePT = "IDE";
-        if(table === "data_ikaen") { companyText = "Ikaen"; codePT = "IKN"; }
-        if(table === "data_kse") { companyText = "Khatulistiwa Sinar Energi"; codePT = "KSE"; }
+        if(table === "data_logistik") { companyText = "Ikaen"; codePT = "IKN"; }
+        if(table === "data_logistik") { companyText = "Khatulistiwa Sinar Energi"; codePT = "KSE"; }
         
         document.getElementById('outCompanyName').innerText = companyText;
         document.getElementById('outSigCompany').innerText = "PT. " + companyText;
@@ -371,3 +371,4 @@
 </script>
 </body>
 </html>
+
