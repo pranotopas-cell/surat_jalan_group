@@ -346,14 +346,14 @@
             qty: totalQty
         };
 
-        const { error } = await _supabase.from("data_kse").insert([payload]);
+        const { error } = await _supabase.from("data_logistik").insert([payload]);
         if(error) {
             alert("Gagal Simpan: " + error.message);
         } else { 
             alert("Memo Berhasil Disimpan ke Database!"); 
             initPage(); 
         }
-        btn.innerText = "💾 SIMPAN"; btn.disabled = false;
+        btn.innerText = " SIMPAN"; btn.disabled = false;
     }
 
     function downloadPDF() {
@@ -375,4 +375,5 @@
 
 </body>
 </html>
+
 
