@@ -14,7 +14,7 @@
         :root { 
             --ide-dark: #0f172a;
             --sidebar-width: 280px;
-            --ikaen-red: #ff0000;
+            --ikaen-red: #80000;
             --ide-blue: #0d6efd;
             --kse-green: #14532d;
         }
@@ -86,12 +86,12 @@
         }
 
         /* FORCE COLORS - Menggunakan selektor spesifik agar tidak tertimpa Bootstrap */
-        .table tbody tr td.doc-ikaen { color: var(--ikaen-sky) !important; font-weight: 700; }
+        .table tbody tr td.doc-ikaen { color: var(--ikaen-red) !important; font-weight: 700; }
         .table tbody tr td.doc-ide { color: var(--ide-blue) !important; font-weight: 700; }
         .table tbody tr td.doc-kse { color: var(--kse-green) !important; font-weight: 700; }
         
         .badge-pt { font-size: 0.6rem; padding: 4px 8px; border-radius: 6px; color: white !important; }
-        .bg-ikaen { background-color: var(--ikaen-sky) !important; }
+        .bg-ikaen { background-color: var(--ikaen-red) !important; }
         .bg-ide { background-color: var(--ide-blue) !important; }
         .bg-kse { background-color: var(--kse-green) !important; }
     </style>
@@ -253,5 +253,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
 
 
