@@ -18,7 +18,6 @@
 
         body { font-family: 'Arial', sans-serif; background-color: #525659; margin: 0; display: flex; }
         
-        /* Sidebar Input Panel */
         .sidebar { 
             width: 400px; background: var(--dark-sidebar); color: white; height: 100vh; 
             padding: 15px; overflow-y: auto; position: fixed; left: 0; top: 0;
@@ -51,7 +50,6 @@
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid var(--primary-blue); }
         .unit-card h4 { margin: 0 0 5px 0; font-size: 10px; color: #ecf0f1; }
 
-        /* Main Preview Area */
         .main-content { margin-left: 400px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
         
         .memo-page { 
@@ -107,19 +105,19 @@
 <div class="sidebar">
     <h2>MEMO SYSTEM</h2>
     <div class="action-group">
-        <button class="btn btn-home" onclick="location.reload()"> HOME</button>
-        <button class="btn btn-save" id="btnSave" onclick="saveData()"> SIMPAN</button>
-        <button class="btn btn-preview" onclick="window.scrollTo(0,0)>"PRINT PREVIEW'</button>
-        <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
+        <button class="btn btn-home" onclick="location.reload()">🏠 HOME</button>
+        <button class="btn btn-save" id="btnSave" onclick="saveData()">💾 SIMPAN</button>
+        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">👁️ PREVIEW</button>
+        <button class="btn btn-download" onclick="downloadPDF()">📥 PDF</button>
     </div>
 
     <div class="section-title">Database & Meta</div>
     <div class="input-group">
         <label>Tabel Tujuan</label>
         <select id="i-target-table" onchange="initPage()">
-            <option value="data_logistik">PT. INDO DHARMA ENERGI</option>
-            <option value="data_logistik">PT. IKAEN</option>
-            <option value="data_logistik">PT. KSE</option>
+            <option value="data_ide">PT. INDO DHARMA ENERGI</option>
+            <option value="data_ikaen">PT. IKAEN</option>
+            <option value="data_kse">PT. KHATULISTIWA SINAR ENERGI</option>
         </select>
     </div>
     <div class="input-group"><label>Nomor Memo (Otomatis)</label><input type="text" id="inNomor" readonly></div>
@@ -259,17 +257,16 @@
         const table = document.getElementById('i-target-table').value;
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         
-        // Update Nama Perusahaan di Template
         let companyText = "Indo Dharma Energi";
         let codePT = "IDE";
-        if(table === "data_logistik") { companyText = "Ikaen"; codePT = "IKN"; }
-        if(table === "data_logistik") { companyText = "Khatulistiwa Sinar Energi"; codePT = "KSE"; }
+        if(table === "data_ikaen") { companyText = "Ikaen"; codePT = "IKN"; }
+        if(table === "data_kse") { companyText = "Khatulistiwa Sinar Energi"; codePT = "KSE"; }
         
         document.getElementById('outCompanyName').innerText = companyText;
         document.getElementById('outSigCompany').innerText = "PT. " + companyText;
 
         try {
-            const { count } = await _supabase.from(table).select('*', { count: 'exact', head: true }).eq('jenis_dokumen', 'MEMO PENGALIRAN');
+            const { count } = await _supabase.from('data_logistik').select('*', { count: 'exact', head: true }).eq('jenis_dokumen', 'MEMO PENGALIRAN');
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
             document.getElementById('inNomor').value = `${nextNo}/MEMO-${codePT}/${roman[now.getMonth()]}/${now.getFullYear()}`;
         } catch (e) {
@@ -307,10 +304,14 @@
 
     async function saveData() {
         const btn = document.getElementById('btnSave');
-        const table = document.getElementById('i-target-table').value;
+        const targetTable = document.getElementById('i-target-table').value;
         const noMemo = document.getElementById('inNomor').value;
         const tglMemo = document.getElementById('inTglMemo').value.replace(/\//g, '-');
         
+        let namaPT = "PT. INDO DHARMA ENERGI";
+        if(targetTable === "data_ikaen") namaPT = "PT. IKAEN";
+        if(targetTable === "data_kse") namaPT = "PT. KHATULISTIWA SINAR ENERGI";
+
         btn.innerText = "SIMPAN..."; btn.disabled = true;
 
         const payloads = [];
@@ -329,6 +330,7 @@
                     nopol: nopol,
                     sopir: driver,
                     qty: qty,
+                    pt: namaPT,
                     keterangan: "PO: " + document.getElementById('inPO').value + " | Trans: " + transportir
                 });
             }
@@ -336,11 +338,11 @@
 
         if (payloads.length === 0) {
             alert("Isi data armada terlebih dahulu.");
-            btn.innerText = " SIMPAN"; btn.disabled = false;
+            btn.innerText = "💾 SIMPAN"; btn.disabled = false;
             return;
         }
 
-        const { error } = await _supabase.from(table).insert(payloads);
+        const { error } = await _supabase.from('data_logistik').insert(payloads);
 
         if(error) {
             alert("Gagal: " + error.message);
@@ -348,7 +350,7 @@
             alert("Data Berhasil Tersimpan!");
             initPage();
         }
-        btn.innerText = " SIMPAN"; btn.disabled = false;
+        btn.innerText = "💾 SIMPAN"; btn.disabled = false;
     }
 
     function downloadPDF() {
@@ -371,4 +373,3 @@
 </script>
 </body>
 </html>
-
