@@ -13,8 +13,9 @@
     <style>
         :root { 
             --ide-dark: #0f172a;
+            --ide-primary: #3b82f6;
             --sidebar-width: 280px;
-            /* Definisi Warna Brand */
+            /* Definisi Warna Baru */
             --color-ikaen: #dc3545; /* Merah */
             --color-ide: #0d6efd;   /* Biru */
             --color-kse: #14532d;   /* Hijau Tua */
@@ -23,8 +24,10 @@
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: #f8fafc; 
+            color: #1e293b;
         }
 
+        /* Sidebar Styling (Kembali ke semula) */
         .sidebar { 
             background: var(--ide-dark); 
             height: 100vh; 
@@ -33,55 +36,92 @@
             position: fixed; 
             width: var(--sidebar-width); 
             z-index: 1000; 
+            overflow-y: auto;
+            border-right: 1px solid rgba(255,255,255,0.1);
         }
 
         .nav-link { 
             color: rgba(255,255,255,0.7); 
+            margin-bottom: 0.2rem; 
             border-radius: 0.75rem; 
             padding: 0.7rem 1rem; 
             text-decoration: none; 
             display: flex; 
             align-items: center; 
+            transition: 0.3s; 
+            cursor: pointer; 
             font-size: 0.85rem; 
         }
 
+        .nav-link:hover, .nav-link.active { 
+            background: rgba(255,255,255,0.1); 
+            color: #38bdf8; 
+        }
+
+        .submenu { 
+            padding-left: 0.5rem; 
+            background: rgba(0,0,0,0.2); 
+            border-radius: 0.75rem; 
+            margin: 0.3rem 0 0.8rem 0; 
+        }
+
+        .submenu .nav-link { font-size: 0.8rem; padding: 0.5rem 1rem; color: rgba(255,255,255,0.5); }
+
         .pt-label { 
             font-size: 0.65rem; 
+            letter-spacing: 1px; 
             color: #38bdf8; 
             padding: 1.2rem 1rem 0.4rem; 
             display: block; 
             font-weight: 700;
         }
 
-        .main-content { margin-left: var(--sidebar-width); padding: 2.5rem; }
+        .main-content { margin-left: var(--sidebar-width); padding: 2.5rem; min-height: 100vh; }
 
-        /* Kustomisasi Tabel & Teks */
-        .table { font-size: 0.72rem; } /* Teks diperkecil agar muat 1 kolom */
-        .table thead th { 
-            background: #f1f5f9; 
-            font-size: 0.65rem; 
-            letter-spacing: 0.5px;
-            white-space: nowrap;
+        .hero-banner {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        /* Utility Classes untuk Warna PT */
-        .txt-ikaen { color: var(--color-ikaen) !important; }
-        .bg-ikaen { background-color: var(--color-ikaen) !important; color: white !important; }
+        .data-card { 
+            background: white; 
+            border-radius: 1.5rem; 
+            padding: 1.5rem; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03); 
+            border: 1px solid #edf2f7; 
+        }
 
-        .txt-ide { color: var(--color-ide) !important; }
-        .bg-ide { background-color: var(--color-ide) !important; color: white !important; }
+        /* Tabel & Teks Kecil (Satu Kolom) */
+        .table { font-size: 0.75rem; }
+        .table thead th { 
+            background: #f1f5f9; 
+            text-transform: uppercase; 
+            font-size: 0.65rem; 
+            font-weight: 700; 
+            padding: 1rem;
+            border: none;
+        }
 
-        .txt-kse { color: var(--color-kse) !important; }
-        .bg-kse { background-color: var(--color-kse) !important; color: white !important; }
-
-        .badge-pt { font-size: 0.6rem; padding: 4px 8px; border-radius: 4px; font-weight: 800; }
+        .badge-pt { font-size: 0.6rem; padding: 4px 8px; border-radius: 6px; font-weight: 700; color: white !important; }
+        
+        /* CSS Khusus Warna yang Dipaksa */
+        .force-ikaen { color: var(--color-ikaen) !important; }
+        .force-ide { color: var(--color-ide) !important; }
+        .force-kse { color: var(--color-kse) !important; }
+        
+        .bg-ikaen { background-color: var(--color-ikaen) !important; }
+        .bg-ide { background-color: var(--color-ide) !important; }
+        .bg-kse { background-color: var(--color-kse) !important; }
     </style>
 </head>
 <body>
 
 <div id="login-page">
     <div class="card p-5 border-0 shadow-lg text-center mx-auto mt-5" style="max-width: 400px; border-radius: 2rem;">
-        <h3 class="fw-bold mb-4">ADMIN ACCESS</h3>
+        <h3 class="fw-bold text-dark mb-4">ADMIN ACCESS</h3>
         <input type="text" id="user" class="form-control mb-3" placeholder="Username">
         <input type="password" id="pass" class="form-control mb-4" placeholder="Password">
         <button class="btn btn-primary w-100 py-2 fw-bold" onclick="handleLogin()">LOGIN SYSTEM</button>
@@ -95,30 +135,54 @@
             <i class="bi bi-shield-check text-info fs-3 me-2"></i>
             <h6 class="fw-bold mb-0 text-white">INTEGRATED SYSTEM</h6>
         </div>
+        
         <nav class="flex-grow-1">
+            <a href="#" class="nav-link active mb-2"><i class="bi bi-speedometer2 me-2"></i> Dashboard Live</a>
+
             <small class="pt-label">PT. INVESTAMA KALIMANTAN ENERGI</small>
-            <a class="nav-link text-white opacity-75"><i class="bi bi-building me-2"></i> IKAEN</a>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2"></i> IKAEN <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <div class="collapse submenu show" id="mIkaen">
+                <a href="sj_ikaen.html" class="nav-link">Surat Jalan</a>
+                <a href="memo_ikaen.html" class="nav-link">Memo</a>
+            </div>
+
             <small class="pt-label">PT. INDO DHARMA ENERGI</small>
-            <a class="nav-link text-white opacity-75"><i class="bi bi-lightning-charge me-2"></i> IDE</a>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-lightning-charge me-2"></i> IDE <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <div class="collapse submenu" id="mIde">
+                <a href="sj_ide.html" class="nav-link">Surat Jalan</a>
+                <a href="memo_ide.html" class="nav-link">Memo</a>
+            </div>
+
             <small class="pt-label">PT. KHATULISTIWA SINAR ENERGI</small>
-            <a class="nav-link text-white opacity-75"><i class="bi bi-fire me-2"></i> KSE</a>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-fire me-2"></i> KSE <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <div class="collapse submenu" id="mKse">
+                <a href="sj_kse.html" class="nav-link">Surat Jalan</a>
+                <a href="memo_kse.html" class="nav-link">Memo</a>
+            </div>
         </nav>
+
         <a href="javascript:void(0)" onclick="handleLogout()" class="nav-link text-danger border-top border-secondary pt-3 mt-auto">
             <i class="bi bi-power me-2"></i> Sign Out
         </a>
     </aside>
 
     <main class="main-content">
-        <div class="card border-0 shadow-sm p-4" style="border-radius: 1.5rem;">
+        <div class="hero-banner text-white">
+            <h1 class="fw-bold mb-1">Real-time Monitoring</h1>
+            <p class="opacity-75">Digital Logistics Delivery System</p>
+        </div>
+
+        <div class="data-card">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold mb-0"><i class="bi bi-rss me-2 text-primary"></i>Delivery Feed Logistik</h6>
-                <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="fetchLogistikData()">Sync</button>
+                <h5 class="fw-bold mb-0"><i class="bi bi-rss me-2 text-primary"></i>Delivery Feed Logistik</h5>
+                <button class="btn btn-sm btn-primary px-4 rounded-pill fw-bold" onclick="fetchLogistikData()">Sync Data</button>
             </div>
+            
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>IDENTITAS</th>
+                            <th>IDENTITAS & TANGGAL</th>
                             <th>NO. DOKUMEN</th>
                             <th>JENIS</th>
                             <th>TUJUAN</th>
@@ -127,7 +191,7 @@
                         </tr>
                     </thead>
                     <tbody id="logistik-table-body">
-                        <tr><td colspan="6" class="text-center py-4">Memuat data...</td></tr>
+                        <tr><td colspan="6" class="text-center py-5">Menghubungkan ke tabel data_logistik...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -148,41 +212,42 @@
 
             let html = '';
             data.forEach(row => {
-                let ptClass = 'bg-secondary';
-                let textClass = 'text-dark';
-                const ptName = (row.pt || '').trim().toUpperCase();
-
-                // Logika Warna Berdasarkan Instruksi
-                if (ptName === 'IKAEN') {
-                    ptClass = 'bg-ikaen';
-                    textClass = 'txt-ikaen';
-                } else if (ptName === 'IDE') {
-                    ptClass = 'bg-ide';
-                    textClass = 'txt-ide';
-                } else if (ptName === 'KSE') {
-                    ptClass = 'bg-kse';
-                    textClass = 'txt-kse';
+                let badgeClass = 'bg-secondary';
+                let textClass = 'text-primary';
+                
+                // Logika Deteksi PT yang Lebih Akurat
+                const valPT = (row.pt || '').toUpperCase();
+                
+                if (valPT.includes('IKAEN')) {
+                    badgeClass = 'bg-ikaen';
+                    textClass = 'force-ikaen';
+                } else if (valPT.includes('IDE')) {
+                    badgeClass = 'bg-ide';
+                    textClass = 'force-ide';
+                } else if (valPT.includes('KSE')) {
+                    badgeClass = 'bg-kse';
+                    textClass = 'force-kse';
                 }
 
                 html += `
                     <tr>
                         <td style="white-space: nowrap;">
-                            <div class="fw-bold" style="font-size:0.65rem">${row.tanggal || '-'}</div>
-                            <span class="badge badge-pt ${ptClass}">${ptName}</span>
+                            <div class="fw-bold small">${row.tanggal || '-'}</div>
+                            <span class="badge badge-pt ${badgeClass}">${valPT}</span>
                         </td>
                         <td class="fw-bold ${textClass}">${row.no_dokumen || '-'}</td>
-                        <td class="text-secondary fw-bold">${row.jenis_dokumen || '-'}</td>
-                        <td><div class="text-truncate" style="max-width:120px;">${row.tujuan || '-'}</div></td>
+                        <td class="text-secondary small fw-bold">${row.jenis_dokumen || '-'}</td>
+                        <td><div class="text-truncate small" style="max-width:140px;">${row.tujuan || '-'}</div></td>
                         <td>
-                            <div class="fw-bold">${row.sopir || '-'}</div>
-                            <div class="text-muted" style="font-size:0.6rem">${row.nopol || '-'}</div>
+                            <div class="fw-bold small">${row.sopir || '-'}</div>
+                            <div class="text-muted" style="font-size:0.7rem">${row.nopol || '-'}</div>
                         </td>
                         <td class="text-end fw-bold">${(row.qty || 0).toLocaleString('id-ID')}</td>
                     </tr>`;
             });
             tbody.innerHTML = html;
         } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Gagal memuat data</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Error: ${err.message}</td></tr>`;
         }
     }
 
@@ -203,5 +268,6 @@
     window.onload = () => { if (localStorage.getItem('ide_session') === 'active') showDashboard(); };
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
