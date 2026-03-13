@@ -56,7 +56,7 @@
         }
 
         .header { display: flex; justify-content: flex-start; align-items: center; padding-bottom: 10px; margin-bottom: 30px; }
-        .logo-container img { height: 55px; width: auto; }
+        .logo-container img { height: 45px; width: auto; }
 
         .info-split-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; font-size: 12px; }
         .recipient-side { width: 50%; }
@@ -96,10 +96,10 @@
     <h2>KSE MEMO SYSTEM</h2>
     
     <div class="action-group">
-        <button class="btn btn-home" onclick="location.reload()">🏠 HOME</button>
-        <button class="btn btn-save" id="btnSave" onclick="saveData()">💾 SIMPAN</button>
-        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">👁️ PREVIEW</button>
-        <button class="btn btn-download" onclick="downloadPDF()">📥 PDF</button>
+        <button class="btn btn-home" onclick="location.reload()"> HOME</button>
+        <button class="btn btn-save" id="btnSave" onclick="saveData()"> SIMPAN</button>
+        <button class="btn btn-preview" onclick="window.scrollTo(0,0)"> PRINT PREVIEW</button>
+        <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
     </div>
 
     <div class="section-title">Meta Data</div>
@@ -170,7 +170,7 @@
         </div>
 
         <div class="opening-text">
-            Dengan Hormat / <i>Dear Sir/Madam,</i><br>
+            Dengan Hormat,</i><br>
             Bersama ini kami sampaikan Realisasi Pengaliran BBM Solar Industri dari <b>PT. Sinarindo Sukses Selalu</b> dengan rincian sebagai berikut:
             <span class="lang-sub">We hereby submit the realization of Industrial Diesel Fuel transfer from PT. Sinarindo Sukses Selalu with details as follows:</span>
         </div>
@@ -196,7 +196,7 @@
             <tbody id="tableBody"></tbody>
             <tfoot>
                 <tr style="font-weight: bold; background: #f1f4f9;">
-                    <td colspan="4" style="text-align: right; padding-right: 15px;">TOTAL REALISASI <span class="lang-sub" style="display:inline; margin-left:5px;">(Total Realization)</span></td>
+                    <td colspan="4" style="text-align: right; padding-right: 15px;">TOTAL REALISASI <span class="lang-sub" style="display:inline; margin-left:5px;"></span></td>
                     <td id="outTotal" style="color: var(--primary-kse); font-size: 13px;"></td>
                     <td></td>
                 </tr>
@@ -211,7 +211,7 @@
         <div class="signature-container">
             Regards,<br>
             <strong style="font-size: 14px; color: var(--primary-kse);">PT. Khatulistiwa Sinar Energi</strong><br>
-            <img src="tanda.png" alt="Tanda Tangan" class="sig-img">
+            <img src="ttd.png" alt="Tanda Tangan" class="sig-img">
             <strong><u>Operational Department</u></strong>
         </div>
 
@@ -349,7 +349,7 @@
             alert("Memo Berhasil Disimpan!"); 
             initPage(); 
         }
-        btn.innerText = "💾 SIMPAN"; btn.disabled = false;
+        btn.innerText = " SIMPAN"; btn.disabled = false;
     }
 
     function downloadPDF() {
@@ -371,3 +371,4 @@
 
 </body>
 </html>
+
