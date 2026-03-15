@@ -15,8 +15,8 @@
             --bg-dark: #050a0a;
             --sidebar-bg: #061212;
             --sidebar-width: 280px;
-            --tech-green: #10b981; /* Tosca/Emerald */
-            --dark-emerald: #064e3b; /* Hijau Tua */
+            --tech-green: #10b981; 
+            --dark-emerald: #064e3b; 
             --glass-border: rgba(16, 185, 129, 0.2);
             --accent-glow: 0 0 15px rgba(16, 185, 129, 0.3);
         }
@@ -25,7 +25,6 @@
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: var(--bg-dark); 
             color: #e2e8f0;
-            overflow-x: hidden;
         }
 
         /* Sidebar Tech Styling */
@@ -38,243 +37,174 @@
             width: var(--sidebar-width); 
             z-index: 1000; 
             border-right: 1px solid var(--glass-border);
-            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            overflow-y: auto;
         }
 
         .nav-link { 
             color: rgba(255,255,255,0.6); 
-            margin-bottom: 0.4rem; 
-            border-radius: 12px; 
-            padding: 0.8rem 1rem; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 0.2rem; 
+            border-radius: 10px; 
+            padding: 0.7rem 1rem; 
+            transition: all 0.3s ease;
             font-size: 0.85rem;
             display: flex;
             align-items: center;
+            text-decoration: none;
         }
 
         .nav-link:hover, .nav-link.active { 
             background: linear-gradient(90deg, var(--dark-emerald), transparent);
             color: var(--tech-green);
-            box-shadow: var(--accent-glow);
         }
 
         .submenu { 
-            padding-left: 1rem; 
-            margin: 0.5rem 0; 
-            border-left: 1px dashed var(--tech-green);
+            padding-left: 0.5rem; 
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            margin: 0.3rem 0 0.8rem 0;
         }
+
+        .submenu .nav-link { font-size: 0.8rem; padding: 0.5rem 1rem; }
 
         .pt-label { 
             font-size: 0.65rem; 
             color: var(--tech-green); 
-            padding: 1.5rem 1rem 0.5rem; 
-            letter-spacing: 1.5px;
+            padding: 1.2rem 1rem 0.4rem; 
+            display: block;
             font-weight: 800;
+            letter-spacing: 1px;
         }
 
-        /* Main Content & Hero */
-        .main-content { margin-left: var(--sidebar-width); padding: 2.5rem; }
+        .main-content { margin-left: var(--sidebar-width); padding: 2.5rem; min-height: 100vh; }
 
         .hero-banner {
             background: linear-gradient(135deg, var(--dark-emerald) 0%, #022c22 100%);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 3rem;
+            border-radius: 20px;
+            padding: 2.5rem;
             margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
         }
 
-        .hero-banner::after {
-            content: "";
-            position: absolute;
-            top: 0; right: 0; bottom: 0; left: 0;
-            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            opacity: 0.1;
-        }
-
-        /* Modern Table Tech */
+        /* Table & Data Tuning */
         .card-table {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 1.5rem;
+            border-radius: 20px;
         }
 
-        .table { color: #cbd5e1; border-color: rgba(255,255,255,0.05); }
+        .table { font-size: 0.75rem; color: #cbd5e1; }
         .table thead th { 
             background: rgba(16, 185, 129, 0.05);
             color: var(--tech-green);
-            font-family: 'JetBrains Mono', monospace;
-            text-transform: uppercase;
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-            padding: 1.2rem;
-            border: none;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
         }
 
-        .table tbody tr { transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.02); }
-        .table tbody tr:hover { background: rgba(16, 185, 129, 0.03); }
+        .table tbody tr:hover { background: rgba(16, 185, 129, 0.05); }
 
-        /* Document Coloring Logic */
-        .doc-ikaen { color: #f87171 !important; font-family: 'JetBrains Mono'; } /* Red accent */
-        .doc-ide { color: #38bdf8 !important; font-family: 'JetBrains Mono'; }   /* Blue accent */
-        .doc-kse { color: var(--tech-green) !important; font-family: 'JetBrains Mono'; }
+        /* Force Color Docs */
+        .doc-ikaen { color: #f87171 !important; font-weight: 700; }
+        .doc-ide { color: #38bdf8 !important; font-weight: 700; }
+        .doc-kse { color: var(--tech-green) !important; font-weight: 700; }
 
-        .badge-pt { font-size: 0.6rem; padding: 5px 10px; border-radius: 4px; font-weight: 700; }
+        .badge-pt { font-size: 0.6rem; padding: 4px 8px; border-radius: 6px; color: white !important; }
         .bg-ikaen { background-color: #991b1b !important; }
         .bg-ide { background-color: #075985 !important; }
-        .bg-kse { background-color: #065f46 !important; }
+        .bg-kse { background-color: #064e3b !important; }
 
-        /* Login Page */
-        #login-page {
-            background: radial-gradient(circle at center, var(--dark-emerald) 0%, var(--bg-dark) 100%);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-        }
-
+        /* Login Layout */
+        #login-page { height: 100vh; display: flex; align-items: center; justify-content: center; }
         .login-card {
-            background: rgba(6, 18, 18, 0.8);
-            backdrop-filter: blur(20px);
+            background: rgba(6, 18, 18, 0.9);
             border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border-radius: 30px;
+            border-radius: 2rem;
+            width: 100%;
+            max-width: 400px;
         }
-
-        .form-control {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            color: white;
-            padding: 0.8rem 1.2rem;
-        }
-        .form-control:focus {
-            background: rgba(255,255,255,0.1);
-            border-color: var(--tech-green);
-            box-shadow: var(--accent-glow);
-            color: white;
-        }
-
-        .btn-tech {
-            background: linear-gradient(90deg, #10b981, #059669);
-            border: none;
-            color: white;
-            font-weight: 700;
-            letter-spacing: 1px;
-            transition: 0.3s;
-        }
-        .btn-tech:hover { transform: translateY(-2px); box-shadow: var(--accent-glow); }
     </style>
 </head>
 <body>
 
 <div id="login-page">
-    <div class="card login-card p-5 text-center mx-auto" style="max-width: 420px; width: 90%;">
-        <div class="mb-4">
-            <i class="bi bi-cpu text-success fs-1"></i>
-        </div>
-        <h3 class="fw-bold mb-1 text-white">SYSTEM ACCESS</h3>
-        <p class="text-secondary small mb-4">Secure Biometric & Credential Login</p>
-        
-        <div class="text-start">
-            <label class="small text-secondary mb-1 ms-2">Operator ID</label>
-            <input type="text" id="user" class="form-control mb-3" placeholder="Username">
-            
-            <label class="small text-secondary mb-1 ms-2">Security Hash</label>
-            <input type="password" id="pass" class="form-control mb-4" placeholder="Password">
-        </div>
-
-        <button class="btn btn-tech w-100 py-3 rounded-pill" onclick="handleLogin()">INITIALIZE LOGIN</button>
-        <p id="error-msg" class="text-danger mt-3 small fw-bold" style="display:none; letter-spacing: 1px;">
-            <i class="bi bi-exclamation-triangle me-1"></i> ACCESS DENIED
-        </p>
+    <div class="card login-card p-5 shadow-lg text-center">
+        <i class="bi bi-shield-lock text-success fs-1 mb-3"></i>
+        <h3 class="fw-bold mb-4 text-white">ADMIN ACCESS</h3>
+        <input type="text" id="user" class="form-control mb-3 bg-dark border-secondary text-white" placeholder="Username">
+        <input type="password" id="pass" class="form-control mb-4 bg-dark border-secondary text-white" placeholder="Password">
+        <button class="btn btn-success w-100 py-2 fw-bold" onclick="handleLogin()">LOGIN SYSTEM</button>
+        <p id="error-msg" class="text-danger mt-3 small" style="display:none;">Akses Ditolak!</p>
     </div>
 </div>
 
 <div id="dashboard-page" style="display:none;">
     <aside class="sidebar d-flex flex-column">
         <div class="mb-4 px-3 d-flex align-items-center">
-            <div class="bg-success rounded-3 p-2 me-3 shadow-lg">
-                <i class="bi bi-shield-lock-fill text-white fs-4"></i>
-            </div>
-            <div>
-                <h6 class="fw-bold mb-0 text-white" style="letter-spacing: 1px;">CORE SYSTEM</h6>
-                <span class="text-success" style="font-size: 0.6rem;"><i class="bi bi-circle-fill me-1"></i> ENCRYPTED</span>
-            </div>
+            <i class="bi bi-cpu text-success fs-3 me-2"></i>
+            <h6 class="fw-bold mb-0 text-white">INTEGRATED SYSTEM</h6>
         </div>
         
         <nav class="flex-grow-1">
-            <a href="#" class="nav-link active mb-3"><i class="bi bi-grid-1x2-fill me-3"></i> Neural Dashboard</a>
+            <a href="#" class="nav-link active mb-2"><i class="bi bi-speedometer2 me-2"></i> Dashboard Live</a>
 
-            <small class="pt-label">PT. IKAEN</small>
-            <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-3"></i> Warehouse <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <small class="pt-label">PT. INVESTAMA KALIMANTAN ENERGI</small>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2"></i> IKAEN <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu show" id="mIkaen">
-                <a href="#" class="nav-link">Surat Jalan</a>
-                <a href="#" class="nav-link">Memo</a>
-                <a href="#" class="nav-link">BA Oper Muatan</a>
+                <a href="sj_ikaen.html" class="nav-link">Surat Jalan</a>
+                <a href="memo_ikaen.html" class="nav-link">Memo</a>
+                <a href="ba_oper_ikaen.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_ikaen.html" class="nav-link">BA Penerimaan</a>
             </div>
 
-            <small class="pt-label">PT. IDE</small>
-            <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-lightning-charge me-3"></i> Energy <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <small class="pt-label">PT. INDO DHARMA ENERGI</small>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-lightning-charge me-2"></i> IDE <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu" id="mIde">
-                <a href="#" class="nav-link">Surat Jalan</a>
-                <a href="#" class="nav-link">BA Oper Muatan</a>
+                <a href="sj_ide.html" class="nav-link">Surat Jalan</a>
+                <a href="memo_ide.html" class="nav-link">Memo</a>
+                <a href="ba_oper_ide.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_ide.html" class="nav-link">BA Penerimaan</a>
             </div>
 
-            <small class="pt-label">PT. KSE</small>
-            <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-fire me-3"></i> Khatulistiwa <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <small class="pt-label">PT. KHATULISTIWA SINAR ENERGI</small>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-fire me-2"></i> KSE <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu" id="mKse">
-                <a href="#" class="nav-link">Surat Jalan</a>
-                <a href="#" class="nav-link">BA Penerimaan</a>
+                <a href="sj_kse.html" class="nav-link">Surat Jalan</a>
+                <a href="memo_kse.html" class="nav-link">Memo</a>
+                <a href="ba_oper_kse.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_kse.html" class="nav-link">BA Penerimaan</a>
             </div>
         </nav>
-
-        <a href="javascript:void(0)" onclick="handleLogout()" class="nav-link text-danger border-top border-secondary pt-3 mt-auto">
-            <i class="bi bi-door-open me-3"></i> Terminate Session
-        </a>
+        <a href="javascript:void(0)" onclick="handleLogout()" class="nav-link text-danger border-top border-secondary pt-3 mt-auto"><i class="bi bi-power me-2"></i> Sign Out</a>
     </aside>
 
     <main class="main-content">
-        <div class="hero-banner">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="fw-bold text-white mb-2">Live Logistics Feed</h1>
-                    <p class="text-success-emphasis mb-0">Monitoring multi-enterprise delivery pipelines in real-time.</p>
-                </div>
-                <div class="col-md-4 text-md-end">
-                    <div class="text-secondary small mb-1">NETWORK STATUS</div>
-                    <div class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2">
-                        STABLE CONNECTION
-                    </div>
-                </div>
-            </div>
+        <div class="hero-banner text-white">
+            <h1 class="fw-bold mb-1">Real-time Monitoring</h1>
+            <p class="opacity-75">Logistics Delivery System Feed</p>
         </div>
 
-        <div class="card-table">
+        <div class="card card-table border-0 p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold mb-0 text-white">
-                    <i class="bi bi-hdd-network me-2 text-success"></i>DATABASE LOGS
-                </h6>
-                <button class="btn btn-sm btn-tech rounded-pill px-4" onclick="fetchLogistikData()">
-                    <i class="bi bi-arrow-repeat me-1"></i> SYNC CORE
-                </button>
+                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-rss me-2 text-success"></i>Delivery Feed Logistik</h6>
+                <button class="btn btn-sm btn-outline-success rounded-pill px-4" onclick="fetchLogistikData()">Sync Data</button>
             </div>
             
             <div class="table-responsive">
                 <table class="table align-middle">
                     <thead>
                         <tr>
-                            <th>NODE IDENTITIY</th>
-                            <th>DOC. NUMBER</th>
-                            <th>CATEGORY</th>
-                            <th>DESTINATION</th>
-                            <th>LOGISTICS AGENT</th>
-                            <th class="text-end">QUANTUM (L)</th>
+                            <th>IDENTITAS</th>
+                            <th>NO. DOKUMEN</th>
+                            <th>JENIS</th>
+                            <th>TUJUAN</th>
+                            <th>SOPIR / NOPOL</th>
+                            <th class="text-end">QTY (L)</th>
                         </tr>
                     </thead>
                     <tbody id="logistik-table-body">
-                        <tr><td colspan="6" class="text-center py-5 text-secondary">Awaiting authorization...</td></tr>
+                        <tr><td colspan="6" class="text-center py-5">Memuat data sistem...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -283,7 +213,6 @@
 </div>
 
 <script>
-    // Konfigurasi Supabase Tetap (Jangan Diubah)
     const SB_URL = "https://ntaectphgoelmhzrkatp.supabase.co"; 
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg";
     const _supabase = supabase.createClient(SB_URL, SB_KEY);
@@ -298,41 +227,35 @@
             data.forEach(row => {
                 let badgeClass = 'bg-secondary';
                 let docColorClass = '';
-                
                 const valPT = (row.pt || '').trim().toUpperCase();
                 
                 if (valPT.includes('IKAEN')) {
-                    badgeClass = 'bg-ikaen';
-                    docColorClass = 'doc-ikaen';
+                    badgeClass = 'bg-ikaen'; docColorClass = 'doc-ikaen';
                 } else if (valPT.includes('IDE') || valPT.includes('DHARMA')) {
-                    badgeClass = 'bg-ide';
-                    docColorClass = 'doc-ide';
+                    badgeClass = 'bg-ide'; docColorClass = 'doc-ide';
                 } else if (valPT.includes('KSE') || valPT.includes('KHATULISTIWA')) {
-                    badgeClass = 'bg-kse';
-                    docColorClass = 'doc-kse';
+                    badgeClass = 'bg-kse'; docColorClass = 'doc-kse';
                 }
 
                 html += `
                     <tr>
                         <td style="white-space: nowrap;">
-                            <div class="text-secondary mb-1" style="font-size:0.65rem; font-family: 'JetBrains Mono'">${row.tanggal || '-'}</div>
+                            <div class="fw-bold text-secondary" style="font-size:0.65rem">${row.tanggal || '-'}</div>
                             <span class="badge badge-pt ${badgeClass}">${valPT}</span>
                         </td>
-                        <td class="${docColorClass} fw-bold">${row.no_dokumen || '-'}</td>
-                        <td class="text-white-50 small fw-bold">${row.jenis_dokumen || '-'}</td>
-                        <td><div class="text-truncate" style="max-width:150px; color:#94a3b8;">${row.tujuan || '-'}</div></td>
+                        <td class="${docColorClass}">${row.no_dokumen || '-'}</td>
+                        <td class="text-white-50 fw-bold">${row.jenis_dokumen || '-'}</td>
+                        <td><div class="text-truncate" style="max-width:130px;">${row.tujuan || '-'}</div></td>
                         <td>
                             <div class="fw-bold text-white">${row.sopir || '-'}</div>
-                            <div class="text-success small" style="font-size:0.65rem; font-family: 'JetBrains Mono'">${row.nopol || '-'}</div>
+                            <div class="text-success" style="font-size:0.65rem">${row.nopol || '-'}</div>
                         </td>
-                        <td class="text-end fw-bold text-success" style="font-family: 'JetBrains Mono'">
-                            ${(row.qty || 0).toLocaleString('id-ID')}
-                        </td>
+                        <td class="text-end fw-bold text-success">${(row.qty || 0).toLocaleString('id-ID')}</td>
                     </tr>`;
             });
             tbody.innerHTML = html;
         } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">ERROR: Failed to establish handshake with database.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">Gagal memuat data.</td></tr>`;
         }
     }
 
@@ -340,9 +263,7 @@
         if(document.getElementById('user').value === "admin" && document.getElementById('pass').value === "kse123") {
             localStorage.setItem('ide_session', 'active');
             showDashboard();
-        } else { 
-            document.getElementById('error-msg').style.display = 'block'; 
-        }
+        } else { document.getElementById('error-msg').style.display = 'block'; }
     }
 
     function showDashboard() {
@@ -351,14 +272,8 @@
         fetchLogistikData();
     }
 
-    function handleLogout() { 
-        localStorage.removeItem('ide_session'); 
-        location.reload(); 
-    }
-
-    window.onload = () => { 
-        if (localStorage.getItem('ide_session') === 'active') showDashboard(); 
-    };
+    function handleLogout() { localStorage.removeItem('ide_session'); location.reload(); }
+    window.onload = () => { if (localStorage.getItem('ide_session') === 'active') showDashboard(); };
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
