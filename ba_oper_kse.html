@@ -60,7 +60,7 @@
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
         <img src="header1.png" style="height: 30px;" onerror="this.src='https://via.placeholder.com/100x30?text=KSE+LOGISTICS'">
-        <h6 class="mb-0 fw-bold d-none d-lg-block">E-BAOM SYSTEM</h6>
+        <h6 class="mb-0 fw-bold">E-BAOM SYSTEM</h6>
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-dark btn-sm fw-bold px-3" id="btnLogistik" onclick="saveToLogistik()">
@@ -195,18 +195,20 @@
     var qr = new QRCode(document.getElementById("qrcode"), { width: 50, height: 50 });
 
     async function generateAutoNumber() {
-        const { count } = await _supabase
-            .from('berita_acara_oper')
-            .select('*', { count: 'exact', head: true });
-        
-        const nextNo = (count || 0) + 1;
-        const romanMonth = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][new Date().getMonth()];
-        const year = new Date().getFullYear();
-        const formattedNo = `${String(nextNo).padStart(3, '0')} / BA-OM / KSE / ${romanMonth} / ${year}`;
-        
-        document.getElementById('in_no').value = formattedNo;
-        document.getElementById('out_no').innerText = formattedNo;
-        qr.makeCode(formattedNo);
+        try {
+            const { count } = await _supabase
+                .from('berita_acara_oper')
+                .select('*', { count: 'exact', head: true });
+            
+            const nextNo = (count || 0) + 1;
+            const romanMonth = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][new Date().getMonth()];
+            const year = new Date().getFullYear();
+            const formattedNo = `${String(nextNo).padStart(3, '0')} / BA-OM / KSE / ${romanMonth} / ${year}`;
+            
+            document.getElementById('in_no').value = formattedNo;
+            document.getElementById('out_no').innerText = formattedNo;
+            qr.makeCode(formattedNo);
+        } catch (e) { console.error(e); }
     }
 
     function formatDateText() {
@@ -245,29 +247,27 @@
         document.getElementById('ot_qty').innerText = tqty ? Number(tqty).toLocaleString('id-ID') + " Liter" : "...................... Liter";
     }
 
-    // Fungsi Simpan ke data_logistik
+    // UPDATE: Hanya simpan Jenis & Nomor Dokumen
     async function saveToLogistik() {
         const btn = document.getElementById('btnLogistik');
+        const noDoc = document.getElementById('in_no').value;
+        
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>...';
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
-        const payload = {
-            no_referensi: document.getElementById('in_no').value,
-            kategori: 'OPER MUATAN',
-            unit_sumber: document.getElementById('s_nopol').value,
-            unit_tujuan: document.getElementById('t_nopol').value,
-            qty_liter: document.getElementById('s_qty').value,
-            keterangan: `Oper Muatan dari ${document.getElementById('s_pt').value} ke ${document.getElementById('t_pt').value}`,
-            created_at: new Date()
-        };
-
-        const { error } = await _supabase.from('data_logistik').insert([payload]);
+        const { error } = await _supabase
+            .from('data_logistik')
+            .insert([{
+                jenis_dokumen: 'Berita Acara Oper Muatan',
+                nomor_dokumen: noDoc
+            }]);
 
         if (error) {
-            alert("Gagal simpan Logistik: " + error.message);
+            alert("Gagal: " + error.message);
         } else {
-            alert("Data Berhasil Disimpan ke Logistik!");
+            alert("Berhasil! Nomor Dokumen tersimpan di Logistik.");
         }
+        
         btn.disabled = false;
         btn.innerHTML = '<i class="bi bi-database-fill-add"></i> SIMPAN LOGISTIK';
     }
@@ -275,7 +275,7 @@
     async function saveToSupabase() {
         const btn = document.getElementById('btnSave');
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>...';
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
         const payload = {
             no_ba: document.getElementById('in_no').value,
@@ -290,9 +290,8 @@
         const { error } = await _supabase.from('berita_acara_oper').insert([payload]);
 
         if (error) {
-            alert("Gagal simpan Berita Acara: " + error.message);
+            alert("Gagal: " + error.message);
         } else {
-            document.getElementById('statusMsg').innerHTML = "<b>TERSIMPAN KE CLOUD</b>";
             downloadPDF();
         }
         btn.disabled = false;
