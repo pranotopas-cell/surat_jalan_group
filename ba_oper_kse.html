@@ -45,17 +45,21 @@
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-dark btn-sm fw-bold px-3" id="btnLogistik" onclick="saveToLogistik()">
-            <i class="bi bi-database-fill-add"></i> SIMPAN LOGISTIK
+            <i class="bi bi-database-fill-add"></i> SIMPAN DATA
         </button>
         <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> PRINT</button>
-        <button class="btn btn-primary btn-sm fw-bold px-4" id="btnSave" onclick="saveToSupabase()"><i class="bi bi-cloud-arrow-up"></i> SIMPAN & PDF</button>
+        <button class="btn btn-primary btn-sm fw-bold px-4" id="btnDownload" onclick="downloadPDF()">
+            <i class="bi bi-file-earmark-pdf"></i> DOWNLOAD PDF
+        </button>
     </div>
 </div>
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-3 input-sidebar shadow-sm">
-            <div class="alert alert-success py-2 mb-3" id="statusMsg"><i class="bi bi-database-check me-2"></i><b>INPUT DATA</b></div>
+            <div class="alert alert-success py-2 mb-3" id="statusMsg">
+                <i class="bi bi-database-check me-2"></i><b>INPUT DATA</b>
+            </div>
             
             <label class="form-label-custom">Nomor BA (Auto)</label>
             <input type="text" id="in_no" class="form-control form-control-sm mb-2 bg-light" readonly>
@@ -141,19 +145,17 @@
 </div>
 
 <script>
-    // 1. Inisialisasi Supabase
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
     var qr = new QRCode(document.getElementById("qrcode"), { width: 50, height: 50 });
 
-    // 2. Logika Auto Numbering yang lebih stabil
     async function generateAutoNumber() {
         try {
-            const { data, count, error } = await _supabase
+            const { count, error } = await _supabase
                 .from('berita_acara_oper')
-                .select('id', { count: 'exact' });
+                .select('*', { count: 'exact', head: true });
             
             if(error) throw error;
 
@@ -166,74 +168,76 @@
             document.getElementById('out_no').innerText = formattedNo;
             qr.makeCode(formattedNo);
         } catch (e) {
-            console.error("Gagal ambil nomor urut:", e.message);
-            document.getElementById('in_no').value = "001 / BA-OM / KSE / ERROR";
+            console.error(e);
         }
     }
 
-    // 3. Logika Simpan ke Tabel data_logistik
+    // LOGIKA PERBAIKAN SIMPAN LOGISTIK
     async function saveToLogistik() {
         const btn = document.getElementById('btnLogistik');
         const noDoc = document.getElementById('in_no').value;
         
-        if(!noDoc) return alert("Nomor dokumen kosong!");
+        if(!noDoc) return alert("Isi data terlebih dahulu!");
 
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
         try {
-            // Memastikan data dikirim dalam bentuk array objek
-            const { data, error } = await _supabase
+            // 1. Simpan ke data_logistik
+            const { error: errorLog } = await _supabase
                 .from('data_logistik')
-                .insert([
-                    { 
-                        jenis_dokumen: 'Berita Acara Oper Muatan', 
-                        nomor_dokumen: noDoc 
-                    }
-                ]);
+                .insert([{ 
+                    jenis_dokumen: 'Berita Acara Oper Muatan', 
+                    nomor_dokumen: noDoc 
+                }]);
 
-            if (error) throw error;
-            alert("Berhasil simpan ke Data Logistik!");
+            if (errorLog) throw errorLog;
+
+            // 2. Simpan ke berita_acara_oper (Tabel Utama)
+            const payload = {
+                no_ba: noDoc,
+                tanggal: document.getElementById('in_tgl_input').value,
+                s_nopol: document.getElementById('s_nopol').value,
+                s_qty: parseInt(document.getElementById('s_qty').value) || 0,
+                t_nopol: document.getElementById('t_nopol').value,
+                t_qty: parseInt(document.getElementById('t_qty').value) || 0,
+                admin: document.getElementById('in_sig_operasional').value
+            };
+
+            const { error: errorBA } = await _supabase.from('berita_acara_oper').insert([payload]);
+            if (errorBA) throw errorBA;
+
+            alert("Data berhasil tersimpan di Logistik & Database!");
+            document.getElementById('statusMsg').innerHTML = "<b>DATA TERSIMPAN</b>";
         } catch (err) {
-            alert("Gagal Logistik: " + err.message);
+            alert("Terjadi kesalahan simpan: " + err.message);
             console.error(err);
         } finally {
             btn.disabled = false;
-            btn.innerHTML = '<i class="bi bi-database-fill-add"></i> SIMPAN LOGISTIK';
+            btn.innerHTML = '<i class="bi bi-database-fill-add"></i> SIMPAN DATA';
         }
     }
 
-    // 4. Logika Simpan ke Tabel berita_acara_oper
-    async function saveToSupabase() {
-        const btn = document.getElementById('btnSave');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-
-        const payload = {
-            no_ba: document.getElementById('in_no').value,
-            tanggal: document.getElementById('in_tgl_input').value,
-            s_nopol: document.getElementById('s_nopol').value,
-            s_qty: parseInt(document.getElementById('s_qty').value) || 0,
-            t_nopol: document.getElementById('t_nopol').value,
-            t_qty: parseInt(document.getElementById('t_qty').value) || 0,
-            admin: document.getElementById('in_sig_operasional').value
+    function downloadPDF() {
+        const btn = document.getElementById('btnDownload');
+        const element = document.getElementById('pdf-area');
+        const noDoc = document.getElementById('in_no').value.replaceAll(' / ', '_');
+        
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> PROSES...';
+        
+        const opt = {
+            margin: 0,
+            filename: `BAOM_${noDoc}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 3, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        try {
-            const { error } = await _supabase.from('berita_acara_oper').insert([payload]);
-            if (error) throw error;
-            
-            alert("Dokumen Berhasil Disimpan!");
-            downloadPDF();
-        } catch (err) {
-            alert("Gagal Simpan Dokumen: " + err.message);
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> SIMPAN & PDF';
-        }
+        html2pdf().set(opt).from(element).save().then(() => {
+            btn.innerHTML = '<i class="bi bi-file-earmark-pdf"></i> DOWNLOAD PDF';
+        });
     }
 
-    // Fungsi Pembantu UI
     function formatDateText() {
         const dateInput = document.getElementById('in_tgl_input').value;
         if(!dateInput) return;
@@ -263,15 +267,8 @@
 
         document.getElementById('os_sopir_sig').innerText = document.getElementById('s_sopir').value;
         document.getElementById('ot_sopir_sig').innerText = document.getElementById('t_sopir').value;
-        
         document.getElementById('os_qty').innerText = (document.getElementById('s_qty').value || "0") + " Liter";
         document.getElementById('ot_qty').innerText = (document.getElementById('t_qty').value || "0") + " Liter";
-    }
-
-    function downloadPDF() {
-        const element = document.getElementById('pdf-area');
-        const filename = 'BAOM_' + document.getElementById('in_no').value.replaceAll(' / ', '_');
-        html2pdf().set({ margin: 0, filename: filename, html2canvas: { scale: 3 }, jsPDF: { unit: 'mm', format: 'a4' } }).from(element).save();
     }
 
     window.onload = () => { generateAutoNumber(); };
