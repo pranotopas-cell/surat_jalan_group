@@ -223,7 +223,7 @@
             const { error: errorLog } = await _supabase
                 .from('data_logistik')
                 .insert([{ 
-                    jenis_dokumen: 'Berita Acara Oper Muatan', 
+                    jenis_dokumen: 'BA Oper Muatan', 
                     no_dokumen: noDoc,
                     pt: ptName
                 }]);
@@ -239,10 +239,10 @@
                 t_qty: parseInt(document.getElementById('t_qty').value) || 0,
                 admin: document.getElementById('in_sig_operasional').value
             };
-            const { error: errorBA } = await _supabase.from('berita_acara_oper').insert([payload]);
+            const { error: errorBA } = await _supabase.from('data_logistik').insert([payload]);
             if (errorBA) throw errorBA;
 
-            alert("Data Berhasil Tersimpan di Logistik!");
+            alert("Data Berhasil Tersimpan di data_Logistik!");
             document.getElementById('statusMsg').innerHTML = "<b>DATA TERSIMPAN</b>";
         } catch (err) {
             alert("Kesalahan Simpan: " + err.message);
