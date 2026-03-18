@@ -124,7 +124,9 @@
                     <span>NOMOR: <span id="out_no"></span></span>
                 </div>
 
-                <p style="text-align: justify;">Pada hari ini <b id="out_hari"></b>, <span id="out_tgl_lengkap"></span>, bertempat di <b>Pangkalan Bun</b>, telah dilaksanakan kegiatan pemindahan (oper) muatan BBM Non-Subsidi:</p>
+                <p style="text-align: justify; line-height: 1.5;">
+                    Pada hari ini <b id="out_hari"></b>, <span id="out_tgl_lengkap"></span>, bertempat di <b>Pangkalan Bun</b>, telah dilaksanakan kegiatan pemindahan (oper) muatan Bahan Bakar Minyak (BBM) Non-Subsidi dengan rincian data sebagai berikut:
+                </p>
 
                 <div class="section-title">I. DATA UNIT PENYERAH (SUMBER)</div>
                 <div class="data-grid">
@@ -141,6 +143,10 @@
                     <div class="data-row"><div class="data-label">Volume Diterima</div><div class="data-value" id="ot_qty"></div></div>
                     <div class="data-row"><div class="data-label">Nama Pengemudi</div><div class="data-value" id="ot_sopir"></div></div>
                 </div>
+
+                <p style="margin-top: 20px; text-align: justify; line-height: 1.5;">
+                    Demikian Berita Acara ini dibuat dengan sebenar-benarnya untuk dapat dipergunakan sebagaimana mestinya sebagai bukti serah terima muatan BBM yang sah.
+                </p>
 
                 <div class="signature-grid">
                     <div class="sig-box">
@@ -162,14 +168,13 @@
 
                 <div class="footer-kse">
                     <div class="footer-content">
-                        <div style="font-size: 8px; color: #64748b;">
-                            <b>KSE DIGITAL SYSTEM</b> | BA-OM E-Document
-                        </div>
-                        <div class="d-flex align-items-end gap-3">
+                        <div id="qrcode"></div>
+                        
+                        <div class="d-flex align-items-end gap-3 flex-column">
                             <div class="text-end">
-                                <b style="font-size: 11px; color: var(--kse-primary);">PT. KHATULISTIWA SINAR ENERGI</b>
+                                <b style="font-size: 11px; color: var(--kse-primary);">PT. KHATULISTIWA SINAR ENERGI</b><br>
+                                <span style="font-size: 8px; color: #64748b;"><b>KSE DIGITAL SYSTEM</b> | BA-OM E-Document</span>
                             </div>
-                            <div id="qrcode"></div>
                         </div>
                     </div>
                 </div>
@@ -183,7 +188,7 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
-    var qr = new QRCode(document.getElementById("qrcode"), { width: 50, height: 50 });
+    var qr = new QRCode(document.getElementById("qrcode"), { width: 60, height: 60 });
 
     async function generateAutoNumber() {
         try {
@@ -214,7 +219,7 @@
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
         try {
-            // 1. Simpan ke data_logistik (Sesuai constraint PT)
+            // Simpan ke data_logistik: jenis_dokumen, nomor_dokumen, dan pt
             const { error: errorLog } = await _supabase
                 .from('data_logistik')
                 .insert([{ 
@@ -224,7 +229,7 @@
                 }]);
             if (errorLog) throw errorLog;
 
-            // 2. Simpan ke berita_acara_oper
+            // Simpan ke berita_acara_oper (Tabel Detail)
             const payload = {
                 no_ba: noDoc,
                 tanggal: document.getElementById('in_tgl_input').value,
@@ -237,7 +242,7 @@
             const { error: errorBA } = await _supabase.from('berita_acara_oper').insert([payload]);
             if (errorBA) throw errorBA;
 
-            alert("Data Berhasil Tersimpan!");
+            alert("Data Berhasil Tersimpan di Logistik!");
             document.getElementById('statusMsg').innerHTML = "<b>DATA TERSIMPAN</b>";
         } catch (err) {
             alert("Kesalahan Simpan: " + err.message);
