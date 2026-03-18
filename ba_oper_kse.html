@@ -6,6 +6,7 @@
     <title>KSE - Berita Acara Oper Muatan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -13,27 +14,46 @@
     <style>
         :root { --kse-primary: #064e3b; --kse-dark: #022c22; }
         body { background-color: #f1f5f9; font-family: 'Arial', sans-serif; font-size: 11px; color: #334155; }
+        
         .control-nav { background: #fff; border-bottom: 2px solid #e2e8f0; padding: 12px 24px; position: sticky; top: 0; z-index: 1000; }
         .input-sidebar { background: #fff; height: calc(100vh - 65px); overflow-y: auto; padding: 20px; border-right: 1px solid #e2e8f0; }
-        .document-canvas { background: white; width: 210mm; min-height: 297mm; margin: 20px auto; padding: 15mm 20mm; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); color: #000; }
+        
+        .document-canvas { 
+            background: white; width: 210mm; min-height: 297mm; 
+            margin: 20px auto; padding: 15mm 20mm; position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); color: #000;
+        }
+
         .header-section { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; padding-bottom: 10px; }
         .logo-img { height: 60px; width: auto; }
+        
         .ba-title { text-align: center; margin-bottom: 25px; }
         .ba-title h5 { font-weight: 900; text-decoration: underline; margin-bottom: 2px; font-size: 16px; color: #000; }
+        .ba-title span { font-weight: 700; font-size: 12px; }
+
         .section-title { background: #f8fafc; padding: 6px 12px; font-weight: 800; margin: 20px 0 10px 0; border-left: 5px solid var(--kse-primary); border-bottom: 1px solid #e2e8f0; text-transform: uppercase; }
+        
         .data-grid { display: grid; grid-template-columns: 1fr; gap: 4px; margin-left: 15px; }
         .data-row { display: flex; align-items: baseline; }
         .data-label { width: 190px; position: relative; font-weight: 500; }
         .data-label::after { content: ":"; position: absolute; right: 15px; }
         .data-value { font-weight: 600; flex: 1; border-bottom: 1px dotted #ccc; }
+
         .signature-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 50px; text-align: center; }
         .sig-box { height: 140px; display: flex; flex-direction: column; justify-content: space-between; }
         .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; }
+
         .footer-kse { position: absolute; bottom: 10mm; width: calc(100% - 40mm); border-top: 1px solid #eee; padding-top: 10px; }
         .footer-content { display: flex; justify-content: space-between; align-items: flex-end; }
         #qrcode { background: white; padding: 2px; border: 1px solid #eee; }
+
         .form-label-custom { font-size: 10px; font-weight: 800; color: #475569; margin-top: 12px; display: block; text-transform: uppercase; }
-        @media print { .control-nav, .input-sidebar { display: none !important; } body { background: white; padding: 0; } .document-canvas { margin: 0; box-shadow: none; width: 210mm; } }
+
+        @media print {
+            .control-nav, .input-sidebar { display: none !important; }
+            body { background: white; padding: 0; }
+            .document-canvas { margin: 0; box-shadow: none; width: 210mm; }
+        }
     </style>
 </head>
 <body>
@@ -57,9 +77,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-3 input-sidebar shadow-sm">
-            <div class="alert alert-success py-2 mb-3" id="statusMsg">
-                <i class="bi bi-database-check me-2"></i><b>INPUT DATA</b>
-            </div>
+            <div class="alert alert-success py-2 mb-3" id="statusMsg"><i class="bi bi-database-check me-2"></i><b>INPUT DATA</b></div>
             
             <label class="form-label-custom">Nomor BA (Auto)</label>
             <input type="text" id="in_no" class="form-control form-control-sm mb-2 bg-light" readonly>
@@ -76,20 +94,20 @@
             </div>
             <input type="hidden" id="in_tgl_lengkap">
 
-            <label class="form-label-custom text-success">Unit Penyerah</label>
+            <label class="form-label-custom text-success">Unit Penyerah (Sumber)</label>
             <input type="text" id="s_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol" oninput="updateView()">
-            <input type="text" id="s_pt" class="form-control form-control-sm mb-1" placeholder="Perusahaan" oninput="updateView()">
+            <input type="text" id="s_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT Penyerah" oninput="updateView()">
             <input type="number" id="s_qty" class="form-control form-control-sm mb-1" placeholder="Qty Liter" oninput="updateView()">
             <input type="text" id="s_sopir" class="form-control form-control-sm mt-1" placeholder="Sopir" oninput="updateView()">
 
-            <label class="form-label-custom text-danger">Unit Penerima</label>
+            <label class="form-label-custom text-danger">Unit Penerima (Tujuan)</label>
             <input type="text" id="t_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol" oninput="updateView()">
-            <input type="text" id="t_pt" class="form-control form-control-sm mb-1" placeholder="Perusahaan" oninput="updateView()">
+            <input type="text" id="t_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT Penerima" oninput="updateView()">
             <input type="number" id="t_qty" class="form-control form-control-sm mb-1" placeholder="Qty Diterima" oninput="updateView()">
             <input type="text" id="t_sopir" class="form-control form-control-sm mb-1" placeholder="Sopir" oninput="updateView()">
 
             <label class="form-label-custom">Admin Operasional</label>
-            <input type="text" id="in_sig_operasional" class="form-control form-control-sm" oninput="updateView()">
+            <input type="text" id="in_sig_operasional" class="form-control form-control-sm" placeholder="Nama Admin" oninput="updateView()">
         </div>
 
         <div class="col-lg-9 p-0" id="pdf-area">
@@ -108,7 +126,7 @@
 
                 <p style="text-align: justify;">Pada hari ini <b id="out_hari"></b>, <span id="out_tgl_lengkap"></span>, bertempat di <b>Pangkalan Bun</b>, telah dilaksanakan kegiatan pemindahan (oper) muatan BBM Non-Subsidi:</p>
 
-                <div class="section-title">I. DATA UNIT PENYERAH</div>
+                <div class="section-title">I. DATA UNIT PENYERAH (SUMBER)</div>
                 <div class="data-grid">
                     <div class="data-row"><div class="data-label">Nomor Polisi</div><div class="data-value" id="os_nopol"></div></div>
                     <div class="data-row"><div class="data-label">Nama Perusahaan</div><div class="data-value" id="os_pt"></div></div>
@@ -116,7 +134,7 @@
                     <div class="data-row"><div class="data-label">Nama Pengemudi</div><div class="data-value" id="os_sopir"></div></div>
                 </div>
 
-                <div class="section-title">II. DATA UNIT PENERIMA</div>
+                <div class="section-title">II. DATA UNIT PENERIMA (TUJUAN)</div>
                 <div class="data-grid">
                     <div class="data-row"><div class="data-label">Nomor Polisi</div><div class="data-value" id="ot_nopol"></div></div>
                     <div class="data-row"><div class="data-label">Nama Perusahaan</div><div class="data-value" id="ot_pt"></div></div>
@@ -125,16 +143,32 @@
                 </div>
 
                 <div class="signature-grid">
-                    <div class="sig-box"><span>Penyerah,</span><div class="mt-auto sig-name" id="os_sopir_sig"></div><div>Sopir Penyerah</div></div>
-                    <div class="sig-box"><span>Penerima,</span><div class="mt-auto sig-name" id="ot_sopir_sig"></div><div>Sopir Penerima</div></div>
-                    <div class="sig-box"><span>Pangkalan Bun, <span id="out_tgl_footer"></span></span><div class="mt-auto sig-name" id="out_operasional_sig"></div><div>Operasional KSE</div></div>
+                    <div class="sig-box">
+                        <span>Penyerah,</span>
+                        <div class="mt-auto sig-name" id="os_sopir_sig"></div>
+                        <div>Sopir Penyerah</div>
+                    </div>
+                    <div class="sig-box">
+                        <span>Penerima,</span>
+                        <div class="mt-auto sig-name" id="ot_sopir_sig"></div>
+                        <div>Sopir Penerima</div>
+                    </div>
+                    <div class="sig-box">
+                        <span>Pangkalan Bun, <span id="out_tgl_footer"></span></span>
+                        <div class="mt-auto sig-name" id="out_operasional_sig"></div>
+                        <div>Operasional KSE</div>
+                    </div>
                 </div>
 
                 <div class="footer-kse">
                     <div class="footer-content">
-                        <div style="font-size: 8px; color: #64748b;"><b>KSE DIGITAL SYSTEM</b> | BA-OM E-Document</div>
+                        <div style="font-size: 8px; color: #64748b;">
+                            <b>KSE DIGITAL SYSTEM</b> | BA-OM E-Document
+                        </div>
                         <div class="d-flex align-items-end gap-3">
-                            <div class="text-end"><b style="font-size: 11px; color: var(--kse-primary);">PT. KHATULISTIWA SINAR ENERGI</b></div>
+                            <div class="text-end">
+                                <b style="font-size: 11px; color: var(--kse-primary);">PT. KHATULISTIWA SINAR ENERGI</b>
+                            </div>
                             <div id="qrcode"></div>
                         </div>
                     </div>
@@ -158,7 +192,6 @@
                 .select('*', { count: 'exact', head: true });
             
             if(error) throw error;
-
             const nextNo = (count || 0) + 1;
             const romanMonth = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][new Date().getMonth()];
             const year = new Date().getFullYear();
@@ -167,33 +200,31 @@
             document.getElementById('in_no').value = formattedNo;
             document.getElementById('out_no').innerText = formattedNo;
             qr.makeCode(formattedNo);
-        } catch (e) {
-            console.error(e);
-        }
+        } catch (e) { console.error(e); }
     }
 
-    // LOGIKA PERBAIKAN SIMPAN LOGISTIK
     async function saveToLogistik() {
         const btn = document.getElementById('btnLogistik');
         const noDoc = document.getElementById('in_no').value;
+        const ptName = document.getElementById('s_pt').value;
         
-        if(!noDoc) return alert("Isi data terlebih dahulu!");
+        if(!noDoc || !ptName) return alert("Nomor Dokumen dan Nama PT wajib diisi!");
 
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
         try {
-            // 1. Simpan ke data_logistik
+            // 1. Simpan ke data_logistik (Sesuai constraint PT)
             const { error: errorLog } = await _supabase
                 .from('data_logistik')
                 .insert([{ 
                     jenis_dokumen: 'Berita Acara Oper Muatan', 
-                    no_dokumen: noDoc 
+                    nomor_dokumen: noDoc,
+                    pt: ptName
                 }]);
-
             if (errorLog) throw errorLog;
 
-            // 2. Simpan ke berita_acara_oper (Tabel Utama)
+            // 2. Simpan ke berita_acara_oper
             const payload = {
                 no_ba: noDoc,
                 tanggal: document.getElementById('in_tgl_input').value,
@@ -203,15 +234,13 @@
                 t_qty: parseInt(document.getElementById('t_qty').value) || 0,
                 admin: document.getElementById('in_sig_operasional').value
             };
-
             const { error: errorBA } = await _supabase.from('berita_acara_oper').insert([payload]);
             if (errorBA) throw errorBA;
 
-            alert("Data berhasil tersimpan di Logistik & Database!");
+            alert("Data Berhasil Tersimpan!");
             document.getElementById('statusMsg').innerHTML = "<b>DATA TERSIMPAN</b>";
         } catch (err) {
-            alert("Terjadi kesalahan simpan: " + err.message);
-            console.error(err);
+            alert("Kesalahan Simpan: " + err.message);
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="bi bi-database-fill-add"></i> SIMPAN DATA';
@@ -219,23 +248,15 @@
     }
 
     function downloadPDF() {
-        const btn = document.getElementById('btnDownload');
         const element = document.getElementById('pdf-area');
         const noDoc = document.getElementById('in_no').value.replaceAll(' / ', '_');
-        
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> PROSES...';
-        
         const opt = {
             margin: 0,
             filename: `BAOM_${noDoc}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 3, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-
-        html2pdf().set(opt).from(element).save().then(() => {
-            btn.innerHTML = '<i class="bi bi-file-earmark-pdf"></i> DOWNLOAD PDF';
-        });
+        html2pdf().set(opt).from(element).save();
     }
 
     function formatDateText() {
@@ -245,7 +266,6 @@
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
         const formatted = dateObj.toLocaleDateString('id-ID', options);
         const hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][dateObj.getDay()];
-        
         document.getElementById('in_hari').value = hari;
         document.getElementById('in_tgl_lengkap').value = `tanggal ${dateObj.getDate()} bulan ${formatted.split(' ')[1]} tahun ${dateObj.getFullYear()}`;
         document.getElementById('out_tgl_footer').innerText = formatted;
@@ -259,12 +279,9 @@
             't_nopol': 'ot_nopol', 't_pt': 'ot_pt', 't_sopir': 'ot_sopir', 
             'in_sig_operasional': 'out_operasional_sig'
         };
-
         for (let id in mapping) {
-            let val = document.getElementById(id).value;
-            document.getElementById(mapping[id]).innerText = val || "";
+            document.getElementById(mapping[id]).innerText = document.getElementById(id).value;
         }
-
         document.getElementById('os_sopir_sig').innerText = document.getElementById('s_sopir').value;
         document.getElementById('ot_sopir_sig').innerText = document.getElementById('t_sopir').value;
         document.getElementById('os_qty').innerText = (document.getElementById('s_qty').value || "0") + " Liter";
