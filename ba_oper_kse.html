@@ -212,20 +212,21 @@
         const btn = document.getElementById('btnLogistik');
         const noDoc = document.getElementById('in_no').value;
         const ptName = document.getElementById('s_pt').value;
+        const sopirName = document.getElementById('s_sopir').value;
         
-        if(!noDoc || !ptName) return alert("Nomor Dokumen dan Nama PT wajib diisi!");
-
+        // Pesan peringatan dihapus, sistem langsung mencoba simpan
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
         try {
-            // Simpan ke data_logistik: jenis_dokumen, nomor_dokumen, dan pt
+            // Perbaikan Logika: Simpan pt, jenis_dokumen, no_dokumen, sopir ke data_logistik
             const { error: errorLog } = await _supabase
                 .from('data_logistik')
                 .insert([{ 
                     jenis_dokumen: 'Berita Acara Oper Muatan', 
-                    nomor_dokumen: noDoc,
-                    pt: ptName
+                    no_dokumen: noDoc,
+                    pt: ptName,
+                    sopir: sopirName
                 }]);
             if (errorLog) throw errorLog;
 
@@ -242,10 +243,10 @@
             const { error: errorBA } = await _supabase.from('berita_acara_oper').insert([payload]);
             if (errorBA) throw errorBA;
 
-            alert("Data Berhasil Tersimpan di Logistik!");
+            alert("Berhasil Simpan!");
             document.getElementById('statusMsg').innerHTML = "<b>DATA TERSIMPAN</b>";
         } catch (err) {
-            alert("Kesalahan Simpan: " + err.message);
+            alert("Gagal Simpan: " + err.message);
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="bi bi-database-fill-add"></i> SIMPAN DATA';
