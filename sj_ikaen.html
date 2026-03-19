@@ -144,7 +144,7 @@
     <div class="field"><label>Tanggal Dokumen (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
     <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no" readonly placeholder="Otomatis saat simpan"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
-    <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
+    <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Site - Pangkalan Bun"></div>
 
     <h2>2. Tabel Rincian Utama</h2>
     <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="-"></div>
@@ -155,8 +155,8 @@
     <div class="field"><label>Tgl Pengaliran</label><input type="date" id="i-load-date"></div>
     <div class="field"><label>Plat Nomor</label><input type="text" id="i-plat" value="-"></div>
     <div class="field"><label>Nomor Segel</label><input type="text" id="i-segel" value="-"></div>
-    <div class="field"><label>Meter Awal (mm)</label><input type="text" id="i-m1" value="-"></div>
-    <div class="field"><label>Meter Akhir (mm)</label><input type="text" id="i-m2" value="-"></div>
+    <div class="field"><label>Km Awal (Km)</label><input type="text" id="i-m1" value="-"></div>
+    <div class="field"><label>Km Akhir (Km)</label><input type="text" id="i-m2" value="-"></div>
     <div class="field"><label>Tinggi Cairan (T2)</label><input type="text" id="i-t2" value="-"></div>
 
     <h2>3. Deskripsi Pesanan</h2>
@@ -234,15 +234,15 @@
             <td>: <span class="val" id="v-plat">-</span></td>
         </tr>
         <tr>
-            <td><div class="label-group"><span class="label-id">Meter Awal (TC)</span><span class="label-en">Initial Meter</span></div></td>
-            <td>: <span class="val" id="v-m1">-</span> mm</td>
-            <td><div class="label-group"><span class="label-id">Meter Akhir (TC)</span><span class="label-en">Final Meter</span></div></td>
-            <td>: <span class="val" id="v-m2">-</span> mm</td>
+            <td><div class="label-group"><span class="label-id">Km Awal (Km)</span><span class="label-en">Initial Km Meter</span></div></td>
+            <td>: <span class="val" id="v-m1">-</span> Km</td>
+            <td><div class="label-group"><span class="label-id">Km Akhir (Km)</span><span class="label-en">Final Km Meter</span></div></td>
+            <td>: <span class="val" id="v-m2">-</span> Km</td>
         </tr>
         <tr>
             <td><div class="label-group"><span class="label-id">Nomor Segel</span><span class="label-en">Seal Number</span></div></td>
             <td>: <span class="val" id="v-segel">-</span></td>
-            <td><div class="label-group"><span class="label-id">Tinggi Cairan (T2)</span><span class="label-en">High Liquid Level</span></div></td>
+            <td><div class="label-group"><span class="label-id">Tinggi Cairan (TC)</span><span class="label-en">High Liquid Level</span></div></td>
             <td>: <span class="val" id="v-t2">-</span> mm</td>
         </tr>
         <tr>
@@ -251,15 +251,15 @@
         </tr>
     </table>
 
-    <div style="font-weight:bold; font-size:9.5pt; margin-top:5px; margin-bottom: 5px;">DESCRIPTION NOTE / Catatan Keterangan</div>
+    <div style="font-weight:bold; font-size:9.5pt; margin-top:5px; margin-bottom: 5px;">DESCRIPTION NOTE:</div>
     <div class="desc-section">
         <table class="desc-table">
             <tr>
-                <td width="45%"><b>Purchase Order to:</b><br><i style="font-size: 7.5pt;">Nomor PO:</i></td>
+                <td width="45%"><b>Nomor Purchase Order :</b><br><i style="font-size: 7.5pt;">Nomor PO Cust:</i></td>
                 <td>: <span class="val" id="v-po-num">-</span></td>
             </tr>
             <tr>
-                <td><b>Sales Order No.</b> / Nomor SO</td>
+                <td><b>Tanggal purchase Order</b>Date PO</td>
                 <td>: <span class="val" id="v-so-desc">-</span></td>
             </tr>
             <tr>
