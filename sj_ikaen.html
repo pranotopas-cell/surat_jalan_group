@@ -32,9 +32,11 @@
             position: relative; 
             box-sizing: border-box;
             box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
         }
 
-        /* PERBAIKAN STRUKTUR TITIK DUA - AGAR TIDAK LEPAS */
+        /* PERBAIKAN TITIK DUA AGAR TETAP LURUS */
         .cell-content {
             display: flex;
             align-items: flex-start;
@@ -42,35 +44,37 @@
         }
 
         .colon {
-            width: 10px;
+            width: 12px;
             flex-shrink: 0;
             font-weight: bold;
+            text-align: center;
         }
 
         .val { 
             font-weight: bold; 
             font-size: 9.5pt; 
-            word-break: break-all;
+            word-break: break-all; /* Agar teks panjang otomatis turun ke bawah */
             white-space: normal; 
             flex-grow: 1;
         }
 
-        .header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
         .main-logo { height: 75px; width: auto; }
         .logo-text { display: flex; flex-direction: column; width: 220px; }
         .logo-text b { font-size: 19pt; color: var(--primary-red); display: flex; justify-content: space-between; }
         .logo-text span { font-size: 12pt; color: var(--primary-blue); font-weight: bold; }
         
-        .company-address { font-size: 8.5pt; margin-top: 8px; line-height: 1.4; width: 55%; }
+        .company-address { font-size: 8.5pt; margin-top: 5px; line-height: 1.3; width: 55%; }
         .meta-info-grid { text-align: right; font-size: 8.5pt; width: 45%; }
         .meta-info-grid table { margin-left: auto; border-collapse: collapse; }
-        .meta-label { font-weight: bold; width: 120px; text-align: left; }
+        .meta-label { font-weight: bold; width: 110px; text-align: left; }
 
-        .title-block { text-align: center; margin: 25px 0 15px 0; }
+        .title-block { text-align: center; margin: 20px 0 15px 0; }
         .title-block h1 { font-size: 20pt; margin: 0; text-decoration: underline; font-weight: bold; letter-spacing: 2px; }
 
         .main-table { width: 100%; border-top: 2.5px solid var(--primary-red); border-bottom: 2.5px solid var(--primary-blue); border-collapse: collapse; table-layout: fixed; }
-        .main-table td { padding: 6px 4px; vertical-align: top; border-bottom: 0.5px solid #eee; overflow: hidden; }
+        .main-table td { padding: 6px 4px; vertical-align: top; border-bottom: 0.5px solid #eee; }
         
         .label-group { display: flex; flex-direction: column; }
         .label-id { font-weight: bold; font-size: 8.5pt; color: #000; }
@@ -78,22 +82,26 @@
 
         .desc-section { display: flex; gap: 15px; margin-top: 10px; }
         .desc-table { width: 65%; border-collapse: collapse; table-layout: fixed; }
-        .desc-table td { border: 1px solid #ccc; padding: 7px; background: #fcfcfc; font-size: 8.5pt; }
+        .desc-table td { border: 1px solid #ccc; padding: 6px; background: #fcfcfc; font-size: 8.5pt; }
         .note-box { width: 35%; font-size: 7.5pt; font-style: italic; line-height: 1.3; border: 1px dashed var(--primary-blue); padding: 8px; background: #f0f4f8; }
 
-        .sig-table { width: 100%; border-collapse: collapse; margin-top: 30px; table-layout: fixed; }
+        .sig-table { width: 100%; border-collapse: collapse; margin-top: 25px; table-layout: fixed; }
         .sig-table th, .sig-table td { border: 1px solid #000; text-align: center; padding: 5px; }
-        .sig-table td { height: 100px; vertical-align: bottom; font-weight: bold; padding-bottom: 10px; position: relative; }
+        .sig-table th { background: #f9f9f9; font-size: 9pt; }
+        .sig-table td { height: 95px; vertical-align: bottom; font-weight: bold; padding-bottom: 8px; position: relative; }
         .stamp-container { position: absolute; top: 5px; left: 50%; transform: translateX(-50%); width: 150px; opacity: 0.8; z-index: 1; pointer-events: none; }
+
+        .other-note { border: 1px solid #000; border-top: none; padding: 5px 10px; font-size: 8pt; min-height: 40px; }
 
         /* Panel Editor */
         .editor-panel { width: 380px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ddd; max-height: 95vh; overflow-y: auto; position: sticky; top: 20px; }
-        .editor-panel h2 { margin: 15px 0 8px 0; color: var(--primary-red); font-size: 10pt; border-bottom: 1px solid #ddd; }
+        .editor-panel h2 { margin: 15px 0 8px 0; color: var(--primary-red); font-size: 10pt; border-bottom: 2px solid var(--primary-blue); padding-bottom: 3px; }
         .field { display: flex; flex-direction: column; margin-bottom: 8px; }
         .field label { font-size: 8pt; font-weight: bold; margin-bottom: 2px; }
         input, textarea, select { padding: 6px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; }
         
-        .btn { padding: 10px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; color: white; margin-top: 10px; width: 100%; }
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .btn { padding: 10px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; color: white; }
 
         @media print { .editor-panel { display: none; } body { background: none; padding: 0; } #sj-container { box-shadow: none; margin: 0; } }
     </style>
@@ -101,36 +109,43 @@
 <body>
 
 <div class="editor-panel">
-    <h2>Settings</h2>
+    <h2>1. Pengaturan Dokumen</h2>
     <div class="field">
-        <label>Perusahaan</label>
+        <label>Pilih Perusahaan</label>
         <select id="i-pt-select" onchange="generateNumberPreview()">
             <option value="IKAEN">PT. IKNVESTAMA KALIMANTAN ENERGI</option>
             <option value="IDE">PT. INDO DHARMA ENERGI</option>
             <option value="KSE">PT. KHATULISTIWA SINAR ENERGI</option>
         </select>
     </div>
-
-    <h2>Informasi Utama</h2>
+    <div class="field"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
+
+    <h2>2. Rincian Pengiriman</h2>
     <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="-"></div>
     <div class="field"><label>Produk</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
     <div class="field"><label>Volume (L)</label><input type="number" id="i-vol" value="0"></div>
     <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
     <div class="field"><label>Nomor SO</label><input type="text" id="i-so-desc" value="-"></div>
     <div class="field"><label>Plat Nomor</label><input type="text" id="i-plat" value="-"></div>
-    <div class="field"><label>Nomor Segel (Bisa Panjang)</label><textarea id="i-segel" rows="2">-</textarea></div>
+    <div class="field"><label>Nomor Segel</label><textarea id="i-segel" rows="2">-</textarea></div>
     <div class="field"><label>Km Awal</label><input type="text" id="i-m1" value="-"></div>
     <div class="field"><label>Km Akhir</label><input type="text" id="i-m2" value="-"></div>
-    <div class="field"><label>Nama Driver</label><input type="text" id="i-driver" value="-"></div>
 
-    <button class="btn" style="background:var(--primary-blue)" onclick="saveData()">SIMPAN KE DATABASE</button>
-    <button class="btn" style="background:var(--primary-red)" onclick="window.print()">CETAK SURAT JALAN</button>
+    <h2>3. Personalia</h2>
+    <div class="field"><label>Nama Driver</label><input type="text" id="i-driver" value="-"></div>
+    <div class="field"><label>Manager</label><input type="text" id="i-mgr" value="RISKY DANDY SAPUTRA"></div>
+    <div class="field"><label>Catatan Lain</label><textarea id="i-other-note" rows="2"></textarea></div>
+
+    <div class="action-btns">
+        <button class="btn" style="background: #28a745;" onclick="saveData()">SIMPAN</button>
+        <button class="btn" style="background: #800000;" onclick="window.print()">PRINT</button>
+    </div>
 </div>
 
 <div id="sj-container">
     <div class="header">
-        <div style="display:flex; align-items:center; gap:10px;">
+        <div class="logo-area">
             <img src="ikaen.png" class="main-logo">
             <div class="logo-text"><b><span>I</span><span>N</span><span>V</span><span>E</span><span>S</span><span>T</span><span>A</span><span>M</span><span>A</span></b><span>KALIMANTAN ENERGI</span></div>
         </div>
@@ -138,16 +153,14 @@
             <table>
                 <tr><td class="meta-label">Tanggal / Date</td><td><div class="cell-content"><span class="colon">:</span><span id="v-tgl" class="val"></span></div></td></tr>
                 <tr><td class="meta-label">No. Surat Jalan</td><td><div class="cell-content"><span class="colon">:</span><span id="v-no" class="val">-</span></div></td></tr>
+                <tr><td class="meta-label">Lokasi / Location</td><td><div class="cell-content"><span class="colon">:</span><span class="val">Site - Pangkalan Bun</span></div></td></tr>
             </table>
         </div>
     </div>
 
-    <div class="header">
-        <div class="company-address">
-            Jln. Ahmad Wongso Rt.18 Pangkalan Bun<br>
-            Kotawaringin Barat, Kalimantan Tengah<br>
-            <span style="color:var(--primary-red); font-weight:bold;">admin@investamakalimantan.com</span>
-        </div>
+    <div class="company-address">
+        Jln. Ahmad Wongso Rt.18 Pangkalan Bun, Kotawaringin Barat, Kalimantan Tengah<br>
+        <span style="color:var(--primary-red); font-weight:bold; text-decoration:underline">admin@investamakalimantan.com</span>
     </div>
 
     <div class="title-block">
@@ -166,23 +179,25 @@
             <td><div class="label-group"><span class="label-id">Nomor DO</span><span class="label-en">DO Number</span></div></td>
             <td><div class="cell-content"><span class="colon">:</span><span class="val" id="v-do-top">-</span></div></td>
             <td><div class="label-group"><span class="label-id">Volume</span><span class="label-en">Capacity</span></div></td>
-            <td><div class="cell-content"><span class="colon">:</span><span class="val"><span id="v-vol">-</span> L</span></div></td>
+            <td><div class="cell-content"><span class="colon">:</span><span class="val"><span id="v-vol">-</span> Liter</span></div></td>
         </tr>
         <tr>
             <td><div class="label-group"><span class="label-id">Nomor SO</span><span class="label-en">SO Number</span></div></td>
             <td><div class="cell-content"><span class="colon">:</span><span class="val" id="v-so-top">-</span></div></td>
-            <td><div class="label-group"><span class="label-id">Nomor Polisi</span><span class="label-en">Plat Number</span></div></td>
-            <td><div class="cell-content"><span class="colon">:</span><span class="val" id="v-plat">-</span></div></td>
+            <td><div class="label-group"><span class="label-id">Dikirim Via</span><span class="label-en">Delivery By</span></div></td>
+            <td><div class="cell-content"><span class="colon">:</span><span class="val">Fuel Truck</span></div></td>
         </tr>
         <tr>
             <td><div class="label-group"><span class="label-id">Km Awal</span><span class="label-en">Initial Km</span></div></td>
-            <td><div class="cell-content"><span class="colon">:</span><span class="val" id="v-m1">-</span></div></td>
-            <td><div class="label-group"><span class="label-id">Km Akhir</span><span class="label-en">Final Km</span></div></td>
-            <td><div class="cell-content"><span class="colon">:</span><span class="val" id="v-m2">-</span></div></td>
+            <td><div class="cell-content"><span class="colon">:</span><span class="val" id="v-m1">-</span> Km</div></td>
+            <td><div class="label-group"><span class="label-id">Nomor Polisi</span><span class="label-en">Police Number</span></div></td>
+            <td><div class="cell-content"><span class="colon">:</span><span class="val" id="v-plat">-</span></div></td>
         </tr>
         <tr>
+            <td><div class="label-group"><span class="label-id">Km Akhir</span><span class="label-en">Final Km</span></div></td>
+            <td><div class="cell-content"><span class="colon">:</span><span class="val" id="v-m2">-</span> Km</div></td>
             <td><div class="label-group"><span class="label-id">Nomor Segel</span><span class="label-en">Seal Number</span></div></td>
-            <td colspan="3"><div class="cell-content"><span class="colon">:</span><span class="val" id="v-segel">-</span></div></td>
+            <td><div class="cell-content"><span class="colon">:</span><span class="val" id="v-segel">-</span></div></td>
         </tr>
         <tr>
             <td><div class="label-group"><span class="label-id">Tujuan</span><span class="label-en">Destination</span></div></td>
@@ -190,6 +205,7 @@
         </tr>
     </table>
 
+    <div style="font-weight:bold; font-size:9pt; margin-top:10px;">DESCRIPTION NOTE:</div>
     <div class="desc-section">
         <table class="desc-table">
             <tr>
@@ -197,28 +213,30 @@
                 <td><div class="cell-content"><span class="colon">:</span><span class="val" id="v-po-num">-</span></div></td>
             </tr>
             <tr>
-                <td><b>PO Quantity:</b></td>
+                <td><b>PO Quantity (L):</b></td>
                 <td><div class="cell-content"><span class="colon">:</span><span class="val" id="v-poqty">-</span> L</div></td>
             </tr>
         </table>
-        <div class="note-box">Produk sudah diterima dalam keadaan kualitas dan kuantitas yang baik.</div>
+        <div class="note-box">Produk diterima dalam kondisi baik. Segala bentuk komplain setelah penandatanganan tidak dapat dilayani.</div>
     </div>
 
     <table class="sig-table">
-        <tr><th>Penerima</th><th>Pengemudi</th><th>Manager Operasional</th></tr>
+        <tr><th>Penerima / Received By</th><th>Pengemudi / Driver</th><th>Operational Manager</th></tr>
         <tr>
-            <td>( . . . . . . . . . . . )</td>
-            <td><span id="v-driver" class="val" style="display:block; text-align:center;">-</span></td>
+            <td>( . . . . . . . . . . . . . . . . )</td>
+            <td><div class="cell-content" style="justify-content:center;"><span id="v-driver" class="val">-</span></div></td>
             <td>
                 <img src="ike.png" class="stamp-container">
-                <br><b>RISKY DANDY SAPUTRA</b>
+                <span id="v-mgr" class="val">RISKY DANDY SAPUTRA</span>
             </td>
         </tr>
     </table>
 
-    <div style="position:absolute; bottom: 25px; left: 12mm; display:flex; align-items:center; gap:10px;">
+    <div class="other-note"><b>Other Note:</b> <span id="v-other-note"></span></div>
+
+    <div style="position:absolute; bottom: 30px; left: 12mm; display:flex; align-items:center; gap:10px;">
         <div id="qrcode"></div>
-        <div style="font-size:7pt;"><b>E-System IKE</b><br>Verified Document</div>
+        <div style="font-size:7pt;"><b>E-System Surat Jalan IKE</b><br>Verification Secure System</div>
     </div>
 </div>
 
@@ -226,30 +244,37 @@
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    var qrcode = new QRCode(document.getElementById("qrcode"), { width: 40, height: 40 });
+    var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
     function upd() {
-        document.getElementById('v-trans').innerText = document.getElementById('i-trans').value;
-        document.getElementById('v-prod').innerText = document.getElementById('i-prod').value;
-        document.getElementById('v-vol').innerText = document.getElementById('i-vol').value;
-        document.getElementById('v-do-top').innerText = document.getElementById('i-do-desc').value;
-        document.getElementById('v-so-top').innerText = document.getElementById('i-so-desc').value;
-        document.getElementById('v-plat').innerText = document.getElementById('i-plat').value;
-        document.getElementById('v-segel').innerText = document.getElementById('i-segel').value;
-        document.getElementById('v-m1').innerText = document.getElementById('i-m1').value;
-        document.getElementById('v-m2').innerText = document.getElementById('i-m2').value;
-        document.getElementById('v-dest').innerText = document.getElementById('i-po-to').value;
-        document.getElementById('v-driver').innerText = document.getElementById('i-driver').value;
+        const mappings = [
+            ['v-trans', 'i-trans'], ['v-prod', 'i-prod'], ['v-vol', 'i-vol'],
+            ['v-do-top', 'i-do-desc'], ['v-so-top', 'i-so-desc'], ['v-m1', 'i-m1'],
+            ['v-m2', 'i-m2'], ['v-plat', 'i-plat'], ['v-segel', 'i-segel'],
+            ['v-dest', 'i-po-to'], ['v-po-num', 'i-do-desc'], ['v-poqty', 'i-vol'],
+            ['v-driver', 'i-driver'], ['v-mgr', 'i-mgr'], ['v-other-note', 'i-other-note']
+        ];
+        mappings.forEach(m => {
+            const el = document.getElementById(m[0]);
+            if(el) el.innerText = document.getElementById(m[1]).value || '-';
+        });
+
+        const rawTgl = document.getElementById('i-tgl').value;
+        document.getElementById('v-tgl').innerText = rawTgl || '-';
         
         qrcode.clear();
-        qrcode.makeCode("IKE-SJ-" + document.getElementById('v-no').innerText);
+        qrcode.makeCode("VERIFIED-IKE-" + document.getElementById('v-no').innerText);
     }
 
     async function generateNumberPreview() {
         const pt = document.getElementById('i-pt-select').value;
         const now = new Date();
-        document.getElementById('v-tgl').innerText = now.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
-        document.getElementById('v-no').innerText = `001/SJ-${pt}/III/2026`;
+        const year = now.getFullYear();
+        const month = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][now.getMonth()];
+        
+        // Simulasi nomor (Bisa dihubungkan ke count Supabase)
+        const finalNo = `001/SJ-${pt}/${month}/${year}`;
+        document.getElementById('v-no').innerText = finalNo;
         upd();
     }
 
@@ -265,14 +290,18 @@
             qty: parseFloat(document.getElementById('i-vol').value) || 0,
             pt: pt === 'IKAEN' ? 'PT. IKNVESTAMA KALIMANTAN ENERGI' : (pt === 'IDE' ? 'PT. INDO DHARMA ENERGI' : 'PT. KHATULISTIWA SINAR ENERGI')
         };
-
         const { error } = await _supabase.from('data_logistik').insert([payload]);
         if (error) alert('Gagal simpan: ' + error.message);
-        else alert('Berhasil disimpan ke Database!');
+        else alert('Data Berhasil Disimpan!');
     }
 
     document.querySelectorAll('input, select, textarea').forEach(el => el.addEventListener('input', upd));
-    window.onload = generateNumberPreview;
+    
+    window.onload = () => {
+        const d = new Date();
+        document.getElementById('i-tgl').value = `${d.getFullYear()}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getDate().toString().padStart(2,'0')}`;
+        generateNumberPreview();
+    };
 </script>
 </body>
 </html>
