@@ -64,7 +64,6 @@
         .sig-table th { background: #f2f2f2; font-size: 9pt; padding: 8px 5px; }
         .sig-table td { height: 115px; vertical-align: bottom; font-weight: bold; font-size: 9.5pt; padding-bottom: 10px; position: relative; }
         
-        /* UPDATE: Ukuran Stempel Diperbesar */
         .stamp-container { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 165px; z-index: 1; opacity: 0.9; pointer-events: none; }
         
         .other-note-container { width: 100%; border: 1px solid #000; border-top: none; padding: 6px 10px; font-size: 8pt; min-height: 45px; box-sizing: border-box; background: #fff; text-align: left; }
@@ -75,28 +74,41 @@
         .field label { font-size: 8pt; font-weight: bold; margin-bottom: 4px; color: #444; }
         input, textarea, select { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; font-family: inherit; }
         
-        /* UPDATE: Tombol Mendatar di Atas */
-        .action-group { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .btn { flex: 1; padding: 10px 5px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 8pt; color: white; transition: 0.3s; text-transform: uppercase; }
+        /* UPDATE: Tombol Dipindahkan ke Atas Kanan Layar */
+        .action-group { 
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            z-index: 999; 
+            background: rgba(52, 58, 64, 0.9); 
+            padding: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid #555;
+        }
+        .btn { width: 120px; padding: 10px 5px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 8pt; color: white; transition: 0.3s; text-transform: uppercase; }
         .btn-preview { background: #6c757d; }
         .btn-save { background: var(--success-blue); }
         .btn-print { background: var(--primary-blue); }
         .btn-download { background: var(--accent-red); }
-        .btn:hover { opacity: 0.8; }
+        .btn:hover { opacity: 0.8; transform: scale(1.05); }
         
-        @media print { .editor-panel { display: none; } body { background: none; padding: 0; display: block; } #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; } }
+        @media print { .editor-panel, .action-group { display: none; } body { background: none; padding: 0; display: block; } #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; } }
     </style>
 </head>
 <body>
 
-<div class="editor-panel">
-    <div class="action-group">
-        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">Preview</button>
-        <button class="btn btn-save" onclick="saveData()">Simpan</button>
-        <button class="btn btn-print" onclick="window.print()">Print</button>
-        <button class="btn btn-download" onclick="downloadPDF()">Download</button>
-    </div>
+<div class="action-group">
+    <button class="btn btn-preview" onclick="window.scrollTo(0,0)">Preview</button>
+    <button class="btn btn-save" onclick="saveData()">Simpan</button>
+    <button class="btn btn-print" onclick="window.print()">Print</button>
+    <button class="btn btn-download" onclick="downloadPDF()">Download</button>
+</div>
 
+<div class="editor-panel">
     <h2>Database & Document Type</h2>
     <div class="field">
         <label>Pilih Perusahaan</label>
@@ -147,7 +159,7 @@
     <div class="header">
         <div class="logo-area">
             <img src="ikaen.png" alt="Logo" class="main-logo">
-            <div class="logo-text"><b>INVESTAMA</b><span>   K A L I M A N T A N  E N E R G I </span></div>
+            <div class="logo-text"><b>INVESTAMA</b><span>    K A L I M A N T A N  E N E R G I </span></div>
         </div>
     </div>
     
