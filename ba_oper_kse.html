@@ -81,12 +81,16 @@
             <input type="text" id="s_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol" oninput="updateView()">
             <input type="text" id="s_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT Penyerah" oninput="updateView()">
             <input type="number" id="s_qty" class="form-control form-control-sm mb-1" placeholder="Qty Liter" oninput="updateView()">
+            <input type="text" id="s_segel" class="form-control form-control-sm mb-1" placeholder="Nomor Segel" oninput="updateView()">
+            <input type="text" id="s_tinggi" class="form-control form-control-sm mb-1" placeholder="Tinggi Cairan (cm)" oninput="updateView()">
             <input type="text" id="s_sopir" class="form-control form-control-sm" placeholder="Sopir" oninput="updateView()">
 
             <label class="form-label-custom text-danger">Unit Penerima (Tujuan)</label>
             <input type="text" id="t_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol" oninput="updateView()">
             <input type="text" id="t_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT Penerima" oninput="updateView()">
             <input type="number" id="t_qty" class="form-control form-control-sm mb-1" placeholder="Qty Diterima" oninput="updateView()">
+            <input type="text" id="t_segel" class="form-control form-control-sm mb-1" placeholder="Nomor Segel" oninput="updateView()">
+            <input type="text" id="t_tinggi" class="form-control form-control-sm mb-1" placeholder="Tinggi Cairan (cm)" oninput="updateView()">
             <input type="text" id="t_sopir" class="form-control form-control-sm" placeholder="Sopir" oninput="updateView()">
 
             <label class="form-label-custom">Admin Operasional</label>
@@ -114,6 +118,8 @@
                     <div class="data-row"><div class="data-label">Nomor Polisi</div><div class="data-value" id="os_nopol"></div></div>
                     <div class="data-row"><div class="data-label">Nama Perusahaan</div><div class="data-value" id="os_pt"></div></div>
                     <div class="data-row"><div class="data-label">Volume Muatan</div><div class="data-value" id="os_qty"></div></div>
+                    <div class="data-row"><div class="data-label">Nomor Segel</div><div class="data-value" id="os_segel"></div></div>
+                    <div class="data-row"><div class="data-label">Tinggi Cairan</div><div class="data-value" id="os_tinggi"></div></div>
                     <div class="data-row"><div class="data-label">Nama Pengemudi</div><div class="data-value" id="os_sopir"></div></div>
                 </div>
 
@@ -122,6 +128,8 @@
                     <div class="data-row"><div class="data-label">Nomor Polisi</div><div class="data-value" id="ot_nopol"></div></div>
                     <div class="data-row"><div class="data-label">Nama Perusahaan</div><div class="data-value" id="ot_pt"></div></div>
                     <div class="data-row"><div class="data-label">Volume Diterima</div><div class="data-value" id="ot_qty"></div></div>
+                    <div class="data-row"><div class="data-label">Nomor Segel</div><div class="data-value" id="ot_segel"></div></div>
+                    <div class="data-row"><div class="data-label">Tinggi Cairan</div><div class="data-value" id="ot_tinggi"></div></div>
                     <div class="data-row"><div class="data-label">Nama Pengemudi</div><div class="data-value" id="ot_sopir"></div></div>
                 </div>
 
@@ -175,7 +183,6 @@
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
         try {
-            // HANYA menyimpan ke data_logistik (Menghilangkan error tabel berita_acara_oper)
             const { error } = await _supabase.from('data_logistik').insert([{ 
                 tanggal: tglInput,
                 jenis_dokumen: 'Berita Acara Oper Muatan', 
@@ -212,8 +219,8 @@
     function updateView() {
         const mapping = {
             'in_no': 'out_no', 'in_hari': 'out_hari', 'in_tgl_lengkap': 'out_tgl_lengkap',
-            's_nopol': 'os_nopol', 's_pt': 'os_pt', 's_sopir': 'os_sopir',
-            't_nopol': 'ot_nopol', 't_pt': 'ot_pt', 't_sopir': 'ot_sopir', 
+            's_nopol': 'os_nopol', 's_pt': 'os_pt', 's_sopir': 'os_sopir', 's_segel': 'os_segel', 's_tinggi': 'os_tinggi',
+            't_nopol': 'ot_nopol', 't_pt': 'ot_pt', 't_sopir': 'ot_sopir', 't_segel': 'ot_segel', 't_tinggi': 'ot_tinggi',
             'in_sig_operasional': 'out_operasional_sig'
         };
         for (let id in mapping) {
@@ -224,6 +231,12 @@
         document.getElementById('ot_sopir_sig').innerText = document.getElementById('t_sopir').value;
         document.getElementById('os_qty').innerText = (document.getElementById('s_qty').value || "0") + " Liter";
         document.getElementById('ot_qty').innerText = (document.getElementById('t_qty').value || "0") + " Liter";
+        
+        // Penambahan CM untuk unit tinggi jika diisi
+        const sTinggi = document.getElementById('s_tinggi').value;
+        const tTinggi = document.getElementById('t_tinggi').value;
+        if(sTinggi) document.getElementById('os_tinggi').innerText = sTinggi + " cm";
+        if(tTinggi) document.getElementById('ot_tinggi').innerText = tTinggi + " cm";
     }
 
     function downloadPDF() {
