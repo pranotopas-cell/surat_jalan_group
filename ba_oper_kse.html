@@ -169,7 +169,6 @@
                 <div class="footer-kse">
                     <div class="footer-content">
                         <div id="qrcode"></div>
-                        
                         <div class="d-flex align-items-end gap-3 flex-column">
                             <div class="text-end">
                                 <b style="font-size: 11px; color: var(--kse-primary);">PT. KHATULISTIWA SINAR ENERGI</b><br>
@@ -193,7 +192,7 @@
     async function generateAutoNumber() {
         try {
             const { count, error } = await _supabase
-                .from('jenis_dokumen')
+                .from('data_logistik')
                 .select('*', { count: 'exact', head: true });
             
             if(error) throw error;
@@ -213,16 +212,22 @@
         const noDoc = document.getElementById('in_no').value;
         const ptName = document.getElementById('s_pt').value;
         const sopirName = document.getElementById('s_sopir').value;
+        const tglInput = document.getElementById('in_tgl_input').value;
         
-        // Pesan peringatan dihapus, sistem langsung mencoba simpan
+        if (!tglInput || !ptName) {
+            alert("Harap isi Tanggal dan Nama PT terlebih dahulu.");
+            return;
+        }
+
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
         try {
-            // Perbaikan Logika: Simpan pt, jenis_dokumen, no_dokumen, sopir ke data_logistik
+            // Update Logika: Simpan ke data_logistik dengan kolom yang ada (tanggal, jenis_dokumen, pt, dll)
             const { error: errorLog } = await _supabase
                 .from('data_logistik')
                 .insert([{ 
+                    tanggal: tglInput,
                     jenis_dokumen: 'Berita Acara Oper Muatan', 
                     no_dokumen: noDoc,
                     pt: ptName,
@@ -230,10 +235,10 @@
                 }]);
             if (errorLog) throw errorLog;
 
-            // Simpan ke berita_acara_oper (Tabel Detail)
+            // Simpan detail ke berita_acara_oper
             const payload = {
                 no_ba: noDoc,
-                tanggal: document.getElementById('in_tgl_input').value,
+                tanggal: tglInput,
                 s_nopol: document.getElementById('s_nopol').value,
                 s_qty: parseInt(document.getElementById('s_qty').value) || 0,
                 t_nopol: document.getElementById('t_nopol').value,
@@ -243,8 +248,9 @@
             const { error: errorBA } = await _supabase.from('berita_acara_oper').insert([payload]);
             if (errorBA) throw errorBA;
 
-            alert("Berhasil Simpan!");
-            document.getElementById('statusMsg').innerHTML = "<b>DATA TERSIMPAN</b>";
+            alert("Berhasil Simpan Data!");
+            document.getElementById('statusMsg').innerHTML = "<b>DATA TERSIMPAN KE SISTEM</b>";
+            document.getElementById('statusMsg').className = "alert alert-primary py-2 mb-3";
         } catch (err) {
             alert("Gagal Simpan: " + err.message);
         } finally {
@@ -259,7 +265,8 @@
         const opt = {
             margin: 0,
             filename: `BAOM_${noDoc}.pdf`,
-            html2canvas: { scale: 3, useCORS: true },
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         html2pdf().set(opt).from(element).save();
@@ -272,6 +279,7 @@
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
         const formatted = dateObj.toLocaleDateString('id-ID', options);
         const hari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][dateObj.getDay()];
+        
         document.getElementById('in_hari').value = hari;
         document.getElementById('in_tgl_lengkap').value = `tanggal ${dateObj.getDate()} bulan ${formatted.split(' ')[1]} tahun ${dateObj.getFullYear()}`;
         document.getElementById('out_tgl_footer').innerText = formatted;
@@ -286,7 +294,9 @@
             'in_sig_operasional': 'out_operasional_sig'
         };
         for (let id in mapping) {
-            document.getElementById(mapping[id]).innerText = document.getElementById(id).value;
+            const el = document.getElementById(id);
+            const target = document.getElementById(mapping[id]);
+            if(el && target) target.innerText = el.value;
         }
         document.getElementById('os_sopir_sig').innerText = document.getElementById('s_sopir').value;
         document.getElementById('ot_sopir_sig').innerText = document.getElementById('t_sopir').value;
