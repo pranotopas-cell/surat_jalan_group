@@ -16,7 +16,7 @@
             --accent-bg: #e6f2ed; 
             --success-green: #2e7d32; 
         }
-        body { font-family: 'Arial', sans-serif; font-size: 10pt; margin: 0; padding: 20px; background-color: #4a4d4a; color: #000; display: flex; gap: 20px; justify-content: center; align-items: flex-start; }
+        body { font-family: 'Arial', sans-serif; font-size: 10pt; margin: 0; padding: 20px; background-color: #4a4d4a; color: #000; display: flex; gap: 20px; justify-content: center; align-items: flex-start; position: relative; }
         
         #sj-container { width: 210mm; height: 297mm; padding: 10mm 12mm; background: white; position: relative; box-sizing: border-box; box-shadow: 0 0 15px rgba(0,0,0,0.6); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
         
@@ -73,18 +73,37 @@
         .field label { font-size: 8pt; font-weight: bold; margin-bottom: 4px; color: #444; }
         input, textarea, select { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; font-family: inherit; }
         
-        .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 25px; }
-        .btn { padding: 12px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 9pt; color: white; transition: 0.3s; }
+        /* UPDATE: Posisi Tombol Melayang di Kanan Atas */
+        .top-action-bar { 
+            position: fixed; 
+            top: 20px; 
+            right: 40px; 
+            display: flex; 
+            gap: 10px; 
+            z-index: 999; 
+            background: rgba(74, 77, 74, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .btn { padding: 10px 20px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 8.5pt; color: white; transition: 0.3s; white-space: nowrap; }
         .btn-preview { background: #6c757d; }
         .btn-save { background: var(--success-green); }
         .btn-print { background: var(--primary-green); }
         .btn-download { background: var(--tosca); }
-        .btn:hover { opacity: 0.8; }
+        .btn:hover { opacity: 0.8; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
         
-        @media print { .editor-panel { display: none; } body { background: none; padding: 0; display: block; } #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; } }
+        @media print { .editor-panel, .top-action-bar { display: none; } body { background: none; padding: 0; display: block; } #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; } }
     </style>
 </head>
 <body>
+
+<div class="top-action-bar">
+    <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PREVIEW</button>
+    <button class="btn btn-save" onclick="saveData()">SIMPAN DATA</button>
+    <button class="btn btn-print" onclick="window.print()">PRINT / CETAK</button>
+    <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
+</div>
 
 <div class="editor-panel">
     <h2>Database & Document Type</h2>
@@ -131,13 +150,6 @@
     <div class="field"><label>Nama Pengemudi</label><input type="text" id="i-driver" value="-"></div>
     <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="Staff Operasional"></div>
     <div class="field"><label>Other Note</label><textarea id="i-other-note" rows="2"></textarea></div>
-
-    <div class="action-group">
-        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PREVIEW</button>
-        <button class="btn btn-save" onclick="saveData()">SIMPAN DATA</button>
-        <button class="btn btn-print" onclick="window.print()">PRINT / CETAK</button>
-        <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
-    </div>
 </div>
 
 <div id="sj-container">
@@ -279,7 +291,6 @@
         return `${parts[2]} ${bulanIndo[parseInt(parts[1]) - 1]} ${parts[0]}`;
     }
 
-    // Logika Auto-Number yang mengecek database pusat (sama untuk semua PT)
     async function generateAutoNumber() {
         const companyCode = document.getElementById('i-target-company').value;
         const docType = document.getElementById('i-doc-type').value;
@@ -298,7 +309,6 @@
         if (companyCode === "IKAEN") namaPT = "PT. IKNVESTAMA KALIMANTAN ENERGI";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
-        // Mengecek nomor terakhir di tabel data_logistik khusus untuk PT terpilih
         const { data } = await _supabase.from('data_logistik')
             .select('no_dokumen')
             .eq('pt', namaPT)
@@ -366,7 +376,6 @@
             pt: namaPT 
         };
 
-        // Simpan semua ke tabel data_logistik
         const { error } = await _supabase.from('data_logistik').insert([payload]);
 
         if (error) {
