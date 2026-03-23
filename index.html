@@ -23,17 +23,26 @@
 
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-dark); color: #f1f5f9; }
 
-        /* Login Page */
+        /* Login Page - Background Tema Alat Berat & Niaga */
         #login-page { 
             height: 100vh; display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), 
-                        url('https://images.unsplash.com/photo-1565034946487-077786996e27?q=80&w=2070&auto=format&fit=crop');
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.85)), 
+                        url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop');
             background-size: cover; background-position: center;
         }
 
         .login-card {
-            background: rgba(30, 41, 59, 0.9); border: 1px solid var(--ind-blue);
-            border-radius: 1.5rem; width: 100%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            background: rgba(30, 41, 59, 0.95); border: 1px solid var(--ind-blue);
+            border-radius: 1.5rem; width: 100%; max-width: 450px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Logo Container */
+        .logo-container {
+            display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 25px;
+        }
+        .logo-container img {
+            height: 45px; width: auto; object-fit: contain; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2));
         }
 
         /* Sidebar Styling */
@@ -74,7 +83,7 @@
             white-space: nowrap; padding: 10px 8px;
         }
 
-        /* Color Coding */
+        /* Color Coding Rows */
         .row-ikaen { color: #ff4d4d !important; font-weight: 600; }
         .row-ide { color: #3b82f6 !important; font-weight: 600; }
         .row-kse { color: #f59e0b !important; font-weight: 600; }
@@ -85,10 +94,8 @@
 
         .table tbody td { padding: 10px 8px; white-space: nowrap; }
 
-        /* Button Hover Effects */
         .btn-tracking:hover {
-            background-color: #0dcaf0;
-            color: #000 !important;
+            background-color: #0dcaf0; color: #000 !important;
             box-shadow: 0 0 15px rgba(13, 202, 240, 0.4);
         }
     </style>
@@ -97,8 +104,13 @@
 
 <div id="login-page">
     <div class="card login-card p-5 text-center">
-        <i class="bi bi-gear-wide-connected text-primary fs-1 mb-3"></i>
-        <h3 class="fw-bold mb-4 text-white">LOGIN</h3>
+        <div class="logo-container">
+            <img src="header1.png" alt="Header">
+            <img src="ide1.png" alt="IDE">
+            <img src="ikaen.png" alt="IKAEN">
+        </div>
+        
+        <h3 class="fw-bold mb-4 text-white" style="letter-spacing: 2px;">LOGIN SYSTEM</h3>
         <input type="text" id="user" class="form-control mb-3 bg-dark border-secondary text-white" placeholder="Username">
         <input type="password" id="pass" class="form-control mb-4 bg-dark border-secondary text-white" placeholder="Password">
         <button class="btn btn-primary w-100 py-2 fw-bold" onclick="handleLogin()">ACCESS SYSTEM</button>
@@ -110,7 +122,7 @@
     <aside class="sidebar d-flex flex-column">
         <div class="mb-4 px-3 d-flex align-items-center">
             <i class="bi bi-terminal-fill text-primary fs-3 me-2"></i>
-            <h6 class="fw-bold mb-0 text-white">INTEGRATED  SYSTEM</h6>
+            <h6 class="fw-bold mb-0 text-white">INTEGRATED COMPANY SYSTEM</h6>
         </div>
         
         <nav class="flex-grow-1">
@@ -146,17 +158,17 @@
     </aside>
 
     <header class="top-nav">
-        <button class="btn btn-outline-danger btn-sm fw-bold px-3" onclick="handleLogout()">Sign Out</button>
+        <button class="btn btn-outline-danger btn-sm fw-bold px-3" onclick="handleLogout()">SIGN OUT</button>
     </header>
 
     <main class="main-content">
         <div class="card card-table border-0 p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-activity me-2 text-primary"></i>HISTORY MONITORING LOGISTICS COMPANY  </h6>
+                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-activity me-2 text-primary"></i>LOGISTICS FEED</h6>
                 
                 <div class="d-flex gap-2">
                     <button class="btn btn-sm btn-outline-info rounded-pill px-3 fw-bold btn-tracking" onclick="openMaps()">
-                        <i class="bi bi-geo-alt-fill me-1"></i> Tracking Unit
+                        <i class="bi bi-geo-alt-fill me-1"></i> Tracking Maps
                     </button>
                     <button class="btn btn-sm btn-primary rounded-pill px-4 fw-bold" onclick="fetchLogistikData()">
                         <i class="bi bi-arrow-clockwise me-1"></i> Sync Data
@@ -168,12 +180,12 @@
                 <table class="table align-middle">
                     <thead>
                         <tr>
-                            <th>Identitas</th>
-                            <th>No Dokumen</th>
-                            <th>Jenis</th>
-                            <th>Tujuan</th>
-                            <th>Sopir-Nopol</th>
-                            <th class="text-end">Qty (L)</th>
+                            <th>IDENTITAS</th>
+                            <th>NO. DOKUMEN</th>
+                            <th>JENIS</th>
+                            <th>TUJUAN</th>
+                            <th>SOPIR / NOPOL</th>
+                            <th class="text-end">QTY (L)</th>
                         </tr>
                     </thead>
                     <tbody id="logistik-table-body">
@@ -234,9 +246,7 @@
         }
     }
 
-    // Fungsi untuk membuka link Google Maps
     function openMaps() {
-        // Ganti URL ini dengan link tracking armada Anda jika ada
         window.open("https://www.google.com/maps", "_blank");
     }
 
