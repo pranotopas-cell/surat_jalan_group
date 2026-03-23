@@ -193,7 +193,7 @@
     async function generateAutoNumber() {
         try {
             const { count, error } = await _supabase
-                .from('berita_acara_oper')
+                .from('jenis_dokumen')
                 .select('*', { count: 'exact', head: true });
             
             if(error) throw error;
