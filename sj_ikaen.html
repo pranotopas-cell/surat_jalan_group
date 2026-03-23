@@ -74,27 +74,26 @@
         .field label { font-size: 8pt; font-weight: bold; margin-bottom: 4px; color: #444; }
         input, textarea, select { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; font-family: inherit; }
         
-        /* UPDATE: Tombol Dipindahkan ke Atas Kanan Layar */
+        /* UPDATE: Tombol Mendatar di Kanan Atas */
         .action-group { 
             position: fixed; 
             top: 20px; 
-            right: 20px; 
+            right: 40px; 
             display: flex; 
-            flex-direction: column; 
             gap: 10px; 
-            z-index: 999; 
-            background: rgba(52, 58, 64, 0.9); 
-            padding: 15px; 
+            z-index: 1000; 
+            background: rgba(52, 58, 64, 0.95); 
+            padding: 12px; 
             border-radius: 8px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             border: 1px solid #555;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        .btn { width: 120px; padding: 10px 5px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 8pt; color: white; transition: 0.3s; text-transform: uppercase; }
+        .btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 8.5pt; color: white; transition: 0.3s; text-transform: uppercase; white-space: nowrap; }
         .btn-preview { background: #6c757d; }
         .btn-save { background: var(--success-blue); }
         .btn-print { background: var(--primary-blue); }
         .btn-download { background: var(--accent-red); }
-        .btn:hover { opacity: 0.8; transform: scale(1.05); }
+        .btn:hover { opacity: 0.8; transform: translateY(-2px); }
         
         @media print { .editor-panel, .action-group { display: none; } body { background: none; padding: 0; display: block; } #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; } }
     </style>
@@ -102,10 +101,10 @@
 <body>
 
 <div class="action-group">
-    <button class="btn btn-preview" onclick="window.scrollTo(0,0)">Preview</button>
-    <button class="btn btn-save" onclick="saveData()">Simpan</button>
+    <button class="btn btn-preview" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Preview</button>
+    <button class="btn btn-save" onclick="saveData()">Simpan Data</button>
     <button class="btn btn-print" onclick="window.print()">Print</button>
-    <button class="btn btn-download" onclick="downloadPDF()">Download</button>
+    <button class="btn btn-download" onclick="downloadPDF()">Download PDF</button>
 </div>
 
 <div class="editor-panel">
