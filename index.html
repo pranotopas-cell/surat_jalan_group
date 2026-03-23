@@ -121,19 +121,30 @@
             margin-bottom: 2rem;
         }
 
-        /* Table Design */
+        /* Table Design Optimasi Data Padat */
         .card-table {
             background: rgba(30, 41, 59, 0.5);
             border: 1px solid var(--glass-border);
             border-radius: 15px;
         }
 
+        .table {
+            font-size: 0.72rem; /* Mengecilkan teks tabel secara keseluruhan */
+        }
+
         .table thead th { 
             background: rgba(59, 130, 246, 0.1);
             color: var(--ind-blue);
-            font-size: 0.7rem;
+            font-size: 0.65rem; /* Judul kolom lebih kecil */
             font-weight: 700;
             border-bottom: 2px solid var(--ind-blue);
+            white-space: nowrap;
+            padding: 10px 8px;
+        }
+
+        .table tbody td {
+            padding: 8px 8px;
+            white-space: nowrap; /* Mencegah teks turun ke bawah (sebaris) */
         }
 
         /* Badges & Doc Colors */
@@ -262,16 +273,18 @@
 
                 html += `
                     <tr>
-                        <td style="white-space: nowrap;">
-                            <div class="fw-bold text-secondary" style="font-size:0.65rem">${row.tanggal || '-'}</div>
-                            <span class="badge ${badgeClass}" style="font-size:0.6rem">${valPT}</span>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="text-secondary fw-bold" style="font-size:0.6rem">${row.tanggal || '-'}</span>
+                                <span class="badge ${badgeClass}" style="font-size:0.58rem; padding: 3px 6px;">${valPT}</span>
+                            </div>
                         </td>
                         <td class="${docColorClass}">${row.no_dokumen || '-'}</td>
-                        <td class="text-white-50 fw-bold">${row.jenis_dokumen || '-'}</td>
-                        <td><div class="text-truncate" style="max-width:130px;">${row.tujuan || '-'}</div></td>
+                        <td class="text-white-50 small">${row.jenis_dokumen || '-'}</td>
+                        <td><div class="text-truncate" style="max-width:160px;">${row.tujuan || '-'}</div></td>
                         <td>
-                            <div class="fw-bold text-white">${row.sopir || '-'}</div>
-                            <div class="text-primary" style="font-size:0.65rem">${row.nopol || '-'}</div>
+                            <span class="fw-bold text-white">${row.sopir || '-'}</span>
+                            <span class="text-primary ms-1" style="font-size:0.65rem">[${row.nopol || '-'}]</span>
                         </td>
                         <td class="text-end fw-bold text-info">${(row.qty || 0).toLocaleString('id-ID')}</td>
                     </tr>`;
