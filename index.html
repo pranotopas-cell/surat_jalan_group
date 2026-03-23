@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Integrated Delivery System | Hi-Tech Edition</title>
+    <title>Enterprise Integrated Delivery System | Industrial Edition</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -12,22 +12,44 @@
 
     <style>
         :root { 
-            --bg-dark: #050a0a;
-            --sidebar-bg: #061212;
+            --bg-dark: #0f172a;
+            --sidebar-bg: #1e293b;
             --sidebar-width: 280px;
-            --tech-green: #10b981; 
-            --dark-emerald: #064e3b; 
-            --glass-border: rgba(16, 185, 129, 0.2);
-            --accent-glow: 0 0 15px rgba(16, 185, 129, 0.3);
+            --ind-red: #dc2626; 
+            --ind-blue: #2563eb; 
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-glow: 0 0 15px rgba(37, 99, 235, 0.3);
         }
 
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: var(--bg-dark); 
-            color: #e2e8f0;
+            color: #f1f5f9;
         }
 
-        /* Sidebar Tech Styling */
+        /* Login Background Industrial */
+        #login-page { 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), 
+                        url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1600');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .login-card {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--ind-blue);
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Sidebar Styling */
         .sidebar { 
             background: var(--sidebar-bg); 
             height: 100vh; 
@@ -36,14 +58,13 @@
             position: fixed; 
             width: var(--sidebar-width); 
             z-index: 1000; 
-            border-right: 1px solid var(--glass-border);
-            overflow-y: auto;
+            border-right: 2px solid var(--ind-blue);
         }
 
         .nav-link { 
-            color: rgba(255,255,255,0.6); 
+            color: rgba(255,255,255,0.7); 
             margin-bottom: 0.2rem; 
-            border-radius: 10px; 
+            border-radius: 8px; 
             padding: 0.7rem 1rem; 
             transition: all 0.3s ease;
             font-size: 0.85rem;
@@ -53,158 +74,176 @@
         }
 
         .nav-link:hover, .nav-link.active { 
-            background: linear-gradient(90deg, var(--dark-emerald), transparent);
-            color: var(--tech-green);
+            background: var(--ind-blue);
+            color: white;
         }
 
         .submenu { 
             padding-left: 0.5rem; 
-            background: rgba(0,0,0,0.2);
-            border-radius: 10px;
-            margin: 0.3rem 0 0.8rem 0;
+            background: rgba(0,0,0,0.1);
+            border-left: 2px solid var(--ind-red);
+            margin: 0.3rem 0 0.8rem 1rem;
         }
-
-        .submenu .nav-link { font-size: 0.8rem; padding: 0.5rem 1rem; }
 
         .pt-label { 
             font-size: 0.65rem; 
-            color: var(--tech-green); 
+            color: #94a3b8; 
             padding: 1.2rem 1rem 0.4rem; 
             display: block;
             font-weight: 800;
             letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        .main-content { margin-left: var(--sidebar-width); padding: 2.5rem; min-height: 100vh; }
-
-        .hero-banner {
-            background: linear-gradient(135deg, var(--dark-emerald) 0%, #022c22 100%);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-        }
-
-        /* Table & Data Tuning */
-        .card-table {
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-        }
-
-        .table { font-size: 0.75rem; color: #cbd5e1; }
-        .table thead th { 
-            background: rgba(16, 185, 129, 0.05);
-            color: var(--tech-green);
-            font-size: 0.65rem;
-            font-weight: 700;
-            padding: 1rem;
+        /* Top Navbar */
+        .top-bar {
+            margin-left: var(--sidebar-width);
+            padding: 1rem 2.5rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(5px);
             border-bottom: 1px solid var(--glass-border);
         }
 
-        .table tbody tr:hover { background: rgba(16, 185, 129, 0.05); }
+        .main-content { margin-left: var(--sidebar-width); padding: 2rem 2.5rem; min-height: 100vh; }
 
-        /* Force Color Docs */
-        .doc-ikaen { color: #f87171 !important; font-weight: 700; }
-        .doc-ide { color: #38bdf8 !important; font-weight: 700; }
-        .doc-kse { color: var(--tech-green) !important; font-weight: 700; }
-
-        .badge-pt { font-size: 0.6rem; padding: 4px 8px; border-radius: 6px; color: white !important; }
-        .bg-ikaen { background-color: #991b1b !important; }
-        .bg-ide { background-color: #075985 !important; }
-        .bg-kse { background-color: #064e3b !important; }
-
-        /* Login Layout */
-        #login-page { height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .login-card {
-            background: rgba(6, 18, 18, 0.9);
-            border: 1px solid var(--glass-border);
-            border-radius: 2rem;
-            width: 100%;
-            max-width: 400px;
+        .hero-banner {
+            background: linear-gradient(135deg, var(--ind-blue) 0%, #1e3a8a 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 8px solid var(--ind-red);
         }
+
+        /* Table Style */
+        .card-table {
+            background: #1e293b;
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+        }
+
+        .table { font-size: 0.8rem; color: #e2e8f0; }
+        .table thead th { 
+            background: rgba(37, 99, 235, 0.1);
+            color: #60a5fa;
+            border-bottom: 2px solid var(--ind-blue);
+            text-transform: uppercase;
+            font-size: 0.7rem;
+        }
+
+        /* Badge Customization */
+        .bg-ikaen { background-color: var(--ind-red) !important; }
+        .bg-ide { background-color: var(--ind-blue) !important; }
+        .bg-kse { background-color: #0f766e !important; }
+        
+        .btn-ind-red { background: var(--ind-red); color: white; }
+        .btn-ind-red:hover { background: #b91c1c; color: white; }
+
+        .doc-ikaen { color: #f87171 !important; font-weight: 700; }
+        .doc-ide { color: #60a5fa !important; font-weight: 700; }
     </style>
 </head>
 <body>
 
 <div id="login-page">
-    <div class="card login-card p-5 shadow-lg text-center">
-        <i class="bi bi-shield-lock text-success fs-1 mb-3"></i>
-        <h3 class="fw-bold mb-4 text-white">ADMIN ACCESS</h3>
-        <input type="text" id="user" class="form-control mb-3 bg-dark border-secondary text-white" placeholder="Username">
-        <input type="password" id="pass" class="form-control mb-4 bg-dark border-secondary text-white" placeholder="Password">
-        <button class="btn btn-success w-100 py-2 fw-bold" onclick="handleLogin()">LOGIN SYSTEM</button>
-        <p id="error-msg" class="text-danger mt-3 small" style="display:none;">Akses Ditolak!</p>
+    <div class="card login-card p-5 text-center">
+        <div class="mb-4">
+            <i class="bi bi-gear-fill text-primary fs-1"></i>
+            <i class="bi bi-truck text-danger fs-2 ms-n2"></i>
+        </div>
+        <h4 class="fw-bold mb-1 text-white">INDUSTRIAL SYSTEM</h4>
+        <p class="text-white-50 small mb-4">Enterprise Logistics Management</p>
+        
+        <div class="text-start">
+            <label class="small text-white-50 mb-1">Username</label>
+            <input type="text" id="user" class="form-control mb-3 bg-dark border-secondary text-white" placeholder="Admin ID">
+            
+            <label class="small text-white-50 mb-1">Password Access</label>
+            <input type="password" id="pass" class="form-control mb-4 bg-dark border-secondary text-white" placeholder="••••••••">
+        </div>
+        
+        <button class="btn btn-primary w-100 py-2 fw-bold" onclick="handleLogin()">
+            <i class="bi bi-shield-check me-2"></i>AUTHORIZE ACCESS
+        </button>
+        <p id="error-msg" class="text-danger mt-3 small fw-bold" style="display:none;">Access Denied: Invalid Credentials</p>
     </div>
 </div>
 
 <div id="dashboard-page" style="display:none;">
     <aside class="sidebar d-flex flex-column">
         <div class="mb-4 px-3 d-flex align-items-center">
-            <i class="bi bi-cpu text-success fs-3 me-2"></i>
-            <h6 class="fw-bold mb-0 text-white">INTEGRATED SYSTEM</h6>
+            <i class="bi bi-database-fill-gear text-primary fs-3 me-2"></i>
+            <h6 class="fw-bold mb-0 text-white">LOGISTICS v2.0</h6>
         </div>
         
-        <nav class="flex-grow-1">
-            <a href="#" class="nav-link active mb-2"><i class="bi bi-speedometer2 me-2"></i> Dashboard Live</a>
+        <nav class="flex-grow-1 overflow-auto">
+            <a href="#" class="nav-link active mb-3"><i class="bi bi-cpu-fill me-2"></i> Command Center</a>
 
-            <small class="pt-label">PT. INVESTAMA KALIMANTAN ENERGI</small>
-            <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2"></i> IKAEN <i class="bi bi-chevron-down ms-auto small"></i></a>
-            <div class="collapse submenu show" id="mIkaen">
+            <small class="pt-label">PT. Investama Kalimantan Energi</small>
+            <div class="submenu">
                 <a href="sj_ikaen.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_ikaen.html" class="nav-link">Memo</a>
-                <a href="ba_oper_ikaen.html" class="nav-link">BA Oper Muatan</a>
-                <a href="ba_penerimaan_ikaen.html" class="nav-link">BA Penerimaan</a>
             </div>
 
-            <small class="pt-label">PT. INDO DHARMA ENERGI</small>
-            <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-lightning-charge me-2"></i> IDE <i class="bi bi-chevron-down ms-auto small"></i></a>
-            <div class="collapse submenu" id="mIde">
+            <small class="pt-label">PT. Indo Dharma Energi</small>
+            <div class="submenu">
                 <a href="sj_ide.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_ide.html" class="nav-link">Memo</a>
-                <a href="ba_oper_ide.html" class="nav-link">BA Oper Muatan</a>
-                <a href="ba_penerimaan_ide.html" class="nav-link">BA Penerimaan</a>
             </div>
 
-            <small class="pt-label">PT. KHATULISTIWA SINAR ENERGI</small>
-            <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-fire me-2"></i> KSE <i class="bi bi-chevron-down ms-auto small"></i></a>
-            <div class="collapse submenu" id="mKse">
+            <small class="pt-label">PT. Khatulistiwa Sinar Energi</small>
+            <div class="submenu">
                 <a href="sj_kse.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_kse.html" class="nav-link">Memo</a>
-                <a href="ba_oper_kse.html" class="nav-link">BA Oper Muatan</a>
-                <a href="ba_penerimaan_kse.html" class="nav-link">BA Penerimaan</a>
             </div>
         </nav>
-        <a href="javascript:void(0)" onclick="handleLogout()" class="nav-link text-danger border-top border-secondary pt-3 mt-auto"><i class="bi bi-power me-2"></i> Sign Out</a>
     </aside>
+
+    <div class="top-bar">
+        <div class="d-flex align-items-center">
+            <span class="badge bg-dark border border-secondary me-3 px-3 py-2 text-white-50">
+                <i class="bi bi-person-circle me-2"></i>Authenticated: Admin
+            </span>
+            <button onclick="handleLogout()" class="btn btn-ind-red btn-sm px-3 fw-bold">
+                <i class="bi bi-power me-2"></i>SIGN OUT
+            </button>
+        </div>
+    </div>
 
     <main class="main-content">
         <div class="hero-banner text-white">
-            <h1 class="fw-bold mb-1">Real-time Monitoring</h1>
-            <p class="opacity-75">Logistics Delivery System Feed</p>
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="fw-bold mb-1">Industrial Delivery Monitor</h2>
+                    <p class="opacity-75 mb-0">System status: <span class="text-warning">Operational</span> | Tracking active fleets across sectors.</p>
+                </div>
+            </div>
         </div>
 
-        <div class="card card-table border-0 p-4">
+        <div class="card card-table border-0 p-4 shadow-sm">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-rss me-2 text-success"></i>Delivery Feed Logistik</h6>
-                <button class="btn btn-sm btn-outline-success rounded-pill px-4" onclick="fetchLogistikData()">Sync Data</button>
+                <h6 class="fw-bold mb-0 text-white border-start border-4 border-primary ps-3">LIVE LOGISTICS FEED</h6>
+                <button class="btn btn-sm btn-primary rounded-pill px-4" onclick="fetchLogistikData()">
+                    <i class="bi bi-arrow-repeat me-1"></i> Sync Database
+                </button>
             </div>
             
             <div class="table-responsive">
                 <table class="table align-middle">
                     <thead>
                         <tr>
-                            <th>IDENTITAS</th>
-                            <th>NO. DOKUMEN</th>
-                            <th>JENIS</th>
-                            <th>TUJUAN</th>
-                            <th>SOPIR / NOPOL</th>
-                            <th class="text-end">QTY (L)</th>
+                            <th>Identitas PT</th>
+                            <th>No. Dokumen</th>
+                            <th>Jenis</th>
+                            <th>Tujuan</th>
+                            <th>Sopir / Unit</th>
+                            <th class="text-end">Qty (L)</th>
                         </tr>
                     </thead>
                     <tbody id="logistik-table-body">
-                        <tr><td colspan="6" class="text-center py-5">Memuat data sistem...</td></tr>
+                        <tr><td colspan="6" class="text-center py-5">Connecting to secure server...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -234,28 +273,28 @@
                 } else if (valPT.includes('IDE') || valPT.includes('DHARMA')) {
                     badgeClass = 'bg-ide'; docColorClass = 'doc-ide';
                 } else if (valPT.includes('KSE') || valPT.includes('KHATULISTIWA')) {
-                    badgeClass = 'bg-kse'; docColorClass = 'doc-kse';
+                    badgeClass = 'bg-kse'; docColorClass = 'text-info';
                 }
 
                 html += `
                     <tr>
-                        <td style="white-space: nowrap;">
-                            <div class="fw-bold text-secondary" style="font-size:0.65rem">${row.tanggal || '-'}</div>
-                            <span class="badge badge-pt ${badgeClass}">${valPT}</span>
-                        </td>
-                        <td class="${docColorClass}">${row.no_dokumen || '-'}</td>
-                        <td class="text-white-50 fw-bold">${row.jenis_dokumen || '-'}</td>
-                        <td><div class="text-truncate" style="max-width:130px;">${row.tujuan || '-'}</div></td>
                         <td>
-                            <div class="fw-bold text-white">${row.sopir || '-'}</div>
-                            <div class="text-success" style="font-size:0.65rem">${row.nopol || '-'}</div>
+                            <div class="small text-white-50">${row.tanggal || '-'}</div>
+                            <span class="badge rounded-1 ${badgeClass}" style="font-size:0.6rem">${valPT}</span>
                         </td>
-                        <td class="text-end fw-bold text-success">${(row.qty || 0).toLocaleString('id-ID')}</td>
+                        <td class="${docColorClass} fw-bold">${row.no_dokumen || '-'}</td>
+                        <td><span class="text-white-50">${row.jenis_dokumen || '-'}</span></td>
+                        <td><div class="text-truncate" style="max-width:150px;">${row.tujuan || '-'}</div></td>
+                        <td>
+                            <div class="fw-bold">${row.sopir || '-'}</div>
+                            <div class="text-primary small" style="font-size:0.7rem">${row.nopol || '-'}</div>
+                        </td>
+                        <td class="text-end fw-bold text-blue" style="color:#60a5fa">${(row.qty || 0).toLocaleString('id-ID')}</td>
                     </tr>`;
             });
             tbody.innerHTML = html;
         } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">Gagal memuat data.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">Database Connection Error.</td></tr>`;
         }
     }
 
@@ -263,7 +302,9 @@
         if(document.getElementById('user').value === "admin" && document.getElementById('pass').value === "kse123") {
             localStorage.setItem('ide_session', 'active');
             showDashboard();
-        } else { document.getElementById('error-msg').style.display = 'block'; }
+        } else { 
+            document.getElementById('error-msg').style.display = 'block'; 
+        }
     }
 
     function showDashboard() {
@@ -272,8 +313,14 @@
         fetchLogistikData();
     }
 
-    function handleLogout() { localStorage.removeItem('ide_session'); location.reload(); }
-    window.onload = () => { if (localStorage.getItem('ide_session') === 'active') showDashboard(); };
+    function handleLogout() { 
+        localStorage.removeItem('ide_session'); 
+        location.reload(); 
+    }
+
+    window.onload = () => { 
+        if (localStorage.getItem('ide_session') === 'active') showDashboard(); 
+    };
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
