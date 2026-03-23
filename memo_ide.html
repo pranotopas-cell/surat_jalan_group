@@ -18,25 +18,37 @@
 
         body { font-family: 'Arial', sans-serif; background-color: #525659; margin: 0; display: flex; }
         
+        /* Layout Sidebar */
         .sidebar { 
             width: 400px; background: var(--dark-sidebar); color: white; height: 100vh; 
             padding: 15px; overflow-y: auto; position: fixed; left: 0; top: 0;
             box-shadow: 4px 0 10px rgba(0,0,0,0.3);
             z-index: 100;
         }
+
+        /* Navigasi Tombol di Atas Kanan */
+        .top-nav {
+            position: fixed;
+            top: 20px;
+            right: 40px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
         .sidebar h2 { font-size: 16px; border-bottom: 2px solid var(--primary-blue); padding-bottom: 10px; margin-bottom: 15px; color: #ecf0f1; text-align: center; }
         
-        .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
         .btn { 
-            padding: 10px; border: none; border-radius: 4px; cursor: pointer; 
+            padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; 
             font-weight: bold; font-size: 11px; color: white; transition: 0.3s;
             display: flex; align-items: center; justify-content: center; gap: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
         .btn-home { background: #7f8c8d; }
         .btn-save { background: var(--success-green); }
         .btn-preview { background: var(--accent-blue); }
         .btn-download { background: #c0392b; }
-        .btn:hover { opacity: 0.8; }
+        .btn:hover { opacity: 0.8; transform: translateY(-2px); }
 
         .section-title { font-size: 10px; color: var(--accent-blue); font-weight: bold; margin: 15px 0 8px 0; text-transform: uppercase; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
         
@@ -50,7 +62,7 @@
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid var(--primary-blue); }
         .unit-card h4 { margin: 0 0 5px 0; font-size: 10px; color: #ecf0f1; }
 
-        .main-content { margin-left: 400px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
+        .main-content { margin-left: 400px; flex-grow: 1; padding: 80px 20px 40px 20px; display: flex; justify-content: center; align-items: flex-start; }
         
         .memo-page { 
             background: white; width: 210mm; min-height: 297mm; padding: 15mm; 
@@ -70,7 +82,8 @@
         
         .logo-container { display: flex; align-items: center; gap: 10px; }
         .logo-container img { height: 60px; width: auto; }
-        .logo-container .company-name { font-size: 26px; font-weight: bold; color: var(--primary-blue); letter-spacing: -0.5px; }
+        /* Teks Perusahaan Menjadi Uppercase */
+        .logo-container .company-name { font-size: 26px; font-weight: bold; color: var(--primary-blue); letter-spacing: -0.5px; text-transform: uppercase; }
 
         .header-address { text-align: right; font-size: 9px; line-height: 1.4; max-width: 350px; color: #333; }
 
@@ -94,7 +107,7 @@
         .sig-img { width: 160px; margin: 10px 0 5px -10px; display: block; }
 
         @media print {
-            .sidebar { display: none; }
+            .sidebar, .top-nav { display: none; }
             .main-content { margin-left: 0; padding: 0; background: none; }
             .memo-page { box-shadow: none; border: none; width: 100%; padding: 0; }
         }
@@ -102,15 +115,16 @@
 </head>
 <body>
 
+<div class="top-nav">
+    <button class="btn btn-home" onclick="location.reload()"> HOME</button>
+    <button class="btn btn-save" id="btnSave" onclick="saveData()"> SIMPAN</button>
+    <button class="btn btn-preview" onclick="window.scrollTo(0,0)"> PREVIEW</button>
+    <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
+</div>
+
 <div class="sidebar">
     <h2>MEMO SYSTEM</h2>
-    <div class="action-group">
-        <button class="btn btn-home" onclick="location.reload()">🏠 HOME</button>
-        <button class="btn btn-save" id="btnSave" onclick="saveData()">💾 SIMPAN</button>
-        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">👁️ PREVIEW</button>
-        <button class="btn btn-download" onclick="downloadPDF()">📥 PDF</button>
-    </div>
-
+    
     <div class="section-title">Database & Meta</div>
     <div class="input-group">
         <label>Tabel Tujuan</label>
@@ -216,7 +230,7 @@
 
         <div class="signature-container">
             Regards,<br>
-            <strong style="font-size: 14px; color: var(--primary-blue);" id="outSigCompany">PT. Indo Dharma Energi</strong><br>
+            <strong style="font-size: 14px; color: var(--primary-blue);" id="outSigCompany">PT. INDO DHARMA ENERGI</strong><br>
             <img src="ttd_ide.png" alt="Tanda Tangan" class="sig-img" onerror="this.style.display='none'">
         </div>
     </div>
@@ -257,10 +271,10 @@
         const table = document.getElementById('i-target-table').value;
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         
-        let companyText = "Indo Dharma Energi";
+        let companyText = "INDO DHARMA ENERGI";
         let codePT = "IDE";
-        if(table === "data_ikaen") { companyText = "Ikaen"; codePT = "IKN"; }
-        if(table === "data_ide") { companyText = "Indo dharma Energi"; codePT = "IDE"; }
+        if(table === "data_ikaen") { companyText = "IKAEN"; codePT = "IKN"; }
+        if(table === "data_kse") { companyText = "KHATULISTIWA SINAR ENERGI"; codePT = "KSE"; }
         
         document.getElementById('outCompanyName').innerText = companyText;
         document.getElementById('outSigCompany').innerText = "PT. " + companyText;
@@ -310,7 +324,7 @@
         
         let namaPT = "PT. INDO DHARMA ENERGI";
         if(targetTable === "data_ikaen") namaPT = "PT. IKAEN";
-        if(targetTable === "data_ide") namaPT = "PT. INDO DHARMA ENERGI";
+        if(targetTable === "data_kse") namaPT = "PT. KHATULISTIWA SINAR ENERGI";
 
         btn.innerText = "SIMPAN..."; btn.disabled = true;
 
@@ -338,7 +352,7 @@
 
         if (payloads.length === 0) {
             alert("Isi data armada terlebih dahulu.");
-            btn.innerText = "💾 SIMPAN"; btn.disabled = false;
+            btn.innerText = "SIMPAN"; btn.disabled = false;
             return;
         }
 
@@ -350,7 +364,7 @@
             alert("Data Berhasil Tersimpan!");
             initPage();
         }
-        btn.innerText = "💾 SIMPAN"; btn.disabled = false;
+        btn.innerText = "SIMPAN"; btn.disabled = false;
     }
 
     function downloadPDF() {
@@ -373,5 +387,3 @@
 </script>
 </body>
 </html>
-
-
