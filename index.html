@@ -13,12 +13,11 @@
     <style>
         :root { 
             --bg-dark: #0f172a;
-            --sidebar-bg: #1e293b;
+            --sidebar-bg: #111827;
             --sidebar-width: 280px;
-            --ind-red: #dc2626; 
-            --ind-blue: #2563eb; 
+            --ind-red: #ef4444; 
+            --ind-blue: #3b82f6; 
             --glass-border: rgba(255, 255, 255, 0.1);
-            --accent-glow: 0 0 15px rgba(37, 99, 235, 0.3);
         }
 
         body { 
@@ -27,26 +26,26 @@
             color: #f1f5f9;
         }
 
-        /* Login Background Industrial */
+        /* Login Page Background */
         #login-page { 
             height: 100vh; 
             display: flex; 
             align-items: center; 
             justify-content: center;
-            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), 
-                        url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1600');
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), 
+                        url('https://images.unsplash.com/photo-1565034946487-077786996e27?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
         }
 
         .login-card {
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(12px);
             border: 1px solid var(--ind-blue);
             border-radius: 1.5rem;
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
         /* Sidebar Styling */
@@ -58,13 +57,14 @@
             position: fixed; 
             width: var(--sidebar-width); 
             z-index: 1000; 
-            border-right: 2px solid var(--ind-blue);
+            border-right: 1px solid var(--ind-blue);
+            overflow-y: auto;
         }
 
         .nav-link { 
-            color: rgba(255,255,255,0.7); 
+            color: rgba(255,255,255,0.6); 
             margin-bottom: 0.2rem; 
-            border-radius: 8px; 
+            border-radius: 10px; 
             padding: 0.7rem 1rem; 
             transition: all 0.3s ease;
             font-size: 0.85rem;
@@ -74,176 +74,160 @@
         }
 
         .nav-link:hover, .nav-link.active { 
-            background: var(--ind-blue);
-            color: white;
+            background: linear-gradient(90deg, #1e3a8a, transparent);
+            color: var(--ind-blue);
         }
 
+        /* Submenu Accordion Style */
         .submenu { 
             padding-left: 0.5rem; 
-            background: rgba(0,0,0,0.1);
-            border-left: 2px solid var(--ind-red);
-            margin: 0.3rem 0 0.8rem 1rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            margin: 0.3rem 0 0.8rem 0;
         }
+        .submenu .nav-link { font-size: 0.8rem; padding: 0.5rem 1rem; }
 
         .pt-label { 
             font-size: 0.65rem; 
-            color: #94a3b8; 
+            color: #64748b; 
             padding: 1.2rem 1rem 0.4rem; 
             display: block;
             font-weight: 800;
             letter-spacing: 1px;
-            text-transform: uppercase;
         }
 
-        /* Top Navbar */
-        .top-bar {
+        /* Top Navigation Header */
+        .top-nav {
             margin-left: var(--sidebar-width);
-            padding: 1rem 2.5rem;
+            padding: 0.8rem 2.5rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(5px);
-            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 999;
         }
 
         .main-content { margin-left: var(--sidebar-width); padding: 2rem 2.5rem; min-height: 100vh; }
 
         .hero-banner {
-            background: linear-gradient(135deg, var(--ind-blue) 0%, #1e3a8a 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            border-left: 5px solid var(--ind-red);
             border-radius: 15px;
-            padding: 2rem;
+            padding: 2.5rem;
             margin-bottom: 2rem;
-            border-left: 8px solid var(--ind-red);
         }
 
-        /* Table Style */
+        /* Table Design */
         .card-table {
-            background: #1e293b;
+            background: rgba(30, 41, 59, 0.5);
             border: 1px solid var(--glass-border);
             border-radius: 15px;
         }
 
-        .table { font-size: 0.8rem; color: #e2e8f0; }
         .table thead th { 
-            background: rgba(37, 99, 235, 0.1);
-            color: #60a5fa;
-            border-bottom: 2px solid var(--ind-blue);
-            text-transform: uppercase;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--ind-blue);
             font-size: 0.7rem;
+            font-weight: 700;
+            border-bottom: 2px solid var(--ind-blue);
         }
 
-        /* Badge Customization */
+        /* Badges & Doc Colors */
+        .doc-ikaen { color: var(--ind-red) !important; font-weight: 700; }
+        .doc-ide { color: var(--ind-blue) !important; font-weight: 700; }
         .bg-ikaen { background-color: var(--ind-red) !important; }
         .bg-ide { background-color: var(--ind-blue) !important; }
-        .bg-kse { background-color: #0f766e !important; }
-        
-        .btn-ind-red { background: var(--ind-red); color: white; }
-        .btn-ind-red:hover { background: #b91c1c; color: white; }
-
-        .doc-ikaen { color: #f87171 !important; font-weight: 700; }
-        .doc-ide { color: #60a5fa !important; font-weight: 700; }
     </style>
 </head>
 <body>
 
 <div id="login-page">
     <div class="card login-card p-5 text-center">
-        <div class="mb-4">
-            <i class="bi bi-gear-fill text-primary fs-1"></i>
-            <i class="bi bi-truck text-danger fs-2 ms-n2"></i>
-        </div>
-        <h4 class="fw-bold mb-1 text-white">INDUSTRIAL SYSTEM</h4>
-        <p class="text-white-50 small mb-4">Enterprise Logistics Management</p>
-        
-        <div class="text-start">
-            <label class="small text-white-50 mb-1">Username</label>
-            <input type="text" id="user" class="form-control mb-3 bg-dark border-secondary text-white" placeholder="Admin ID">
-            
-            <label class="small text-white-50 mb-1">Password Access</label>
-            <input type="password" id="pass" class="form-control mb-4 bg-dark border-secondary text-white" placeholder="••••••••">
-        </div>
-        
-        <button class="btn btn-primary w-100 py-2 fw-bold" onclick="handleLogin()">
-            <i class="bi bi-shield-check me-2"></i>AUTHORIZE ACCESS
-        </button>
-        <p id="error-msg" class="text-danger mt-3 small fw-bold" style="display:none;">Access Denied: Invalid Credentials</p>
+        <i class="bi bi-gear-wide-connected text-primary fs-1 mb-3"></i>
+        <h3 class="fw-bold mb-4 text-white">INDUSTRIAL LOGIN</h3>
+        <input type="text" id="user" class="form-control mb-3 bg-dark border-secondary text-white" placeholder="Username">
+        <input type="password" id="pass" class="form-control mb-4 bg-dark border-secondary text-white" placeholder="Password">
+        <button class="btn btn-primary w-100 py-2 fw-bold" onclick="handleLogin()">ACCESS SYSTEM</button>
+        <p id="error-msg" class="text-danger mt-3 small" style="display:none;">Autentikasi Gagal!</p>
     </div>
 </div>
 
 <div id="dashboard-page" style="display:none;">
     <aside class="sidebar d-flex flex-column">
         <div class="mb-4 px-3 d-flex align-items-center">
-            <i class="bi bi-database-fill-gear text-primary fs-3 me-2"></i>
-            <h6 class="fw-bold mb-0 text-white">LOGISTICS v2.0</h6>
+            <i class="bi bi-terminal-fill text-primary fs-3 me-2"></i>
+            <h6 class="fw-bold mb-0 text-white">INTEGRATED v2</h6>
         </div>
         
-        <nav class="flex-grow-1 overflow-auto">
-            <a href="#" class="nav-link active mb-3"><i class="bi bi-cpu-fill me-2"></i> Command Center</a>
+        <nav class="flex-grow-1">
+            <a href="#" class="nav-link active mb-2"><i class="bi bi-grid-1x2-fill me-2"></i> Dashboard Live</a>
 
-            <small class="pt-label">PT. Investama Kalimantan Energi</small>
-            <div class="submenu">
+            <small class="pt-label">PT. INVESTAMA KALIMANTAN ENERGI</small>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2"></i> IKAEN <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <div class="collapse submenu show" id="mIkaen">
                 <a href="sj_ikaen.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_ikaen.html" class="nav-link">Memo</a>
+                <a href="ba_oper_ikaen.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_ikaen.html" class="nav-link">BA Penerimaan</a>
             </div>
 
-            <small class="pt-label">PT. Indo Dharma Energi</small>
-            <div class="submenu">
+            <small class="pt-label">PT. INDO DHARMA ENERGI</small>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-droplet-fill me-2"></i> IDE <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <div class="collapse submenu" id="mIde">
                 <a href="sj_ide.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_ide.html" class="nav-link">Memo</a>
+                <a href="ba_oper_ide.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_ide.html" class="nav-link">BA Penerimaan</a>
             </div>
 
-            <small class="pt-label">PT. Khatulistiwa Sinar Energi</small>
-            <div class="submenu">
+            <small class="pt-label">PT. KHATULISTIWA SINAR ENERGI</small>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-lightning-fill me-2"></i> KSE <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <div class="collapse submenu" id="mKse">
                 <a href="sj_kse.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_kse.html" class="nav-link">Memo</a>
+                <a href="ba_oper_kse.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_kse.html" class="nav-link">BA Penerimaan</a>
             </div>
         </nav>
     </aside>
 
-    <div class="top-bar">
-        <div class="d-flex align-items-center">
-            <span class="badge bg-dark border border-secondary me-3 px-3 py-2 text-white-50">
-                <i class="bi bi-person-circle me-2"></i>Authenticated: Admin
-            </span>
-            <button onclick="handleLogout()" class="btn btn-ind-red btn-sm px-3 fw-bold">
-                <i class="bi bi-power me-2"></i>SIGN OUT
-            </button>
-        </div>
-    </div>
+    <header class="top-nav">
+        <span class="text-white-50 small me-3"><i class="bi bi-person-fill me-1"></i> Admin Session</span>
+        <button class="btn btn-outline-danger btn-sm fw-bold px-3" onclick="handleLogout()">
+            <i class="bi bi-power me-2"></i>SIGN OUT
+        </button>
+    </header>
 
     <main class="main-content">
         <div class="hero-banner text-white">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h2 class="fw-bold mb-1">Industrial Delivery Monitor</h2>
-                    <p class="opacity-75 mb-0">System status: <span class="text-warning">Operational</span> | Tracking active fleets across sectors.</p>
-                </div>
-            </div>
+            <h1 class="fw-bold mb-1">Industrial Logistics</h1>
+            <p class="opacity-75">Real-time monitoring & delivery control system.</p>
         </div>
 
-        <div class="card card-table border-0 p-4 shadow-sm">
+        <div class="card card-table border-0 p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold mb-0 text-white border-start border-4 border-primary ps-3">LIVE LOGISTICS FEED</h6>
-                <button class="btn btn-sm btn-primary rounded-pill px-4" onclick="fetchLogistikData()">
-                    <i class="bi bi-arrow-repeat me-1"></i> Sync Database
-                </button>
+                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-activity me-2 text-primary"></i>LOGISTICS FEED</h6>
+                <button class="btn btn-sm btn-primary rounded-pill px-4" onclick="fetchLogistikData()">Sync Data</button>
             </div>
             
             <div class="table-responsive">
                 <table class="table align-middle">
                     <thead>
                         <tr>
-                            <th>Identitas PT</th>
-                            <th>No. Dokumen</th>
-                            <th>Jenis</th>
-                            <th>Tujuan</th>
-                            <th>Sopir / Unit</th>
-                            <th class="text-end">Qty (L)</th>
+                            <th>IDENTITAS</th>
+                            <th>NO. DOKUMEN</th>
+                            <th>JENIS</th>
+                            <th>TUJUAN</th>
+                            <th>SOPIR / NOPOL</th>
+                            <th class="text-end">QTY (L)</th>
                         </tr>
                     </thead>
                     <tbody id="logistik-table-body">
-                        <tr><td colspan="6" class="text-center py-5">Connecting to secure server...</td></tr>
+                        <tr><td colspan="6" class="text-center py-5">Memuat data sistem...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -273,28 +257,28 @@
                 } else if (valPT.includes('IDE') || valPT.includes('DHARMA')) {
                     badgeClass = 'bg-ide'; docColorClass = 'doc-ide';
                 } else if (valPT.includes('KSE') || valPT.includes('KHATULISTIWA')) {
-                    badgeClass = 'bg-kse'; docColorClass = 'text-info';
+                    badgeClass = 'bg-primary'; docColorClass = 'text-info';
                 }
 
                 html += `
                     <tr>
-                        <td>
-                            <div class="small text-white-50">${row.tanggal || '-'}</div>
-                            <span class="badge rounded-1 ${badgeClass}" style="font-size:0.6rem">${valPT}</span>
+                        <td style="white-space: nowrap;">
+                            <div class="fw-bold text-secondary" style="font-size:0.65rem">${row.tanggal || '-'}</div>
+                            <span class="badge ${badgeClass}" style="font-size:0.6rem">${valPT}</span>
                         </td>
-                        <td class="${docColorClass} fw-bold">${row.no_dokumen || '-'}</td>
-                        <td><span class="text-white-50">${row.jenis_dokumen || '-'}</span></td>
-                        <td><div class="text-truncate" style="max-width:150px;">${row.tujuan || '-'}</div></td>
+                        <td class="${docColorClass}">${row.no_dokumen || '-'}</td>
+                        <td class="text-white-50 fw-bold">${row.jenis_dokumen || '-'}</td>
+                        <td><div class="text-truncate" style="max-width:130px;">${row.tujuan || '-'}</div></td>
                         <td>
-                            <div class="fw-bold">${row.sopir || '-'}</div>
-                            <div class="text-primary small" style="font-size:0.7rem">${row.nopol || '-'}</div>
+                            <div class="fw-bold text-white">${row.sopir || '-'}</div>
+                            <div class="text-primary" style="font-size:0.65rem">${row.nopol || '-'}</div>
                         </td>
-                        <td class="text-end fw-bold text-blue" style="color:#60a5fa">${(row.qty || 0).toLocaleString('id-ID')}</td>
+                        <td class="text-end fw-bold text-info">${(row.qty || 0).toLocaleString('id-ID')}</td>
                     </tr>`;
             });
             tbody.innerHTML = html;
         } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">Database Connection Error.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">Gagal memuat data.</td></tr>`;
         }
     }
 
@@ -302,9 +286,7 @@
         if(document.getElementById('user').value === "admin" && document.getElementById('pass').value === "kse123") {
             localStorage.setItem('ide_session', 'active');
             showDashboard();
-        } else { 
-            document.getElementById('error-msg').style.display = 'block'; 
-        }
+        } else { document.getElementById('error-msg').style.display = 'block'; }
     }
 
     function showDashboard() {
@@ -313,14 +295,8 @@
         fetchLogistikData();
     }
 
-    function handleLogout() { 
-        localStorage.removeItem('ide_session'); 
-        location.reload(); 
-    }
-
-    window.onload = () => { 
-        if (localStorage.getItem('ide_session') === 'active') showDashboard(); 
-    };
+    function handleLogout() { localStorage.removeItem('ide_session'); location.reload(); }
+    window.onload = () => { if (localStorage.getItem('ide_session') === 'active') showDashboard(); };
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
