@@ -88,7 +88,7 @@
             border: 1px solid #555;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        .btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 8.5pt; color: white; transition: 0.3s; text-transform: uppercase; white-space: nowrap; }
+        .btn { padding: 10px 18px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 9pt; color: white; transition: 0.3s; text-transform: uppercase; white-space: nowrap; }
         .btn-preview { background: #6c757d; }
         .btn-save { background: var(--success-blue); }
         .btn-print { background: var(--primary-blue); }
@@ -307,7 +307,7 @@
         const monthRoman = roman[now.getMonth()];
         const year = now.getFullYear();
 
-        let namaPT = "PT. IKNVESTAMA KALIMANTAN ENERGI";
+        let namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
         if (companyCode === "KSE") namaPT = "PT. KHATULISTIWA SINAR ENERGI";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
@@ -363,7 +363,7 @@
         const btn = document.querySelector('.btn-save');
         btn.innerText = 'SAVING...'; btn.disabled = true;
 
-        let namaPT = "PT. IKNVESTAMA KALIMANTAN ENERGI";
+        let namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
         if (companyCode === "KSE") namaPT = "PT. KHATULISTIWA SINAR ENERGI";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
