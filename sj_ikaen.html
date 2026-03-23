@@ -62,8 +62,10 @@
         .sig-table { width: 100%; border-collapse: collapse; margin-top: 30px; table-layout: fixed; }
         .sig-table th, .sig-table td { border: 1px solid #000; text-align: center; padding: 5px; width: 33.33%; }
         .sig-table th { background: #f2f2f2; font-size: 9pt; padding: 8px 5px; }
-        .sig-table td { height: 105px; vertical-align: bottom; font-weight: bold; font-size: 9.5pt; padding-bottom: 10px; position: relative; }
-        .stamp-container { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 135px; z-index: 1; opacity: 0.85; pointer-events: none; }
+        .sig-table td { height: 115px; vertical-align: bottom; font-weight: bold; font-size: 9.5pt; padding-bottom: 10px; position: relative; }
+        
+        /* UPDATE: Ukuran Stempel Diperbesar */
+        .stamp-container { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 165px; z-index: 1; opacity: 0.9; pointer-events: none; }
         
         .other-note-container { width: 100%; border: 1px solid #000; border-top: none; padding: 6px 10px; font-size: 8pt; min-height: 45px; box-sizing: border-box; background: #fff; text-align: left; }
         
@@ -73,8 +75,9 @@
         .field label { font-size: 8pt; font-weight: bold; margin-bottom: 4px; color: #444; }
         input, textarea, select { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; font-family: inherit; }
         
-        .action-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 25px; }
-        .btn { padding: 12px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 9pt; color: white; transition: 0.3s; }
+        /* UPDATE: Tombol Mendatar di Atas */
+        .action-group { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .btn { flex: 1; padding: 10px 5px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 8pt; color: white; transition: 0.3s; text-transform: uppercase; }
         .btn-preview { background: #6c757d; }
         .btn-save { background: var(--success-blue); }
         .btn-print { background: var(--primary-blue); }
@@ -87,11 +90,18 @@
 <body>
 
 <div class="editor-panel">
+    <div class="action-group">
+        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">Preview</button>
+        <button class="btn btn-save" onclick="saveData()">Simpan</button>
+        <button class="btn btn-print" onclick="window.print()">Print</button>
+        <button class="btn btn-download" onclick="downloadPDF()">Download</button>
+    </div>
+
     <h2>Database & Document Type</h2>
     <div class="field">
         <label>Pilih Perusahaan</label>
         <select id="i-target-company" onchange="generateAutoNumber()">
-            <option value="IKAEN" selected>PT. IKNVESTAMA KALIMANTAN ENERGI (IKN)</option>
+            <option value="IKAEN" selected>PT. INVESTAMA KALIMANTAN ENERGI (IKAEN)</option>
             <option value="KSE">PT. KHATULISTIWA SINAR ENERGI (KSE)</option>
             <option value="IDE">PT. INDO DHARMA ENERGI (IDE)</option>
         </select>
@@ -131,20 +141,13 @@
     <div class="field"><label>Nama Pengemudi</label><input type="text" id="i-driver" value="-"></div>
     <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="Staff Operasional"></div>
     <div class="field"><label>Other Note</label><textarea id="i-other-note" rows="2"></textarea></div>
-
-    <div class="action-group">
-        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PREVIEW</button>
-        <button class="btn btn-save" onclick="saveData()">SIMPAN DATA</button>
-        <button class="btn btn-print" onclick="window.print()">PRINT / CETAK</button>
-        <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
-    </div>
 </div>
 
 <div id="sj-container">
     <div class="header">
         <div class="logo-area">
             <img src="ikaen.png" alt="Logo" class="main-logo">
-            <div class="logo-text"><b>IKNVESTAMA</b><span>   K A L I M A N T A N  E N E R G I </span></div>
+            <div class="logo-text"><b>INVESTAMA</b><span>   K A L I M A N T A N  E N E R G I </span></div>
         </div>
     </div>
     
