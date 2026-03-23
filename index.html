@@ -98,6 +98,13 @@
             background-color: #0dcaf0; color: #000 !important;
             box-shadow: 0 0 15px rgba(13, 202, 240, 0.4);
         }
+
+        .btn-pdf {
+            padding: 2px 8px; font-size: 0.65rem; border-radius: 4px;
+            transition: all 0.2s; border: 1px solid rgba(255,255,255,0.2);
+            color: white; background: rgba(255,255,255,0.1);
+        }
+        .btn-pdf:hover { background: #dc3545; border-color: #dc3545; color: white; }
     </style>
 </head>
 <body>
@@ -183,13 +190,14 @@
                             <th>Identitas</th>
                             <th>Nomor Dokumen</th>
                             <th>Jenis</th>
-                            <th>Tujuan/th>
+                            <th>Tujuan</th>
                             <th>Sopir-Nopol</th>
                             <th class="text-end">Qty(L)</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="logistik-table-body">
-                        <tr><td colspan="6" class="text-center py-5">Memuat data sistem...</td></tr>
+                        <tr><td colspan="7" class="text-center py-5">Memuat data sistem...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -238,12 +246,22 @@
                             <span class="opacity-75 ms-1" style="font-size:0.65rem">[${row.nopol || '-'}]</span>
                         </td>
                         <td class="text-end fw-bold">${(row.qty || 0).toLocaleString('id-ID')}</td>
+                        <td class="text-center">
+                            <button class="btn btn-pdf" onclick="viewPDF('${row.id}')">
+                                <i class="bi bi-file-earmark-pdf-fill"></i> PDF
+                            </button>
+                        </td>
                     </tr>`;
             });
             tbody.innerHTML = html;
         } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">Gagal memuat data.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-danger">Gagal memuat data.</td></tr>`;
         }
+    }
+
+    function viewPDF(id) {
+        // Logika untuk membuka atau mendownload file PDF berdasarkan ID dokumen
+        alert("Membuka Dokumen ID: " + id);
     }
 
     function openMaps() {
