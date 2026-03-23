@@ -17,7 +17,7 @@
             --sidebar-width: 280px;
             --ind-red: #ef4444; 
             --ind-blue: #3b82f6; 
-            --ind-kse: #22d3ee; /* Cyan untuk KSE agar kontras */
+            --ind-kse: #22d3ee; 
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
@@ -79,19 +79,19 @@
 
         .card-table { background: rgba(30, 41, 59, 0.5); border: 1px solid var(--glass-border); border-radius: 15px; }
 
-        .table { font-size: 0.75rem; }
+        .table { font-size: 0.75rem; border-collapse: separate; border-spacing: 0 4px; }
         .table thead th { 
             background: rgba(59, 130, 246, 0.1); color: var(--ind-blue);
             font-size: 0.68rem; font-weight: 700; border-bottom: 2px solid var(--ind-blue);
             white-space: nowrap; padding: 12px 10px;
         }
 
-        .table tbody td { padding: 10px 10px; white-space: nowrap; vertical-align: middle; }
+        .table tbody td { padding: 12px 10px; white-space: nowrap; vertical-align: middle; }
 
-        /* Row Color Classes */
-        .row-ikaen { color: var(--ind-red) !important; }
-        .row-ide { color: var(--ind-blue) !important; }
-        .row-kse { color: var(--ind-kse) !important; }
+        /* Row Color Enforcement */
+        .row-ikaen, .row-ikaen td, .row-ikaen .fw-bold { color: var(--ind-red) !important; }
+        .row-ide, .row-ide td, .row-ide .fw-bold { color: var(--ind-blue) !important; }
+        .row-kse, .row-kse td, .row-kse .fw-bold { color: var(--ind-kse) !important; }
 
         .bg-ikaen { background-color: var(--ind-red) !important; color: white !important; }
         .bg-ide { background-color: var(--ind-blue) !important; color: white !important; }
@@ -218,15 +218,15 @@
                     <tr class="${textStyleClass}">
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="fw-bold" style="font-size:0.6rem; opacity:0.8;">${row.tanggal || '-'}</span>
+                                <span class="fw-bold" style="font-size:0.6rem;">${row.tanggal || '-'}</span>
                                 <span class="badge ${badgeClass}" style="font-size:0.58rem;">${valPT}</span>
                             </div>
                         </td>
                         <td class="fw-bold">${row.no_dokumen || '-'}</td>
-                        <td><div class="text-truncate" style="max-width:180px;">${row.tujuan || '-'}</div></td>
+                        <td><div class="text-truncate" style="max-width:200px;">${row.tujuan || '-'}</div></td>
                         <td>
                             <span class="fw-bold">${row.sopir || '-'}</span>
-                            <span class="small opacity-75 ms-1">[${row.nopol || '-'}]</span>
+                            <span class="ms-1">[${row.nopol || '-'}]</span>
                         </td>
                         <td class="text-end fw-bold">${(row.qty || 0).toLocaleString('id-ID')}</td>
                     </tr>`;
