@@ -124,7 +124,6 @@
     <div class="section-title">Data Armada (Max 10)</div>
     <div id="unit-inputs">
         <script>
-            // Data dari gambar
             const defaultData = [
                 { t: "PT. KHATULISTIWA SINAR ENERGI", n: "KH 8139 GM", d: "SUPRIYADI", q: 30000, tr: "133.5 cm" },
                 { t: "PT. KHATULISTIWA SINAR ENERGI", n: "KH 8942 GN", d: "AGUS WANTO", q: 10000, tr: "115.4 cm" },
@@ -328,29 +327,42 @@
     async function saveData() {
         const btn = document.getElementById('btnSave');
         btn.innerText = "MENYIMPAN..."; btn.disabled = true;
-        let rincian = ""; let nopolUtama = ""; let totalQty = 0;
+        
+        let nopolList = [];
+        let sopirList = [];
+        let totalQty = 0;
+
         for(let i=1; i<=10; i++) {
             const nopol = document.getElementById(`inNopol${i}`).value;
+            const sopir = document.getElementById(`inDriver${i}`).value;
             const qty = parseFloat(document.getElementById(`inQty${i}`).value) || 0;
+            
             if(nopol) {
-                if(!nopolUtama) nopolUtama = nopol;
+                nopolList.push(nopol);
+                // Kita simpan format "Nama Sopir (Nopol)" ke dalam list sopir
+                sopirList.push(`${sopir} (${nopol})`);
                 totalQty += qty;
-                rincian += `${nopol}(${qty}), `;
             }
         }
+
         const payload = {
             tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
             no_dokumen: document.getElementById('inNomor').value,
             jenis_dokumen: "MEMO PENGALIRAN",
             tujuan: document.getElementById('inTujuanPT').value,
-            nopol: nopolUtama || "-",
-            sopir: rincian.slice(0, -2) || "-", 
+            nopol: nopolList.join(", ") || "-", // Menyimpan semua nopol dipisah koma
+            sopir: sopirList.join(", ") || "-", // Menyimpan semua nama sopir dipisah koma
             qty: totalQty,
             pt: "PT. KHATULISTIWA SINAR ENERGI"
         };
+
         const { error } = await _supabase.from("data_logistik").insert([payload]);
-        if(error) alert("Gagal Simpan: " + error.message);
-        else { alert("Memo Berhasil Disimpan!"); initPage(); }
+        if(error) {
+            alert("Gagal Simpan: " + error.message);
+        } else { 
+            alert("Memo & Nama Sopir Berhasil Disimpan ke Supabase!"); 
+            initPage(); 
+        }
         btn.innerText = "SIMPAN"; btn.disabled = false;
     }
 
