@@ -19,7 +19,6 @@
 
         body { font-family: 'Arial', sans-serif; background-color: #525659; margin: 0; display: flex; }
         
-        /* Sidebar Styles */
         .sidebar { 
             width: 400px; background: var(--dark-sidebar); color: white; height: 100vh; 
             padding: 15px; overflow-y: auto; position: fixed; left: 0; top: 0;
@@ -27,7 +26,6 @@
         }
         .sidebar h2 { font-size: 16px; border-bottom: 2px solid var(--primary-kse); padding-bottom: 10px; margin-bottom: 15px; color: #ecf0f1; text-align: center; }
         
-        /* Header Top Action Bar */
         .top-action-bar {
             position: fixed; top: 0; right: 0; left: 400px; 
             background: #2c3e50; padding: 10px 20px; display: flex; 
@@ -48,14 +46,13 @@
         .section-title { font-size: 10px; color: var(--accent-blue); font-weight: bold; margin: 15px 0 8px 0; text-transform: uppercase; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
         .input-group { margin-bottom: 6px; }
         .input-group label { display: block; font-size: 9px; margin-bottom: 2px; color: #bdc3c7; }
-        .input-group input, .input-group textarea { 
+        .input-group input { 
             width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #2c3e50; 
-            background: #2c3e50; color: white; font-size: 11px; font-family: sans-serif;
+            background: #2c3e50; color: white; font-size: 11px;
         }
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary-kse); }
         .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
 
-        /* Memo Canvas */
         .main-content { margin-left: 400px; margin-top: 50px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
         .memo-page { 
             background: white; width: 210mm; min-height: 297mm; padding: 15mm 20mm; 
@@ -111,7 +108,7 @@
     <h2>KSE MEMO SYSTEM</h2>
 
     <div class="section-title">Meta Data</div>
-    <div class="input-group"><label>Nomor</label><input type="text" id="inNomor" readonly style="background: #1a252f;"></div>
+    <div class="input-group"><label>Nomor</label><input type="text" id="inNomor" readonly></div>
     <div class="input-group"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="inTglMemo"></div>
 
     <div class="section-title">Tujuan Surat</div>
@@ -121,23 +118,32 @@
     <div class="section-title">Informasi Loading</div>
     <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="05/PO-BBM/KSE/III/2026"></div>
     <div class="input-group"><label>Tanggal PO</label><input type="text" id="inTglPO" value="02 Maret 2026"></div>
-    <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="06 Maret 2026"></div>
-    <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu - Kumai"></div>
+    <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="25 Maret 2026"></div>
+    <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value="Storage BBM PT. SSS - Kumai >> PT. SURYA BORNEO INDUSTRI"></div>
 
     <div class="section-title">Data Armada (Max 10)</div>
     <div id="unit-inputs">
         <script>
-            // Generate 10 input cards
+            // Data dari gambar
+            const defaultData = [
+                { t: "PT. KHATULISTIWA SINAR ENERGI", n: "KH 8139 GM", d: "SUPRIYADI", q: 30000, tr: "133.5 cm" },
+                { t: "PT. KHATULISTIWA SINAR ENERGI", n: "KH 8942 GN", d: "AGUS WANTO", q: 10000, tr: "115.4 cm" },
+                { t: "PT. KHATULISTIWA SINAR ENERGI", n: "KH 8943 GN", d: "NUR KHOLIS", q: 5000, tr: "114.6 cm" },
+                { t: "PT. BERKAH SARANA MAKMUR BENUA", n: "KH 8273 RM", d: "FARID HABIBI", q: 15000, tr: "109.5 cm" },
+                { t: "PT. BERKAH SARANA MAKMUR BENUA", n: "KH 8256 RM", d: "RONNY PRASTIANSYAH", q: 15000, tr: "104.3 cm" }
+            ];
+
             for(let i=1; i<=10; i++) {
+                let data = defaultData[i-1] || { t: "", n: "", d: "", q: "", tr: "" };
                 document.write(`
                 <div class="unit-card">
                     <div style="font-size:10px; margin-bottom:5px; color:#3498db">ARMADA ${i}</div>
-                    <input type="text" id="inTrans${i}" value="${i===1 ? 'PT. KHATULISTIWA SINAR ENERGI' : ''}" placeholder="Transportir" style="width:100%; padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
+                    <input type="text" id="inTrans${i}" value="${data.t}" placeholder="Transportir" style="width:100%; padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px; margin-bottom:5px;">
                     <div class="unit-grid">
-                        <input type="text" id="inNopol${i}" placeholder="No. Polisi" style="padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
-                        <input type="text" id="inDriver${i}" placeholder="Driver" style="padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
-                        <input type="number" id="inQty${i}" placeholder="Qty (L)" style="padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
-                        <input type="text" id="inTera${i}" placeholder="Tera (cm)" style="padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
+                        <input type="text" id="inNopol${i}" value="${data.n}" placeholder="No. Polisi" style="padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
+                        <input type="text" id="inDriver${i}" value="${data.d}" placeholder="Driver" style="padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
+                        <input type="number" id="inQty${i}" value="${data.q}" placeholder="Qty (L)" style="padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
+                        <input type="text" id="inTera${i}" value="${data.tr}" placeholder="Tera (cm)" style="padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
                     </div>
                 </div>
                 `);
@@ -149,34 +155,30 @@
 <div class="main-content">
     <div class="memo-page" id="memo-area">
         <div class="header">
-            <div class="logo-container">
-                <img src="header1.png" alt="Logo KSE">
-                 <div class="text-end"><small class="fw-bold" style="color: #64748b;"></small></div>
-            </div>
-          </div>
+            <div class="logo-container"><img src="header1.png" alt="Logo KSE"></div>
+        </div>
 
         <div class="info-split-container">
             <div class="recipient-side">
                 <strong>Kepada yang kami hormati,</strong>
                 <div style="margin-top: 8px; font-size: 14px;">
-                    <strong id="outTujuanPT">PT. Sinarindo Sukses Selalu</strong><br>
-                    <span id="outAlamatPT">- di Tempat.</span>
+                    <strong id="outTujuanPT"></strong><br>
+                    <span id="outAlamatPT"></span>
                 </div>
             </div>
-
             <div class="meta-side">
                 <div class="meta-row">
-                    <div class="meta-label">Nomor <br><span class="lang-sub" style="font-weight: normal;">Number</span></div>
+                    <div class="meta-label">Nomor <br><span class="lang-sub">Number</span></div>
                     <div class="meta-colon">:</div>
                     <div class="meta-value" id="outNomor"></div>
                 </div>
                 <div class="meta-row">
-                    <div class="meta-label">Perihal <br><span class="lang-sub" style="font-weight: normal;">Subject</span></div>
+                    <div class="meta-label">Perihal <br><span class="lang-sub">Subject</span></div>
                     <div class="meta-colon">:</div>
-                    <div class="meta-value">Memo Pengaliran BBM<br><span class="lang-sub" style="font-weight: normal;">Fuel Transfer Memo</span></div>
+                    <div class="meta-value">Memo Pengaliran BBM<br><span class="lang-sub">Fuel Transfer Memo</span></div>
                 </div>
                 <div class="meta-row">
-                    <div class="meta-label">Tanggal <br><span class="lang-sub" style="font-weight: normal;">Date</span></div>
+                    <div class="meta-label">Tanggal <br><span class="lang-sub">Date</span></div>
                     <div class="meta-colon">:</div>
                     <div class="meta-value" id="outTglMemo"></div>
                 </div>
@@ -185,7 +187,7 @@
 
         <div class="opening-text">
             Dengan Hormat,<br>
-            Bersama ini kami sampaikan Realisasi Pengaliran BBM Solar Industri dari <b id="outTujuanRef">PT. Sinarindo Sukses Selalu</b> dengan rincian sebagai berikut:
+            Bersama ini kami sampaikan Realisasi Pengaliran BBM Solar Industri dari <b id="outTujuanRef"></b> dengan rincian sebagai berikut:
             <span class="lang-sub">We hereby submit the realization of Industrial Diesel Fuel transfer from the specified company with details as follows:</span>
         </div>
 
@@ -233,8 +235,7 @@
                 <div id="qrcode"></div>
                 <div class="qr-text">
                     <strong>Digital E-form KSE System</strong><br>
-                    Scan QR ini untuk validasi dokumen asli.<br>
-                    <i>Scan this QR for document validation.</i>
+                    Scan QR ini untuk validasi dokumen asli.
                 </div>
             </div>
             <div class="footer-address">
@@ -247,7 +248,6 @@
 </div>
 
 <script>
-    // Konfigurasi Supabase
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -265,31 +265,26 @@
         document.getElementById('inTglMemo').value = `${yyyy}/${mm}/${dd}`;
         
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
-        const monthRoman = roman[now.getMonth()];
-
         try {
-            const { count, error } = await _supabase.from("data_logistik").select('*', { count: 'exact', head: true }).eq('jenis_dokumen', "MEMO PENGALIRAN");
+            const { count } = await _supabase.from("data_logistik").select('*', { count: 'exact', head: true }).eq('jenis_dokumen', "MEMO PENGALIRAN");
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            document.getElementById('inNomor').value = `${nextNo}/MEMO-KSE/${monthRoman}/${yyyy}`;
+            document.getElementById('inNomor').value = `${nextNo}/MEMO-KSE/${roman[now.getMonth()]}/${yyyy}`;
         } catch (e) {
-            document.getElementById('inNomor').value = `001/MEMO-KSE/${monthRoman}/${yyyy}`;
+            document.getElementById('inNomor').value = `001/MEMO-KSE/${roman[now.getMonth()]}/${yyyy}`;
         }
         update();
     }
 
     function update() {
-        // Update Info PT Tujuan
         const tujuanPT = document.getElementById('inTujuanPT').value;
         document.getElementById('outTujuanPT').innerText = tujuanPT;
         document.getElementById('outAlamatPT').innerText = document.getElementById('inAlamatPT').value;
         document.getElementById('outTujuanRef').innerText = tujuanPT;
-
-        const noSurat = document.getElementById('inNomor').value;
-        document.getElementById('outNomor').innerText = noSurat;
+        document.getElementById('outNomor').innerText = document.getElementById('inNomor').value;
         
         const qrContainer = document.getElementById("qrcode");
         qrContainer.innerHTML = "";
-        new QRCode(qrContainer, { text: noSurat, width: 45, height: 45 });
+        new QRCode(qrContainer, { text: document.getElementById('inNomor').value, width: 45, height: 45 });
 
         const rawDate = document.getElementById('inTglMemo').value;
         const dParts = rawDate.split('/');
@@ -307,7 +302,6 @@
         let tableHTML = "";
         let rowNum = 1;
 
-        // Loop updated to 10
         for(let i=1; i<=10; i++) {
             const qty = parseFloat(document.getElementById(`inQty${i}`).value) || 0;
             const trans = document.getElementById(`inTrans${i}`).value;
@@ -315,7 +309,7 @@
             const driver = document.getElementById(`inDriver${i}`).value;
             const tera = document.getElementById(`inTera${i}`).value;
 
-            if (qty > 0 || nopol !== "") {
+            if (nopol !== "") {
                 total += qty;
                 tableHTML += `<tr>
                     <td>${rowNum++}</td>
@@ -327,47 +321,36 @@
                 </tr>`;
             }
         }
-        document.getElementById('tableBody').innerHTML = tableHTML || "<tr><td colspan='6'>Silakan isi data armada di sidebar</td></tr>";
+        document.getElementById('tableBody').innerHTML = tableHTML || "<tr><td colspan='6'>Silakan isi data armada</td></tr>";
         document.getElementById('outTotal').innerText = total.toLocaleString('id-ID') + " Liter";
     }
 
     async function saveData() {
         const btn = document.getElementById('btnSave');
         btn.innerText = "MENYIMPAN..."; btn.disabled = true;
-
-        let rincianArmada = "";
-        let nopolUtama = "";
-        let totalQty = 0;
-
-        // Loop updated to 10
+        let rincian = ""; let nopolUtama = ""; let totalQty = 0;
         for(let i=1; i<=10; i++) {
             const nopol = document.getElementById(`inNopol${i}`).value;
             const qty = parseFloat(document.getElementById(`inQty${i}`).value) || 0;
             if(nopol) {
                 if(!nopolUtama) nopolUtama = nopol;
                 totalQty += qty;
-                rincianArmada += `${nopol}(${qty}), `;
+                rincian += `${nopol}(${qty}), `;
             }
         }
-
         const payload = {
             tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
             no_dokumen: document.getElementById('inNomor').value,
             jenis_dokumen: "MEMO PENGALIRAN",
             tujuan: document.getElementById('inTujuanPT').value,
             nopol: nopolUtama || "-",
-            sopir: rincianArmada.slice(0, -2) || "-", 
+            sopir: rincian.slice(0, -2) || "-", 
             qty: totalQty,
             pt: "PT. KHATULISTIWA SINAR ENERGI"
         };
-
         const { error } = await _supabase.from("data_logistik").insert([payload]);
-        if(error) {
-            alert("Gagal Simpan: " + error.message);
-        } else { 
-            alert("Memo Berhasil Disimpan!"); 
-            initPage(); 
-        }
+        if(error) alert("Gagal Simpan: " + error.message);
+        else { alert("Memo Berhasil Disimpan!"); initPage(); }
         btn.innerText = "SIMPAN"; btn.disabled = false;
     }
 
