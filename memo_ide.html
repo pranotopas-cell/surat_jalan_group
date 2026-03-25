@@ -82,7 +82,6 @@
         
         .logo-container { display: flex; align-items: center; gap: 10px; }
         .logo-container img { height: 60px; width: auto; }
-        /* Teks Perusahaan Menjadi Uppercase */
         .logo-container .company-name { font-size: 26px; font-weight: bold; color: var(--primary-blue); letter-spacing: -0.5px; text-transform: uppercase; }
 
         .header-address { text-align: right; font-size: 9px; line-height: 1.4; max-width: 350px; color: #333; }
@@ -367,6 +366,10 @@
         btn.innerText = "SIMPAN"; btn.disabled = false;
     }
 
+    /**
+     * UPDATE: Fungsi Download PDF 
+     * Memastikan konten muat dalam satu halaman A4
+     */
     function downloadPDF() {
         const element = document.getElementById('memo-area');
         const filename = 'Memo_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf';
@@ -375,11 +378,28 @@
             margin: 0,
             filename: filename,
             image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true,
+                logging: false,
+                letterRendering: true
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: 'a4', 
+                orientation: 'portrait',
+                compress: true
+            }
         };
 
-        html2pdf().set(opt).from(element).save();
+        // Menjalankan html2pdf dengan satu halaman
+        html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+            // Memastikan PDF hanya berisi 1 halaman (mencegah overflow)
+            var totalPages = pdf.internal.getNumberOfPages();
+            for (var i = totalPages; i > 1; i--) {
+                pdf.deletePage(i);
+            }
+        }).save();
     }
 
     document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', update));
