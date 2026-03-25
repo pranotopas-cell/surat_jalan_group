@@ -191,13 +191,14 @@
                             <th>Nomor Dokumen</th>
                             <th>Jenis</th>
                             <th>Tujuan</th>
-                            <th>Sopir-Nopol</th>
+                            <th>Nama Sopir</th>
+                            <th>No. Polisi</th>
                             <th class="text-end">Qty(L)</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="logistik-table-body">
-                        <tr><td colspan="7" class="text-center py-5">Memuat data sistem...</td></tr>
+                        <tr><td colspan="8" class="text-center py-5">Memuat data sistem...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -241,10 +242,8 @@
                         <td>${row.no_dokumen || '-'}</td>
                         <td class="opacity-75">${row.jenis_dokumen || '-'}</td>
                         <td>${row.tujuan || '-'}</td>
-                        <td>
-                            ${row.sopir || '-'} 
-                            <span class="opacity-75 ms-1" style="font-size:0.65rem">[${row.nopol || '-'}]</span>
-                        </td>
+                        <td class="fw-bold">${row.sopir || '-'}</td>
+                        <td class="font-monospace" style="font-size:0.75rem">${row.nopol || '-'}</td>
                         <td class="text-end fw-bold">${(row.qty || 0).toLocaleString('id-ID')}</td>
                         <td class="text-center">
                             <button class="btn btn-pdf" onclick="viewPDF('${row.id}')">
@@ -255,12 +254,11 @@
             });
             tbody.innerHTML = html;
         } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-danger">Gagal memuat data.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-danger">Gagal memuat data.</td></tr>`;
         }
     }
 
     function viewPDF(id) {
-        // Logika untuk membuka atau mendownload file PDF berdasarkan ID dokumen
         alert("Membuka Dokumen ID: " + id);
     }
 
