@@ -18,7 +18,6 @@
 
         body { font-family: 'Arial', sans-serif; background-color: #525659; margin: 0; display: flex; }
         
-        /* Layout Sidebar */
         .sidebar { 
             width: 400px; background: var(--dark-sidebar); color: white; height: 100vh; 
             padding: 15px; overflow-y: auto; position: fixed; left: 0; top: 0;
@@ -26,7 +25,6 @@
             z-index: 100;
         }
 
-        /* Navigasi Tombol di Atas Kanan */
         .top-nav {
             position: fixed;
             top: 20px;
@@ -62,12 +60,14 @@
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid var(--primary-blue); }
         .unit-card h4 { margin: 0 0 5px 0; font-size: 10px; color: #ecf0f1; }
 
-        .main-content { margin-left: 400px; flex-grow: 1; padding: 80px 20px 40px 20px; display: flex; justify-content: center; align-items: flex-start; }
+        .main-content { margin-left: 400px; flex-grow: 1; padding: 60px 20px 40px 20px; display: flex; justify-content: center; align-items: flex-start; }
         
+        /* Paksa ukuran A4 yang solid */
         .memo-page { 
-            background: white; width: 210mm; min-height: 297mm; padding: 15mm; 
+            background: white; width: 210mm; height: 297mm; padding: 15mm; 
             box-shadow: 0 0 20px rgba(0,0,0,0.5); color: black; line-height: 1.4;
             position: relative; overflow: hidden;
+            box-sizing: border-box;
         }
 
         .top-border {
@@ -77,38 +77,43 @@
 
         .header { 
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 3px double var(--primary-blue); padding-bottom: 10px; margin-top: 10px; margin-bottom: 20px; 
+            border-bottom: 3px double var(--primary-blue); padding-bottom: 10px; margin-top: 5px; margin-bottom: 15px; 
         }
         
         .logo-container { display: flex; align-items: center; gap: 10px; }
-        .logo-container img { height: 60px; width: auto; }
-        .logo-container .company-name { font-size: 26px; font-weight: bold; color: var(--primary-blue); letter-spacing: -0.5px; text-transform: uppercase; }
+        .logo-container img { height: 55px; width: auto; }
+        .logo-container .company-name { font-size: 24px; font-weight: bold; color: var(--primary-blue); letter-spacing: -0.5px; text-transform: uppercase; }
 
-        .header-address { text-align: right; font-size: 9px; line-height: 1.4; max-width: 350px; color: #333; }
+        .header-address { text-align: right; font-size: 9px; line-height: 1.3; max-width: 350px; color: #333; }
 
-        .meta-container { display: flex; justify-content: space-between; margin-bottom: 25px; align-items: flex-start; }
+        .meta-container { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: flex-start; }
         .meta-left-recipient { width: 45%; font-size: 12px; }
         .meta-right-info { width: 50%; font-size: 12px; border-left: 1px solid #eee; padding-left: 20px; }
 
-        .meta-row { display: flex; margin-bottom: 6px; align-items: flex-start; }
+        .meta-row { display: flex; margin-bottom: 4px; align-items: flex-start; }
         .meta-label { width: 90px; font-weight: bold; color: #333; }
         .meta-colon { width: 10px; }
         .meta-value { font-weight: bold; flex: 1; }
         .lang-sub { display: block; font-size: 9px; font-style: italic; color: #666; font-weight: normal; margin-top: -2px; }
 
-        .details-box { margin-bottom: 15px; padding: 12px; background: #f8f9fa; border: 1px solid #ddd; border-left: 4px solid var(--primary-blue); font-size: 12px; }
+        .details-box { margin-bottom: 10px; padding: 10px; background: #f8f9fa; border: 1px solid #ddd; border-left: 4px solid var(--primary-blue); font-size: 11px; }
 
-        table.data-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 6px 4px; text-align: center; font-size: 11px; }
+        table.data-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 5px 4px; text-align: center; font-size: 11px; }
         table.data-table th { background: var(--primary-blue); color: white; }
 
-        .signature-container { margin-top: 40px; text-align: left; font-size: 13px; }
-        .sig-img { width: 150px; margin: 10px 0 5px -10px; display: block; }
+        /* Style Tanda Tangan */
+        .signature-container { margin-top: 30px; text-align: left; font-size: 12px; }
+        .sig-img { 
+            width: 150px; 
+            margin: 5px 0 0 -5px; /* Rata kiri sejajar dengan teks di atasnya */
+            display: block; 
+        }
 
         @media print {
             .sidebar, .top-nav { display: none; }
-            .main-content { margin-left: 0; padding: 0; background: none; }
-            .memo-page { box-shadow: none; border: none; width: 100%; padding: 0; }
+            .main-content { margin-left: 0; padding: 0; }
+            .memo-page { box-shadow: none; border: none; }
         }
     </style>
 </head>
@@ -123,7 +128,6 @@
 
 <div class="sidebar">
     <h2>MEMO SYSTEM</h2>
-    
     <div class="section-title">Database & Meta</div>
     <div class="input-group">
         <label>Tabel Tujuan</label>
@@ -133,14 +137,14 @@
             <option value="data_kse">PT. KHATULISTIWA SINAR ENERGI</option>
         </select>
     </div>
-    <div class="input-group"><label>Nomor Memo (Otomatis)</label><input type="text" id="inNomor" readonly></div>
-    <div class="input-group"><label>Tanggal Memo (YYYY/MM/DD)</label><input type="text" id="inTglMemo"></div>
+    <div class="input-group"><label>Nomor Memo</label><input type="text" id="inNomor" readonly></div>
+    <div class="input-group"><label>Tanggal Memo</label><input type="text" id="inTglMemo"></div>
 
     <div class="section-title">Informasi Loading</div>
-    <div class="input-group"><label>No. Purchase Order (PO)</label><input type="text" id="inPO" value="10/PO-BBM/IDE/II/2026"></div>
+    <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="10/PO-BBM/IDE/II/2026"></div>
     <div class="input-group"><label>Tanggal PO</label><input type="text" id="inTglPO" value="24 Februari 2026"></div>
     <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="02 Maret 2026"></div>
-    <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu - Kumai"></div>
+    <div class="input-group"><label>Lokasi</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu - Kumai"></div>
 
     <div class="section-title">Data Armada</div>
     <div id="armada-container"></div>
@@ -151,7 +155,7 @@
         <div class="top-border"></div>
         <div class="header">
             <div class="logo-container">
-                <img src="ide1.png" alt="Logo IDE" onerror="this.style.display='none'">
+                <img src="ide1.png" alt="Logo" onerror="this.style.display='none'">
                 <div class="company-name" id="outCompanyName">INDO DHARMA ENERGI</div>
             </div>
             <div class="header-address">
@@ -165,10 +169,9 @@
         <div class="meta-container">
             <div class="meta-left-recipient">
                 <div style="font-weight: bold; margin-bottom: 5px;">Kepada Yang kami hormati, <span class="lang-sub" style="display:inline;">:</span></div>
-                <strong style="font-size: 15px; color: var(--primary-blue);">PT. Sinarindo Sukses Selalu</strong><br>
+                <strong style="font-size: 14px; color: var(--primary-blue);">PT. Sinarindo Sukses Selalu</strong><br>
                 <span>Pangkalan Bun - Kalimantan Tengah</span>
             </div>
-
             <div class="meta-right-info">
                 <div class="meta-row">
                     <div class="meta-label">Nomor<span class="lang-sub">Number</span></div>
@@ -188,10 +191,10 @@
             </div>
         </div>
 
-        <div style="margin-bottom: 15px; font-size: 12px;">
+        <div style="margin-bottom: 10px; font-size: 12px;">
             Dengan Hormat, <span class="lang-sub" style="display:inline;">/ Respectfully,</span><br>
             Bersama ini kami sampaikan Realisasi Pengaliran BBM Solar Industri dengan rincian sebagai berikut:<br>
-            <i style="font-size: 11px; color: #666;">Herewith we inform the realization of industrial diesel fuel distribution with the following details:</i>
+            <i style="font-size: 10px; color: #666;">Herewith we inform the realization of industrial diesel fuel distribution with the following details:</i>
         </div>
 
         <div class="details-box">
@@ -205,32 +208,32 @@
             <thead>
                 <tr>
                     <th>NO</th>
-                    <th>TRANSPORTIR<br><i style="font-size: 9px; font-weight: normal;">Transporter</i></th>
-                    <th>NO. POLISI<br><i style="font-size: 9px; font-weight: normal;">License Plate</i></th>
-                    <th>DRIVER<br><i style="font-size: 9px; font-weight: normal;">Driver Name</i></th>
-                    <th>QTY (L)<br><i style="font-size: 9px; font-weight: normal;">Quantity</i></th>
-                    <th>TERA (cm)<br><i style="font-size: 9px; font-weight: normal;">Measurement</i></th>
+                    <th>TRANSPORTIR</th>
+                    <th>NO. POLISI</th>
+                    <th>DRIVER</th>
+                    <th>QTY (L)</th>
+                    <th>TERA (cm)</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
             <tfoot>
                 <tr style="font-weight: bold; background: #f1f4f9;">
-                    <td colspan="4" style="text-align: right;">TOTAL REALISASI <i style="font-size: 9px; font-weight: normal;">(Total Realization)</i></td>
+                    <td colspan="4" style="text-align: right;">TOTAL REALISASI</td>
                     <td id="outTotal" style="color: var(--primary-blue);"></td>
                     <td></td>
                 </tr>
             </tfoot>
         </table>
 
-        <div style="font-size: 11px; margin-top: 20px; text-align: justify; line-height: 1.4;">
+        <div style="font-size: 10px; margin-top: 15px; text-align: justify; line-height: 1.3;">
             Demikian memo ini dibuat tanpa paksaan dari pihak manapun, dengan keterangan yang sebenar-benarnya diatas agar dapat digunakan sebagaimana mestinya.<br>
             <i style="color: #666;">This memo is made voluntarily, with the actual information above to be used as appropriate.</i>
         </div>
 
         <div class="signature-container">
             Regards,<br>
-            <strong style="font-size: 14px; color: var(--primary-blue);" id="outSigCompany">PT. INDO DHARMA ENERGI</strong><br>
-            <img src="ttd_ide.png" alt="Tanda Tangan" class="sig-img" onerror="this.style.display='none'">
+            <strong style="font-size: 13px; color: var(--primary-blue);" id="outSigCompany">PT. INDO DHARMA ENERGI</strong><br>
+            <img src="ttd_ide.png" alt="Signature" class="sig-img" onerror="this.style.display='none'">
         </div>
     </div>
 </div>
@@ -266,7 +269,6 @@
         generateArmadaInputs();
         const now = new Date();
         document.getElementById('inTglMemo').value = `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')}`;
-        
         const table = document.getElementById('i-target-table').value;
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         
@@ -320,11 +322,9 @@
         const targetTable = document.getElementById('i-target-table').value;
         const noMemo = document.getElementById('inNomor').value;
         const tglMemo = document.getElementById('inTglMemo').value.replace(/\//g, '-');
-        
         let namaPT = "PT. INDO DHARMA ENERGI";
         if(targetTable === "data_ikaen") namaPT = "PT. IKAEN";
         if(targetTable === "data_kse") namaPT = "PT. KHATULISTIWA SINAR ENERGI";
-
         btn.innerText = "SIMPAN..."; btn.disabled = true;
 
         const payloads = [];
@@ -333,73 +333,31 @@
             const qty = parseFloat(document.getElementById('inQty' + i).value) || 0;
             const transportir = document.getElementById('inTrans' + i).value;
             const driver = document.getElementById('inDriver' + i).value;
-
             if (nopol || qty > 0) {
                 payloads.push({
-                    tanggal: tglMemo,
-                    no_dokumen: noMemo,
-                    jenis_dokumen: "MEMO PENGALIRAN",
-                    tujuan: "PT. Sinarindo Sukses Selalu",
-                    nopol: nopol,
-                    sopir: driver,
-                    qty: qty,
-                    pt: namaPT,
-                    keterangan: "PO: " + document.getElementById('inPO').value + " | Trans: " + transportir
+                    tanggal: tglMemo, no_dokumen: noMemo, jenis_dokumen: "MEMO PENGALIRAN",
+                    tujuan: "PT. Sinarindo Sukses Selalu", nopol: nopol, sopir: driver,
+                    qty: qty, pt: namaPT, keterangan: "PO: " + document.getElementById('inPO').value + " | Trans: " + transportir
                 });
             }
         }
-
-        if (payloads.length === 0) {
-            alert("Isi data armada terlebih dahulu.");
-            btn.innerText = "SIMPAN"; btn.disabled = false;
-            return;
-        }
-
         const { error } = await _supabase.from('data_logistik').insert(payloads);
-
-        if(error) {
-            alert("Gagal: " + error.message);
-        } else {
-            alert("Data Berhasil Tersimpan!");
-            initPage();
-        }
+        if(!error) { alert("Data Berhasil Tersimpan!"); initPage(); }
         btn.innerText = "SIMPAN"; btn.disabled = false;
     }
 
-    /**
-     * UPDATE: Fungsi Download PDF 
-     * Memastikan konten muat dalam satu halaman A4
-     */
+    // FUNGSI DOWNLOAD PAKSA 1 HALAMAN
     function downloadPDF() {
         const element = document.getElementById('memo-area');
-        const filename = 'Memo_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf';
-        
         const opt = {
             margin: 0,
-            filename: filename,
+            filename: 'Memo_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf',
             image: { type: 'jpeg', quality: 1 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true,
-                logging: false,
-                letterRendering: true
-            },
-            jsPDF: { 
-                unit: 'mm', 
-                format: 'a4', 
-                orientation: 'portrait',
-                compress: true
-            }
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: 'avoid' } // Mencegah pemisahan halaman otomatis
         };
-
-        // Menjalankan html2pdf dengan satu halaman
-        html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-            // Memastikan PDF hanya berisi 1 halaman (mencegah overflow)
-            var totalPages = pdf.internal.getNumberOfPages();
-            for (var i = totalPages; i > 1; i--) {
-                pdf.deletePage(i);
-            }
-        }).save();
+        html2pdf().set(opt).from(element).save();
     }
 
     document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', update));
