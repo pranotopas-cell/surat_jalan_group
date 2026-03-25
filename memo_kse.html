@@ -124,10 +124,11 @@
     <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="06 Maret 2026"></div>
     <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu - Kumai"></div>
 
-    <div class="section-title">Data Armada (Max 5)</div>
+    <div class="section-title">Data Armada (Max 10)</div>
     <div id="unit-inputs">
         <script>
-            for(let i=1; i<=5; i++) {
+            // Generate 10 input cards
+            for(let i=1; i<=10; i++) {
                 document.write(`
                 <div class="unit-card">
                     <div style="font-size:10px; margin-bottom:5px; color:#3498db">ARMADA ${i}</div>
@@ -306,7 +307,8 @@
         let tableHTML = "";
         let rowNum = 1;
 
-        for(let i=1; i<=5; i++) {
+        // Loop updated to 10
+        for(let i=1; i<=10; i++) {
             const qty = parseFloat(document.getElementById(`inQty${i}`).value) || 0;
             const trans = document.getElementById(`inTrans${i}`).value;
             const nopol = document.getElementById(`inNopol${i}`).value;
@@ -337,7 +339,8 @@
         let nopolUtama = "";
         let totalQty = 0;
 
-        for(let i=1; i<=5; i++) {
+        // Loop updated to 10
+        for(let i=1; i<=10; i++) {
             const nopol = document.getElementById(`inNopol${i}`).value;
             const qty = parseFloat(document.getElementById(`inQty${i}`).value) || 0;
             if(nopol) {
