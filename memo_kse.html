@@ -339,8 +339,8 @@
             
             if(nopol) {
                 nopolList.push(nopol);
-                // Kita simpan format "Nama Sopir (Nopol)" ke dalam list sopir
-                sopirList.push(`${sopir} (${nopol})`);
+                // Hanya menyimpan Nama Sopir saja tanpa nomor polisi
+                sopirList.push(sopir);
                 totalQty += qty;
             }
         }
@@ -350,8 +350,8 @@
             no_dokumen: document.getElementById('inNomor').value,
             jenis_dokumen: "MEMO PENGALIRAN",
             tujuan: document.getElementById('inTujuanPT').value,
-            nopol: nopolList.join(", ") || "-", // Menyimpan semua nopol dipisah koma
-            sopir: sopirList.join(", ") || "-", // Menyimpan semua nama sopir dipisah koma
+            nopol: nopolList.join(", ") || "-",
+            sopir: sopirList.join(", ") || "-", 
             qty: totalQty,
             pt: "PT. KHATULISTIWA SINAR ENERGI"
         };
@@ -360,7 +360,7 @@
         if(error) {
             alert("Gagal Simpan: " + error.message);
         } else { 
-            alert("Memo & Nama Sopir Berhasil Disimpan ke Supabase!"); 
+            alert("Memo & Nama Sopir Berhasil Disimpan!"); 
             initPage(); 
         }
         btn.innerText = "SIMPAN"; btn.disabled = false;
