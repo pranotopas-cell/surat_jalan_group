@@ -331,16 +331,27 @@
 
         try {
             const element = document.getElementById('sj-container');
-            const pdfBlob = await html2pdf().set({ margin:0, filename:fileName, image:{type:'jpeg', quality:0.98}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).from(element).output('blob');
+            const pdfBlob = await html2pdf().set({ 
+                margin:0, 
+                filename:fileName, 
+                image:{type:'jpeg', quality:0.98}, 
+                html2canvas:{scale:2, useCORS:true}, 
+                jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} 
+            }).from(element).output('blob');
 
-            // UPLOAD KE BUCKET data_logistik
-            const { error: uploadError } = await _supabase.storage.from('data_logistik').upload(`public/${fileName}`, pdfBlob, { cacheControl:'3600', upsert:true });
+            // 1. Upload ke BUCKET data_logistik
+            const { error: uploadError } = await _supabase.storage
+                .from('data_logistik')
+                .upload(`public/${fileName}`, pdfBlob, { cacheControl:'3600', upsert:true });
+            
             if (uploadError) throw uploadError;
 
+            // 2. Dapatkan URL PDF
             const { data: urlData } = _supabase.storage.from('data_logistik').getPublicUrl(`public/${fileName}`);
             
             let namaPT = (companyCode === "IKAEN") ? "PT. INVESTAMA KALIMANTAN ENERGI" : (companyCode === "IDE") ? "PT. INDO DHARMA ENERGI" : "PT. KHATULISTIWA SINAR ENERGI";
 
+            // 3. Insert ke TABEL data_logistik (Kolom url_pdf)
             const { error: dbError } = await _supabase.from('data_logistik').insert([{
                 tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
                 no_dokumen: noDoc,
@@ -354,15 +365,24 @@
             }]);
 
             if (dbError) throw dbError;
-            alert('Sukses! Data & URL PDF Tersimpan.');
+            alert('Sukses! Data dan link PDF berhasil disimpan.');
             generateAutoNumber();
-        } catch (err) { alert('Error: ' + err.message); }
-        finally { btn.innerText = 'SIMPAN DATA'; btn.disabled = false; }
+        } catch (err) { 
+            alert('Gagal menyimpan: ' + err.message); 
+        } finally { 
+            btn.innerText = 'SIMPAN DATA'; btn.disabled = false; 
+        }
     }
 
     function downloadPDF() {
         const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
-        html2pdf().set({ margin:0, filename: 'DOC_'+noDoc+'.pdf', image:{type:'jpeg', quality:0.98}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).from(document.getElementById('sj-container')).save();
+        html2pdf().set({ 
+            margin:0, 
+            filename: 'DOC_'+noDoc+'.pdf', 
+            image:{type:'jpeg', quality:0.98}, 
+            html2canvas:{scale:2, useCORS:true}, 
+            jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} 
+        }).from(document.getElementById('sj-container')).save();
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
