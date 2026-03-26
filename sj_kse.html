@@ -45,9 +45,7 @@
         .meta-val { font-weight: bold; color: #000; }
         
         .title-block { text-align: center; margin: 35px 0 20px 0; color: #000; }
-        /* Garis dipindah ke bawah Delivery Order */
         .title-block h1 { font-size: 20pt; margin: 0; display: inline-block; border-bottom: 3px solid #000; font-weight: bold; letter-spacing: 2px; color: #000; padding-bottom: 2px; }
-        /* Garis bawah pada Surat Jalan dihilangkan */
         .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; text-decoration: none; }
         
         .main-table { width: 100%; border-top: 2.5px solid var(--primary-green); border-bottom: 2.5px solid var(--primary-green); border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
@@ -79,6 +77,13 @@
         .field label { font-size: 8pt; font-weight: bold; margin-bottom: 4px; color: #444; }
         input, textarea, select { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; font-family: inherit; }
         
+        /* History Styles */
+        .history-section { margin-top: 20px; border-top: 2px solid #eee; padding-top: 15px; }
+        .history-table { width: 100%; border-collapse: collapse; font-size: 7.5pt; }
+        .history-table th { background: #f4f4f4; text-align: left; padding: 5px; border: 1px solid #ddd; }
+        .history-table td { padding: 5px; border: 1px solid #ddd; }
+        .history-row:hover { background: #f0fdfa; cursor: pointer; }
+
         .top-action-bar { position: fixed; top: 20px; right: 40px; display: flex; gap: 10px; z-index: 999; background: rgba(74, 77, 74, 0.8); padding: 10px; border-radius: 8px; }
         
         .btn { padding: 10px 20px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 8.5pt; color: white; transition: 0.3s; white-space: nowrap; }
@@ -146,6 +151,21 @@
     <div class="field"><label>Nama Pengemudi</label><input type="text" id="i-driver" value="-"></div>
     <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="Staff Operasional"></div>
     <div class="field"><label>Other Note</label><textarea id="i-other-note" rows="2"></textarea></div>
+
+    <div class="history-section">
+        <h2>Riwayat Dokumen Terbaru</h2>
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>No. Dokumen</th>
+                    <th>Tujuan</th>
+                    <th>Qty</th>
+                </tr>
+            </thead>
+            <tbody id="history-body">
+                </tbody>
+        </table>
+    </div>
 </div>
 
 <div id="sj-container">
@@ -292,6 +312,25 @@
         return `${parts[2]} ${bulanIndo[parseInt(parts[1]) - 1]} ${parts[0]}`;
     }
 
+    async function loadHistory() {
+        const { data, error } = await _supabase
+            .from('data_logistik')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(10);
+
+        if (!error && data) {
+            const tbody = document.getElementById('history-body');
+            tbody.innerHTML = data.map(row => `
+                <tr class="history-row">
+                    <td>${row.no_dokumen}</td>
+                    <td>${row.tujuan}</td>
+                    <td>${row.qty} L</td>
+                </tr>
+            `).join('');
+        }
+    }
+
     async function generateAutoNumber() {
         const companyCode = document.getElementById('i-target-company').value;
         const docType = document.getElementById('i-doc-type').value;
@@ -395,6 +434,7 @@
             alert('Gagal Simpan: ' + error.message);
         } else {
             alert('Sukses! Data Berhasil Disimpan.');
+            loadHistory(); // Refresh riwayat setelah simpan
             generateAutoNumber();
         }
         btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
@@ -404,7 +444,6 @@
         const element = document.getElementById('sj-container');
         const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
         
-        // Pengaturan agar PDF menjadi satu lembar
         const opt = {
             margin: 0,
             filename: 'DOC_' + noDoc + '.pdf',
@@ -416,14 +455,17 @@
                 letterRendering: true
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: 'avoid' } // Menghindari pemotongan halaman otomatis
+            pagebreak: { mode: 'avoid' }
         };
         
         html2pdf().set(opt).from(element).save();
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
-    window.onload = generateAutoNumber;
+    window.onload = () => {
+        generateAutoNumber();
+        loadHistory();
+    };
 </script>
 </body>
 </html>
