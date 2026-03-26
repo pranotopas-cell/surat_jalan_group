@@ -45,7 +45,7 @@
         .meta-val { font-weight: bold; color: #000; }
         
         .title-block { text-align: center; margin: 35px 0 20px 0; color: #000; }
-        .title-block h1 { font-size: 20pt; margin: 0; text-decoration: underline; font-weight: bold; letter-spacing: 2px; color: var(--dark-green); }
+        .title-block h1 { font-size: 20pt; margin: 0; text-decoration: underline; font-weight: bold; letter-spacing: 2px; color: #000; }
         .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; }
         
         .main-table { width: 100%; border-top: 2.5px solid var(--primary-green); border-bottom: 2.5px solid var(--primary-green); border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
@@ -58,7 +58,6 @@
         .desc-table { width: 60%; border-collapse: collapse; table-layout: fixed; }
         .desc-table td { border: 1px solid #ccc; padding: 6px; background: #fcfcfc; font-size: 8.5pt; }
         
-        /* CSS NOTE BOX DIPERBAIKI */
         .note-box { width: 40%; font-size: 7.5pt; line-height: 1.4; border: 1px dashed var(--tosca); padding: 8px; background: #f0fdfa; }
         .note-box table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
         .note-box td { vertical-align: top; padding: 1px 0; }
@@ -78,17 +77,7 @@
         .field label { font-size: 8pt; font-weight: bold; margin-bottom: 4px; color: #444; }
         input, textarea, select { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; font-family: inherit; }
         
-        .top-action-bar { 
-            position: fixed; 
-            top: 20px; 
-            right: 40px; 
-            display: flex; 
-            gap: 10px; 
-            z-index: 999; 
-            background: rgba(74, 77, 74, 0.8);
-            padding: 10px;
-            border-radius: 8px;
-        }
+        .top-action-bar { position: fixed; top: 20px; right: 40px; display: flex; gap: 10px; z-index: 999; background: rgba(74, 77, 74, 0.8); padding: 10px; border-radius: 8px; }
         
         .btn { padding: 10px 20px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 8.5pt; color: white; transition: 0.3s; white-space: nowrap; }
         .btn-preview { background: #6c757d; }
@@ -115,7 +104,7 @@
         <label>Pilih Perusahaan</label>
         <select id="i-target-company" onchange="generateAutoNumber()">
             <option value="KSE">PT. KHATULISTIWA SINAR ENERGI (KSE)</option>
-            <option value="IKAEN">PT. IKNVESTAMA KALIMANTAN ENERGI (IKN)</option>
+            <option value="IKAEN">PT. INVESTAMA KALIMANTAN ENERGI (IKN)</option>
             <option value="IDE">PT. INDO DHARMA ENERGI (IDE)</option>
         </select>
     </div>
@@ -124,12 +113,13 @@
         <select id="i-doc-type" onchange="generateAutoNumber()">
             <option value="SURAT JALAN">SURAT JALAN (SJ)</option>
             <option value="MEMO">MEMO</option>
+            <option value="BERITA ACARA">BERITA ACARA (BA)</option>
         </select>
     </div>
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Dokumen</label><input type="text" id="i-no" readonly></div>
+    <div class="field"><label>Nomor Dokumen (Manual Edit OK)</label><input type="text" id="i-no"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -309,18 +299,22 @@
             document.getElementById('i-tgl').value = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         }
 
-        let codeDoc = docType === "MEMO" ? "MEMO" : "SJ";
+        let codeDoc = "SJ";
+        if (docType === "MEMO") codeDoc = "MEMO";
+        else if (docType === "BERITA ACARA") codeDoc = "BA";
+
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const monthRoman = roman[now.getMonth()];
         const year = now.getFullYear();
 
         let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
-        if (companyCode === "IKAEN") namaPT = "PT. IKNVESTAMA KALIMANTAN ENERGI";
+        if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
         const { data } = await _supabase.from('data_logistik')
             .select('no_dokumen')
             .eq('pt', namaPT)
+            .eq('jenis_dokumen', docType)
             .order('created_at', { ascending: false })
             .limit(1);
 
@@ -334,8 +328,16 @@
         const formattedNum = nextNum.toString().padStart(3, '0');
         document.getElementById('i-no').value = `${formattedNum}/${codeDoc}-${companyCode}/${monthRoman}/${year}`;
         
-        document.getElementById('v-title-main').innerText = (docType === "MEMO") ? "INTERNAL MEMO" : "DELIVERY ORDER";
-        document.getElementById('v-title-sub').innerText = (docType === "MEMO") ? "MEMO PERUSAHAAN" : "SURAT JALAN";
+        if(docType === "MEMO") {
+            document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
+            document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
+        } else if(docType === "BERITA ACARA") {
+            document.getElementById('v-title-main').innerText = "BERITA ACARA";
+            document.getElementById('v-title-sub').innerText = "BERITA ACARA SERAH TERIMA";
+        } else {
+            document.getElementById('v-title-main').innerText = "DELIVERY ORDER";
+            document.getElementById('v-title-sub').innerText = "SURAT JALAN";
+        }
 
         upd();
     }
@@ -371,7 +373,7 @@
         btn.innerText = 'SAVING...'; btn.disabled = true;
 
         let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
-        if (companyCode === "IKAEN") namaPT = "PT. IKNVESTAMA KALIMANTAN ENERGI";
+        if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
         const payload = {
