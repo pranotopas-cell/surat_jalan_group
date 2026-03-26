@@ -102,12 +102,12 @@
         .bg-kse { background-color: var(--ind-gold) !important; color: black; }
 
         .table tbody td { padding: 10px 8px; white-space: nowrap; }
-        .btn-pdf {
+        .btn-view {
             padding: 2px 8px; font-size: 0.65rem; border-radius: 4px;
             transition: all 0.2s; border: 1px solid rgba(255,255,255,0.2);
-            color: white; background: rgba(255,255,255,0.1);
+            color: white; background: rgba(59, 130, 246, 0.2);
         }
-        .btn-pdf:hover { background: #dc3545; border-color: #dc3545; color: white; }
+        .btn-view:hover { background: #0d6efd; border-color: #0d6efd; color: white; }
     </style>
 </head>
 <body>
@@ -257,8 +257,8 @@
                         <td class="font-monospace" style="font-size:0.75rem">${row.nopol || '-'}</td>
                         <td class="text-end fw-bold">${(row.qty || 0).toLocaleString('id-ID')}</td>
                         <td class="text-center">
-                            <button class="btn btn-pdf" onclick="viewPDF('${row.id}')">
-                                <i class="bi bi-file-earmark-pdf-fill"></i> PDF
+                            <button class="btn btn-view" onclick="viewPDF('${row.id}')">
+                                <i class="bi bi-eye-fill"></i> View
                             </button>
                         </td>
                     </tr>`;
@@ -269,7 +269,13 @@
         }
     }
 
-    function viewPDF(id) { alert("Membuka Dokumen ID: " + id); }
+    // FUNGSI UPDATE: Membuka dokumen berdasarkan ID (Silakan sesuaikan format file yang diinginkan)
+    function viewPDF(id) { 
+        // Logika untuk mengarahkan ke halaman cetak atau viewer sesuai ID
+        // Contoh: mengarahkan ke viewer.html dengan parameter ID
+        window.open(`view_document.html?id=${id}`, "_blank"); 
+    }
+
     function openMaps() { window.open("https://www.google.com/maps", "_blank"); }
 
     function handleLogin() {
