@@ -77,13 +77,6 @@
         .field label { font-size: 8pt; font-weight: bold; margin-bottom: 4px; color: #444; }
         input, textarea, select { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; font-family: inherit; }
         
-        /* History Styles */
-        .history-section { margin-top: 20px; border-top: 2px solid #eee; padding-top: 15px; }
-        .history-table { width: 100%; border-collapse: collapse; font-size: 7.5pt; }
-        .history-table th { background: #f4f4f4; text-align: left; padding: 5px; border: 1px solid #ddd; }
-        .history-table td { padding: 5px; border: 1px solid #ddd; }
-        .history-row:hover { background: #f0fdfa; cursor: pointer; }
-
         .top-action-bar { position: fixed; top: 20px; right: 40px; display: flex; gap: 10px; z-index: 999; background: rgba(74, 77, 74, 0.8); padding: 10px; border-radius: 8px; }
         
         .btn { padding: 10px 20px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 8.5pt; color: white; transition: 0.3s; white-space: nowrap; }
@@ -151,21 +144,6 @@
     <div class="field"><label>Nama Pengemudi</label><input type="text" id="i-driver" value="-"></div>
     <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="Staff Operasional"></div>
     <div class="field"><label>Other Note</label><textarea id="i-other-note" rows="2"></textarea></div>
-
-    <div class="history-section">
-        <h2>Riwayat Dokumen Terbaru</h2>
-        <table class="history-table">
-            <thead>
-                <tr>
-                    <th>No. Dokumen</th>
-                    <th>Tujuan</th>
-                    <th>Qty</th>
-                </tr>
-            </thead>
-            <tbody id="history-body">
-                </tbody>
-        </table>
-    </div>
 </div>
 
 <div id="sj-container">
@@ -312,25 +290,6 @@
         return `${parts[2]} ${bulanIndo[parseInt(parts[1]) - 1]} ${parts[0]}`;
     }
 
-    async function loadHistory() {
-        const { data, error } = await _supabase
-            .from('data_logistik')
-            .select('*')
-            .order('created_at', { ascending: false })
-            .limit(10);
-
-        if (!error && data) {
-            const tbody = document.getElementById('history-body');
-            tbody.innerHTML = data.map(row => `
-                <tr class="history-row">
-                    <td>${row.no_dokumen}</td>
-                    <td>${row.tujuan}</td>
-                    <td>${row.qty} L</td>
-                </tr>
-            `).join('');
-        }
-    }
-
     async function generateAutoNumber() {
         const companyCode = document.getElementById('i-target-company').value;
         const docType = document.getElementById('i-doc-type').value;
@@ -409,35 +368,72 @@
     }
 
     async function saveData() {
-        const companyCode = document.getElementById('i-target-company').value;
         const btn = document.querySelector('.btn-save');
-        btn.innerText = 'SAVING...'; btn.disabled = true;
+        btn.innerText = 'MEMPROSES...'; btn.disabled = true;
 
-        let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
-        if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
-        else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
+        const companyCode = document.getElementById('i-target-company').value;
+        const noDoc = document.getElementById('i-no').value;
+        const fileName = `DOC_${noDoc.replace(/\//g, '-')}_${Date.now()}.pdf`;
 
-        const payload = {
-            tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
-            no_dokumen: document.getElementById('i-no').value,
-            jenis_dokumen: document.getElementById('i-doc-type').value,
-            tujuan: document.getElementById('i-po-to').value,
-            nopol: document.getElementById('i-plat').value,
-            sopir: document.getElementById('i-driver').value,
-            qty: parseFloat(document.getElementById('i-vol').value) || 0,
-            pt: namaPT 
+        // 1. Generate PDF sebagai Blob
+        const element = document.getElementById('sj-container');
+        const opt = {
+            margin: 0,
+            filename: fileName,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        const { error } = await _supabase.from('data_logistik').insert([payload]);
+        try {
+            const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
 
-        if (error) {
-            alert('Gagal Simpan: ' + error.message);
-        } else {
-            alert('Sukses! Data Berhasil Disimpan.');
-            loadHistory(); // Refresh riwayat setelah simpan
+            // 2. Upload ke Storage (Bucket: dokumen-kse)
+            const { data: uploadData, error: uploadError } = await _supabase.storage
+                .from('dokumen-kse')
+                .upload(`public/${fileName}`, pdfBlob, {
+                    cacheControl: '3600',
+                    upsert: true
+                });
+
+            if (uploadError) throw uploadError;
+
+            // 3. Dapatkan Public URL
+            const { data: urlData } = _supabase.storage
+                .from('dokumen-kse')
+                .getPublicUrl(`public/${fileName}`);
+            
+            const publicUrl = urlData.publicUrl;
+
+            // 4. Simpan ke Database
+            let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
+            if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
+            else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
+
+            const payload = {
+                tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
+                no_dokumen: noDoc,
+                jenis_dokumen: document.getElementById('i-doc-type').value,
+                tujuan: document.getElementById('i-po-to').value,
+                nopol: document.getElementById('i-plat').value,
+                sopir: document.getElementById('i-driver').value,
+                qty: parseFloat(document.getElementById('i-vol').value) || 0,
+                pt: namaPT,
+                url_pdf: publicUrl
+            };
+
+            const { error: dbError } = await _supabase.from('data_logistik').insert([payload]);
+
+            if (dbError) throw dbError;
+
+            alert('Sukses! Data Berhasil Disimpan & PDF Diupload.');
             generateAutoNumber();
+
+        } catch (err) {
+            alert('Kesalahan: ' + err.message);
+        } finally {
+            btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
         }
-        btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
     }
 
     function downloadPDF() {
@@ -448,12 +444,7 @@
             margin: 0,
             filename: 'DOC_' + noDoc + '.pdf',
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true,
-                logging: false,
-                letterRendering: true
-            },
+            html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
             pagebreak: { mode: 'avoid' }
         };
@@ -462,10 +453,7 @@
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
-    window.onload = () => {
-        generateAutoNumber();
-        loadHistory();
-    };
+    window.onload = generateAutoNumber;
 </script>
 </body>
 </html>
