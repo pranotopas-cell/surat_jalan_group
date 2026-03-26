@@ -67,7 +67,7 @@
         .sig-table th, .sig-table td { border: 1px solid #000; text-align: center; padding: 5px; width: 33.33%; }
         .sig-table th { background: var(--accent-bg); font-size: 9pt; padding: 8px 5px; }
         .sig-table td { height: 105px; vertical-align: bottom; font-weight: bold; font-size: 9.5pt; padding-bottom: 10px; position: relative; }
-        .stamp-container { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 175px; z-index: 1; opacity: 0.85; pointer-events: none; }
+        .stamp-container { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 150px; z-index: 1; opacity: 0.85; pointer-events: none; }
         
         .other-note-container { width: 100%; border: 1px solid #000; border-top: none; padding: 6px 10px; font-size: 8pt; min-height: 45px; box-sizing: border-box; background: #fff; text-align: left; }
         
@@ -129,11 +129,11 @@
     <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
     <div class="field"><label>Volume Liter (qty)</label><input type="number" id="i-vol" value="0"></div>
     <div class="field"><label>Nomor SO</label><input type="text" id="i-so-desc" value="-"></div>
-    <div class="field"><label>Tgl Pengaliran</label><input type="date" id="i-load-date"></div>
+    <div class="field"><label>Tgl Pengisian</label><input type="date" id="i-load-date"></div>
     <div class="field"><label>Plat Nomor</label><input type="text" id="i-plat" value="-"></div>
     <div class="field"><label>Nomor Segel</label><input type="text" id="i-segel" value="-"></div>
-    <div class="field"><label>Meter Awal (mm)</label><input type="text" id="i-m1" value="-"></div>
-    <div class="field"><label>Meter Akhir (mm)</label><input type="text" id="i-m2" value="-"></div>
+    <div class="field"><label>Kilometer Awal)</label><input type="text" id="i-m1" value="-"></div>
+    <div class="field"><label>Kilometer Akhir</label><input type="text" id="i-m2" value="-"></div>
     <div class="field"><label>Tinggi Cairan (T2)</label><input type="text" id="i-t2" value="-"></div>
 
     <h2>3. Deskripsi Pesanan</h2>
@@ -172,7 +172,7 @@
 
     <div class="title-block">
         <h1 id="v-title-main">DELIVERY ORDER</h1>
-        <p id="v-title-sub">SURAT JALAN</p>
+        <p id="v-title-sub">Surat Jalan</p>
     </div>
 
     <table class="main-table">
@@ -195,15 +195,15 @@
             <td>: <span class="val">Fuel Truck (Mobil Tangki)</span></td>
         </tr>
         <tr>
-            <td><div class="label-group"><span class="label-id">Tgl Pengaliran</span><span class="label-en">Loading Date</span></div></td>
+            <td><div class="label-group"><span class="label-id">Tgl Pengisian</span><span class="label-en">Loading Date</span></div></td>
             <td>: <span class="val" id="v-load">-</span></td>
             <td><div class="label-group"><span class="label-id">Nomor Polisi</span><span class="label-en">Police Plat Number</span></div></td>
             <td>: <span class="val" id="v-plat">-</span></td>
         </tr>
         <tr>
-            <td><div class="label-group"><span class="label-id">Meter Awal (TC)</span><span class="label-en">Initial Meter</span></div></td>
+            <td><div class="label-group"><span class="label-id">Kilometer Awal</span><span class="label-en">Initial Km</span></div></td>
             <td>: <span class="val" id="v-m1">-</span> mm</td>
-            <td><div class="label-group"><span class="label-id">Meter Akhir (TC)</span><span class="label-en">Final Meter</span></div></td>
+            <td><div class="label-group"><span class="label-id">Kilometer Akhir</span><span class="label-en">Final Km</span></div></td>
             <td>: <span class="val" id="v-m2">-</span> mm</td>
         </tr>
         <tr>
@@ -218,15 +218,15 @@
         </tr>
     </table>
 
-    <div style="font-weight:bold; font-size:9.5pt; margin-top:5px; margin-bottom: 5px;">DESCRIPTION NOTE / Catatan Keterangan</div>
+    <div style="font-weight:bold; font-size:9.5pt; margin-top:5px; margin-bottom: 5px;">DESCRIPTION NOTE</div>
     <div class="desc-section">
         <table class="desc-table">
             <tr>
-                <td width="45%"><b>Purchase Order to:</b><br><i style="font-size: 7.5pt;">Nomor PO:</i></td>
+                <td width="45%"><b>Number Purchase Order:</b><br><i style="font-size: 7.5pt;">Nomor PO:</i></td>
                 <td>: <span class="val" id="v-po-num">-</span></td>
             </tr>
             <tr>
-                <td><b>Sales Order No.</b> / <i style="font-size: 7.5pt;">Nomor SO</i></td>
+                <td><b>PIc Number</b> / <i style="font-size: 7.5pt;">Nomor PIC</i></td>
                 <td>: <span class="val" id="v-so-desc">-</span></td>
             </tr>
             <tr>
