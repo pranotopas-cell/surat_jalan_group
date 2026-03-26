@@ -45,8 +45,10 @@
         .meta-val { font-weight: bold; color: #000; }
         
         .title-block { text-align: center; margin: 35px 0 20px 0; color: #000; }
-        .title-block h1 { font-size: 20pt; margin: 0; text-decoration: underline; font-weight: bold; letter-spacing: 2px; color: #000; }
-        .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; }
+        /* Garis dipindah ke bawah Delivery Order */
+        .title-block h1 { font-size: 20pt; margin: 0; display: inline-block; border-bottom: 3px solid #000; font-weight: bold; letter-spacing: 2px; color: #000; padding-bottom: 2px; }
+        /* Garis bawah pada Surat Jalan dihilangkan */
+        .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; text-decoration: none; }
         
         .main-table { width: 100%; border-top: 2.5px solid var(--primary-green); border-bottom: 2.5px solid var(--primary-green); border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
         .main-table td { padding: 6px 4px; vertical-align: top; border-bottom: 0.5px solid #eee; }
@@ -132,7 +134,7 @@
     <div class="field"><label>Tgl Pengisian</label><input type="date" id="i-load-date"></div>
     <div class="field"><label>Plat Nomor</label><input type="text" id="i-plat" value="-"></div>
     <div class="field"><label>Nomor Segel</label><input type="text" id="i-segel" value="-"></div>
-    <div class="field"><label>Kilometer Awal)</label><input type="text" id="i-m1" value="-"></div>
+    <div class="field"><label>Kilometer Awal</label><input type="text" id="i-m1" value="-"></div>
     <div class="field"><label>Kilometer Akhir</label><input type="text" id="i-m2" value="-"></div>
     <div class="field"><label>Tinggi Cairan (T2)</label><input type="text" id="i-t2" value="-"></div>
 
@@ -158,7 +160,7 @@
         <div class="company-address">
             Jln. H.M Rafi'i Rt.24 Kel. Madurejo  Arut Selatan<br>
             Kotawaringin Barat, Kalimantan Tengah<br>
-            <span style="color:var(--primary-green); font-weight:bold; text-decoration:underline">pt.khatulistiwa.sinar.energi@gmail.com</span>
+            <span style="color:var(--primary-green); font-weight:bold;">pt.khatulistiwa.sinar.energi@gmail.com</span>
         </div>
         <div class="meta-info-grid">
             <table>
@@ -401,7 +403,23 @@
     function downloadPDF() {
         const element = document.getElementById('sj-container');
         const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
-        html2pdf().set({ margin: 0, filename: 'DOC_'+noDoc+'.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save();
+        
+        // Pengaturan agar PDF menjadi satu lembar
+        const opt = {
+            margin: 0,
+            filename: 'DOC_' + noDoc + '.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true,
+                logging: false,
+                letterRendering: true
+            },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: 'avoid' } // Menghindari pemotongan halaman otomatis
+        };
+        
+        html2pdf().set(opt).from(element).save();
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
