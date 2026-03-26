@@ -46,7 +46,7 @@
         
         .title-block { text-align: center; margin: 35px 0 20px 0; color: #000; }
         .title-block h1 { font-size: 20pt; margin: 0; display: inline-block; border-bottom: 3px solid #000; font-weight: bold; letter-spacing: 2px; color: #000; padding-bottom: 2px; }
-        .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; text-decoration: none; }
+        .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; }
         
         .main-table { width: 100%; border-top: 2.5px solid var(--primary-green); border-bottom: 2.5px solid var(--primary-green); border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
         .main-table td { padding: 6px 4px; vertical-align: top; border-bottom: 0.5px solid #eee; }
@@ -61,7 +61,6 @@
         .note-box { width: 40%; font-size: 7.5pt; line-height: 1.4; border: 1px dashed var(--tosca); padding: 8px; background: #f0fdfa; }
         .note-box table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
         .note-box td { vertical-align: top; padding: 1px 0; }
-        .note-text-justify { text-align: justify; margin-top: 5px; font-style: italic; display: block; }
         
         .sig-table { width: 100%; border-collapse: collapse; margin-top: 30px; table-layout: fixed; }
         .sig-table th, .sig-table td { border: 1px solid #000; text-align: center; padding: 5px; width: 33.33%; }
@@ -119,7 +118,7 @@
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Dokumen (Manual Edit OK)</label><input type="text" id="i-no"></div>
+    <div class="field"><label>Nomor Dokumen</label><input type="text" id="i-no"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -156,7 +155,7 @@
     
     <div class="header">
         <div class="company-address">
-            Jln. H.M Rafi'i Rt.24 Kel. Madurejo  Arut Selatan<br>
+            Jln. H.M Rafi'i Rt.24 Kel. Madurejo Arut Selatan<br>
             Kotawaringin Barat, Kalimantan Tengah<br>
             <span style="color:var(--primary-green); font-weight:bold;">pt.khatulistiwa.sinar.energi@gmail.com</span>
         </div>
@@ -218,48 +217,33 @@
         </tr>
     </table>
 
-    <div style="font-weight:bold; font-size:9.5pt; margin-top:5px; margin-bottom: 5px;">DESCRIPTION NOTE</div>
     <div class="desc-section">
         <table class="desc-table">
-            <tr>
-                <td width="45%"><b>Number Purchase Order:</b><br><i style="font-size: 7.5pt;">Nomor PO:</i></td>
-                <td>: <span class="val" id="v-po-num">-</span></td>
-            </tr>
-            <tr>
-                <td><b>PIc Number</b> / <i style="font-size: 7.5pt;">Nomor PIC</i></td>
-                <td>: <span class="val" id="v-so-desc">-</span></td>
-            </tr>
-            <tr>
-                <td><b>PO Quantity</b> / <i style="font-size: 7.5pt;">Jumlah Pesanan</i></td>
-                <td>: <span class="val" id="v-poqty-v">-</span> L</td>
-            </tr>
+            <tr><td><b>Number Purchase Order:</b></td><td>: <span class="val" id="v-po-num">-</span></td></tr>
+            <tr><td><b>PIc Number / PIC</b></td><td>: <span class="val" id="v-so-desc">-</span></td></tr>
+            <tr><td><b>PO Quantity / Liter</b></td><td>: <span class="val" id="v-poqty-v">-</span> L</td></tr>
         </table>
-        
         <div class="note-box">
             <b>NOTE :</b>
             <table>
-                <tr><td width="35%">Kuantitas</td><td width="5%">:</td><td>Sesuai Manifes (Cukup)</td></tr>
+                <tr><td>Kuantitas</td><td>:</td><td>Sesuai Manifes</td></tr>
                 <tr><td>Kualitas</td><td>:</td><td>Baik / Standar</td></tr>
-                <tr><td>Kondisi Segel</td><td>:</td><td>Aman & Terkendali</td></tr>
             </table>
-            <span class="note-text-justify">
-                "Penerima menyatakan barang dalam kondisi sempurna saat serah terima. Batas waktu pengajuan keberatan/komplain adalah 1x24 jam sejak saat penandatanganan ini."
-            </span>
         </div>
     </div>
 
     <table class="sig-table">
         <tr>
-            <th>Penerima<br><span class="label-en">Received By</span></th>
-            <th>Pengemudi<br><span class="label-en">Driver</span></th>
-            <th>Manager Operasional<br><span class="label-en">Operational Manager</span></th>
+            <th>Penerima</th>
+            <th>Pengemudi</th>
+            <th>Manager Operasional</th>
         </tr>
         <tr>
-            <td><span>( . . . . . . . . . . . . . . . . )</span></td>
+            <td><br><br><br>( . . . . . . . . . . . . . . . . )</td>
             <td><span id="v-driver">-</span></td>
             <td>
                 <img src="stempel.png" alt="Stempel" class="stamp-container">
-                <div style="position:relative; z-index:2;"><br><br><span id="v-mgr"> Staff Operasional</span></div>
+                <br><br><span id="v-mgr">Staff Operasional</span>
             </td>
         </tr>
     </table>
@@ -270,7 +254,7 @@
 
     <div class="system-qr-footer">
         <div id="qrcode"></div>
-        <div class="system-info-text"><b>E-System Document KSE Group</b><br><i>Digital Verification Secure System</i></div>
+        <div class="system-info-text"><b>E-System Document KSE Group</b></div>
     </div>
     <div class="page-footer-border"></div>
     <div class="accent-box"><div class="accent-blue"></div><div class="accent-light"></div></div>
@@ -299,72 +283,42 @@
             document.getElementById('i-tgl').value = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         }
 
-        let codeDoc = "SJ";
-        if (docType === "MEMO") codeDoc = "MEMO";
-        else if (docType === "BERITA ACARA") codeDoc = "BA";
-
+        let codeDoc = (docType === "MEMO") ? "MEMO" : (docType === "BERITA ACARA") ? "BA" : "SJ";
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const monthRoman = roman[now.getMonth()];
         const year = now.getFullYear();
 
-        let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
-        if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
-        else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
+        let namaPT = (companyCode === "IKAEN") ? "PT. INVESTAMA KALIMANTAN ENERGI" : (companyCode === "IDE") ? "PT. INDO DHARMA ENERGI" : "PT. KHATULISTIWA SINAR ENERGI";
 
         const { data } = await _supabase.from('data_logistik')
             .select('no_dokumen')
             .eq('pt', namaPT)
             .eq('jenis_dokumen', docType)
-            .order('created_at', { ascending: false })
-            .limit(1);
+            .order('created_at', { ascending: false }).limit(1);
 
         let nextNum = 1;
         if (data && data.length > 0 && data[0].no_dokumen) {
-            const lastNo = data[0].no_dokumen;
-            const lastNum = parseInt(lastNo.split('/')[0]);
+            const lastNum = parseInt(data[0].no_dokumen.split('/')[0]);
             if(!isNaN(lastNum)) nextNum = lastNum + 1;
         }
 
-        const formattedNum = nextNum.toString().padStart(3, '0');
-        document.getElementById('i-no').value = `${formattedNum}/${codeDoc}-${companyCode}/${monthRoman}/${year}`;
-        
-        if(docType === "MEMO") {
-            document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
-            document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
-        } else if(docType === "BERITA ACARA") {
-            document.getElementById('v-title-main').innerText = "BERITA ACARA";
-            document.getElementById('v-title-sub').innerText = "BERITA ACARA SERAH TERIMA";
-        } else {
-            document.getElementById('v-title-main').innerText = "DELIVERY ORDER";
-            document.getElementById('v-title-sub').innerText = "SURAT JALAN";
-        }
-
+        document.getElementById('i-no').value = `${nextNum.toString().padStart(3, '0')}/${codeDoc}-${companyCode}/${monthRoman}/${year}`;
         upd();
     }
 
     function upd() {
-        const fields = [
-            ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'], ['v-trans', 'i-trans'], 
-            ['v-prod', 'i-prod'], ['v-do-top', 'i-do-desc'], ['v-vol', 'i-vol'], 
-            ['v-so-top', 'i-so-desc'], ['v-load', 'i-load-date'], ['v-plat', 'i-plat'], 
-            ['v-m1', 'i-m1'], ['v-m2', 'i-m2'], ['v-segel', 'i-segel'], 
-            ['v-t2', 'i-t2'], ['v-po-num', 'i-po-num'], ['v-so-desc', 'i-so-desc'], 
-            ['v-poqty-v', 'i-poqty'], ['v-driver', 'i-driver'], ['v-mgr', 'i-mgr'], ['v-other-note', 'i-other-note']
+        const mapping = [
+            ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'], ['v-trans', 'i-trans'], ['v-prod', 'i-prod'], 
+            ['v-do-top', 'i-do-desc'], ['v-vol', 'i-vol'], ['v-so-top', 'i-so-desc'], ['v-load', 'i-load-date'], 
+            ['v-plat', 'i-plat'], ['v-m1', 'i-m1'], ['v-m2', 'i-m2'], ['v-segel', 'i-segel'], 
+            ['v-t2', 'i-t2'], ['v-po-num', 'i-po-num'], ['v-so-desc', 'i-so-desc'], ['v-poqty-v', 'i-poqty'], 
+            ['v-driver', 'i-driver'], ['v-mgr', 'i-mgr'], ['v-other-note', 'i-other-note']
         ];
-        
-        fields.forEach(p => {
-            const displayEl = document.getElementById(p[0]);
-            const inputEl = document.getElementById(p[1]);
-            if(displayEl && inputEl) displayEl.innerText = inputEl.value || '-';
-        });
-        
-        const tglInput = document.getElementById('i-tgl').value;
-        document.getElementById('v-tgl').innerText = formatTanggalIndonesia(tglInput);
+        mapping.forEach(m => { document.getElementById(m[0]).innerText = document.getElementById(m[1]).value || '-'; });
+        document.getElementById('v-tgl').innerText = formatTanggalIndonesia(document.getElementById('i-tgl').value);
         document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
         document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
-        
-        qrcode.clear();
-        qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
+        qrcode.clear(); qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
     }
 
     async function saveData() {
@@ -375,42 +329,19 @@
         const noDoc = document.getElementById('i-no').value;
         const fileName = `DOC_${noDoc.replace(/\//g, '-')}_${Date.now()}.pdf`;
 
-        // 1. Generate PDF sebagai Blob
-        const element = document.getElementById('sj-container');
-        const opt = {
-            margin: 0,
-            filename: fileName,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
         try {
-            const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
+            const element = document.getElementById('sj-container');
+            const pdfBlob = await html2pdf().set({ margin:0, filename:fileName, image:{type:'jpeg', quality:0.98}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).from(element).output('blob');
 
-            // 2. Upload ke Storage (Bucket: dokumen-kse)
-            const { data: uploadData, error: uploadError } = await _supabase.storage
-                .from('dokumen-kse')
-                .upload(`public/${fileName}`, pdfBlob, {
-                    cacheControl: '3600',
-                    upsert: true
-                });
-
+            // UPLOAD KE BUCKET data_logistik
+            const { error: uploadError } = await _supabase.storage.from('data_logistik').upload(`public/${fileName}`, pdfBlob, { cacheControl:'3600', upsert:true });
             if (uploadError) throw uploadError;
 
-            // 3. Dapatkan Public URL
-            const { data: urlData } = _supabase.storage
-                .from('dokumen-kse')
-                .getPublicUrl(`public/${fileName}`);
+            const { data: urlData } = _supabase.storage.from('data_logistik').getPublicUrl(`public/${fileName}`);
             
-            const publicUrl = urlData.publicUrl;
+            let namaPT = (companyCode === "IKAEN") ? "PT. INVESTAMA KALIMANTAN ENERGI" : (companyCode === "IDE") ? "PT. INDO DHARMA ENERGI" : "PT. KHATULISTIWA SINAR ENERGI";
 
-            // 4. Simpan ke Database
-            let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
-            if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
-            else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
-
-            const payload = {
+            const { error: dbError } = await _supabase.from('data_logistik').insert([{
                 tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
                 no_dokumen: noDoc,
                 jenis_dokumen: document.getElementById('i-doc-type').value,
@@ -419,37 +350,19 @@
                 sopir: document.getElementById('i-driver').value,
                 qty: parseFloat(document.getElementById('i-vol').value) || 0,
                 pt: namaPT,
-                url_pdf: publicUrl
-            };
-
-            const { error: dbError } = await _supabase.from('data_logistik').insert([payload]);
+                url_pdf: urlData.publicUrl
+            }]);
 
             if (dbError) throw dbError;
-
-            alert('Sukses! Data Berhasil Disimpan & PDF Diupload.');
+            alert('Sukses! Data & URL PDF Tersimpan.');
             generateAutoNumber();
-
-        } catch (err) {
-            alert('Kesalahan: ' + err.message);
-        } finally {
-            btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
-        }
+        } catch (err) { alert('Error: ' + err.message); }
+        finally { btn.innerText = 'SIMPAN DATA'; btn.disabled = false; }
     }
 
     function downloadPDF() {
-        const element = document.getElementById('sj-container');
         const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
-        
-        const opt = {
-            margin: 0,
-            filename: 'DOC_' + noDoc + '.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: 'avoid' }
-        };
-        
-        html2pdf().set(opt).from(element).save();
+        html2pdf().set({ margin:0, filename: 'DOC_'+noDoc+'.pdf', image:{type:'jpeg', quality:0.98}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm', format:'a4', orientation:'portrait'} }).from(document.getElementById('sj-container')).save();
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
