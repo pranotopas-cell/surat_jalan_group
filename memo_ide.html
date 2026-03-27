@@ -52,13 +52,14 @@
         
         .input-group { margin-bottom: 6px; }
         .input-group label { display: block; font-size: 9px; margin-bottom: 2px; color: #bdc3c7; }
-        .input-group input, .input-group select { 
+        .input-group input, .input-group select, .input-group textarea { 
             width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #2c3e50; 
-            background: #2c3e50; color: white; font-size: 11px;
+            background: #2c3e50; color: white; font-size: 11px; font-family: inherit;
         }
 
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid var(--primary-blue); }
         .unit-card h4 { margin: 0 0 5px 0; font-size: 10px; color: #ecf0f1; }
+        .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 
         .main-content { margin-left: 400px; flex-grow: 1; padding: 60px 20px 40px 20px; display: flex; justify-content: center; align-items: flex-start; }
         
@@ -137,6 +138,7 @@
     </div>
     <div class="input-group"><label>Nomor Memo (Editable)</label><input type="text" id="inNomor"></div>
     <div class="input-group"><label>Tanggal Memo</label><input type="text" id="inTglMemo"></div>
+    <div class="input-group"><label>Perihal / Subject (Editable)</label><textarea id="inPerihal" rows="2">Memo Pengaliran BBM</textarea></div>
 
     <div class="section-title">Informasi Loading</div>
     <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="-"></div>
@@ -144,7 +146,7 @@
     <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="02 Maret 2026"></div>
     <div class="input-group"><label>Lokasi</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu"></div>
 
-    <div class="section-title">Data Armada</div>
+    <div class="section-title">Data Armada (Bisa Pilih/Ketik)</div>
     <div id="armada-container"></div>
 </div>
 
@@ -184,7 +186,7 @@
                 <div class="meta-row">
                     <div class="meta-label">Perihal<span class="lang-sub">Subject</span></div>
                     <div class="meta-colon">:</div>
-                    <div class="meta-value">Memo Pengaliran BBM<span class="lang-sub">Fuel Distribution Memo</span></div>
+                    <div class="meta-value" id="outPerihal">Memo Pengaliran BBM<span class="lang-sub">Fuel Distribution Memo</span></div>
                 </div>
             </div>
         </div>
@@ -241,47 +243,43 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // DATA PILIHAN (DROPDOWN)
-    const listTransportir = ["PT. BERKAH SARANA MAKMUR BENUA", "PT. INDO DHARMA ENERGI", "PT. IKAEN", "PT. KSE"];
-    const listNopol = ["KH 8121 GI", "KH 8542 GK", "KH 8891 G", "KH 8001 GL"];
-    const listDriver = ["Samsul", "Ahmad", "Budi", "Hadi", "Fery"];
+    // DATA PILIHAN (MASTER)
+    const listTransportir = ["PT. KHATULISTIWA SINAR ENERGI", "PT. BERKAH SARANA MAKMUR BENUA", "PT. INDO DHARMA ENERGI", "PT. TRANS GLOBAL ENERGI", "PT. IKAEN"];
+    const listNopol = ["KH 8139 GM", "KH 8942 GN", "KH 8943 GN", "KH 8273 RM", "KH 8256 RM", "KH 8121 GI", "KH 8542 GK", "L 9761 UJ"];
+    const listDriver = ["SUPRIYADI", "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", "ADI SUCIPTO", "AGUS MULYANTO", "Samsul", "Ahmad"];
     const listQty = ["5000", "8000", "10000", "15000"];
-    const listTera = ["155", "160", "175", "180"];
+    const listTera = ["133.5 cm", "115.4 cm", "114.6 cm", "109.5 cm", "104.3 cm", "124,0 cm"];
 
-    function createDropdownOptions(list) {
-        return `<option value="">-- Pilih --</option>` + list.map(item => `<option value="${item}">${item}</option>`).join('');
+    function createDatalist(id, list) {
+        return `<datalist id="${id}">` + list.map(item => `<option value="${item}">`).join('') + `</datalist>`;
     }
 
     function generateArmadaInputs() {
         let html = "";
+        html += createDatalist('listTrans', listTransportir);
+        html += createDatalist('listNopol', listNopol);
+        html += createDatalist('listDriver', listDriver);
+        html += createDatalist('listQty', listQty);
+        html += createDatalist('listTera', listTera);
+
         for(let i=1; i<=5; i++) {
             html += `
             <div class="unit-card">
                 <h4>Unit ${i}</h4>
                 <div class="input-group">
                     <label>Transportir</label>
-                    <select id="inTrans${i}">${createDropdownOptions(listTransportir)}</select>
+                    <input type="text" id="inTrans${i}" list="listTrans" placeholder="Pilih/Ketik">
                 </div>
-                <div class="input-group">
-                    <label>No. Polisi</label>
-                    <select id="inNopol${i}">${createDropdownOptions(listNopol)}</select>
-                </div>
-                <div class="input-group">
-                    <label>Driver</label>
-                    <select id="inDriver${i}">${createDropdownOptions(listDriver)}</select>
-                </div>
-                <div class="input-group">
-                    <label>Qty (Liter)</label>
-                    <select id="inQty${i}">${createDropdownOptions(listQty)}</select>
-                </div>
-                <div class="input-group">
-                    <label>Tera (cm)</label>
-                    <select id="inTera${i}">${createDropdownOptions(listTera)}</select>
+                <div class="unit-grid">
+                    <div class="input-group"><label>No. Polisi</label><input type="text" id="inNopol${i}" list="listNopol"></div>
+                    <div class="input-group"><label>Driver</label><input type="text" id="inDriver${i}" list="listDriver"></div>
+                    <div class="input-group"><label>Qty (L)</label><input type="text" id="inQty${i}" list="listQty"></div>
+                    <div class="input-group"><label>Tera (cm)</label><input type="text" id="inTera${i}" list="listTera"></div>
                 </div>
             </div>`;
         }
         document.getElementById('armada-container').innerHTML = html;
-        document.querySelectorAll('.unit-card select').forEach(el => el.addEventListener('change', update));
+        document.querySelectorAll('.unit-card input').forEach(el => el.addEventListener('input', update));
     }
 
     function formatIndoDate(dateObj) {
@@ -316,7 +314,14 @@
     }
 
     function update() {
+        // Update Meta
         document.getElementById('outNomor').innerText = document.getElementById('inNomor').value;
+        
+        // Update Perihal
+        const perihal = document.getElementById('inPerihal').value;
+        let perihalSub = "Fuel Distribution Memo";
+        document.getElementById('outPerihal').innerHTML = perihal + `<span class="lang-sub">${perihalSub}</span>`;
+
         const rawDate = document.getElementById('inTglMemo').value;
         const dParts = rawDate.split('/');
         if(dParts.length === 3) {
@@ -332,13 +337,21 @@
         let total = 0, tableHTML = "", rowCount = 1;
         for (let i = 1; i <= 5; i++) {
             const nopol = document.getElementById('inNopol' + i).value;
-            const qty = parseFloat(document.getElementById('inQty' + i).value) || 0;
+            const qtyStr = document.getElementById('inQty' + i).value || "0";
+            const qty = parseFloat(qtyStr.replace(/,/g, '')) || 0;
             if (nopol || qty > 0) {
                 total += qty;
-                tableHTML += `<tr><td>${rowCount++}</td><td style="text-align:left;">${document.getElementById('inTrans'+i).value}</td><td>${nopol}</td><td>${document.getElementById('inDriver'+i).value}</td><td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td><td>${document.getElementById('inTera'+i).value}</td></tr>`;
+                tableHTML += `<tr>
+                    <td>${rowCount++}</td>
+                    <td style="text-align:left;">${document.getElementById('inTrans'+i).value}</td>
+                    <td>${nopol}</td>
+                    <td>${document.getElementById('inDriver'+i).value}</td>
+                    <td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td>
+                    <td>${document.getElementById('inTera'+i).value}</td>
+                </tr>`;
             }
         }
-        document.getElementById('tableBody').innerHTML = tableHTML;
+        document.getElementById('tableBody').innerHTML = tableHTML || "<tr><td colspan='6'>Silakan isi data armada</td></tr>";
         document.getElementById('outTotal').innerText = total.toLocaleString('id-ID') + " Liter";
     }
 
@@ -350,12 +363,14 @@
         let namaPT = "PT. INDO DHARMA ENERGI";
         if(targetTable === "data_ikaen") namaPT = "PT. IKAEN";
         if(targetTable === "data_kse") namaPT = "PT. KHATULISTIWA SINAR ENERGI";
+        
         btn.innerText = "SIMPAN..."; btn.disabled = true;
 
         const payloads = [];
         for (let i = 1; i <= 5; i++) {
             const nopol = document.getElementById('inNopol' + i).value;
-            const qty = parseFloat(document.getElementById('inQty' + i).value) || 0;
+            const qtyStr = document.getElementById('inQty' + i).value || "0";
+            const qty = parseFloat(qtyStr.replace(/,/g, '')) || 0;
             const transportir = document.getElementById('inTrans' + i).value;
             const driver = document.getElementById('inDriver' + i).value;
             if (nopol || qty > 0) {
@@ -366,8 +381,16 @@
                 });
             }
         }
+
+        if(payloads.length === 0) {
+            alert("Isi minimal satu data armada!");
+            btn.innerText = "SIMPAN"; btn.disabled = false;
+            return;
+        }
+
         const { error } = await _supabase.from('data_logistik').insert(payloads);
         if(!error) { alert("Data Berhasil Tersimpan!"); initPage(); }
+        else { alert("Gagal Simpan: " + error.message); }
         btn.innerText = "SIMPAN"; btn.disabled = false;
     }
 
@@ -383,7 +406,10 @@
         html2pdf().set(opt).from(element).save();
     }
 
-    document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', update));
+    document.addEventListener('input', function(e) {
+        if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') update();
+    });
+    
     window.onload = initPage;
 </script>
 </body>
