@@ -62,9 +62,8 @@
 
         .main-content { margin-left: 400px; flex-grow: 1; padding: 60px 20px 40px 20px; display: flex; justify-content: center; align-items: flex-start; }
         
-        /* Paksa ukuran A4 yang solid */
         .memo-page { 
-            background: white; width: 210mm; height: 297mm; padding: 5mm 15mm 5mm 15mm; 
+            background: white; width: 210mm; height: 297mm; padding: 10mm 15mm; 
             box-shadow: 0 0 20px rgba(0,0,0,0.5); color: black; line-height: 1.4;
             position: relative; overflow: hidden;
             box-sizing: border-box;
@@ -102,18 +101,17 @@
         table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 5px 4px; text-align: center; font-size: 11px; }
         table.data-table th { background: var(--primary-blue); color: white; }
 
-        /* Style Tanda Tangan */
         .signature-container { margin-top: 30px; text-align: left; font-size: 12px; }
         .sig-img { 
             width: 150px; 
-            margin: 5px 0 0 -5px; /* Rata kiri sejajar dengan teks di atasnya */
+            margin: 5px 0 0 -5px;
             display: block; 
         }
 
         @media print {
             .sidebar, .top-nav { display: none; }
             .main-content { margin-left: 0; padding: 0; }
-            .memo-page { box-shadow: none; border: none; }
+            .memo-page { box-shadow: none; border: none; width: 100%; height: auto; }
         }
     </style>
 </head>
@@ -137,7 +135,7 @@
             <option value="data_kse">PT. KHATULISTIWA SINAR ENERGI</option>
         </select>
     </div>
-    <div class="input-group"><label>Nomor Memo</label><input type="text" id="inNomor" readonly></div>
+    <div class="input-group"><label>Nomor Memo (Editable)</label><input type="text" id="inNomor"></div>
     <div class="input-group"><label>Tanggal Memo</label><input type="text" id="inTglMemo"></div>
 
     <div class="section-title">Informasi Loading</div>
@@ -243,21 +241,47 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // DATA PILIHAN (DROPDOWN)
+    const listTransportir = ["PT. BERKAH SARANA MAKMUR BENUA", "PT. INDO DHARMA ENERGI", "PT. IKAEN", "PT. KSE"];
+    const listNopol = ["KH 8121 GI", "KH 8542 GK", "KH 8891 G", "KH 8001 GL"];
+    const listDriver = ["Samsul", "Ahmad", "Budi", "Hadi", "Fery"];
+    const listQty = ["5000", "8000", "10000", "15000"];
+    const listTera = ["155", "160", "175", "180"];
+
+    function createDropdownOptions(list) {
+        return `<option value="">-- Pilih --</option>` + list.map(item => `<option value="${item}">${item}</option>`).join('');
+    }
+
     function generateArmadaInputs() {
         let html = "";
         for(let i=1; i<=5; i++) {
             html += `
             <div class="unit-card">
                 <h4>Unit ${i}</h4>
-                <div class="input-group"><input type="text" id="inTrans${i}" placeholder="Transportir" value="${i<=1 ? 'PT. BERKAH SARANA MAKMUR BENUA' : ''}"></div>
-                <div class="input-group"><input type="text" id="inNopol${i}" placeholder="No. Polisi"></div>
-                <div class="input-group"><input type="text" id="inDriver${i}" placeholder="Driver"></div>
-                <div class="input-group"><input type="number" id="inQty${i}" placeholder="Qty (Liter)"></div>
-                <div class="input-group"><input type="text" id="inTera${i}" placeholder="Tera (cm)"></div>
+                <div class="input-group">
+                    <label>Transportir</label>
+                    <select id="inTrans${i}">${createDropdownOptions(listTransportir)}</select>
+                </div>
+                <div class="input-group">
+                    <label>No. Polisi</label>
+                    <select id="inNopol${i}">${createDropdownOptions(listNopol)}</select>
+                </div>
+                <div class="input-group">
+                    <label>Driver</label>
+                    <select id="inDriver${i}">${createDropdownOptions(listDriver)}</select>
+                </div>
+                <div class="input-group">
+                    <label>Qty (Liter)</label>
+                    <select id="inQty${i}">${createDropdownOptions(listQty)}</select>
+                </div>
+                <div class="input-group">
+                    <label>Tera (cm)</label>
+                    <select id="inTera${i}">${createDropdownOptions(listTera)}</select>
+                </div>
             </div>`;
         }
         document.getElementById('armada-container').innerHTML = html;
-        document.querySelectorAll('.unit-card input').forEach(el => el.addEventListener('input', update));
+        document.querySelectorAll('.unit-card select').forEach(el => el.addEventListener('change', update));
     }
 
     function formatIndoDate(dateObj) {
@@ -269,6 +293,7 @@
         generateArmadaInputs();
         const now = new Date();
         document.getElementById('inTglMemo').value = `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getDate().toString().padStart(2,'0')}`;
+        
         const table = document.getElementById('i-target-table').value;
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         
@@ -346,16 +371,14 @@
         btn.innerText = "SIMPAN"; btn.disabled = false;
     }
 
-    // FUNGSI DOWNLOAD PAKSA 1 HALAMAN
     function downloadPDF() {
         const element = document.getElementById('memo-area');
         const opt = {
             margin: 0,
             filename: 'Memo_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf',
             image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: 'avoid' } // Mencegah pemisahan halaman otomatis
+            html2canvas: { scale: 3, useCORS: true, letterRendering: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         html2pdf().set(opt).from(element).save();
     }
