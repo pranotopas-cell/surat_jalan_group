@@ -46,9 +46,9 @@
         .section-title { font-size: 10px; color: var(--accent-blue); font-weight: bold; margin: 15px 0 8px 0; text-transform: uppercase; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
         .input-group { margin-bottom: 6px; }
         .input-group label { display: block; font-size: 9px; margin-bottom: 2px; color: #bdc3c7; }
-        .input-group input, .input-group select { 
+        .input-group input, .input-group select, .input-group textarea { 
             width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #2c3e50; 
-            background: #2c3e50; color: white; font-size: 11px;
+            background: #2c3e50; color: white; font-size: 11px; font-family: inherit;
         }
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary-kse); }
         .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
@@ -106,9 +106,10 @@
 <div class="sidebar">
     <h2>KSE MEMO SYSTEM</h2>
 
-    <div class="section-title">Meta Data</div>
+    <div class="section-title">Meta Data & Perihal</div>
     <div class="input-group"><label>Nomor (Editable)</label><input type="text" id="inNomor"></div>
     <div class="input-group"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="inTglMemo"></div>
+    <div class="input-group"><label>Perihal / Subject</label><textarea id="inPerihal" rows="2">Memo Pengaliran BBM</textarea></div>
 
     <div class="section-title">Tujuan Surat</div>
     <div class="input-group"><label>Nama Perusahaan Tujuan</label><input type="text" id="inTujuanPT" value="PT. Sinarindo Sukses Selalu"></div>
@@ -147,7 +148,7 @@
                 <div class="meta-row">
                     <div class="meta-label">Perihal <br><span class="lang-sub">Subject</span></div>
                     <div class="meta-colon">:</div>
-                    <div class="meta-value">Memo Pengaliran BBM<br><span class="lang-sub">Fuel Transfer Memo</span></div>
+                    <div class="meta-value"><span id="outPerihal"></span><br><span class="lang-sub" id="outPerihalSub">Fuel Transfer Memo</span></div>
                 </div>
                 <div class="meta-row">
                     <div class="meta-label">Tanggal <br><span class="lang-sub">Date</span></div>
@@ -253,7 +254,6 @@
             </div>`;
         }
         document.getElementById('unit-inputs').innerHTML = html;
-        // Trigger update on change
         document.querySelectorAll('.unit-card select').forEach(el => el.addEventListener('change', update));
     }
 
@@ -282,6 +282,16 @@
     }
 
     function update() {
+        const perihal = document.getElementById('inPerihal').value;
+        document.getElementById('outPerihal').innerText = perihal;
+        
+        // Logika sub-perihal bahasa inggris sederhana
+        if(perihal.toLowerCase().includes("bbm") || perihal.toLowerCase().includes("solar")) {
+            document.getElementById('outPerihalSub').innerText = "Fuel Transfer Memo";
+        } else {
+            document.getElementById('outPerihalSub').innerText = "Subject Related Memo";
+        }
+
         const tujuanPT = document.getElementById('inTujuanPT').value;
         document.getElementById('outTujuanPT').innerText = tujuanPT;
         document.getElementById('outAlamatPT').innerText = document.getElementById('inAlamatPT').value;
@@ -366,7 +376,7 @@
     }
 
     document.addEventListener('input', function (e) {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') update();
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') update();
     });
 
     window.onload = initPage;
