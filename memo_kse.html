@@ -46,7 +46,7 @@
         .section-title { font-size: 10px; color: var(--accent-blue); font-weight: bold; margin: 15px 0 8px 0; text-transform: uppercase; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
         .input-group { margin-bottom: 6px; }
         .input-group label { display: block; font-size: 9px; margin-bottom: 2px; color: #bdc3c7; }
-        .input-group input { 
+        .input-group input, .input-group select { 
             width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #2c3e50; 
             background: #2c3e50; color: white; font-size: 11px;
         }
@@ -55,7 +55,7 @@
 
         .main-content { margin-left: 400px; margin-top: 50px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
         .memo-page { 
-            background: white; width: 210mm; min-height: 297mm; padding: 15mm 20mm; 
+            background: white; width: 210mm; min-height: 297mm; padding: 10mm 15mm; 
             box-shadow: 0 0 20px rgba(0,0,0,0.5); color: black; line-height: 1.4;
             position: relative; display: flex; flex-direction: column;
         }
@@ -79,7 +79,6 @@
         table.data-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
         table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 8px 5px; text-align: center; font-size: 11px; }
         table.data-table th { background: var(--primary-kse); color: white; font-weight: bold; }
-        table.data-table tr:nth-child(even) { background-color: #f2f6fa; }
 
         .signature-container { margin-top: 30px; text-align: left; font-size: 13px; }
         .sig-img { width: 80px; margin: 5px 0 5px -10px; display: block; }
@@ -91,7 +90,7 @@
         @media print {
             .sidebar, .top-action-bar { display: none; }
             .main-content { margin-left: 0; margin-top: 0; padding: 0; background: none; }
-            .memo-page { box-shadow: none; border: none; width: 100%; padding: 15mm; }
+            .memo-page { box-shadow: none; border: none; width: 100%; padding: 10mm 15mm; }
         }
     </style>
 </head>
@@ -108,7 +107,7 @@
     <h2>KSE MEMO SYSTEM</h2>
 
     <div class="section-title">Meta Data</div>
-    <div class="input-group"><label>Nomor</label><input type="text" id="inNomor" readonly></div>
+    <div class="input-group"><label>Nomor (Editable)</label><input type="text" id="inNomor"></div>
     <div class="input-group"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="inTglMemo"></div>
 
     <div class="section-title">Tujuan Surat</div>
@@ -121,34 +120,8 @@
     <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="25 Maret 2026"></div>
     <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value="Storage BBM PT. SSS ,TUJUAN : PT. SURYA BORNEO INDUSTRI"></div>
 
-    <div class="section-title">Data Armada (Max 10)</div>
-    <div id="unit-inputs">
-        <script>
-            const defaultData = [
-                { t: "PT. KHATULISTIWA SINAR ENERGI", n: "KH 8139 GM", d: "SUPRIYADI", q: 30000, tr: "133.5 cm" },
-                { t: "PT. KHATULISTIWA SINAR ENERGI", n: "KH 8942 GN", d: "AGUS WANTO", q: 10000, tr: "115.4 cm" },
-                { t: "PT. KHATULISTIWA SINAR ENERGI", n: "KH 8943 GN", d: "NUR KHOLIS", q: 5000, tr: "114.6 cm" },
-                { t: "PT. BERKAH SARANA MAKMUR BENUA", n: "KH 8273 RM", d: "FARID HABIBI", q: 15000, tr: "109.5 cm" },
-                { t: "PT. BERKAH SARANA MAKMUR BENUA", n: "KH 8256 RM", d: "RONNY PRASTIANSYAH", q: 15000, tr: "104.3 cm" }
-            ];
-
-            for(let i=1; i<=10; i++) {
-                let data = defaultData[i-1] || { t: "", n: "", d: "", q: "", tr: "" };
-                document.write(`
-                <div class="unit-card">
-                    <div style="font-size:10px; margin-bottom:5px; color:#3498db">ARMADA ${i}</div>
-                    <input type="text" id="inTrans${i}" value="${data.t}" placeholder="Transportir" style="width:100%; padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px; margin-bottom:5px;">
-                    <div class="unit-grid">
-                        <input type="text" id="inNopol${i}" value="${data.n}" placeholder="No. Polisi" style="padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
-                        <input type="text" id="inDriver${i}" value="${data.d}" placeholder="Driver" style="padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
-                        <input type="number" id="inQty${i}" value="${data.q}" placeholder="Qty (L)" style="padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
-                        <input type="text" id="inTera${i}" value="${data.tr}" placeholder="Tera (cm)" style="padding:5px; background:#2c3e50; border:1px solid #1a252f; color:white; font-size:11px; border-radius:4px;">
-                    </div>
-                </div>
-                `);
-            }
-        </script>
-    </div>
+    <div class="section-title">Data Armada (Pilihan)</div>
+    <div id="unit-inputs"></div>
 </div>
 
 <div class="main-content">
@@ -251,12 +224,46 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // MASTER DATA PILIHAN
+    const listTransportir = ["PT. KHATULISTIWA SINAR ENERGI", "PT. BERKAH SARANA MAKMUR BENUA", "PT. INDO DHARMA ENERGI", "PT. IKAEN"];
+    const listNopol = ["KH 8139 GM", "KH 8942 GN", "KH 8943 GN", "KH 8273 RM", "KH 8256 RM", "KH 8121 GI", "KH 8542 GK"];
+    const listDriver = ["SUPRIYADI", "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", "Samsul", "Ahmad"];
+    const listQty = ["5000", "10000", "15000", "30000"];
+    const listTera = ["133.5 cm", "115.4 cm", "114.6 cm", "109.5 cm", "104.3 cm"];
+
+    function createOptions(list) {
+        return `<option value="">-- Pilih --</option>` + list.map(item => `<option value="${item}">${item}</option>`).join('');
+    }
+
+    function generateArmadaInputs() {
+        let html = "";
+        for(let i=1; i<=10; i++) {
+            html += `
+            <div class="unit-card">
+                <div style="font-size:10px; margin-bottom:5px; color:#3498db">ARMADA ${i}</div>
+                <div class="input-group">
+                    <select id="inTrans${i}">${createOptions(listTransportir)}</select>
+                </div>
+                <div class="unit-grid">
+                    <select id="inNopol${i}">${createOptions(listNopol)}</select>
+                    <select id="inDriver${i}">${createOptions(listDriver)}</select>
+                    <select id="inQty${i}">${createOptions(listQty)}</select>
+                    <select id="inTera${i}">${createOptions(listTera)}</select>
+                </div>
+            </div>`;
+        }
+        document.getElementById('unit-inputs').innerHTML = html;
+        // Trigger update on change
+        document.querySelectorAll('.unit-card select').forEach(el => el.addEventListener('change', update));
+    }
+
     function formatIndoDate(dateObj) {
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
     }
 
     async function initPage() {
+        generateArmadaInputs();
         const now = new Date();
         const yyyy = now.getFullYear();
         const mm = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -297,30 +304,23 @@
         document.getElementById('outTglLoad').innerText = document.getElementById('inTglLoad').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
-        let total = 0;
-        let tableHTML = "";
-        let rowNum = 1;
-
+        let total = 0, tableHTML = "", rowNum = 1;
         for(let i=1; i<=10; i++) {
             const qty = parseFloat(document.getElementById(`inQty${i}`).value) || 0;
-            const trans = document.getElementById(`inTrans${i}`).value;
             const nopol = document.getElementById(`inNopol${i}`).value;
-            const driver = document.getElementById(`inDriver${i}`).value;
-            const tera = document.getElementById(`inTera${i}`).value;
-
             if (nopol !== "") {
                 total += qty;
                 tableHTML += `<tr>
                     <td>${rowNum++}</td>
-                    <td style="text-align:left;">${trans}</td>
+                    <td style="text-align:left;">${document.getElementById(`inTrans${i}`).value}</td>
                     <td>${nopol}</td>
-                    <td>${driver}</td>
+                    <td>${document.getElementById(`inDriver${i}`).value}</td>
                     <td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td>
-                    <td>${tera}</td>
+                    <td>${document.getElementById(`inTera${i}`).value}</td>
                 </tr>`;
             }
         }
-        document.getElementById('tableBody').innerHTML = tableHTML || "<tr><td colspan='6'>Silakan isi data armada</td></tr>";
+        document.getElementById('tableBody').innerHTML = tableHTML || "<tr><td colspan='6'>Silakan pilih data armada</td></tr>";
         document.getElementById('outTotal').innerText = total.toLocaleString('id-ID') + " Liter";
     }
 
@@ -328,39 +328,29 @@
         const btn = document.getElementById('btnSave');
         btn.innerText = "MENYIMPAN..."; btn.disabled = true;
         
-        let nopolList = [];
-        let sopirList = [];
-        let totalQty = 0;
-
+        let payloads = [];
         for(let i=1; i<=10; i++) {
             const nopol = document.getElementById(`inNopol${i}`).value;
-            const sopir = document.getElementById(`inDriver${i}`).value;
             const qty = parseFloat(document.getElementById(`inQty${i}`).value) || 0;
-            
             if(nopol) {
-                nopolList.push(nopol);
-                // Hanya menyimpan Nama Sopir saja tanpa nomor polisi
-                sopirList.push(sopir);
-                totalQty += qty;
+                payloads.push({
+                    tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
+                    no_dokumen: document.getElementById('inNomor').value,
+                    jenis_dokumen: "MEMO PENGALIRAN",
+                    tujuan: document.getElementById('inTujuanPT').value,
+                    nopol: nopol,
+                    sopir: document.getElementById(`inDriver${i}`).value, 
+                    qty: qty,
+                    pt: "PT. KHATULISTIWA SINAR ENERGI"
+                });
             }
         }
 
-        const payload = {
-            tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
-            no_dokumen: document.getElementById('inNomor').value,
-            jenis_dokumen: "MEMO PENGALIRAN",
-            tujuan: document.getElementById('inTujuanPT').value,
-            nopol: nopolList.join(", ") || "-",
-            sopir: sopirList.join(", ") || "-", 
-            qty: totalQty,
-            pt: "PT. KHATULISTIWA SINAR ENERGI"
-        };
-
-        const { error } = await _supabase.from("data_logistik").insert([payload]);
+        const { error } = await _supabase.from("data_logistik").insert(payloads);
         if(error) {
             alert("Gagal Simpan: " + error.message);
         } else { 
-            alert("Memo & Nama Sopir Berhasil Disimpan!"); 
+            alert("Data Berhasil Disimpan!"); 
             initPage(); 
         }
         btn.innerText = "SIMPAN"; btn.disabled = false;
@@ -371,12 +361,12 @@
         const filename = 'Memo_KSE_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf';
         html2pdf().set({
             margin: 0, filename: filename, image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            html2canvas: { scale: 3 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(element).save();
     }
 
     document.addEventListener('input', function (e) {
-        if (e.target.tagName === 'INPUT') update();
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') update();
     });
 
     window.onload = initPage;
