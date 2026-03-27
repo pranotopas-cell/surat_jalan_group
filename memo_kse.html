@@ -112,7 +112,7 @@
     <div class="input-group"><label>Perihal / Subject</label><textarea id="inPerihal" rows="2">Memo Pengaliran BBM</textarea></div>
 
     <div class="section-title">Tujuan Surat</div>
-    <div class="input-group"><label>Nama Perusahaan Tujuan</label><input type="text" id="inTujuanPT" value="PT. Sinarindo Sukses Selalu"></div>
+    <div class="input-group"><label>Nama Perusahaan Tujuan</label><input type="text" id="inTujuanPT" value="PT.SINARINDO SUKSES SELALU"></div>
     <div class="input-group"><label>Alamat/Keterangan</label><input type="text" id="inAlamatPT" value="- di Tempat."></div>
 
     <div class="section-title">Informasi Loading</div>
@@ -226,11 +226,11 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // MASTER DATA PILIHAN
-    const listTransportir = ["PT. KHATULISTIWA SINAR ENERGI", "PT. BERKAH SARANA MAKMUR BENUA", "PT. INDO DHARMA ENERGI", "PT. IKAEN"];
-    const listNopol = ["KH 8139 GM", "KH 8942 GN", "KH 8943 GN", "KH 8273 RM", "KH 8256 RM", "KH 8121 GI", "KH 8542 GK"];
-    const listDriver = ["SUPRIYADI", "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", "Samsul", "Ahmad"];
+    const listTransportir = ["PT. KHATULISTIWA SINAR ENERGI", "PT. BERKAH SARANA MAKMUR BENUA", "PT. INDO DHARMA ENERGI", "PT. TRANS GLOBAL ENERGI"];
+    const listNopol = ["KH 8139 GM", "KH 8942 GN", "KH 8943 GN", "KH 8273 RM", "KH 8256 RM", "KH 8121 GI", "KH 8542 GK", "L 9761 UJ"];
+    const listDriver = ["SUPRIYADI", "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", "ADI SUCIPTO", "AGUS MULYANTO"];
     const listQty = ["5000", "10000", "15000", "30000"];
-    const listTera = ["133.5 cm", "115.4 cm", "114.6 cm", "109.5 cm", "104.3 cm"];
+    const listTera = ["133.5 cm", "115.4 cm", "114.6 cm", "109.5 cm", "104.3 cm", "124,0 cm"];
 
     function createOptions(list) {
         return `<option value="">-- Pilih --</option>` + list.map(item => `<option value="${item}">${item}</option>`).join('');
