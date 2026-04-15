@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viewer Dokumen - Integrated System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { background-color: #0f172a; color: white; padding: 20px; font-family: sans-serif; }
+        .doc-card { background: #1e293b; border: 1px solid #3b82f6; border-radius: 15px; padding: 30px; max-width: 800px; margin: auto; }
+        .label { color: #64748b; font-size: 0.8rem; text-transform: uppercase; font-weight: bold; }
+        .value { font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #334155; padding-bottom: 5px; text-transform: uppercase; }
+        .header-box { border-bottom: 2px solid #3b82f6; margin-bottom: 25px; padding-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="loader" class="text-center mt-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2">MENGAMBIL DATA DARI DATABASE...</p>
+    </div>
+
+    <div id="content" class="doc-card" style="display: none;">
+        <div class="header-box d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">DETAIL DOKUMEN</h4>
+            <button class="btn btn-sm btn-outline-light" onclick="window.print()">CETAK</button>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <p class="label">PERUSAHAAN (PT)</p>
+                <p id="view-pt" class="value">-</p>
+                
+                <p class="label">NOMOR DOKUMEN</p>
+                <p id="view-no" class="value">-</p>
+
+                <p class="label">JENIS DOKUMEN</p>
+                <p id="view-jenis" class="value">-</p>
+            </div>
+            <div class="col-md-6">
+                <p class="label">NAMA SOPIR</p>
+                <p id="view-sopir" class="value">-</p>
+
+                <p class="label">TUJUAN PENGIRIMAN</p>
+                <p id="view-tujuan" class="value">-</p>
+
+                <p class="label">QUANTITY (LITER)</p>
+                <p id="view-qty" class="value fw-bold text-info">-</p>
+            </div>
+        </div>
+        <div class="mt-4 small text-secondary">
+            ID SISTEM: <span id="view-id"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Konfigurasi Supabase (SAMAKAN DENGAN DASHBOARD ANDA)
+    const SB_URL = "https://ntaectphgoelmhzrkatp.supabase.co"; 
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg";
+    const _supabase = supabase.createClient(SB_URL, SB_KEY);
+
+    async function loadData() {
+        // 1. Ambil ID dari URL (?id=xxxx)
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+
+        if (!id) {
+            alert("ID TIDAK DITEMUKAN");
+            return;
+        }
+
+        try {
+            // 2. Query ke Supabase berdasarkan ID
+            const { data, error } = await _supabase
+                .from('data_logistik')
+                .select('*')
+                .eq('id', id) // Mencari kolom 'id' yang isinya sesuai 'sin1::5kj5r...'
+                .single();
+
+            if (error) throw error;
+
+            // 3. Masukkan data ke HTML
+            document.getElementById('view-pt').innerText = data.pt || '-';
+            document.getElementById('view-no').innerText = data.no_dokumen || '-';
+            document.getElementById('view-jenis').innerText = data.jenis_dokumen || '-';
+            document.getElementById('view-sopir').innerText = data.sopir || '-';
+            document.getElementById('view-tujuan').innerText = data.tujuan || '-';
+            document.getElementById('view-qty').innerText = (data.qty || 0).toLocaleString('id-ID') + " L";
+            document.getElementById('view-id').innerText = data.id;
+
+            // Tampilkan konten, sembunyikan loader
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+
+        } catch (err) {
+            console.error(err);
+            document.getElementById('loader').innerHTML = `<h5 class="text-danger">ERROR: DOKUMEN TIDAK DITEMUKAN</h5><p>${err.message}</p>`;
+        }
+    }
+
+    window.onload = loadData;
+</script>
+</body>
+</html>
