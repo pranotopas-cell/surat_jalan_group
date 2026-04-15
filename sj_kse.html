@@ -6,6 +6,7 @@
     <title>Surat Jalan Digital - Khatulistiwa Sinar Energi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         :root {
@@ -64,7 +65,6 @@
         .logo-area { display: flex; align-items: center; gap: 15px; }
         .main-logo { height: 75px; width: auto; }
         
-        /* Pembaruan: Teks rata kiri dan PT dihilangkan */
         .logo-text { display: flex; flex-direction: column; justify-content: center; }
         .logo-text b { font-size: 17pt; line-height: 1.1; color: var(--primary-green); text-align: left; }
         .logo-text span { font-size: 13pt; color: var(--accent-tosca); font-weight: bold; letter-spacing: 1px; text-align: left; }
@@ -83,7 +83,6 @@
         .meta-val { font-weight: bold; color: #000; }
 
         .title-block { text-align: center; margin: 35px 0 20px 0; color: #000; }
-        /* Pembaruan: Judul Delivery Order warna hitam */
         .title-block h1 { font-size: 20pt; margin: 0; text-decoration: underline; font-weight: bold; letter-spacing: 2px; color: #000; }
         .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #333; }
 
@@ -133,9 +132,9 @@
         input, textarea { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; font-family: inherit; }
         
         .action-group { display: flex; flex-direction: column; gap: 10px; margin-top: 25px; }
-        .btn { width: 100%; padding: 14px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 10pt; color: white; }
+        .btn { width: 100%; padding: 14px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 10pt; color: white; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-save { background: #000; }
         .btn-print { background: var(--primary-green); }
-        .btn-preview { background: #555; }
         .btn-download { background: #2e7d32; }
 
         @media print {
@@ -143,11 +142,16 @@
             body { background: none; padding: 0; display: block; }
             #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; }
         }
+
+        /* Loading Spinner */
+        .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <div class="editor-panel">
+    <div id="alert-status"></div>
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (Date)</label><input type="text" id="i-tgl" value="09 Februari 2026"></div>
     <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no" value="001/SJ-KSE/II/2026"></div>
@@ -177,7 +181,7 @@
     <div class="field"><label>Other Note (Catatan Tambahan)</label><textarea id="i-other-note" rows="2" placeholder="Tulis catatan tambahan di sini..."></textarea></div>
 
     <div class="action-group">
-        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PREVIEW</button>
+        <button class="btn btn-save" id="btn-save" onclick="saveToSupabase()">SIMPAN DATA KE DATABASE</button>
         <button class="btn btn-print" onclick="window.print()">PRINT / CETAK</button>
         <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
     </div>
@@ -317,7 +321,63 @@
 </div>
 
 <script>
+    // Konfigurasi Supabase
+    const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
+
+    // Fungsi Auto Number (Logika IKN)
+    async function generateAutoNumber() {
+        try {
+            const { count } = await _supabase.from('data_logistik')
+                .select('*', { count: 'exact', head: true })
+                .eq('jenis_dokumen', 'Surat Jalan');
+
+            const nextNo = (count || 0) + 1;
+            const romanMonth = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][new Date().getMonth()];
+            const year = new Date().getFullYear();
+            const formattedNo = `${String(nextNo).padStart(3, '0')}/SJ-KSE/${romanMonth}/${year}`;
+            
+            document.getElementById('i-no').value = formattedNo;
+            upd();
+        } catch (e) { console.error(e); }
+    }
+
+    // Fungsi Simpan (Logika IKN di data_logistik)
+    async function saveToSupabase() {
+        const btn = document.getElementById('btn-save');
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner"></div> MENYIMPAN...';
+
+        try {
+            const payload = {
+                tanggal: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+                no_dokumen: document.getElementById('i-no').value,
+                jenis_dokumen: 'Surat Jalan',
+                pt: 'PT. KHATULISTIWA SINAR ENERGI',
+                tujuan: document.getElementById('i-po-to').value,
+                nopol: document.getElementById('i-plat').value,
+                sopir: document.getElementById('i-driver').value,
+                qty: parseFloat(document.getElementById('i-vol').value.replace(/[^0-9.]/g, '')) || 0,
+                keterangan: document.getElementById('i-other-note').value
+            };
+
+            const { error } = await _supabase.from('data_logistik').insert([payload]);
+
+            if (error) throw error;
+
+            alert('Sukses! Data Berhasil Disimpan Ke Database.');
+            await generateAutoNumber();
+
+        } catch (err) {
+            alert('Gagal Simpan: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'SIMPAN DATA KE DATABASE';
+        }
+    }
 
     function fitText(el, defaultSize) {
         if(!el) return;
@@ -379,9 +439,12 @@
     }
 
     document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', upd));
-    upd();
+    
+    // Inisialisasi saat load
+    window.onload = async () => {
+        await generateAutoNumber();
+        upd();
+    };
 </script>
 </body>
 </html>
-
-
