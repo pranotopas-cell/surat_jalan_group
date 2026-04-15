@@ -51,9 +51,6 @@
             background: #2c3e50; color: white; font-size: 11px; font-family: inherit;
         }
         
-        /* Gaya Khusus untuk Input Data Armada agar bisa diedit */
-        .editable-input { margin-bottom: 2px; position: relative; }
-
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary-kse); }
         .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
 
@@ -111,7 +108,15 @@
     <h2>KSE MEMO SYSTEM</h2>
 
     <div class="section-title">Meta Data & Perihal</div>
-    <div class="input-group"><label>Nomor (Editable)</label><input type="text" id="inNomor"></div>
+    <div class="input-group">
+        <label>No. Urut (Manual)</label>
+        <input type="text" id="inNoUrut" placeholder="Contoh: 001">
+    </div>
+    <div class="input-group">
+        <label>Format No. Surat (Edit Jika Perlu)</label>
+        <input type="text" id="inNoFormat" placeholder="/MEMO-KSE/IX/2026">
+    </div>
+    
     <div class="input-group"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="inTglMemo"></div>
     <div class="input-group"><label>Perihal / Subject</label><textarea id="inPerihal" rows="2">MEMO PENGALIRAN BBM</textarea></div>
 
@@ -125,7 +130,7 @@
     <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="25 Maret 2026"></div>
     <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value="Storage BBM PT. SSS ,TUJUAN : PT. SURYA BORNEO INDUSTRI"></div>
 
-    <div class="section-title">Data Armada (Bisa Pilih atau Ketik)</div>
+    <div class="section-title">Data Armada</div>
     <div id="unit-inputs"></div>
 </div>
 
@@ -229,7 +234,6 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // MASTER DATA PILIHAN
     const listTransportir = ["PT. KHATULISTIWA SINAR ENERGI", "PT. BERKAH SARANA MAKMUR BENUA", "PT. INDO DHARMA ENERGI", "PT. TRANS GLOBAL ENERGI"];
     const listNopol = ["KH 8139 GM", "KH 8942 GN", "KH 8943 GN", "KH 8273 RM", "KH 8256 RM", "KH 8121 GI", "KH 8542 GK", "L 9761 UJ"];
     const listDriver = ["SUPRIYADI", "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", "ADI SUCIPTO", "AGUS MULYANTO"];
@@ -242,7 +246,6 @@
 
     function generateArmadaInputs() {
         let html = "";
-        // Tambahkan datalist sekali saja di awal
         html += createDatalist('listTrans', listTransportir);
         html += createDatalist('listNopol', listNopol);
         html += createDatalist('listDriver', listDriver);
@@ -254,7 +257,7 @@
             <div class="unit-card">
                 <div style="font-size:10px; margin-bottom:5px; color:#3498db">ARMADA ${i}</div>
                 <div class="input-group">
-                    <input type="text" id="inTrans${i}" list="listTrans" placeholder="Transportir (Bisa ketik/pilih)">
+                    <input type="text" id="inTrans${i}" list="listTrans" placeholder="Transportir">
                 </div>
                 <div class="unit-grid">
                     <input type="text" id="inNopol${i}" list="listNopol" placeholder="Nopol">
@@ -265,7 +268,6 @@
             </div>`;
         }
         document.getElementById('unit-inputs').innerHTML = html;
-        // Event listener tetap untuk update otomatis
         document.querySelectorAll('.unit-card input').forEach(el => el.addEventListener('input', update));
     }
 
@@ -278,40 +280,45 @@
         generateArmadaInputs();
         const now = new Date();
         const yyyy = now.getFullYear();
-        const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+        const mmNum = now.getMonth() + 1;
+        const mmStr = mmNum.toString().padStart(2, '0');
         const dd = now.getDate().toString().padStart(2, '0');
-        document.getElementById('inTglMemo').value = `${yyyy}/${mm}/${dd}`;
+        
+        document.getElementById('inTglMemo').value = `${yyyy}/${mmStr}/${dd}`;
         
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+        const bulanRomawi = roman[now.getMonth()];
+
         try {
             const { count } = await _supabase.from("data_logistik").select('*', { count: 'exact', head: true }).eq('jenis_dokumen', "MEMO PENGALIRAN");
             const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            document.getElementById('inNomor').value = `${nextNo}/MEMO-KSE/${roman[now.getMonth()]}/${yyyy}`;
+            document.getElementById('inNoUrut').value = nextNo;
+            document.getElementById('inNoFormat').value = `/MEMO-KSE/${bulanRomawi}/${yyyy}`;
         } catch (e) {
-            document.getElementById('inNomor').value = `001/MEMO-KSE/${roman[now.getMonth()]}/${yyyy}`;
+            document.getElementById('inNoUrut').value = "001";
+            document.getElementById('inNoFormat').value = `/MEMO-KSE/${bulanRomawi}/${yyyy}`;
         }
         update();
     }
 
     function update() {
+        const noUrut = document.getElementById('inNoUrut').value;
+        const noFormat = document.getElementById('inNoFormat').value;
+        const fullNomor = noUrut + noFormat;
+        document.getElementById('outNomor').innerText = fullNomor;
+
         const perihal = document.getElementById('inPerihal').value;
         document.getElementById('outPerihal').innerText = perihal;
-        
-        if(perihal.toLowerCase().includes("bbm") || perihal.toLowerCase().includes("solar")) {
-            document.getElementById('outPerihalSub').innerText = "Fuel Transfer Memo";
-        } else {
-            document.getElementById('outPerihalSub').innerText = "Subject Related Memo";
-        }
+        document.getElementById('outPerihalSub').innerText = (perihal.toLowerCase().includes("bbm") || perihal.toLowerCase().includes("solar")) ? "Fuel Transfer Memo" : "Subject Related Memo";
 
         const tujuanPT = document.getElementById('inTujuanPT').value;
         document.getElementById('outTujuanPT').innerText = tujuanPT;
         document.getElementById('outAlamatPT').innerText = document.getElementById('inAlamatPT').value;
         document.getElementById('outTujuanRef').innerText = tujuanPT;
-        document.getElementById('outNomor').innerText = document.getElementById('inNomor').value;
         
         const qrContainer = document.getElementById("qrcode");
         qrContainer.innerHTML = "";
-        new QRCode(qrContainer, { text: document.getElementById('inNomor').value, width: 45, height: 45 });
+        new QRCode(qrContainer, { text: fullNomor, width: 45, height: 45 });
 
         const rawDate = document.getElementById('inTglMemo').value;
         const dParts = rawDate.split('/');
@@ -327,10 +334,10 @@
 
         let total = 0, tableHTML = "", rowNum = 1;
         for(let i=1; i<=10; i++) {
-            const qtyStr = document.getElementById(`inQty${i}`).value || "0";
-            const qty = parseFloat(qtyStr.replace(/,/g, '')) || 0;
             const nopol = document.getElementById(`inNopol${i}`).value;
             if (nopol !== "") {
+                const qtyStr = document.getElementById(`inQty${i}`).value || "0";
+                const qty = parseFloat(qtyStr.replace(/,/g, '')) || 0;
                 total += qty;
                 tableHTML += `<tr>
                     <td>${rowNum++}</td>
@@ -349,39 +356,36 @@
     async function saveData() {
         const btn = document.getElementById('btnSave');
         btn.innerText = "MENYIMPAN..."; btn.disabled = true;
+        const fullNomor = document.getElementById('inNoUrut').value + document.getElementById('inNoFormat').value;
         
         let payloads = [];
         for(let i=1; i<=10; i++) {
             const nopol = document.getElementById(`inNopol${i}`).value;
-            const qtyStr = document.getElementById(`inQty${i}`).value || "0";
-            const qty = parseFloat(qtyStr.replace(/,/g, '')) || 0;
             if(nopol) {
+                const qtyStr = document.getElementById(`inQty${i}`).value || "0";
                 payloads.push({
                     tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
-                    no_dokumen: document.getElementById('inNomor').value,
+                    no_dokumen: fullNomor,
                     jenis_dokumen: "MEMO PENGALIRAN",
                     tujuan: document.getElementById('inTujuanPT').value,
                     nopol: nopol,
                     sopir: document.getElementById(`inDriver${i}`).value, 
-                    qty: qty,
+                    qty: parseFloat(qtyStr.replace(/,/g, '')) || 0,
                     pt: "PT. KHATULISTIWA SINAR ENERGI"
                 });
             }
         }
 
         const { error } = await _supabase.from("data_logistik").insert(payloads);
-        if(error) {
-            alert("Gagal Simpan: " + error.message);
-        } else { 
-            alert("Data Berhasil Disimpan!"); 
-            initPage(); 
-        }
+        if(error) alert("Gagal Simpan: " + error.message);
+        else { alert("Data Berhasil Disimpan!"); initPage(); }
         btn.innerText = "SIMPAN"; btn.disabled = false;
     }
 
     function downloadPDF() {
         const element = document.getElementById('memo-area');
-        const filename = 'Memo_KSE_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf';
+        const fullNomor = document.getElementById('inNoUrut').value + document.getElementById('inNoFormat').value;
+        const filename = 'Memo_KSE_' + fullNomor.replace(/\//g, '-') + '.pdf';
         html2pdf().set({
             margin: 0, filename: filename, image: { type: 'jpeg', quality: 1 },
             html2canvas: { scale: 3 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -389,7 +393,7 @@
     }
 
     document.addEventListener('input', function (e) {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') update();
+        if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) update();
     });
 
     window.onload = initPage;
