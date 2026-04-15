@@ -93,7 +93,7 @@
 
 <div class="top-action-bar">
     <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PREVIEW</button>
-    <button class="btn btn-save" id="btn-save-sb" onclick="saveData()">SIMPAN DATA</button>
+    <button class="btn btn-save" onclick="saveData()">SIMPAN DATA</button>
     <button class="btn btn-print" onclick="window.print()">PRINT / CETAK</button>
     <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
 </div>
@@ -369,63 +369,33 @@
 
     async function saveData() {
         const companyCode = document.getElementById('i-target-company').value;
-        const btn = document.getElementById('btn-save-sb');
-        const noDoc = document.getElementById('i-no').value;
-        const noDocClean = noDoc.replace(/[\/\s]/g, '-');
-        const fileName = `DOC-${noDocClean}.pdf`;
-
-        btn.innerText = 'UPLOADING PDF...'; btn.disabled = true;
+        const btn = document.querySelector('.btn-save');
+        btn.innerText = 'SAVING...'; btn.disabled = true;
 
         let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
         if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
-        try {
-            // 1. GENERATE PDF BLOB
-            const element = document.getElementById('sj-container');
-            const opt = {
-                margin: 0,
-                filename: fileName,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
+        const payload = {
+            tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
+            no_dokumen: document.getElementById('i-no').value,
+            jenis_dokumen: document.getElementById('i-doc-type').value,
+            tujuan: document.getElementById('i-po-to').value,
+            nopol: document.getElementById('i-plat').value,
+            sopir: document.getElementById('i-driver').value,
+            qty: parseFloat(document.getElementById('i-vol').value) || 0,
+            pt: namaPT 
+        };
 
-            // 2. UPLOAD PDF KE BUCKET 'pdfs'
-            const { data: uploadData, error: uploadError } = await _supabase.storage
-                .from('pdfs')
-                .upload(fileName, pdfBlob, { upsert: true });
+        const { error } = await _supabase.from('data_logistik').insert([payload]);
 
-            if (uploadError) throw uploadError;
-
-            // 3. AMBIL PUBLIC URL
-            const { data: { publicUrl } } = _supabase.storage.from('pdfs').getPublicUrl(fileName);
-
-            // 4. SIMPAN DATA KE TABEL
-            const payload = {
-                tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
-                no_dokumen: noDoc,
-                jenis_dokumen: document.getElementById('i-doc-type').value,
-                tujuan: document.getElementById('i-po-to').value,
-                nopol: document.getElementById('i-plat').value,
-                sopir: document.getElementById('i-driver').value,
-                qty: parseFloat(document.getElementById('i-vol').value) || 0,
-                pt: namaPT,
-                pdf_url: publicUrl // Menyimpan URL PDF
-            };
-
-            const { error: dbError } = await _supabase.from('data_logistik').insert([payload]);
-
-            if (dbError) throw dbError;
-
-            alert('Sukses! Data dan PDF Berhasil Diarsipkan.');
+        if (error) {
+            alert('Gagal Simpan: ' + error.message);
+        } else {
+            alert('Sukses! Data Berhasil Disimpan.');
             generateAutoNumber();
-        } catch (e) {
-            alert('Gagal Simpan: ' + e.message);
-        } finally {
-            btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
         }
+        btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
     }
 
     function downloadPDF() {
