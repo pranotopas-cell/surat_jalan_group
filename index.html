@@ -13,7 +13,7 @@
     <style>
         :root { 
             --bg-dark: #0f172a;
-            --sidebar-bg: #111827;
+            --sidebar-bg: #0f172a;
             --sidebar-width: 280px;
             --ind-red: #ef4444; 
             --ind-blue: #3b82f6; 
@@ -21,30 +21,30 @@
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-dark); color: #f1f5f9; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-dark); color: #f1f5f9; overflow-x: hidden; }
 
         /* Login Page */
         #login-page { 
             height: 100vh; display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.85)), 
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), 
                         url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop');
             background-size: cover; background-position: center;
         }
 
         .login-card {
-            background: rgba(30, 41, 59, 0.95); border: 1px solid var(--ind-blue);
-            border-radius: 1.5rem; width: 100%; max-width: 450px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
+            background: rgba(30, 41, 59, 0.7); border: 1px solid var(--ind-blue);
+            border-radius: 1.5rem; width: 100%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            backdrop-filter: blur(15px); padding: 3rem !important;
         }
 
         .logo-container { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 25px; }
-        .logo-container img { height: 40px; width: auto; object-fit: contain; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
+        .logo-container img { height: 35px; width: auto; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
 
         /* Sidebar */
         .sidebar { 
             background: var(--sidebar-bg); height: 100vh; color: white; padding: 1.5rem 1rem; 
             position: fixed; width: var(--sidebar-width); z-index: 1000; 
-            border-right: 1px solid var(--ind-blue); overflow-y: auto;
+            border-right: 1px solid var(--glass-border); overflow-y: auto;
         }
 
         .nav-link { 
@@ -52,28 +52,28 @@
             padding: 0.7rem 1rem; transition: all 0.3s ease; font-size: 0.85rem;
             display: flex; align-items: center; text-decoration: none;
         }
-        .nav-link:hover, .nav-link.active { background: linear-gradient(90deg, #1e3a8a, transparent); color: var(--ind-blue); }
-        .submenu { padding-left: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 10px; margin: 0.3rem 0 0.8rem 0; }
+        .nav-link:hover, .nav-link.active { background: rgba(59, 130, 246, 0.15); color: var(--ind-blue); }
+        .submenu { padding-left: 0.5rem; background: rgba(0,0,0,0.15); border-radius: 10px; margin: 0.3rem 0 0.8rem 0; }
         .submenu .nav-link { font-size: 0.8rem; padding: 0.5rem 1rem; }
         .pt-label { font-size: 0.65rem; color: #64748b; padding: 1.2rem 1rem 0.4rem; display: block; font-weight: 800; letter-spacing: 1px; }
 
         /* Top Nav & Running Text */
         .top-nav {
-            margin-left: var(--sidebar-width); padding: 0.8rem 2.5rem;
-            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px);
+            margin-left: var(--sidebar-width); padding: 0.8rem 2rem;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--glass-border); display: flex;
-            flex-direction: column; align-items: flex-end; position: sticky; top: 0; z-index: 999;
+            flex-direction: column; position: sticky; top: 0; z-index: 999;
         }
 
         .running-text-container {
-            width: 100%; overflow: hidden; background: rgba(0,0,0,0.3);
-            border-radius: 5px; margin-bottom: 8px; padding: 4px 0;
-            border-left: 3px solid var(--ind-gold);
+            width: 100%; overflow: hidden; background: rgba(0,0,0,0.4);
+            border-radius: 6px; margin-bottom: 10px; padding: 6px 0;
+            border-left: 4px solid var(--ind-gold);
         }
 
         .marquee-text {
             white-space: nowrap; display: inline-block;
-            animation: marquee 30s linear infinite;
+            animation: marquee 40s linear infinite;
             font-size: 0.8rem; color: #e2e8f0; font-weight: 500;
         }
 
@@ -82,44 +82,47 @@
             100% { transform: translateX(-100%); }
         }
 
-        .main-content { margin-left: var(--sidebar-width); padding: 2rem 2.5rem; min-height: 100vh; }
+        .main-content { margin-left: var(--sidebar-width); padding: 2rem; min-height: 100vh; }
 
         /* Logistics Table */
-        .card-table { background: rgba(30, 41, 59, 0.5); border: 1px solid var(--glass-border); border-radius: 15px; }
-        .table { font-size: 0.72rem; }
+        .card-table { background: rgba(30, 41, 59, 0.4); border: 1px solid var(--glass-border); border-radius: 15px; }
+        .table { font-size: 0.75rem; text-transform: uppercase; } /* FORCE UPPERCASE */
         .table thead th { 
-            background: rgba(59, 130, 246, 0.1); color: var(--ind-blue);
-            font-size: 0.65rem; font-weight: 700; border-bottom: 2px solid var(--ind-blue);
-            white-space: nowrap; padding: 10px 8px;
+            background: rgba(59, 130, 246, 0.05); color: var(--ind-blue);
+            font-size: 0.7rem; font-weight: 700; border-bottom: 2px solid var(--ind-blue);
+            white-space: nowrap; padding: 12px 10px; letter-spacing: 0.5px;
         }
 
-        .row-ikaen { color: #ff4d4d !important; font-weight: 600; }
-        .row-ide { color: #3b82f6 !important; font-weight: 600; }
-        .row-kse { color: #f59e0b !important; font-weight: 600; }
+        .row-ikaen { color: #fca5a5 !important; }
+        .row-ide { color: #93c5fd !important; }
+        .row-kse { color: #fcd34d !important; }
         
         .bg-ikaen { background-color: var(--ind-red) !important; color: white; }
         .bg-ide { background-color: var(--ind-blue) !important; color: white; }
         .bg-kse { background-color: var(--ind-gold) !important; color: black; }
 
-        .table tbody td { padding: 10px 8px; white-space: nowrap; }
+        .table tbody td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .btn-view {
-            padding: 2px 8px; font-size: 0.65rem; border-radius: 4px;
-            transition: all 0.2s; border: 1px solid rgba(255,255,255,0.2);
-            color: white; background: rgba(59, 130, 246, 0.2);
+            padding: 4px 12px; font-size: 0.65rem; border-radius: 6px;
+            transition: all 0.2s; border: 1px solid var(--ind-blue);
+            color: var(--ind-blue); background: transparent; font-weight: 600;
         }
-        .btn-view:hover { background: #0d6efd; border-color: #0d6efd; color: white; }
+        .btn-view:hover { background: var(--ind-blue); color: white; }
+        
+        .btn-tracking { border: 1px solid var(--ind-gold); color: var(--ind-gold); }
+        .btn-tracking:hover { background: var(--ind-gold); color: black; }
     </style>
 </head>
 <body>
 
 <div id="login-page">
-    <div class="card login-card p-5 text-center">
+    <div class="card login-card text-center">
         <div class="logo-container">
             <img src="header1.png" alt="Header">
             <img src="ide1.png" alt="IDE">
             <img src="ikaen.png" alt="IKAEN">
         </div>
-        <h3 class="fw-bold mb-4 text-white" style="letter-spacing: 2px;">LOGIN SYSTEM</h3>
+        <h4 class="fw-bold mb-4 text-white" style="letter-spacing: 3px;">SYSTEM LOGIN</h4>
         <input type="text" id="user" class="form-control mb-3 bg-dark border-secondary text-white" placeholder="Username">
         <input type="password" id="pass" class="form-control mb-4 bg-dark border-secondary text-white" placeholder="Password">
         <button class="btn btn-primary w-100 py-2 fw-bold" onclick="handleLogin()">ACCESS SYSTEM</button>
@@ -135,19 +138,19 @@
         </div>
         
         <nav class="flex-grow-1">
-            <a href="#" class="nav-link active mb-2"><i class="bi bi-grid-1x2-fill me-2"></i> IKAEN-IDE-KSE </a>
+            <a href="#" class="nav-link active mb-3"><i class="bi bi-grid-1x2-fill me-2"></i> DASHBOARD UTAMA </a>
 
-            <small class="pt-label">PT. INVESTAMA KALIMANTAN ENERGI</small>
-            <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2"></i> IKAEN <i class="bi bi-chevron-down ms-auto small"></i></a>
-            <div class="collapse submenu show" id="mIkaen">
-                <a href="sj_ikaen.html" class="nav-link">Surat Jalan</a>
-                <a href="memo_ikaen.html" class="nav-link">Memo</a>
-                <a href="ba_oper_ikaen.html" class="nav-link">BA Oper Muatan</a>
-                <a href="ba_penerimaan_ikaen.html" class="nav-link">BA Penerimaan</a>
+            <small class="pt-label">PT. KHATULISTIWA SINAR ENERGI</small>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-lightning-fill me-2 text-warning"></i> KSE <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <div class="collapse submenu show" id="mKse">
+                <a href="sj_kse.html" class="nav-link">Surat Jalan</a>
+                <a href="memo_kse.html" class="nav-link">Memo</a>
+                <a href="ba_oper_kse.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_kse.html" class="nav-link">BA Penerimaan</a>
             </div>
 
             <small class="pt-label">PT. INDO DHARMA ENERGI</small>
-            <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-droplet-fill me-2"></i> IDE <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-droplet-fill me-2 text-info"></i> IDE <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu" id="mIde">
                 <a href="sj_ide.html" class="nav-link">Surat Jalan</a>
                 <a href="memo_ide.html" class="nav-link">Memo</a>
@@ -155,13 +158,13 @@
                 <a href="ba_penerimaan_ide.html" class="nav-link">BA Penerimaan</a>
             </div>
 
-            <small class="pt-label">PT. KHATULISTIWA SINAR ENERGI</small>
-            <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-lightning-fill me-2"></i> KSE <i class="bi bi-chevron-down ms-auto small"></i></a>
-            <div class="collapse submenu" id="mKse">
-                <a href="sj_kse.html" class="nav-link">Surat Jalan</a>
-                <a href="memo_kse.html" class="nav-link">Memo</a>
-                <a href="ba_oper_kse.html" class="nav-link">BA Oper Muatan</a>
-                <a href="ba_penerimaan_kse.html" class="nav-link">BA Penerimaan</a>
+            <small class="pt-label">PT. INVESTAMA KALIMANTAN ENERGI</small>
+            <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2 text-danger"></i> IKAEN <i class="bi bi-chevron-down ms-auto small"></i></a>
+            <div class="collapse submenu" id="mIkaen">
+                <a href="sj_ikaen.html" class="nav-link">Surat Jalan</a>
+                <a href="memo_ikaen.html" class="nav-link">Memo</a>
+                <a href="ba_oper_ikaen.html" class="nav-link">BA Oper Muatan</a>
+                <a href="ba_penerimaan_ikaen.html" class="nav-link">BA Penerimaan</a>
             </div>
         </nav>
     </aside>
@@ -170,26 +173,28 @@
         <div class="running-text-container">
             <div class="marquee-text">
                 <span class="text-warning fw-bold">SOP BONGKAR MUAT BBM:</span> 
-                1. Pastikan area steril dari api & rokok | 2. Pasang grounding & siapkan APAR | 
-                3. Periksa segel & volume tangki | 4. Lakukan penyambungan hose dengan rapat | 
-                5. Pantau aliran secara berkala |6.Pakai APD lengkap
+                1. PASTIKAN AREA STERIL DARI API & ROKOK | 2. PASANG GROUNDING & SIAPKAN APAR | 
+                3. PERIKSA SEGEL & VOLUME TANGKI | 4. LAKUKAN PENYAMBUNGAN HOSE DENGAN RAPAT | 
+                5. PANTAU ALIRAN SECARA BERKALA | 6. PAKAI APD LENGKAP
                 <span class="text-info ms-4 fw-bold">NOTE:</span> 
-                "Keselamatan kerja adalah kunci keberlangsungan usaha. Kedisiplinan hari ini adalah fondasi kesuksesan hari esok. Mari bekerja cerdas, aman, dan jujur."- "Sinergi mengalirkan Energi " salam "Pejuang Energi"
+                "KESELAMATAN KERJA ADALAH KUNCI KEBERLANGSUNGAN USAHA. KEDISIPLINAN HARI INI ADALAH FONDASI KESUKSESAN HARI ESOK." - SINERGI MENGALIRKAN ENERGI - SALAM PEJUANG ENERGI
             </div>
         </div>
-        <button class="btn btn-outline-danger btn-sm fw-bold px-3" onclick="handleLogout()">Sign Out</button>
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-outline-danger btn-sm fw-bold px-3" onclick="handleLogout()">SIGN OUT</button>
+        </div>
     </header>
 
     <main class="main-content">
-        <div class="card card-table border-0 p-4">
+        <div class="card card-table border-0 p-4 shadow-lg">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-activity me-2 text-primary"></i>HISTORY LOGISTICS </h6>
+                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-activity me-2 text-primary"></i>HISTORY LOGISTICS REAL-TIME</h6>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-outline-info rounded-pill px-3 fw-bold btn-tracking" onclick="openMaps()">
-                        <i class="bi bi-geo-alt-fill me-1"></i> Tracking Unit
+                    <button class="btn btn-sm btn-tracking rounded-pill px-3 fw-bold" onclick="openMaps()">
+                        <i class="bi bi-geo-alt-fill me-1"></i> TRACKING UNIT
                     </button>
                     <button class="btn btn-sm btn-primary rounded-pill px-4 fw-bold" onclick="fetchLogistikData()">
-                        <i class="bi bi-arrow-clockwise me-1"></i> Sync Data
+                        <i class="bi bi-arrow-clockwise me-1"></i> SYNC DATA
                     </button>
                 </div>
             </div>
@@ -198,18 +203,18 @@
                 <table class="table align-middle">
                     <thead>
                         <tr>
-                            <th>Identitas</th>
-                            <th>Nomor Dokumen</th>
-                            <th>Jenis</th>
-                            <th>Tujuan</th>
-                            <th>Nama Sopir</th>
-                            <th>No. Polisi</th>
-                            <th class="text-end">Qty(L)</th>
-                            <th class="text-center">Aksi</th>
+                            <th>IDENTITAS & TANGGAL</th>
+                            <th>NOMOR DOKUMEN</th>
+                            <th>JENIS</th>
+                            <th>TUJUAN</th>
+                            <th>NAMA SOPIR</th>
+                            <th>NO. POLISI</th>
+                            <th class="text-end">QTY (L)</th>
+                            <th class="text-center">AKSI</th>
                         </tr>
                     </thead>
                     <tbody id="logistik-table-body">
-                        <tr><td colspan="8" class="text-center py-5">Memuat data sistem...</td></tr>
+                        <tr><td colspan="8" class="text-center py-5">MEMUAT DATA SISTEM...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -245,34 +250,31 @@
                 html += `
                     <tr class="${rowColorClass}">
                         <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="text-secondary" style="font-size:0.6rem">${row.tanggal || '-'}</span>
-                                <span class="badge ${badgeClass}" style="font-size:0.58rem;">${ptRaw}</span>
+                            <div class="d-flex flex-column gap-1">
+                                <span class="badge ${badgeClass}" style="font-size:0.6rem; width: fit-content;">${ptRaw}</span>
+                                <span class="text-secondary" style="font-size:0.65rem">${row.tanggal || '-'}</span>
                             </div>
                         </td>
-                        <td>${row.no_dokumen || '-'}</td>
+                        <td class="fw-bold">${row.no_dokumen || '-'}</td>
                         <td class="opacity-75">${row.jenis_dokumen || '-'}</td>
                         <td>${row.tujuan || '-'}</td>
-                        <td class="fw-bold">${row.sopir || '-'}</td>
-                        <td class="font-monospace" style="font-size:0.75rem">${row.nopol || '-'}</td>
+                        <td class="fw-bold text-white">${row.sopir || '-'}</td>
+                        <td class="font-monospace" style="letter-spacing:1px;">${row.nopol || '-'}</td>
                         <td class="text-end fw-bold">${(row.qty || 0).toLocaleString('id-ID')}</td>
                         <td class="text-center">
                             <button class="btn btn-view" onclick="viewPDF('${row.id}')">
-                                <i class="bi bi-eye-fill"></i> View
+                                <i class="bi bi-file-earmark-pdf"></i> VIEW
                             </button>
                         </td>
                     </tr>`;
             });
             tbody.innerHTML = html;
         } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-danger">Gagal memuat data.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-danger">GAGAL MEMUAT DATA.</td></tr>`;
         }
     }
 
-    // FUNGSI UPDATE: Membuka dokumen berdasarkan ID (Silakan sesuaikan format file yang diinginkan)
     function viewPDF(id) { 
-        // Logika untuk mengarahkan ke halaman cetak atau viewer sesuai ID
-        // Contoh: mengarahkan ke viewer.html dengan parameter ID
         window.open(`view_document.html?id=${id}`, "_blank"); 
     }
 
