@@ -310,6 +310,7 @@
         if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
+        // Filter nomor berdasarkan PT dan Jenis Dokumen secara spesifik
         const { data } = await _supabase.from('data_logistik')
             .select('no_dokumen')
             .eq('pt', namaPT)
@@ -367,19 +368,26 @@
 
     async function saveData() {
         const btn = document.querySelector('.btn-save');
-        btn.innerText = 'UPLOADING PDF...'; btn.disabled = true;
+        btn.innerText = 'PROSES SIMPAN...'; btn.disabled = true;
 
         const companyCode = document.getElementById('i-target-company').value;
-        const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
-        const fileName = `DOC_${noDoc}.pdf`;
+        const noDocRaw = document.getElementById('i-no').value;
+        const noDocClean = noDocRaw.replace(/\//g, '-');
+        const fileName = `DOC_${noDocClean}.pdf`;
 
         try {
             // 1. GENERATE PDF AS BLOB
             const element = document.getElementById('sj-container');
-            const opt = { margin: 0, filename: fileName, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            const opt = { 
+                margin: 0, 
+                filename: fileName, 
+                image: { type: 'jpeg', quality: 0.98 }, 
+                html2canvas: { scale: 2, useCORS: true }, 
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+            };
             const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
 
-            // 2. UPLOAD TO SUPABASE STORAGE (Bucket: pdfs)
+            // 2. UPLOAD TO STORAGE
             const { data: uploadData, error: uploadError } = await _supabase.storage
                 .from('pdfs')
                 .upload(`logistik/${fileName}`, pdfBlob, { upsert: true });
@@ -389,30 +397,36 @@
             // 3. GET PUBLIC URL
             const { data: { publicUrl } } = _supabase.storage.from('pdfs').getPublicUrl(`logistik/${fileName}`);
 
-            // 4. SAVE METADATA TO DATABASE
+            // 4. PREPARE PAYLOAD
             let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
             if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
             else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
             const payload = {
                 tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
-                no_dokumen: document.getElementById('i-no').value,
+                no_dokumen: noDocRaw,
                 jenis_dokumen: document.getElementById('i-doc-type').value,
                 tujuan: document.getElementById('i-po-to').value,
                 nopol: document.getElementById('i-plat').value,
                 sopir: document.getElementById('i-driver').value,
                 qty: parseFloat(document.getElementById('i-vol').value) || 0,
                 pt: namaPT,
-                pdf_url: publicUrl // Link ini akan muncul di dashboard
+                pdf_url: publicUrl
             };
 
-            const { error: dbError } = await _supabase.from('data_logistik').insert([payload]);
+            // 5. INSERT TO DATABASE
+            const { error: dbError } = await _supabase
+                .from('data_logistik')
+                .insert([payload]);
+
             if (dbError) throw dbError;
 
             alert('Sukses! Data & PDF Berhasil Disimpan.');
-            generateAutoNumber();
+            await generateAutoNumber(); // Refresh nomor otomatis
+            
         } catch (err) {
-            alert('Gagal: ' + err.message);
+            console.error(err);
+            alert('Gagal Simpan: ' + err.message + '\n\nPastikan RLS di Supabase sudah di-set ALLOW INSERT untuk public.');
         } finally {
             btn.innerText = 'SIMPAN & UPLOAD PDF'; btn.disabled = false;
         }
