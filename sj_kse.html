@@ -45,9 +45,7 @@
         .meta-val { font-weight: bold; color: #000; }
         
         .title-block { text-align: center; margin: 35px 0 20px 0; color: #000; }
-        /* Garis dipindah ke bawah Delivery Order */
         .title-block h1 { font-size: 20pt; margin: 0; display: inline-block; border-bottom: 3px solid #000; font-weight: bold; letter-spacing: 2px; color: #000; padding-bottom: 2px; }
-        /* Garis bawah pada Surat Jalan dihilangkan */
         .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; text-decoration: none; }
         
         .main-table { width: 100%; border-top: 2.5px solid var(--primary-green); border-bottom: 2.5px solid var(--primary-green); border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
@@ -85,7 +83,6 @@
         .btn-preview { background: #6c757d; }
         .btn-save { background: var(--success-green); }
         .btn-print { background: var(--primary-green); }
-        .btn-download { background: var(--tosca); }
         .btn:hover { opacity: 0.8; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
         
         @media print { .editor-panel, .top-action-bar { display: none; } body { background: none; padding: 0; display: block; } #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; } }
@@ -97,7 +94,6 @@
     <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PREVIEW</button>
     <button class="btn btn-save" onclick="saveData()">SIMPAN DATA</button>
     <button class="btn btn-print" onclick="window.print()">PRINT / CETAK</button>
-    <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
 </div>
 
 <div class="editor-panel">
@@ -121,7 +117,10 @@
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Dokumen (Manual Edit OK)</label><input type="text" id="i-no"></div>
+    <div class="field">
+        <label>Nomor Dokumen (Bisa Edit Manual)</label>
+        <input type="text" id="i-no" style="background: #fffbe6; border: 1px solid #ffd666;">
+    </div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -292,19 +291,18 @@
         return `${parts[2]} ${bulanIndo[parseInt(parts[1]) - 1]} ${parts[0]}`;
     }
 
+    // Fungsi Utama: Ambil nomor terakhir untuk saran, tapi biarkan user edit manual
     async function generateAutoNumber() {
         const companyCode = document.getElementById('i-target-company').value;
         const docType = document.getElementById('i-doc-type').value;
         const now = new Date();
         
+        // Setup Tanggal default jika kosong
         if(!document.getElementById('i-tgl').value) {
             document.getElementById('i-tgl').value = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         }
 
-        let codeDoc = "SJ";
-        if (docType === "MEMO") codeDoc = "MEMO";
-        else if (docType === "BERITA ACARA") codeDoc = "BA";
-
+        let codeDoc = (docType === "MEMO") ? "MEMO" : (docType === "BERITA ACARA") ? "BA" : "SJ";
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const monthRoman = roman[now.getMonth()];
         const year = now.getFullYear();
@@ -313,6 +311,7 @@
         if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
+        // Ambil Data Terakhir dari Supabase (Query berdasarkan PT dan Jenis Dokumen)
         const { data } = await _supabase.from('data_logistik')
             .select('no_dokumen')
             .eq('pt', namaPT)
@@ -327,9 +326,11 @@
             if(!isNaN(lastNum)) nextNum = lastNum + 1;
         }
 
+        // Tampilkan nomor otomatis di input panel (User masih bisa hapus dan ganti manual)
         const formattedNum = nextNum.toString().padStart(3, '0');
         document.getElementById('i-no').value = `${formattedNum}/${codeDoc}-${companyCode}/${monthRoman}/${year}`;
         
+        // Update Label Judul
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
@@ -344,6 +345,7 @@
         upd();
     }
 
+    // Fungsi Update Tampilan Real-time
     function upd() {
         const fields = [
             ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'], ['v-trans', 'i-trans'], 
@@ -365,6 +367,7 @@
         document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
         document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
         
+        // QR Code selalu mengikuti isi nomor dokumen di panel
         qrcode.clear();
         qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
     }
@@ -378,9 +381,10 @@
         if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
+        // Payload menggunakan nilai yang ada di input (Nomor Manual User yang tersimpan)
         const payload = {
             tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
-            no_dokumen: document.getElementById('i-no').value,
+            no_dokumen: document.getElementById('i-no').value, // Nomor dari input manual tersimpan di sini
             jenis_dokumen: document.getElementById('i-doc-type').value,
             tujuan: document.getElementById('i-po-to').value,
             nopol: document.getElementById('i-plat').value,
@@ -395,35 +399,14 @@
             alert('Gagal Simpan: ' + error.message);
         } else {
             alert('Sukses! Data Berhasil Disimpan.');
+            // Setelah simpan, ambil nomor urut berikutnya berdasarkan nomor terakhir yang baru saja disimpan
             generateAutoNumber();
         }
         btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
-    }
-
-    function downloadPDF() {
-        const element = document.getElementById('sj-container');
-        const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
-        
-        // Pengaturan agar PDF menjadi satu lembar
-        const opt = {
-            margin: 0,
-            filename: 'DOC_' + noDoc + '.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true,
-                logging: false,
-                letterRendering: true
-            },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: 'avoid' } // Menghindari pemotongan halaman otomatis
-        };
-        
-        html2pdf().set(opt).from(element).save();
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
     window.onload = generateAutoNumber;
 </script>
 </body>
-</html
+</html>
