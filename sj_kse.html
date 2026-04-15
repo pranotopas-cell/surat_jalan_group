@@ -18,12 +18,10 @@
         }
         body { font-family: 'Arial', sans-serif; font-size: 10pt; margin: 0; padding: 20px; background-color: #4a4d4a; color: #000; display: flex; gap: 20px; justify-content: center; align-items: flex-start; position: relative; }
         
-        /* Container Dokumen */
         #sj-container { width: 210mm; height: 297mm; padding: 10mm 12mm; background: white; position: relative; box-sizing: border-box; box-shadow: 0 0 15px rgba(0,0,0,0.6); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
         
         .val { font-weight: bold; font-size: 9.5pt; display: inline-block; margin-top: 2px; white-space: nowrap; overflow: hidden; max-width: 100%; }
         
-        /* Decoration Footer */
         .page-footer-border { position: absolute; bottom: 0; left: 0; width: 100%; height: 12px; background: #222; }
         .accent-box { position: absolute; bottom: 0; right: 0; display: flex; }
         .accent-blue { width: 45px; height: 12px; background: var(--primary-green); transform: skewX(-30deg); margin-right: -5px; }
@@ -33,7 +31,6 @@
         #qrcode { background: white; padding: 2px; border: 1px solid #eee; }
         .system-info-text { font-size: 7pt; line-height: 1.2; color: #333; }
         
-        /* Header */
         .header { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .logo-area { display: flex; align-items: center; gap: 15px; }
         .main-logo { height: 45px; width: auto; }
@@ -49,9 +46,8 @@
         
         .title-block { text-align: center; margin: 35px 0 20px 0; color: #000; }
         .title-block h1 { font-size: 20pt; margin: 0; display: inline-block; border-bottom: 3px solid #000; font-weight: bold; letter-spacing: 2px; color: #000; padding-bottom: 2px; }
-        .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; }
+        .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; text-decoration: none; }
         
-        /* Tables */
         .main-table { width: 100%; border-top: 2.5px solid var(--primary-green); border-bottom: 2.5px solid var(--primary-green); border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
         .main-table td { padding: 6px 4px; vertical-align: top; border-bottom: 0.5px solid #eee; }
         .label-group { display: flex; flex-direction: column; }
@@ -75,7 +71,6 @@
         
         .other-note-container { width: 100%; border: 1px solid #000; border-top: none; padding: 6px 10px; font-size: 8pt; min-height: 45px; box-sizing: border-box; background: #fff; text-align: left; }
         
-        /* Editor Panel */
         .editor-panel { width: 380px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ddd; max-height: 95vh; overflow-y: auto; position: sticky; top: 20px; }
         .editor-panel h2 { margin: 18px 0 8px 0; color: var(--primary-green); font-size: 11pt; border-bottom: 2px solid var(--tosca); padding-bottom: 5px; }
         .field { display: flex; flex-direction: column; margin-bottom: 10px; }
@@ -88,8 +83,8 @@
         .btn-preview { background: #6c757d; }
         .btn-save { background: var(--success-green); }
         .btn-print { background: var(--primary-green); }
+        .btn-download { background: var(--tosca); }
         .btn:hover { opacity: 0.8; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
         
         @media print { .editor-panel, .top-action-bar { display: none; } body { background: none; padding: 0; display: block; } #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; } }
     </style>
@@ -98,7 +93,7 @@
 
 <div class="top-action-bar">
     <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PREVIEW</button>
-    <button class="btn btn-save" id="save-btn" onclick="saveData()">SIMPAN & UPLOAD PDF</button>
+    <button class="btn btn-save" onclick="saveData()">SIMPAN & UPLOAD PDF</button>
     <button class="btn btn-print" onclick="window.print()">PRINT / CETAK</button>
 </div>
 
@@ -123,7 +118,7 @@
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Dokumen (Manual Edit)</label><input type="text" id="i-no" style="background: #fffbe6; border: 1px solid #ffd666;"></div>
+    <div class="field"><label>Nomor Dokumen</label><input type="text" id="i-no"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -153,7 +148,7 @@
 <div id="sj-container">
     <div class="header">
         <div class="logo-area">
-            <img src="header1.png" alt="Logo" class="main-logo">
+            <img src="header1.png" alt="Logo" class="main-logo" onerror="this.src='https://via.placeholder.com/150x50?text=LOGO+KSE'">
             <div class="logo-text"><b>KHATULISTIWA</b><span>   S I N A R  E N E R G I </span></div>
         </div>
     </div>
@@ -262,7 +257,7 @@
             <td><span>( . . . . . . . . . . . . . . . . )</span></td>
             <td><span id="v-driver">-</span></td>
             <td>
-                <img src="stempel.png" alt="Stempel" class="stamp-container">
+                <img src="stempel.png" alt="Stempel" class="stamp-container" onerror="this.style.display='none'">
                 <div style="position:relative; z-index:2;"><br><br><span id="v-mgr"> Staff Operasional</span></div>
             </td>
         </tr>
@@ -294,7 +289,6 @@
         return `${parts[2]} ${bulanIndo[parseInt(parts[1]) - 1]} ${parts[0]}`;
     }
 
-    // Ambil nomor terakhir dari DB untuk saran, tapi user bisa edit manual
     async function generateAutoNumber() {
         const companyCode = document.getElementById('i-target-company').value;
         const docType = document.getElementById('i-doc-type').value;
@@ -304,7 +298,10 @@
             document.getElementById('i-tgl').value = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         }
 
-        let codeDoc = (docType === "MEMO") ? "MEMO" : (docType === "BERITA ACARA") ? "BA" : "SJ";
+        let codeDoc = "SJ";
+        if (docType === "MEMO") codeDoc = "MEMO";
+        else if (docType === "BERITA ACARA") codeDoc = "BA";
+
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const monthRoman = roman[now.getMonth()];
         const year = now.getFullYear();
@@ -323,15 +320,13 @@
         let nextNum = 1;
         if (data && data.length > 0 && data[0].no_dokumen) {
             const lastNo = data[0].no_dokumen;
-            const parts = lastNo.split('/');
-            const lastNum = parseInt(parts[0]);
+            const lastNum = parseInt(lastNo.split('/')[0]);
             if(!isNaN(lastNum)) nextNum = lastNum + 1;
         }
 
         const formattedNum = nextNum.toString().padStart(3, '0');
         document.getElementById('i-no').value = `${formattedNum}/${codeDoc}-${companyCode}/${monthRoman}/${year}`;
         
-        // Update Title UI
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
@@ -370,71 +365,59 @@
         qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
     }
 
-    // UPLOAD PDF KE STORAGE
-    async function uploadPDF(fileName) {
-        const element = document.getElementById('sj-container');
-        const opt = { margin: 0, filename: fileName, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-        
-        const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
-        
-        // Path langsung ke file (Karena bucket sudah bernama dokumen_pdf)
-        const filePath = fileName;
-
-        const { data, error } = await _supabase.storage
-            .from('dokumen_pdf') 
-            .upload(filePath, pdfBlob, { contentType: 'application/pdf', upsert: true });
-
-        if (error) throw error;
-
-        const { data: publicUrl } = _supabase.storage.from('dokumen_pdf').getPublicUrl(filePath);
-        return publicUrl.publicUrl;
-    }
-
-    // SIMPAN DATA & PDF
     async function saveData() {
-        const companyCode = document.getElementById('i-target-company').value;
-        const btn = document.getElementById('save-btn');
-        const noDok = document.getElementById('i-no').value;
-        
-        btn.innerText = 'PROSES UPLOAD...'; btn.disabled = true;
+        const btn = document.querySelector('.btn-save');
+        btn.innerText = 'UPLOADING PDF...'; btn.disabled = true;
 
-        let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
-        if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
-        else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
+        const companyCode = document.getElementById('i-target-company').value;
+        const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
+        const fileName = `DOC_${noDoc}.pdf`;
 
         try {
-            // 1. Upload ke Storage
-            const cleanFileName = noDok.replace(/[\/\s]/g, '-') + '.pdf';
-            const pdfUrl = await uploadPDF(cleanFileName);
+            // 1. GENERATE PDF AS BLOB
+            const element = document.getElementById('sj-container');
+            const opt = { margin: 0, filename: fileName, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
 
-            // 2. Insert ke Database
+            // 2. UPLOAD TO SUPABASE STORAGE (Bucket: pdfs)
+            const { data: uploadData, error: uploadError } = await _supabase.storage
+                .from('pdfs')
+                .upload(`logistik/${fileName}`, pdfBlob, { upsert: true });
+
+            if (uploadError) throw uploadError;
+
+            // 3. GET PUBLIC URL
+            const { data: { publicUrl } } = _supabase.storage.from('pdfs').getPublicUrl(`logistik/${fileName}`);
+
+            // 4. SAVE METADATA TO DATABASE
+            let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
+            if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
+            else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
+
             const payload = {
                 tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
-                no_dokumen: noDok, // Menggunakan nomor manual yang diedit user
+                no_dokumen: document.getElementById('i-no').value,
                 jenis_dokumen: document.getElementById('i-doc-type').value,
                 tujuan: document.getElementById('i-po-to').value,
                 nopol: document.getElementById('i-plat').value,
                 sopir: document.getElementById('i-driver').value,
                 qty: parseFloat(document.getElementById('i-vol').value) || 0,
                 pt: namaPT,
-                url_pdf: pdfUrl
+                pdf_url: publicUrl // Link ini akan muncul di dashboard
             };
 
-            const { error } = await _supabase.from('data_logistik').insert([payload]);
+            const { error: dbError } = await _supabase.from('data_logistik').insert([payload]);
+            if (dbError) throw dbError;
 
-            if (error) throw error;
-
-            alert('Data Berhasil Disimpan & PDF Diupload!\n\nNomor: ' + noDok + '\nLink: ' + pdfUrl);
+            alert('Sukses! Data & PDF Berhasil Disimpan.');
             generateAutoNumber();
         } catch (err) {
-            console.error(err);
-            alert('Kesalahan Sistem: ' + err.message + '\n\nTips: Pastikan Bucket "dokumen_pdf" sudah ada & Public di Supabase.');
+            alert('Gagal: ' + err.message);
         } finally {
             btn.innerText = 'SIMPAN & UPLOAD PDF'; btn.disabled = false;
         }
     }
 
-    // Listeners
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
     window.onload = generateAutoNumber;
 </script>
