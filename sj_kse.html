@@ -126,16 +126,22 @@
             position: sticky;
             top: 20px;
         }
-        .editor-panel h2 { margin: 18px 0 8px 0; color: var(--primary-green); font-size: 11pt; border-bottom: 2px solid var(--accent-tosca); padding-bottom: 5px; }
-        .field { display: flex; flex-direction: column; margin-bottom: 10px; }
-        .field label { font-size: 8pt; font-weight: bold; margin-bottom: 4px; color: #444; }
-        input, textarea { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; font-family: inherit; }
+
+        /* HEADER PANEL EDITOR & TOMBOL DI ATAS KANAN */
+        .editor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid var(--accent-tosca); padding-bottom: 10px; }
+        .editor-panel h2 { margin: 18px 0 8px 0; color: var(--primary-green); font-size: 11pt; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         
-        .action-group { display: flex; flex-direction: column; gap: 10px; margin-top: 25px; }
-        .btn { width: 100%; padding: 14px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 10pt; color: white; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .action-group-top { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-bottom: 20px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
+        .btn { padding: 10px 12px; border: none; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 8.5pt; color: white; display: flex; align-items: center; gap: 5px; flex: 1 1 auto; min-width: 120px; justify-content: center; }
+        
+        .btn-preview { background: #555; }
         .btn-save { background: #000; }
         .btn-print { background: var(--primary-green); }
         .btn-download { background: #2e7d32; }
+
+        .field { display: flex; flex-direction: column; margin-bottom: 10px; }
+        .field label { font-size: 8pt; font-weight: bold; margin-bottom: 4px; color: #444; }
+        input, textarea { padding: 8px; border: 1px solid #bbb; border-radius: 4px; font-size: 9pt; font-family: inherit; }
 
         @media print {
             .editor-panel { display: none; }
@@ -143,15 +149,24 @@
             #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; }
         }
 
-        /* Loading Spinner */
-        .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
+        .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <div class="editor-panel">
-    <div id="alert-status"></div>
+    <div class="editor-header">
+        <h3 style="margin:0; font-size:12pt; color:var(--primary-green)">EDITOR SYSTEM</h3>
+    </div>
+
+    <div class="action-group-top">
+        <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PREVIEW</button>
+        <button class="btn btn-save" id="btn-save" onclick="saveToSupabase()">SIMPAN DATA</button>
+        <button class="btn btn-print" onclick="window.print()">PRINT / CETAK</button>
+        <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
+    </div>
+
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal Dokumen (Date)</label><input type="text" id="i-tgl" value="09 Februari 2026"></div>
     <div class="field"><label>Nomor Surat Jalan</label><input type="text" id="i-no" value="001/SJ-KSE/II/2026"></div>
@@ -179,12 +194,6 @@
     <div class="field"><label>Nama Pengemudi (Driver)</label><input type="text" id="i-driver" value="-"></div>
     <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="RISKY DANDY SAPUTRA"></div>
     <div class="field"><label>Other Note (Catatan Tambahan)</label><textarea id="i-other-note" rows="2" placeholder="Tulis catatan tambahan di sini..."></textarea></div>
-
-    <div class="action-group">
-        <button class="btn btn-save" id="btn-save" onclick="saveToSupabase()">SIMPAN DATA KE DATABASE</button>
-        <button class="btn btn-print" onclick="window.print()">PRINT / CETAK</button>
-        <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
-    </div>
 </div>
 
 <div id="sj-container">
@@ -321,14 +330,12 @@
 </div>
 
 <script>
-    // Konfigurasi Supabase
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
-    // Fungsi Auto Number (Logika IKN)
     async function generateAutoNumber() {
         try {
             const { count } = await _supabase.from('data_logistik')
@@ -345,15 +352,14 @@
         } catch (e) { console.error(e); }
     }
 
-    // Fungsi Simpan (Logika IKN di data_logistik)
     async function saveToSupabase() {
         const btn = document.getElementById('btn-save');
         btn.disabled = true;
-        btn.innerHTML = '<div class="spinner"></div> MENYIMPAN...';
+        btn.innerHTML = '<div class="spinner"></div> PROSES...';
 
         try {
             const payload = {
-                tanggal: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+                tanggal: new Date().toISOString().split('T')[0],
                 no_dokumen: document.getElementById('i-no').value,
                 jenis_dokumen: 'Surat Jalan',
                 pt: 'PT. KHATULISTIWA SINAR ENERGI',
@@ -365,17 +371,16 @@
             };
 
             const { error } = await _supabase.from('data_logistik').insert([payload]);
-
             if (error) throw error;
 
-            alert('Sukses! Data Berhasil Disimpan Ke Database.');
+            alert('Data Berhasil Disimpan!');
             await generateAutoNumber();
 
         } catch (err) {
             alert('Gagal Simpan: ' + err.message);
         } finally {
             btn.disabled = false;
-            btn.innerHTML = 'SIMPAN DATA KE DATABASE';
+            btn.innerHTML = 'SIMPAN DATA';
         }
     }
 
@@ -414,11 +419,9 @@
         document.getElementById('v-poqty').innerText = document.getElementById('i-poqty').value;
         document.getElementById('v-driver').innerText = document.getElementById('i-driver').value;
         document.getElementById('v-mgr').innerText = document.getElementById('i-mgr').value;
-        
         document.getElementById('v-other-note').innerText = document.getElementById('i-other-note').value;
         
         document.querySelectorAll('.val').forEach(el => fitText(el, 9.5));
-        
         qrcode.clear();
         qrcode.makeCode("KSE-VERIFIED-" + document.getElementById('i-no').value);
     }
@@ -426,25 +429,19 @@
     function downloadPDF() {
         const element = document.getElementById('sj-container');
         const noSJ = document.getElementById('i-no').value.replace(/\//g, '-');
-        const ptTujuan = document.getElementById('i-po-to').value.replace(/\s/g, '_');
         window.scrollTo(0, 0);
         const opt = {
             margin: 0,
-            filename: 'Surat_Jalan_' + noSJ + '_' + ptTujuan + '.pdf',
+            filename: 'SJ_KSE_' + noSJ + '.pdf',
             image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowHeight: element.scrollHeight },
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         html2pdf().set(opt).from(element).save();
     }
 
     document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', upd));
-    
-    // Inisialisasi saat load
-    window.onload = async () => {
-        await generateAutoNumber();
-        upd();
-    };
+    window.onload = async () => { await generateAutoNumber(); upd(); };
 </script>
 </body>
 </html>
