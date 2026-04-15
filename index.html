@@ -86,7 +86,7 @@
 
         /* Logistics Table */
         .card-table { background: rgba(30, 41, 59, 0.4); border: 1px solid var(--glass-border); border-radius: 15px; }
-        .table { font-size: 0.75rem; text-transform: uppercase; } /* FORCE UPPERCASE */
+        .table { font-size: 0.75rem; text-transform: uppercase; }
         .table thead th { 
             background: rgba(59, 130, 246, 0.05); color: var(--ind-blue);
             font-size: 0.7rem; font-weight: 700; border-bottom: 2px solid var(--ind-blue);
@@ -247,6 +247,7 @@
                     badgeClass = 'bg-kse'; rowColorClass = 'row-kse';
                 }
 
+                // PERBAIKAN: Memastikan pemanggilan kolom tujuan dan sopir sesuai data row
                 html += `
                     <tr class="${rowColorClass}">
                         <td>
@@ -258,7 +259,7 @@
                         <td class="fw-bold">${row.no_dokumen || '-'}</td>
                         <td class="opacity-75">${row.jenis_dokumen || '-'}</td>
                         <td>${row.tujuan || '-'}</td>
-                        <td class="fw-bold text-white">${row.sopir || '-'}</td>
+                        <td class="fw-bold">${row.sopir || '-'}</td>
                         <td class="font-monospace" style="letter-spacing:1px;">${row.nopol || '-'}</td>
                         <td class="text-end fw-bold">${(row.qty || 0).toLocaleString('id-ID')}</td>
                         <td class="text-center">
@@ -270,7 +271,8 @@
             });
             tbody.innerHTML = html;
         } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-danger">GAGAL MEMUAT DATA.</td></tr>`;
+            console.error(err);
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-danger">GAGAL MEMUAT DATA. PERIKSA KONEKSI.</td></tr>`;
         }
     }
 
