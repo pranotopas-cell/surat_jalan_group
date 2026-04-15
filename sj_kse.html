@@ -83,8 +83,6 @@
         .btn-preview { background: #6c757d; }
         .btn-save { background: var(--success-green); }
         .btn-print { background: var(--primary-green); }
-        .btn-download { background: var(--tosca); }
-        .btn:hover { opacity: 0.8; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
         
         @media print { .editor-panel, .top-action-bar { display: none; } body { background: none; padding: 0; display: block; } #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; } }
     </style>
@@ -93,7 +91,7 @@
 
 <div class="top-action-bar">
     <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PREVIEW</button>
-    <button class="btn btn-save" onclick="saveData()">SIMPAN & UPLOAD PDF</button>
+    <button class="btn btn-save" id="save-btn" onclick="saveData()">SIMPAN & UPLOAD PDF</button>
     <button class="btn btn-print" onclick="window.print()">PRINT / CETAK</button>
 </div>
 
@@ -120,7 +118,7 @@
     <div class="field"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
     <div class="field"><label>Nomor Dokumen</label><input type="text" id="i-no"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
-    <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="-"></div>
+    <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
     <h2>2. Tabel Rincian Utama</h2>
     <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="-"></div>
@@ -131,8 +129,8 @@
     <div class="field"><label>Tgl Pengisian</label><input type="date" id="i-load-date"></div>
     <div class="field"><label>Plat Nomor</label><input type="text" id="i-plat" value="-"></div>
     <div class="field"><label>Nomor Segel</label><input type="text" id="i-segel" value="-"></div>
-    <div class="field"><label>Kilometer Awal</label><input type="text" id="i-m1" value="................"></div>
-    <div class="field"><label>Kilometer Akhir</label><input type="text" id="i-m2" value="..............."></div>
+    <div class="field"><label>Kilometer Awal</label><input type="text" id="i-m1" value="______________"></div>
+    <div class="field"><label>Kilometer Akhir</label><input type="text" id="i-m2" value="______________"></div>
     <div class="field"><label>Tinggi Cairan (T2)</label><input type="text" id="i-t2" value="-"></div>
 
     <h2>3. Deskripsi Pesanan</h2>
@@ -366,44 +364,51 @@
     }
 
     async function saveData() {
-        const btn = document.querySelector('.btn-save');
-        btn.innerText = 'UPLOADING PDF...'; btn.disabled = true;
+        const btn = document.getElementById('save-btn');
+        btn.innerText = 'UPLOADING...'; btn.disabled = true;
 
         const companyCode = document.getElementById('i-target-company').value;
-        const noDoc = document.getElementById('i-no').value.replace(/\//g, '-');
-        const fileName = `DOC_${noDoc}.pdf`;
+        const noDocRaw = document.getElementById('i-no').value;
+        const noDocClean = noDocRaw.replace(/[\/\s]/g, '-'); // Ganti / dan spasi jadi -
+        const fileName = `SJ_${noDocClean}.pdf`;
 
         try {
-            // 1. GENERATE PDF AS BLOB
+            // 1. GENERATE PDF
             const element = document.getElementById('sj-container');
-            const opt = { margin: 0, filename: fileName, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            const opt = { 
+                margin: 0, 
+                filename: fileName, 
+                image: { type: 'jpeg', quality: 0.98 }, 
+                html2canvas: { scale: 2, useCORS: true }, 
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+            };
             const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
 
-            // 2. UPLOAD TO SUPABASE STORAGE (Bucket: pdfs)
+            // 2. UPLOAD KE BUCKET 'pdfs' (Pastikan nama bucket di dashboard sama)
             const { data: uploadData, error: uploadError } = await _supabase.storage
                 .from('pdfs')
-                .upload(`logistik/${fileName}`, pdfBlob, { upsert: true });
+                .upload(fileName, pdfBlob, { upsert: true });
 
             if (uploadError) throw uploadError;
 
-            // 3. GET PUBLIC URL
-            const { data: { publicUrl } } = _supabase.storage.from('pdfs').getPublicUrl(`logistik/${fileName}`);
+            // 3. GET URL
+            const { data: { publicUrl } } = _supabase.storage.from('pdfs').getPublicUrl(fileName);
 
-            // 4. SAVE METADATA TO DATABASE
+            // 4. SAVE TO DB
             let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
             if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
             else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
             const payload = {
                 tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
-                no_dokumen: document.getElementById('i-no').value,
+                no_dokumen: noDocRaw,
                 jenis_dokumen: document.getElementById('i-doc-type').value,
                 tujuan: document.getElementById('i-po-to').value,
                 nopol: document.getElementById('i-plat').value,
                 sopir: document.getElementById('i-driver').value,
                 qty: parseFloat(document.getElementById('i-vol').value) || 0,
                 pt: namaPT,
-                pdf_url: publicUrl // Link ini akan muncul di dashboard
+                pdf_url: publicUrl 
             };
 
             const { error: dbError } = await _supabase.from('data_logistik').insert([payload]);
@@ -412,7 +417,8 @@
             alert('Sukses! Data & PDF Berhasil Disimpan.');
             generateAutoNumber();
         } catch (err) {
-            alert('Gagal: ' + err.message);
+            console.error(err);
+            alert('Gagal: ' + err.message + '\n\nTips: Pastikan Bucket "pdfs" sudah dibuat di Supabase.');
         } finally {
             btn.innerText = 'SIMPAN & UPLOAD PDF'; btn.disabled = false;
         }
