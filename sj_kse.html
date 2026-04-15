@@ -18,10 +18,12 @@
         }
         body { font-family: 'Arial', sans-serif; font-size: 10pt; margin: 0; padding: 20px; background-color: #4a4d4a; color: #000; display: flex; gap: 20px; justify-content: center; align-items: flex-start; position: relative; }
         
+        /* Container Dokumen */
         #sj-container { width: 210mm; height: 297mm; padding: 10mm 12mm; background: white; position: relative; box-sizing: border-box; box-shadow: 0 0 15px rgba(0,0,0,0.6); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
         
         .val { font-weight: bold; font-size: 9.5pt; display: inline-block; margin-top: 2px; white-space: nowrap; overflow: hidden; max-width: 100%; }
         
+        /* Decoration Footer */
         .page-footer-border { position: absolute; bottom: 0; left: 0; width: 100%; height: 12px; background: #222; }
         .accent-box { position: absolute; bottom: 0; right: 0; display: flex; }
         .accent-blue { width: 45px; height: 12px; background: var(--primary-green); transform: skewX(-30deg); margin-right: -5px; }
@@ -31,6 +33,7 @@
         #qrcode { background: white; padding: 2px; border: 1px solid #eee; }
         .system-info-text { font-size: 7pt; line-height: 1.2; color: #333; }
         
+        /* Header */
         .header { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .logo-area { display: flex; align-items: center; gap: 15px; }
         .main-logo { height: 45px; width: auto; }
@@ -48,6 +51,7 @@
         .title-block h1 { font-size: 20pt; margin: 0; display: inline-block; border-bottom: 3px solid #000; font-weight: bold; letter-spacing: 2px; color: #000; padding-bottom: 2px; }
         .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; }
         
+        /* Tables */
         .main-table { width: 100%; border-top: 2.5px solid var(--primary-green); border-bottom: 2.5px solid var(--primary-green); border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
         .main-table td { padding: 6px 4px; vertical-align: top; border-bottom: 0.5px solid #eee; }
         .label-group { display: flex; flex-direction: column; }
@@ -71,6 +75,7 @@
         
         .other-note-container { width: 100%; border: 1px solid #000; border-top: none; padding: 6px 10px; font-size: 8pt; min-height: 45px; box-sizing: border-box; background: #fff; text-align: left; }
         
+        /* Editor Panel */
         .editor-panel { width: 380px; padding: 20px; background: #fff; border-radius: 8px; border: 1px solid #ddd; max-height: 95vh; overflow-y: auto; position: sticky; top: 20px; }
         .editor-panel h2 { margin: 18px 0 8px 0; color: var(--primary-green); font-size: 11pt; border-bottom: 2px solid var(--tosca); padding-bottom: 5px; }
         .field { display: flex; flex-direction: column; margin-bottom: 10px; }
@@ -84,6 +89,7 @@
         .btn-save { background: var(--success-green); }
         .btn-print { background: var(--primary-green); }
         .btn:hover { opacity: 0.8; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
         
         @media print { .editor-panel, .top-action-bar { display: none; } body { background: none; padding: 0; display: block; } #sj-container { box-shadow: none; margin: 0; border: none; padding: 10mm 12mm; } }
     </style>
@@ -117,7 +123,7 @@
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field"><label>Nomor Dokumen (Manual)</label><input type="text" id="i-no" style="background: #fffbe6;"></div>
+    <div class="field"><label>Nomor Dokumen (Manual Edit)</label><input type="text" id="i-no" style="background: #fffbe6; border: 1px solid #ffd666;"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -288,6 +294,7 @@
         return `${parts[2]} ${bulanIndo[parseInt(parts[1]) - 1]} ${parts[0]}`;
     }
 
+    // Ambil nomor terakhir dari DB untuk saran, tapi user bisa edit manual
     async function generateAutoNumber() {
         const companyCode = document.getElementById('i-target-company').value;
         const docType = document.getElementById('i-doc-type').value;
@@ -316,13 +323,15 @@
         let nextNum = 1;
         if (data && data.length > 0 && data[0].no_dokumen) {
             const lastNo = data[0].no_dokumen;
-            const lastNum = parseInt(lastNo.split('/')[0]);
+            const parts = lastNo.split('/');
+            const lastNum = parseInt(parts[0]);
             if(!isNaN(lastNum)) nextNum = lastNum + 1;
         }
 
         const formattedNum = nextNum.toString().padStart(3, '0');
         document.getElementById('i-no').value = `${formattedNum}/${codeDoc}-${companyCode}/${monthRoman}/${year}`;
         
+        // Update Title UI
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
@@ -361,16 +370,18 @@
         qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
     }
 
-    // FUNGSI BARU: Upload PDF ke Supabase Storage
+    // UPLOAD PDF KE STORAGE
     async function uploadPDF(fileName) {
         const element = document.getElementById('sj-container');
         const opt = { margin: 0, filename: fileName, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
         
         const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
-        const filePath = `dokumen_pdf/${fileName}`;
+        
+        // Path langsung ke file (Karena bucket sudah bernama dokumen_pdf)
+        const filePath = fileName;
 
         const { data, error } = await _supabase.storage
-            .from('dokumen_pdf') // Nama Bucket Anda
+            .from('dokumen_pdf') 
             .upload(filePath, pdfBlob, { contentType: 'application/pdf', upsert: true });
 
         if (error) throw error;
@@ -379,6 +390,7 @@
         return publicUrl.publicUrl;
     }
 
+    // SIMPAN DATA & PDF
     async function saveData() {
         const companyCode = document.getElementById('i-target-company').value;
         const btn = document.getElementById('save-btn');
@@ -391,36 +403,38 @@
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
         try {
-            // 1. Generate & Upload PDF dahulu untuk mendapatkan URL
-            const fileName = `${noDok.replace(/\//g, '-')}.pdf`;
-            const pdfUrl = await uploadPDF(fileName);
+            // 1. Upload ke Storage
+            const cleanFileName = noDok.replace(/[\/\s]/g, '-') + '.pdf';
+            const pdfUrl = await uploadPDF(cleanFileName);
 
-            // 2. Simpan Data ke Tabel
+            // 2. Insert ke Database
             const payload = {
                 tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
-                no_dokumen: noDok,
+                no_dokumen: noDok, // Menggunakan nomor manual yang diedit user
                 jenis_dokumen: document.getElementById('i-doc-type').value,
                 tujuan: document.getElementById('i-po-to').value,
                 nopol: document.getElementById('i-plat').value,
                 sopir: document.getElementById('i-driver').value,
                 qty: parseFloat(document.getElementById('i-vol').value) || 0,
                 pt: namaPT,
-                url_pdf: pdfUrl // Kolom baru untuk menyimpan link PDF
+                url_pdf: pdfUrl
             };
 
             const { error } = await _supabase.from('data_logistik').insert([payload]);
 
             if (error) throw error;
 
-            alert('Data & PDF Berhasil Disimpan!\nLink PDF: ' + pdfUrl);
+            alert('Data Berhasil Disimpan & PDF Diupload!\n\nNomor: ' + noDok + '\nLink: ' + pdfUrl);
             generateAutoNumber();
         } catch (err) {
-            alert('Terjadi Kesalahan: ' + err.message);
+            console.error(err);
+            alert('Kesalahan Sistem: ' + err.message + '\n\nTips: Pastikan Bucket "dokumen_pdf" sudah ada & Public di Supabase.');
         } finally {
             btn.innerText = 'SIMPAN & UPLOAD PDF'; btn.disabled = false;
         }
     }
 
+    // Listeners
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
     window.onload = generateAutoNumber;
 </script>
