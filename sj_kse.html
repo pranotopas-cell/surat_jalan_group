@@ -46,7 +46,7 @@
         
         .title-block { text-align: center; margin: 35px 0 20px 0; color: #000; }
         .title-block h1 { font-size: 20pt; margin: 0; display: inline-block; border-bottom: 3px solid #000; font-weight: bold; letter-spacing: 2px; color: #000; padding-bottom: 2px; }
-        .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; text-decoration: none; }
+        .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; }
         
         .main-table { width: 100%; border-top: 2.5px solid var(--primary-green); border-bottom: 2.5px solid var(--primary-green); border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
         .main-table td { padding: 6px 4px; vertical-align: top; border-bottom: 0.5px solid #eee; }
@@ -92,7 +92,7 @@
 
 <div class="top-action-bar">
     <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PREVIEW</button>
-    <button class="btn btn-save" onclick="saveData()">SIMPAN DATA</button>
+    <button class="btn btn-save" id="save-btn" onclick="saveData()">SIMPAN & UPLOAD PDF</button>
     <button class="btn btn-print" onclick="window.print()">PRINT / CETAK</button>
 </div>
 
@@ -117,10 +117,7 @@
 
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
-    <div class="field">
-        <label>Nomor Dokumen (Bisa Edit Manual)</label>
-        <input type="text" id="i-no" style="background: #fffbe6; border: 1px solid #ffd666;">
-    </div>
+    <div class="field"><label>Nomor Dokumen (Manual)</label><input type="text" id="i-no" style="background: #fffbe6;"></div>
     <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
     <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value="Pangkalan Bun"></div>
 
@@ -291,13 +288,11 @@
         return `${parts[2]} ${bulanIndo[parseInt(parts[1]) - 1]} ${parts[0]}`;
     }
 
-    // Fungsi Utama: Ambil nomor terakhir untuk saran, tapi biarkan user edit manual
     async function generateAutoNumber() {
         const companyCode = document.getElementById('i-target-company').value;
         const docType = document.getElementById('i-doc-type').value;
         const now = new Date();
         
-        // Setup Tanggal default jika kosong
         if(!document.getElementById('i-tgl').value) {
             document.getElementById('i-tgl').value = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         }
@@ -311,7 +306,6 @@
         if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
-        // Ambil Data Terakhir dari Supabase (Query berdasarkan PT dan Jenis Dokumen)
         const { data } = await _supabase.from('data_logistik')
             .select('no_dokumen')
             .eq('pt', namaPT)
@@ -326,11 +320,9 @@
             if(!isNaN(lastNum)) nextNum = lastNum + 1;
         }
 
-        // Tampilkan nomor otomatis di input panel (User masih bisa hapus dan ganti manual)
         const formattedNum = nextNum.toString().padStart(3, '0');
         document.getElementById('i-no').value = `${formattedNum}/${codeDoc}-${companyCode}/${monthRoman}/${year}`;
         
-        // Update Label Judul
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
@@ -341,11 +333,9 @@
             document.getElementById('v-title-main').innerText = "DELIVERY ORDER";
             document.getElementById('v-title-sub').innerText = "SURAT JALAN";
         }
-
         upd();
     }
 
-    // Fungsi Update Tampilan Real-time
     function upd() {
         const fields = [
             ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'], ['v-trans', 'i-trans'], 
@@ -367,42 +357,68 @@
         document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
         document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
         
-        // QR Code selalu mengikuti isi nomor dokumen di panel
         qrcode.clear();
         qrcode.makeCode("VERIFIED-" + document.getElementById('i-no').value);
     }
 
+    // FUNGSI BARU: Upload PDF ke Supabase Storage
+    async function uploadPDF(fileName) {
+        const element = document.getElementById('sj-container');
+        const opt = { margin: 0, filename: fileName, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+        
+        const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
+        const filePath = `dokumen_pdf/${fileName}`;
+
+        const { data, error } = await _supabase.storage
+            .from('dokumen_pdf') // Nama Bucket Anda
+            .upload(filePath, pdfBlob, { contentType: 'application/pdf', upsert: true });
+
+        if (error) throw error;
+
+        const { data: publicUrl } = _supabase.storage.from('dokumen_pdf').getPublicUrl(filePath);
+        return publicUrl.publicUrl;
+    }
+
     async function saveData() {
         const companyCode = document.getElementById('i-target-company').value;
-        const btn = document.querySelector('.btn-save');
-        btn.innerText = 'SAVING...'; btn.disabled = true;
+        const btn = document.getElementById('save-btn');
+        const noDok = document.getElementById('i-no').value;
+        
+        btn.innerText = 'PROSES UPLOAD...'; btn.disabled = true;
 
         let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
         if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
-        // Payload menggunakan nilai yang ada di input (Nomor Manual User yang tersimpan)
-        const payload = {
-            tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
-            no_dokumen: document.getElementById('i-no').value, // Nomor dari input manual tersimpan di sini
-            jenis_dokumen: document.getElementById('i-doc-type').value,
-            tujuan: document.getElementById('i-po-to').value,
-            nopol: document.getElementById('i-plat').value,
-            sopir: document.getElementById('i-driver').value,
-            qty: parseFloat(document.getElementById('i-vol').value) || 0,
-            pt: namaPT 
-        };
+        try {
+            // 1. Generate & Upload PDF dahulu untuk mendapatkan URL
+            const fileName = `${noDok.replace(/\//g, '-')}.pdf`;
+            const pdfUrl = await uploadPDF(fileName);
 
-        const { error } = await _supabase.from('data_logistik').insert([payload]);
+            // 2. Simpan Data ke Tabel
+            const payload = {
+                tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
+                no_dokumen: noDok,
+                jenis_dokumen: document.getElementById('i-doc-type').value,
+                tujuan: document.getElementById('i-po-to').value,
+                nopol: document.getElementById('i-plat').value,
+                sopir: document.getElementById('i-driver').value,
+                qty: parseFloat(document.getElementById('i-vol').value) || 0,
+                pt: namaPT,
+                url_pdf: pdfUrl // Kolom baru untuk menyimpan link PDF
+            };
 
-        if (error) {
-            alert('Gagal Simpan: ' + error.message);
-        } else {
-            alert('Sukses! Data Berhasil Disimpan.');
-            // Setelah simpan, ambil nomor urut berikutnya berdasarkan nomor terakhir yang baru saja disimpan
+            const { error } = await _supabase.from('data_logistik').insert([payload]);
+
+            if (error) throw error;
+
+            alert('Data & PDF Berhasil Disimpan!\nLink PDF: ' + pdfUrl);
             generateAutoNumber();
+        } catch (err) {
+            alert('Terjadi Kesalahan: ' + err.message);
+        } finally {
+            btn.innerText = 'SIMPAN & UPLOAD PDF'; btn.disabled = false;
         }
-        btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
     }
 
     document.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', upd));
