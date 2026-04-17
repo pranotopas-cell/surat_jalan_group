@@ -29,9 +29,18 @@
         .address-meta-row { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; }
         .content-body { margin-top: 40px; line-height: 1.5; }
         
-        .table-main { width: 100%; border: 1.5px solid #000; border-collapse: collapse; margin: 15px 0; }
-        .table-main th { background-color: var(--kse-primary) !important; color: white !important; border: 1px solid #000; padding: 8px 4px; text-align: center; font-size: 11px; }
-        .table-main td { border: 1px solid #000; padding: 6px; vertical-align: middle; text-align: center; font-size: 11px; }
+        /* PERBAIKAN LEBAR KOLOM TABEL */
+        .table-main { width: 100%; border: 1.5px solid #000; border-collapse: collapse; margin: 15px 0; table-layout: fixed; }
+        .table-main th { background-color: var(--kse-primary) !important; color: white !important; border: 1px solid #000; padding: 8px 4px; text-align: center; font-size: 10px; }
+        .table-main td { border: 1px solid #000; padding: 6px 4px; vertical-align: middle; text-align: center; font-size: 10px; word-wrap: break-word; }
+
+        /* Kolom Transportir diperlebar agar tidak turun */
+        .col-no { width: 30px; }
+        .col-trans { width: 180px; text-align: left !important; padding-left: 8px !important; }
+        .col-nopol { width: 90px; }
+        .col-driver { width: 110px; }
+        .col-qty { width: 80px; }
+        .col-tera { width: 70px; }
 
         .signature-area { margin-top: 30px; }
         .ttd-img { height: 90px; width: auto; margin-top: 5px; }
@@ -51,10 +60,10 @@
 <div class="control-nav shadow-sm d-flex justify-content-between align-items-center">
     <div class="d-flex gap-2">
         <a href="/" class="btn btn-outline-dark btn-sm"><i class="bi bi-house-door"></i> HOME</a>
-        <button class="btn btn-dark btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> PRINT</button>
+        <button class="btn btn-dark btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> PRINT / PREVIEW</button>
     </div>
     <div class="d-flex gap-2">
-        <button class="btn btn-primary btn-sm" id="btnSave" onclick="saveToSupabase()"><i class="bi bi-cloud-upload"></i> SIMPAN KE DATABASE</button>
+        <button class="btn btn-primary btn-sm" id="btnSave" onclick="saveToSupabase()"><i class="bi bi-cloud-upload"></i> SIMPAN DATABASE</button>
         <button class="btn btn-success btn-sm fw-bold px-4" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> SIMPAN PDF</button>
     </div>
 </div>
@@ -65,7 +74,7 @@
             <h6 class="fw-bold mb-3 text-success border-bottom pb-2">DATA MEMO</h6>
             <div class="row g-2 mb-3">
                 <div class="col-12"><label class="small fw-bold">Tanggal Surat</label><input type="text" id="in_tgl_surat" class="form-control form-control-sm" oninput="updateView()"></div>
-                <div class="col-12"><label class="small fw-bold">No. Memo</label><input type="text" id="in_no_memo" class="form-control form-control-sm" oninput="updateView()"></div>
+                <div class="col-12"><label class="small fw-bold">No. Memo (Bisa Edit)</label><input type="text" id="in_no_memo" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">Perihal</label><input type="text" id="in_hal" class="form-control form-control-sm" value="Memo Pengaliran BBM" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">Kepada</label><input type="text" id="in_kepada" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">No. PO</label><input type="text" id="in_po" class="form-control form-control-sm" oninput="updateView()"></div>
@@ -79,6 +88,7 @@
                     <option value="PT. KHATULISTIWA SINAR ENERGI">
                     <option value="PT. INDO DHARMA ENERGI">
                     <option value="PT. BERKAH SARANA MAKMUR BENUA">
+                    <option value="PT. TRANS GLOBAL ENERGI">
                 </datalist>
                 <datalist id="listNopol"></datalist>
                 <datalist id="listDriver"></datalist>
@@ -86,11 +96,11 @@
                 <script>
                     for(let i=1; i<=5; i++) {
                         document.write(`
-                            <div class="p-2 border mb-2 bg-light rounded">
-                                <small class="fw-bold text-secondary">Unit ${i}</small>
+                            <div class="p-2 border mb-2 bg-light rounded shadow-sm">
+                                <small class="fw-bold text-dark">Baris ${i}</small>
                                 <input type="text" placeholder="Transportir" class="form-control form-control-sm mb-1 in-trans" list="listTrans" oninput="updateTable()">
                                 <div class="row g-1">
-                                    <div class="col-6"><input type="text" placeholder="No Pol" class="form-control form-control-sm in-nopol" list="listNopol" onchange="handleNopolChange(${i-1})" oninput="updateTable()"></div>
+                                    <div class="col-6"><input type="text" placeholder="No Polisi" class="form-control form-control-sm in-nopol" list="listNopol" onchange="handleNopolChange(${i-1})" oninput="updateTable()"></div>
                                     <div class="col-6"><input type="text" placeholder="Driver" class="form-control form-control-sm in-driver" list="listDriver" oninput="updateTable()"></div>
                                     <div class="col-6"><input type="number" placeholder="Qty" class="form-control form-control-sm in-qty" oninput="updateTable()"></div>
                                     <div class="col-6"><input type="text" placeholder="Tera" class="form-control form-control-sm in-tera" oninput="updateTable()"></div>
@@ -125,7 +135,7 @@
                             <tr>
                                 <td class="text-end">Nomor<br><span class="sub-lang">Number</span></td>
                                 <td class="text-center">:</td>
-                                <td><span id="out_no_memo"></span></td>
+                                <td><span id="out_no_memo" class="fw-bold"></span></td>
                             </tr>
                             <tr>
                                 <td class="text-end">Perihal<br><span class="sub-lang">Subject</span></td>
@@ -164,12 +174,12 @@
                     <table class="table-main">
                         <thead>
                             <tr>
-                                <th width="5%">NO</th>
-                                <th width="25%">TRANSPORTIR</th>
-                                <th width="20%">NOMOR POLISI</th>
-                                <th width="20%">DRIVER</th>
-                                <th width="15%">QTY (LTR)</th>
-                                <th width="15%">TERA UNIT</th>
+                                <th class="col-no">NO</th>
+                                <th class="col-trans">TRANSPORTIR</th>
+                                <th class="col-nopol">NOMOR POLISI</th>
+                                <th class="col-driver">DRIVER</th>
+                                <th class="col-qty">QTY (LTR)</th>
+                                <th class="col-tera">TERA UNIT</th>
                             </tr>
                         </thead>
                         <tbody id="table-body"></tbody>
@@ -218,12 +228,10 @@
 </div>
 
 <script>
-    // Konfigurasi Supabase
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Data Master Otomatis (Sama seperti logika IDE Anda)
     const masterData = {
         nopol: {
             "KH 8141 GH": { tera: "100,5", qty: 5000 },
@@ -244,7 +252,6 @@
         document.getElementById('out_tgl_muat').innerText = document.getElementById('in_tgl_muat').value;
         document.getElementById('out_lokasi').innerText = document.getElementById('in_lokasi').value;
         
-        // Update QR
         const qrData = `Memo: ${document.getElementById('in_no_memo').value} | To: ${document.getElementById('in_kepada').value}`;
         document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=50x50&data=${encodeURIComponent(qrData)}`;
     }
@@ -274,7 +281,7 @@
                 total += vQty;
                 html += `<tr>
                     <td>${i+1}</td>
-                    <td style="text-align:left">${trans[i].value}</td>
+                    <td class="col-trans">${trans[i].value}</td>
                     <td>${nopol[i].value}</td>
                     <td>${driver[i].value}</td>
                     <td class="fw-bold">${vQty.toLocaleString('id-ID')}</td>
@@ -282,8 +289,24 @@
                 </tr>`;
             }
         }
-        document.getElementById('table-body').innerHTML = html || '<tr><td colspan="6">Belum ada data unit</td></tr>';
+        document.getElementById('table-body').innerHTML = html || '<tr><td colspan="6">...</td></tr>';
         document.getElementById('out_total').innerText = total.toLocaleString('id-ID') + " Ltr";
+    }
+
+    async function setAutomaticMemoNumber() {
+        const now = new Date();
+        const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+        const year = now.getFullYear();
+        const month = roman[now.getMonth()];
+        
+        try {
+            const { count } = await _supabase.from('data_logistik').select('*', { count: 'exact', head: true }).eq('jenis_dokumen', 'MEMO PENGALIRAN');
+            const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
+            document.getElementById('in_no_memo').value = `${nextNo}/MEMO-KSE/${month}/${year}`;
+        } catch (e) {
+            document.getElementById('in_no_memo').value = `001/MEMO-KSE/${month}/${year}`;
+        }
+        updateView();
     }
 
     async function saveToSupabase() {
@@ -291,7 +314,7 @@
         const noMemo = document.getElementById('in_no_memo').value;
         if(!noMemo) return alert("Nomor Memo Harus Diisi!");
 
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menyimpan...';
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Simpan...';
         btn.disabled = true;
 
         const trans = document.querySelectorAll('.in-trans');
@@ -318,13 +341,10 @@
         }
 
         const { error } = await _supabase.from('data_logistik').insert(payloads);
+        if(!error) alert("Data Berhasil Tersimpan!");
+        else alert("Gagal: " + error.message);
         
-        if(!error) {
-            alert("Data Berhasil Tersimpan ke Database!");
-        } else {
-            alert("Gagal Simpan: " + error.message);
-        }
-        btn.innerHTML = '<i class="bi bi-cloud-upload"></i> SIMPAN KE DATABASE';
+        btn.innerHTML = '<i class="bi bi-cloud-upload"></i> SIMPAN DATABASE';
         btn.disabled = false;
     }
 
@@ -342,20 +362,20 @@
     }
 
     window.onload = function() {
-        // Set Tanggal Otomatis
+        // SET TANGGAL OTOMATIS
         const today = new Date();
-        const dd = String(today.getDate()).padStart(2, '0');
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const yyyy = today.getFullYear();
-        document.getElementById('in_tgl_surat').value = `${dd}/${mm}/${yyyy}`;
-        document.getElementById('in_tgl_muat').value = `${dd}/${mm}/${yyyy}`;
+        const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+        const tglFull = `${today.getDate().toString().padStart(2, '0')} ${months[today.getMonth()]} ${today.getFullYear()}`;
+        document.getElementById('in_tgl_surat').value = tglFull;
+        document.getElementById('in_tgl_muat').value = tglFull;
         
         // Populate Datalists
         document.getElementById('listNopol').innerHTML = Object.keys(masterData.nopol).map(n => `<option value="${n}">`).join('');
         document.getElementById('listDriver').innerHTML = masterData.drivers.map(d => `<option value="${d}">`).join('');
         
         document.getElementById('doc-id').innerText = Math.floor(1000 + Math.random() * 9000);
-        updateView();
+        
+        setAutomaticMemoNumber();
         updateTable();
     };
 </script>
