@@ -101,9 +101,9 @@
 <div class="editor-panel">
     <h2>Database & Document Type</h2>
     <div class="field">
-        <label>Pilih Perusahaan (Transportir)</label>
+        <label>Pilih Transportir (List)</label>
         <select id="i-target-company" onchange="generateAutoNumber()">
-            <option value="KSE">PT. KHATULISTIWA SINAR ENERGI (KSE)</option>
+            <option value="KSE">PT. KHATULISTIWA SINAR ENERGI</option>
             <option value="BSMB">PT. BERKAH SARANA MAKMUR BENUA</option>
             <option value="IDE">PT. INDO DHARMA ENERGI</option>
             <option value="TGE">PT. TRANS GLOBAL ENERGI</option>
@@ -132,13 +132,12 @@
         </select>
         <input type="text" id="i-po-to" value="PT. " style="margin-top:5px">
     </div>
-    <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value=" "></div>
 
-    <h2>2. Tabel Rincian Utama</h2>
+    <h2>2. Data Armada & Driver</h2>
     <div class="field">
-        <label>Pilih Unit (Auto Fill Sopir/Qty/Tera)</label>
+        <label>Pilih Unit (Quick Select)</label>
         <select id="select-unit" onchange="applyUnitData(this.value)">
-            <option value="">-- Pilih Nopol --</option>
+            <option value="">-- Pilih Nomor Polisi --</option>
             <option value="KH 8141 GH">KH 8141 GH (AGUS - 5.000)</option>
             <option value="KH 8139 GM">KH 8139 GM (WIYANTO - 10.000)</option>
             <option value="KH 8942 GN">KH 8942 GN (WAHID - 5.000)</option>
@@ -150,26 +149,29 @@
             <option value="L 9761 UJ">L 9761 UJ (ADI SUCIPTO - 8.000)</option>
         </select>
     </div>
-    <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="PT. KHATULISTIWA SINAR ENERGI"></div>
+    
+    <div class="field"><label>Nama Transportir</label><input type="text" id="i-trans"></div>
+    <div class="field"><label>Nomor Polisi (Nopol)</label><input type="text" id="i-plat"></div>
+    <div class="field"><label>Nama Sopir / Driver</label><input type="text" id="i-driver"></div>
+    <div class="field"><label>Quantity (Qty Liter)</label><input type="number" id="i-vol"></div>
+    <div class="field"><label>Nilai Tera / TC</label><input type="text" id="i-t2"></div>
+
+    <h2>3. Rincian Tambahan</h2>
     <div class="field"><label>Produk</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
-    <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
-    <div class="field"><label>Volume Liter (qty)</label><input type="number" id="i-vol" value="0"></div>
-    <div class="field"><label>Nomor SO</label><input type="text" id="i-so-desc" value="-"></div>
     <div class="field"><label>Tgl Pengisian</label><input type="date" id="i-load-date"></div>
-    <div class="field"><label>Plat Nomor</label><input type="text" id="i-plat" value="-"></div>
     <div class="field"><label>Nomor Segel</label><input type="text" id="i-segel" value="-"></div>
-    <div class="field"><label>Tera / TC (T2)</label><input type="text" id="i-t2" value="-"></div>
     <div class="field"><label>Kilometer Awal</label><input type="text" id="i-m1" value=" _ _ _ _ _ _ _ "></div>
     <div class="field"><label>Kilometer Akhir</label><input type="text" id="i-m2" value=" _ _ _ _ _ _ _"></div>
 
-    <h2>3. Deskripsi Pesanan</h2>
+    <h2>4. Deskripsi Pesanan</h2>
+    <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
+    <div class="field"><label>Nomor SO / PIC</label><input type="text" id="i-so-desc" value="-"></div>
     <div class="field"><label>Nomor PO</label><input type="text" id="i-po-num" value="-"></div>
     <div class="field"><label>PO Quantity (L)</label><input type="number" id="i-poqty" value="0"></div>
 
-    <h2>4. Pengesahan & Catatan</h2>
-    <div class="field"><label>Nama Pengemudi</label><input type="text" id="i-driver" value="-"></div>
+    <h2>5. Pengesahan</h2>
     <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="Staff Operasional"></div>
-    <div class="field"><label>Other Note</label><textarea id="i-other-note" rows="2"></textarea></div>
+    <div class="field"><label>Catatan Tambahan (Other Note)</label><textarea id="i-other-note" rows="2"></textarea></div>
 </div>
 
 <div id="sj-container">
@@ -191,7 +193,7 @@
                 <tr><td class="meta-label">Tanggal / Date</td><td>: <span id="v-tgl" class="meta-val"></span></td></tr>
                 <tr><td class="meta-label">No. Dokumen</td><td>: <span id="v-no" class="meta-val"></span></td></tr>
                 <tr><td class="meta-label">Tujuan / To</td><td>: <span id="v-po-to-header" class="meta-val"></span></td></tr>
-                <tr><td class="meta-label">Lokasi / Location</td><td>: <span id="v-lokasi" class="meta-val"></span></td></tr>
+                <tr><td class="meta-label">Lokasi / Location</td><td>: <span id="v-lokasi" class="meta-val"> - </span></td></tr>
             </table>
         </div>
     </div>
@@ -308,7 +310,6 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
-    // DATABASE MASTER DATA (Updated with your List)
     const dataMasterUnit = {
         "KH 8141 GH": { sopir: "AGUS", qty: 5000, tera: "100,5" },
         "KH 8139 GM": { sopir: "WIYANTO", qty: 10000, tera: "133,5" },
@@ -325,11 +326,12 @@
         if(!nopol) return;
         const data = dataMasterUnit[nopol];
         if(data) {
+            // Auto Fill Panel Input
             document.getElementById('i-plat').value = nopol;
             document.getElementById('i-driver').value = data.sopir;
             document.getElementById('i-vol').value = data.qty;
             document.getElementById('i-t2').value = data.tera;
-            upd(); 
+            upd(); // Update Tampilan Visual di Kanan
         }
     }
 
@@ -365,7 +367,6 @@
         const monthRoman = roman[now.getMonth()];
         const year = now.getFullYear();
 
-        // Mapping Company Names for DB and Header
         let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
         if (companyCode === "BSMB") namaPT = "PT. BERKAH SARANA MAKMUR BENUA";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
@@ -391,7 +392,6 @@
         const formattedNum = nextNum.toString().padStart(3, '0');
         document.getElementById('i-no').value = `${formattedNum}/${codeDoc}-${companyCode}/${monthRoman}/${year}`;
         
-        // Update Title Display
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
@@ -408,7 +408,7 @@
 
     function upd() {
         const fields = [
-            ['v-no', 'i-no'], ['v-lokasi', 'i-lokasi'], ['v-trans', 'i-trans'], 
+            ['v-no', 'i-no'], ['v-trans', 'i-trans'], 
             ['v-prod', 'i-prod'], ['v-do-top', 'i-do-desc'], ['v-vol', 'i-vol'], 
             ['v-so-top', 'i-so-desc'], ['v-load', 'i-load-date'], ['v-plat', 'i-plat'], 
             ['v-m1', 'i-m1'], ['v-m2', 'i-m2'], ['v-segel', 'i-segel'], 
