@@ -43,8 +43,12 @@
         .meta-info-grid { text-align: right; font-size: 8.5pt; width: 45%; margin-top: 8px; }
         .meta-info-grid table { width: auto; margin-left: auto; border-collapse: collapse; }
         .meta-info-grid td { vertical-align: top; padding: 2px 0; text-align: left; }
-        .meta-label { font-weight: bold; width: 115px; color: #333; }
-        .meta-val { font-weight: bold; color: #000; }
+        
+        /* CSS Tambahan untuk Alih Bahasa Header */
+        .meta-label-box { display: flex; flex-direction: column; width: 115px; }
+        .meta-label-id { font-weight: bold; color: #333; font-size: 8.5pt; }
+        .meta-label-en { font-style: italic; color: #666; font-size: 7pt; margin-top: -2px; }
+        .meta-val { font-weight: bold; color: #000; font-size: 8.5pt; }
         
         .title-block { text-align: center; margin: 35px 0 20px 0; color: #000; }
         .title-block h1 { font-size: 20pt; margin: 0; display: inline-block; border-bottom: 3px solid #000; font-weight: bold; letter-spacing: 2px; color: #000; padding-bottom: 2px; }
@@ -144,12 +148,10 @@
             <option value="PT. BOR">
             <option value="PT. ANGKASA MITRA SEJATI">
             <option value="PT. TRIDEA SENADA">
-            <option value="PT. TRIDEA SENADA">
-                            
         </datalist>
     </div>
 
-    <h2>2. Data Logistik (Editable Dropdown)</h2>
+    <h2>2. Data Logistik</h2>
     <div class="field">
         <label>Transportir</label>
         <input list="listTransportir" id="i-trans" onchange="upd(); adjustFontSize()">
@@ -181,51 +183,9 @@
         </datalist>
     </div>
 
-    <div class="field">
-        <label>Nama Sopir</label>
-        <input list="listDriver" id="i-driver">
-        <datalist id="listDriver">
-            <option value="AGUS WANTO">
-            <option value="ADI SUCIPTO">
-            <option value="AGUS MULYANTO">
-            <option value="NUR KHOLIS">
-            <option value="FARID HABIBI">
-            <option value="RONNY PRASTIANSYAH">
-            <option value="FARID HABIBI">
-            <option value="AGUS TGE">
-            <option value="ADI SUCIPTO">
-            <option value="INDRA">
-            <option value="SUPRIYADI">
-            <option value="WAHID ">
-             <option value="AGUS IDE">
-        </datalist>
-    </div>
-
-    <div class="field">
-        <label>Quantity (Qty)</label>
-        <input list="listQty" id="i-vol">
-        <datalist id="listQty">
-            <option value="5000">
-            <option value="8000">
-            <option value="10000">
-        </datalist>
-    </div>
-
-    <div class="field">
-        <label>Tera (TC)</label>
-        <input list="listTera" id="i-t2">
-        <datalist id="listTera">
-            <option value="100,5">
-            <option value="133,5">
-            <option value="115,4">
-            <option value="114,6">
-            <option value="109,5">
-            <option value="104,3">
-            <option value="113,8">
-            <option value="106,2">
-            <option value="124,0">
-        </datalist>
-    </div>
+    <div class="field"><label>Nama Sopir</label><input list="listDriver" id="i-driver"></div>
+    <div class="field"><label>Quantity (Qty)</label><input list="listQty" id="i-vol"></div>
+    <div class="field"><label>Tera (TC)</label><input list="listTera" id="i-t2"></div>
 
     <h2>3. Rincian Tambahan</h2>
     <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
@@ -263,9 +223,33 @@
         </div>
         <div class="meta-info-grid">
             <table>
-                <tr><td class="meta-label">Tanggal / Date</td><td>: <span id="v-tgl" class="meta-val"></span></td></tr>
-                <tr><td class="meta-label">No. Dokumen</td><td>: <span id="v-no" class="meta-val"></span></td></tr>
-                <tr><td class="meta-label">Tujuan / To</td><td>: <span id="v-po-to-header" class="meta-val"></span></td></tr>
+                <tr>
+                    <td>
+                        <div class="meta-label-box">
+                            <span class="meta-label-id">Tanggal</span>
+                            <span class="meta-label-en">Date</span>
+                        </div>
+                    </td>
+                    <td>: <span id="v-tgl" class="meta-val"></span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="meta-label-box">
+                            <span class="meta-label-id">No. Dokumen</span>
+                            <span class="meta-label-en">Document No.</span>
+                        </div>
+                    </td>
+                    <td>: <span id="v-no" class="meta-val"></span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="meta-label-box">
+                            <span class="meta-label-id">Tujuan</span>
+                            <span class="meta-label-en">To</span>
+                        </div>
+                    </td>
+                    <td>: <span id="v-po-to-header" class="meta-val"></span></td>
+                </tr>
             </table>
         </div>
     </div>
