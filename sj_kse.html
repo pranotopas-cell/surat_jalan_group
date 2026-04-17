@@ -134,12 +134,13 @@
 
     <h2>2. Tabel Rincian Utama</h2>
     <div class="field">
-        <label>Pilih Unit & Sopir</label>
+        <label>Pilih Unit & Sopir (Auto Fill)</label>
         <select id="select-unit" onchange="applyUnitData(this.value)">
             <option value="">-- Pilih Nopol --</option>
             <option value="KH 8001 AA">KH 8001 AA (BUDI - 5000L)</option>
             <option value="KH 8002 BB">KH 8002 BB (IWAN - 8000L)</option>
             <option value="KH 8003 CC">KH 8003 CC (ANTO - 10000L)</option>
+            <option value="KH 8004 DD">KH 8004 DD (HADI - 5000L)</option>
         </select>
     </div>
     <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="KSE GROUP"></div>
@@ -300,11 +301,12 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
-    // DATABASE MASTER DATA (Silahkan Tambah Sendiri)
+    // DATABASE MASTER DATA (Data Transportir, Sopir, Qty, dan Tera Terhubung ke Nopol)
     const dataMasterUnit = {
-        "KH 8001 AA": { sopir: "BUDI SANTOSO", qty: 5000, tera: "TC-01/KSE/2025" },
-        "KH 8002 BB": { sopir: "IWAN SETIAWAN", qty: 8000, tera: "TC-02/KSE/2025" },
-        "KH 8003 CC": { sopir: "ANTO WIJAYA", qty: 10000, tera: "TC-03/KSE/2025" }
+        "KH 8001 AA": { sopir: "BUDI SANTOSO", qty: 5000, tera: "215", trans: "KSE GROUP" },
+        "KH 8002 BB": { sopir: "IWAN SETIAWAN", qty: 8000, tera: "230", trans: "KSE GROUP" },
+        "KH 8003 CC": { sopir: "ANTO WIJAYA", qty: 10000, tera: "245", trans: "KSE GROUP" },
+        "KH 8004 DD": { sopir: "HADI MULYONO", qty: 5000, tera: "212", trans: "KSE GROUP" }
     };
 
     function applyUnitData(nopol) {
@@ -315,6 +317,7 @@
             document.getElementById('i-driver').value = data.sopir;
             document.getElementById('i-vol').value = data.qty;
             document.getElementById('i-t2').value = data.tera;
+            document.getElementById('i-trans').value = data.trans;
             upd(); // Refresh Tampilan
         }
     }
