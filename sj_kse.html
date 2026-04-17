@@ -101,11 +101,13 @@
 <div class="editor-panel">
     <h2>Database & Document Type</h2>
     <div class="field">
-        <label>Pilih Perusahaan</label>
+        <label>Pilih Perusahaan (Transportir)</label>
         <select id="i-target-company" onchange="generateAutoNumber()">
             <option value="KSE">PT. KHATULISTIWA SINAR ENERGI (KSE)</option>
-            <option value="IKAEN">PT. INVESTAMA KALIMANTAN ENERGI (IKN)</option>
-            <option value="IDE">PT. INDO DHARMA ENERGI (IDE)</option>
+            <option value="BSMB">PT. BERKAH SARANA MAKMUR BENUA</option>
+            <option value="IDE">PT. INDO DHARMA ENERGI</option>
+            <option value="TGE">PT. TRANS GLOBAL ENERGI</option>
+            <option value="IKAEN">PT. INVESTAMA KALIMANTAN ENERGI</option>
         </select>
     </div>
     <div class="field">
@@ -134,16 +136,21 @@
 
     <h2>2. Tabel Rincian Utama</h2>
     <div class="field">
-        <label>Pilih Unit & Sopir (Auto Fill)</label>
+        <label>Pilih Unit (Auto Fill Sopir/Qty/Tera)</label>
         <select id="select-unit" onchange="applyUnitData(this.value)">
             <option value="">-- Pilih Nopol --</option>
-            <option value="KH 8001 AA">KH 8001 AA (BUDI - 5000L)</option>
-            <option value="KH 8002 BB">KH 8002 BB (IWAN - 8000L)</option>
-            <option value="KH 8003 CC">KH 8003 CC (ANTO - 10000L)</option>
-            <option value="KH 8004 DD">KH 8004 DD (HADI - 5000L)</option>
+            <option value="KH 8141 GH">KH 8141 GH (AGUS - 5.000)</option>
+            <option value="KH 8139 GM">KH 8139 GM (WIYANTO - 10.000)</option>
+            <option value="KH 8942 GN">KH 8942 GN (WAHID - 5.000)</option>
+            <option value="KH 8943 GN">KH 8943 GN (SUPRIYADI - 5.000)</option>
+            <option value="KH 8273 RM">KH 8273 RM (AGUS WANTO - 5.000)</option>
+            <option value="KH 8256 RM">KH 8256 RM (NUR KHOLIS - 5.000)</option>
+            <option value="KH 8641 GN">KH 8641 GN (FARID HABIBI - 5.000)</option>
+            <option value="KH 8206 GN">KH 8206 GN (RONNY PRASTIANSYAH - 5.000)</option>
+            <option value="L 9761 UJ">L 9761 UJ (ADI SUCIPTO - 8.000)</option>
         </select>
     </div>
-    <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="KSE GROUP"></div>
+    <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="PT. KHATULISTIWA SINAR ENERGI"></div>
     <div class="field"><label>Produk</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
     <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
     <div class="field"><label>Volume Liter (qty)</label><input type="number" id="i-vol" value="0"></div>
@@ -301,12 +308,17 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
-    // DATABASE MASTER DATA (Data Transportir, Sopir, Qty, dan Tera Terhubung ke Nopol)
+    // DATABASE MASTER DATA (Updated with your List)
     const dataMasterUnit = {
-        "KH 8001 AA": { sopir: "BUDI SANTOSO", qty: 5000, tera: "215", trans: "KSE GROUP" },
-        "KH 8002 BB": { sopir: "IWAN SETIAWAN", qty: 8000, tera: "230", trans: "KSE GROUP" },
-        "KH 8003 CC": { sopir: "ANTO WIJAYA", qty: 10000, tera: "245", trans: "KSE GROUP" },
-        "KH 8004 DD": { sopir: "HADI MULYONO", qty: 5000, tera: "212", trans: "KSE GROUP" }
+        "KH 8141 GH": { sopir: "AGUS", qty: 5000, tera: "100,5" },
+        "KH 8139 GM": { sopir: "WIYANTO", qty: 10000, tera: "133,5" },
+        "KH 8942 GN": { sopir: "WAHID", qty: 5000, tera: "115,4" },
+        "KH 8943 GN": { sopir: "SUPRIYADI", qty: 5000, tera: "114,6" },
+        "KH 8273 RM": { sopir: "AGUS WANTO", qty: 5000, tera: "109,5" },
+        "KH 8256 RM": { sopir: "NUR KHOLIS", qty: 5000, tera: "104,3" },
+        "KH 8641 GN": { sopir: "FARID HABIBI", qty: 5000, tera: "113,8" },
+        "KH 8206 GN": { sopir: "RONNY PRASTIANSYAH", qty: 5000, tera: "106,2" },
+        "L 9761 UJ":   { sopir: "ADI SUCIPTO", qty: 8000, tera: "124,0" }
     };
 
     function applyUnitData(nopol) {
@@ -317,8 +329,7 @@
             document.getElementById('i-driver').value = data.sopir;
             document.getElementById('i-vol').value = data.qty;
             document.getElementById('i-t2').value = data.tera;
-            document.getElementById('i-trans').value = data.trans;
-            upd(); // Refresh Tampilan
+            upd(); 
         }
     }
 
@@ -354,9 +365,14 @@
         const monthRoman = roman[now.getMonth()];
         const year = now.getFullYear();
 
+        // Mapping Company Names for DB and Header
         let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
-        if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
+        if (companyCode === "BSMB") namaPT = "PT. BERKAH SARANA MAKMUR BENUA";
         else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
+        else if (companyCode === "TGE") namaPT = "PT. TRANS GLOBAL ENERGI";
+        else if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
+
+        document.getElementById('i-trans').value = namaPT;
 
         const { data } = await _supabase.from('data_logistik')
             .select('no_dokumen')
@@ -375,6 +391,7 @@
         const formattedNum = nextNum.toString().padStart(3, '0');
         document.getElementById('i-no').value = `${formattedNum}/${codeDoc}-${companyCode}/${monthRoman}/${year}`;
         
+        // Update Title Display
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
@@ -415,13 +432,8 @@
     }
 
     async function saveData() {
-        const companyCode = document.getElementById('i-target-company').value;
         const btn = document.querySelector('.btn-save');
         btn.innerText = 'SAVING...'; btn.disabled = true;
-
-        let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
-        if (companyCode === "IKAEN") namaPT = "PT. INVESTAMA KALIMANTAN ENERGI";
-        else if (companyCode === "IDE") namaPT = "PT. INDO DHARMA ENERGI";
 
         const payload = {
             tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
@@ -431,7 +443,7 @@
             nopol: document.getElementById('i-plat').value,
             sopir: document.getElementById('i-driver').value,
             qty: parseFloat(document.getElementById('i-vol').value) || 0,
-            pt: namaPT 
+            pt: document.getElementById('i-trans').value 
         };
 
         const { error } = await _supabase.from('data_logistik').insert([payload]);
