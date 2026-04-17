@@ -120,11 +120,29 @@
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
     <div class="field"><label>Nomor Dokumen </label><input type="text" id="i-no"></div>
-    <div class="field"><label>Tujuan (To)</label><input type="text" id="i-po-to" value="PT. "></div>
+    <div class="field">
+        <label>Tujuan (To)</label>
+        <select id="select-tujuan" onchange="applyTujuan(this.value)">
+            <option value="">-- Pilih Tujuan --</option>
+            <option value="PT. ASMIN BARA BRONANG">PT. ASMIN BARA BRONANG</option>
+            <option value="PT. SINAR JAYA">PT. SINAR JAYA</option>
+            <option value="PT. KALIMANTAN ENERGI">PT. KALIMANTAN ENERGI</option>
+        </select>
+        <input type="text" id="i-po-to" value="PT. " style="margin-top:5px">
+    </div>
     <div class="field"><label>Lokasi Header</label><input type="text" id="i-lokasi" value=" "></div>
 
     <h2>2. Tabel Rincian Utama</h2>
-    <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="-"></div>
+    <div class="field">
+        <label>Pilih Unit & Sopir</label>
+        <select id="select-unit" onchange="applyUnitData(this.value)">
+            <option value="">-- Pilih Nopol --</option>
+            <option value="KH 8001 AA">KH 8001 AA (BUDI - 5000L)</option>
+            <option value="KH 8002 BB">KH 8002 BB (IWAN - 8000L)</option>
+            <option value="KH 8003 CC">KH 8003 CC (ANTO - 10000L)</option>
+        </select>
+    </div>
+    <div class="field"><label>Transportir</label><input type="text" id="i-trans" value="KSE GROUP"></div>
     <div class="field"><label>Produk</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
     <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
     <div class="field"><label>Volume Liter (qty)</label><input type="number" id="i-vol" value="0"></div>
@@ -132,9 +150,9 @@
     <div class="field"><label>Tgl Pengisian</label><input type="date" id="i-load-date"></div>
     <div class="field"><label>Plat Nomor</label><input type="text" id="i-plat" value="-"></div>
     <div class="field"><label>Nomor Segel</label><input type="text" id="i-segel" value="-"></div>
+    <div class="field"><label>Tera / TC (T2)</label><input type="text" id="i-t2" value="-"></div>
     <div class="field"><label>Kilometer Awal</label><input type="text" id="i-m1" value=" _ _ _ _ _ _ _ "></div>
     <div class="field"><label>Kilometer Akhir</label><input type="text" id="i-m2" value=" _ _ _ _ _ _ _"></div>
-    <div class="field"><label>Tinggi Cairan (T2)</label><input type="text" id="i-t2" value="-"></div>
 
     <h2>3. Deskripsi Pesanan</h2>
     <div class="field"><label>Nomor PO</label><input type="text" id="i-po-num" value="-"></div>
@@ -209,7 +227,7 @@
         <tr>
             <td><div class="label-group"><span class="label-id">Nomor Segel</span><span class="label-en">Seal Number</span></div></td>
             <td>: <span class="val" id="v-segel">-</span></td>
-            <td><div class="label-group"><span class="label-id">Tinggi Cairan (T2)</span><span class="label-en">High Liquid Level</span></div></td>
+            <td><div class="label-group"><span class="label-id">Tera / TC (T2)</span><span class="label-en">Calibration / TC</span></div></td>
             <td>: <span class="val" id="v-t2">-</span> Cm</td>
         </tr>
         <tr>
@@ -281,6 +299,32 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
+
+    // DATABASE MASTER DATA (Silahkan Tambah Sendiri)
+    const dataMasterUnit = {
+        "KH 8001 AA": { sopir: "BUDI SANTOSO", qty: 5000, tera: "TC-01/KSE/2025" },
+        "KH 8002 BB": { sopir: "IWAN SETIAWAN", qty: 8000, tera: "TC-02/KSE/2025" },
+        "KH 8003 CC": { sopir: "ANTO WIJAYA", qty: 10000, tera: "TC-03/KSE/2025" }
+    };
+
+    function applyUnitData(nopol) {
+        if(!nopol) return;
+        const data = dataMasterUnit[nopol];
+        if(data) {
+            document.getElementById('i-plat').value = nopol;
+            document.getElementById('i-driver').value = data.sopir;
+            document.getElementById('i-vol').value = data.qty;
+            document.getElementById('i-t2').value = data.tera;
+            upd(); // Refresh Tampilan
+        }
+    }
+
+    function applyTujuan(val) {
+        if(val) {
+            document.getElementById('i-po-to').value = val;
+            upd();
+        }
+    }
 
     function formatTanggalIndonesia(dateStr) {
         if(!dateStr) return '-';
