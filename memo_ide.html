@@ -145,7 +145,7 @@
     <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="02 Maret 2026"></div>
     <div class="input-group"><label>Lokasi</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu"></div>
 
-    <div class="section-title">Data Armada (Bisa Pilih/Ketik)</div>
+    <div class="section-title">Data Armada</div>
     <div id="armada-container"></div>
 </div>
 
@@ -245,13 +245,32 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const listTransportir = ["PT. KHATULISTIWA SINAR ENERGI", "PT. BERKAH SARANA MAKMUR BENUA", "PT. INDO DHARMA ENERGI", "PT. TRANS GLOBAL ENERGI", "PT. IKAEN"];
-    const listNopol = ["KH 8139 GM", "KH 8942 GN", "KH 8943 GN", "KH 8273 RM", "KH 8256 RM", "KH 8121 GI", "KH 8542 GK", "L 9761 UJ"];
-    const listDriver = ["SUPRIYADI", "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", "ADI SUCIPTO", "AGUS MULYANTO", "Samsul", "Ahmad"];
-    const listQty = ["5000", "8000", "10000", "15000"];
-    const listTera = ["133.5 cm", "115.4 cm", "114.6 cm", "109.5 cm", "104.3 cm", "124,0 cm"];
+    const listTransportir = [
+        "PT. KHATULISTIWA SINAR ENERGI", 
+        "PT. BERKAH SARANA MAKMUR BENUA", 
+        "PT. INDO DHARMA ENERGI", 
+        "PT. TRANS GLOBAL ENERGI", 
+        "PT. INVESTAMA KALIMANTAN ENERGI"
+    ];
 
-    let qrCodeInstance = null;
+    // Data Master Nopol, Tera, dan Qty
+    const dataNopol = {
+        "KH 8141 GH": { tera: "100,5", qty: "5000" },
+        "KH 8139 GM": { tera: "133,5", qty: "10000" },
+        "KH 8942 GN": { tera: "115,4", qty: "5000" },
+        "KH 8943 GN": { tera: "114,6", qty: "5000" },
+        "KH 8273 RM": { tera: "109,5", qty: "5000" },
+        "KH 8256 RM": { tera: "104,3", qty: "5000" },
+        "KH 8641 GN": { tera: "113,8", qty: "5000" },
+        "KH 8206 GN": { tera: "106,2", qty: "5000" },
+        "L 9761 UJ": { tera: "124,0", qty: "8000" }
+    };
+
+    const listDriver = [
+        "AGUS WIYANTO", "WAHID", "SUPRIYADI", "AGUS WANTO", 
+        "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", 
+        "ADI SUCIPTO", "AGUS MULYANTO", "AGUS INDRA"
+    ];
 
     function createDatalist(id, list) {
         return `<datalist id="${id}">` + list.map(item => `<option value="${item}">`).join('') + `</datalist>`;
@@ -260,10 +279,8 @@
     function generateArmadaInputs() {
         let html = "";
         html += createDatalist('listTrans', listTransportir);
-        html += createDatalist('listNopol', listNopol);
+        html += createDatalist('listNopol', Object.keys(dataNopol));
         html += createDatalist('listDriver', listDriver);
-        html += createDatalist('listQty', listQty);
-        html += createDatalist('listTera', listTera);
 
         for(let i=1; i<=5; i++) {
             html += `
@@ -271,14 +288,24 @@
                 <h4>Unit ${i}</h4>
                 <div class="input-group"><label>Transportir</label><input type="text" id="inTrans${i}" list="listTrans"></div>
                 <div class="unit-grid">
-                    <div class="input-group"><label>No. Polisi</label><input type="text" id="inNopol${i}" list="listNopol"></div>
+                    <div class="input-group"><label>No. Polisi</label><input type="text" id="inNopol${i}" list="listNopol" onchange="handleNopolChange(${i})"></div>
                     <div class="input-group"><label>Driver</label><input type="text" id="inDriver${i}" list="listDriver"></div>
-                    <div class="input-group"><label>Qty (L)</label><input type="text" id="inQty${i}" list="listQty"></div>
-                    <div class="input-group"><label>Tera (cm)</label><input type="text" id="inTera${i}" list="listTera"></div>
+                    <div class="input-group"><label>Qty (L)</label><input type="text" id="inQty${i}"></div>
+                    <div class="input-group"><label>Tera (cm)</label><input type="text" id="inTera${i}"></div>
                 </div>
             </div>`;
         }
         document.getElementById('armada-container').innerHTML = html;
+    }
+
+    // Fungsi Auto-Fill saat Nopol dipilih
+    function handleNopolChange(index) {
+        const val = document.getElementById('inNopol' + index).value;
+        if(dataNopol[val]) {
+            document.getElementById('inTera' + index).value = dataNopol[val].tera + " cm";
+            document.getElementById('inQty' + index).value = dataNopol[val].qty;
+        }
+        update();
     }
 
     function formatIndoDate(dateObj) {
@@ -378,6 +405,7 @@
 
         const { error } = await _supabase.from('data_logistik').insert(payloads);
         if(!error) { alert("Data Berhasil Tersimpan!"); initPage(); }
+        else { alert("Error: " + error.message); }
         btn.innerText = "SIMPAN"; btn.disabled = false;
     }
 
