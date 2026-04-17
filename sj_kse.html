@@ -113,6 +113,15 @@
     <h2>1. Informasi Header</h2>
     <div class="field"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
     <div class="field"><label>Nomor Dokumen </label><input type="text" id="i-no"></div>
+    <div class="field">
+        <label>Tujuan (To)</label>
+        <input list="listTujuan" id="i-po-to" value="PT. ">
+        <datalist id="listTujuan">
+            <option value="PT. ASMIN BARA BRONANG">
+            <option value="PT. SINAR JAYA">
+            <option value="PT. KALIMANTAN ENERGI">
+        </datalist>
+    </div>
 
     <h2>2. Data Logistik (Editable Dropdown)</h2>
     <div class="field">
@@ -191,15 +200,6 @@
     <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
     <div class="field"><label>Nomor SO</label><input type="text" id="i-so-desc" value="-"></div>
     <div class="field"><label>Nomor PIC</label><input type="text" id="i-pic-desc" value="-"></div>
-    <div class="field">
-        <label>Tujuan (Destination)</label>
-        <input list="listTujuan" id="i-po-to" value="PT. ">
-        <datalist id="listTujuan">
-            <option value="PT. ASMIN BARA BRONANG">
-            <option value="PT. SINAR JAYA">
-            <option value="PT. KALIMANTAN ENERGI">
-        </datalist>
-    </div>
     <div class="field"><label>Produk</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
     <div class="field"><label>Tgl Pengisian</label><input type="date" id="i-load-date"></div>
     <div class="field"><label>Nomor Segel</label><input type="text" id="i-segel" value="-"></div>
@@ -234,6 +234,7 @@
                 <tr><td class="meta-label">Tanggal / Date</td><td>: <span id="v-tgl" class="meta-val"></span></td></tr>
                 <tr><td class="meta-label">No. Dokumen</td><td>: <span id="v-no" class="meta-val"></span></td></tr>
                 <tr><td class="meta-label">Tujuan / To</td><td>: <span id="v-po-to-header" class="meta-val"></span></td></tr>
+                <tr><td class="meta-label">Lokasi / Location</td><td>: <span id="v-lokasi" class="meta-val"> - </span></td></tr>
             </table>
         </div>
     </div>
