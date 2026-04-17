@@ -113,7 +113,7 @@
         <input type="text" id="inNoUrut" placeholder="Contoh: 001">
     </div>
     <div class="input-group">
-        <label>Format No. Surat (Edit Jika Perlu)</label>
+        <label>Format No. Surat</label>
         <input type="text" id="inNoFormat" placeholder="/MEMO-KSE/IX/2026">
     </div>
     
@@ -121,8 +121,8 @@
     <div class="input-group"><label>Perihal / Subject</label><textarea id="inPerihal" rows="2">MEMO PENGALIRAN BBM</textarea></div>
 
     <div class="section-title">Tujuan Surat</div>
-    <div class="input-group"><label>Nama Perusahaan Tujuan</label><input type="text" id="inTujuanPT" value="PT.SINARINDO SUKSES SELALU"></div>
-    <div class="input-group"><label>Alamat/Keterangan</label><input type="text" id="inAlamatPT" value="JL.Ahmad Yani Km.2,2 Pangkalan Bun."></div>
+    <div class="input-group"><label>Nama Perusahaan Tujuan</label><input type="text" id="inTujuanPT" value="PT. SINARINDO SUKSES SELALU"></div>
+    <div class="input-group"><label>Alamat/Keterangan</label><input type="text" id="inAlamatPT" value="JL. Ahmad Yani Km.2,2 Pangkalan Bun."></div>
 
     <div class="section-title">Informasi Loading</div>
     <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="-"></div>
@@ -234,23 +234,42 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const listTransportir = ["PT. KHATULISTIWA SINAR ENERGI", "PT. BERKAH SARANA MAKMUR BENUA", "PT. INDO DHARMA ENERGI", "PT. TRANS GLOBAL ENERGI"];
-    const listNopol = ["KH 8139 GM", "KH 8942 GN", "KH 8943 GN", "KH 8273 RM", "KH 8256 RM", "KH 8121 GI", "KH 8542 GK", "L 9761 UJ"];
-    const listDriver = ["SUPRIYADI", "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", "ADI SUCIPTO", "AGUS MULYANTO"];
-    const listQty = ["5000", "8000", "10000", "15000"];
-    const listTera = ["133.5 cm", "115.4 cm", "114.6 cm", "109.5 cm", "104.3 cm", "124,0 cm"];
+    // Data List sesuai permintaan
+    const listTransportir = [
+        "PT. KHATULISTIWA SINAR ENERGI", 
+        "PT. BERKAH SARANA MAKMUR BENUA", 
+        "PT. INDO DHARMA ENERGI", 
+        "PT. TRANS GLOBAL ENERGI",
+        "PT. INVESTAMA KALIMANTAN ENERGI"
+    ];
 
-    function createDatalist(id, list) {
-        return `<datalist id="${id}">` + list.map(item => `<option value="${item}">`).join('') + `</datalist>`;
+    const dataArmada = [
+        { nopol: "KH 8141 GH", tera: "100.5 cm", qty: 5000 },
+        { nopol: "KH 8139 GM", tera: "133.5 cm", qty: 10000 },
+        { nopol: "KH 8942 GN", tera: "115.4 cm", qty: 5000 },
+        { nopol: "KH 8943 GN", tera: "114.6 cm", qty: 5000 },
+        { nopol: "KH 8273 RM", tera: "109.5 cm", qty: 5000 },
+        { nopol: "KH 8256 RM", tera: "104.3 cm", qty: 5000 },
+        { nopol: "KH 8641 GN", tera: "113.8 cm", qty: 5000 },
+        { nopol: "KH 8206 GN", tera: "106.2 cm", qty: 5000 },
+        { nopol: "L 9761 UJ", tera: "124.0 cm", qty: 8000 }
+    ];
+
+    const listDriver = [
+        "AGUS WIYANTO", "WAHID", "SUPRIYADI", "AGUS WANTO", 
+        "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", 
+        "ADI SUCIPTO", "AGUS MULYANTO", "AGUS INDRA"
+    ];
+
+    function createDatalist(id, list, key = null) {
+        return `<datalist id="${id}">` + list.map(item => `<option value="${key ? item[key] : item}">`).join('') + `</datalist>`;
     }
 
     function generateArmadaInputs() {
         let html = "";
         html += createDatalist('listTrans', listTransportir);
-        html += createDatalist('listNopol', listNopol);
+        html += createDatalist('listNopol', dataArmada, 'nopol');
         html += createDatalist('listDriver', listDriver);
-        html += createDatalist('listQty', listQty);
-        html += createDatalist('listTera', listTera);
 
         for(let i=1; i<=10; i++) {
             html += `
@@ -260,15 +279,26 @@
                     <input type="text" id="inTrans${i}" list="listTrans" placeholder="Transportir">
                 </div>
                 <div class="unit-grid">
-                    <input type="text" id="inNopol${i}" list="listNopol" placeholder="Nopol">
+                    <input type="text" id="inNopol${i}" list="listNopol" placeholder="Nopol" onchange="autoFillArmada(${i})">
                     <input type="text" id="inDriver${i}" list="listDriver" placeholder="Sopir">
-                    <input type="text" id="inQty${i}" list="listQty" placeholder="Qty">
-                    <input type="text" id="inTera${i}" list="listTera" placeholder="Tera">
+                    <input type="text" id="inQty${i}" placeholder="Qty">
+                    <input type="text" id="inTera${i}" placeholder="Tera">
                 </div>
             </div>`;
         }
         document.getElementById('unit-inputs').innerHTML = html;
         document.querySelectorAll('.unit-card input').forEach(el => el.addEventListener('input', update));
+    }
+
+    // FUNGSI AUTOFILL BERDASARKAN NOPOL
+    function autoFillArmada(index) {
+        const nopolVal = document.getElementById(`inNopol${index}`).value.trim();
+        const found = dataArmada.find(item => item.nopol === nopolVal);
+        if (found) {
+            document.getElementById(`inQty${index}`).value = found.qty;
+            document.getElementById(`inTera${index}`).value = found.tera;
+        }
+        update();
     }
 
     function formatIndoDate(dateObj) {
@@ -337,7 +367,7 @@
             const nopol = document.getElementById(`inNopol${i}`).value;
             if (nopol !== "") {
                 const qtyStr = document.getElementById(`inQty${i}`).value || "0";
-                const qty = parseFloat(qtyStr.replace(/,/g, '')) || 0;
+                const qty = parseFloat(qtyStr.toString().replace(/,/g, '')) || 0;
                 total += qty;
                 tableHTML += `<tr>
                     <td>${rowNum++}</td>
@@ -370,7 +400,7 @@
                     tujuan: document.getElementById('inTujuanPT').value,
                     nopol: nopol,
                     sopir: document.getElementById(`inDriver${i}`).value, 
-                    qty: parseFloat(qtyStr.replace(/,/g, '')) || 0,
+                    qty: parseFloat(qtyStr.toString().replace(/,/g, '')) || 0,
                     pt: "PT. KHATULISTIWA SINAR ENERGI"
                 });
             }
@@ -400,4 +430,4 @@
 </script>
 
 </body>
-</html
+</html>
