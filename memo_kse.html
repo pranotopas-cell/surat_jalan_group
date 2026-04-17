@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Memo Terintegrasi - IDE Group</title>
+    <title>Sistem Memo Terintegrasi - KSE Group</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -83,7 +83,7 @@
         
         .logo-container { display: flex; align-items: center; gap: 10px; }
         .logo-container img { height: 55px; width: auto; }
-        .logo-container .company-name { font-size: 24px; font-weight: bold; color: var(--primary-blue); letter-spacing: -0.5px; text-transform: uppercase; }
+        .logo-container .company-name { font-size: 20px; font-weight: bold; color: var(--primary-blue); letter-spacing: -0.5px; text-transform: uppercase; }
 
         .header-address { text-align: right; font-size: 9px; line-height: 1.3; max-width: 350px; color: #333; }
 
@@ -125,14 +125,14 @@
 </div>
 
 <div class="sidebar">
-    <h2>MEMO SYSTEM</h2>
+    <h2>MEMO SYSTEM - KSE</h2>
     <div class="section-title">Database & Meta</div>
     <div class="input-group">
         <label>Tabel Tujuan</label>
         <select id="i-target-table" onchange="initPage()">
+            <option value="data_kse" selected>PT. KHATULISTIWA SINAR ENERGI</option>
             <option value="data_ide">PT. INDO DHARMA ENERGI</option>
             <option value="data_ikaen">PT. IKAEN</option>
-            <option value="data_kse">PT. KHATULISTIWA SINAR ENERGI</option>
         </select>
     </div>
     <div class="input-group"><label>Nomor Memo (Editable)</label><input type="text" id="inNomor"></div>
@@ -142,7 +142,7 @@
     <div class="section-title">Informasi Loading</div>
     <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="-"></div>
     <div class="input-group"><label>Tanggal PO</label><input type="text" id="inTglPO" value="-"></div>
-    <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="02 Maret 2026"></div>
+    <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="17 April 2026"></div>
     <div class="input-group"><label>Lokasi</label><input type="text" id="inLokasi" value="Storage BBM PT. Sinarindo Sukses Selalu"></div>
 
     <div class="section-title">Data Armada</div>
@@ -154,8 +154,8 @@
         <div class="top-border"></div>
         <div class="header">
             <div class="logo-container">
-                <img src="ide1.png" alt="Logo" onerror="this.style.display='none'">
-                <div class="company-name" id="outCompanyName">INDO DHARMA ENERGI</div>
+                <img src="kse.png" alt="Logo" onerror="this.style.display='none'">
+                <div class="company-name" id="outCompanyName">KHATULISTIWA SINAR ENERGI</div>
             </div>
             <div class="header-address">
                 <strong>SUPLIER DAN TRANSPORTIR BAHAN BAKAR MINYAK RESMI</strong><br>
@@ -232,8 +232,8 @@
         <div class="footer-flex">
             <div class="signature-container">
                 Regards,<br>
-                <strong style="font-size: 13px; color: var(--primary-blue);" id="outSigCompany">PT. INDO DHARMA ENERGI</strong><br>
-                <img src="ttd_ide.png" alt="Signature" class="sig-img" onerror="this.style.display='none'">
+                <strong style="font-size: 13px; color: var(--primary-blue);" id="outSigCompany">PT. KHATULISTIWA SINAR ENERGI</strong><br>
+                <img src="ttd_kse.png" alt="Signature" class="sig-img" onerror="this.style.display='none'">
             </div>
             <div id="qrcode"></div>
         </div>
@@ -253,7 +253,6 @@
         "PT. INVESTAMA KALIMANTAN ENERGI"
     ];
 
-    // Data Master Nopol, Tera, dan Qty
     const dataNopol = {
         "KH 8141 GH": { tera: "100,5", qty: "5000" },
         "KH 8139 GM": { tera: "133,5", qty: "10000" },
@@ -267,9 +266,9 @@
     };
 
     const listDriver = [
-        "AGUS" , "WIYANTO", "WAHID", "SUPRIYADI", "AGUS WANTO", 
+        "AGUS WIYANTO", "WAHID", "SUPRIYADI", "AGUS WANTO", 
         "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", 
-        "ADI SUCIPTO", "AGUS MULYANTO", "AGUS" , "INDRA"
+        "ADI SUCIPTO", "AGUS MULYANTO", "AGUS INDRA"
     ];
 
     function createDatalist(id, list) {
@@ -298,7 +297,6 @@
         document.getElementById('armada-container').innerHTML = html;
     }
 
-    // Fungsi Auto-Fill saat Nopol dipilih
     function handleNopolChange(index) {
         const val = document.getElementById('inNopol' + index).value;
         if(dataNopol[val]) {
@@ -321,10 +319,10 @@
         const table = document.getElementById('i-target-table').value;
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         
-        let companyText = "INDO DHARMA ENERGI";
-        let codePT = "IDE";
+        let companyText = "KHATULISTIWA SINAR ENERGI";
+        let codePT = "KSE";
+        if(table === "data_ide") { companyText = "INDO DHARMA ENERGI"; codePT = "IDE"; }
         if(table === "data_ikaen") { companyText = "IKAEN"; codePT = "IKN"; }
-        if(table === "data_kse") { companyText = "KHATULISTIWA SINAR ENERGI"; codePT = "KSE"; }
         
         document.getElementById('outCompanyName').innerText = companyText;
         document.getElementById('outSigCompany').innerText = "PT. " + companyText;
@@ -383,9 +381,9 @@
         const targetTable = document.getElementById('i-target-table').value;
         const noMemo = document.getElementById('inNomor').value;
         const tglMemo = document.getElementById('inTglMemo').value.replace(/\//g, '-');
-        let namaPT = "PT. INDO DHARMA ENERGI";
+        let namaPT = "PT. KHATULISTIWA SINAR ENERGI";
+        if(targetTable === "data_ide") namaPT = "PT. INDO DHARMA ENERGI";
         if(targetTable === "data_ikaen") namaPT = "PT. IKAEN";
-        if(targetTable === "data_kse") namaPT = "PT. KHATULISTIWA SINAR ENERGI";
         
         btn.innerText = "SIMPAN..."; btn.disabled = true;
 
@@ -404,7 +402,7 @@
         }
 
         const { error } = await _supabase.from('data_logistik').insert(payloads);
-        if(!error) { alert("Data Berhasil Tersimpan!"); initPage(); }
+        if(!error) { alert("Data Berhasil Tersimpan ke Database KSE!"); initPage(); }
         else { alert("Error: " + error.message); }
         btn.innerText = "SIMPAN"; btn.disabled = false;
     }
@@ -413,7 +411,7 @@
         const element = document.getElementById('memo-area');
         const opt = {
             margin: 0,
-            filename: 'Memo_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf',
+            filename: 'Memo_KSE_' + document.getElementById('inNomor').value.replace(/\//g, '-') + '.pdf',
             image: { type: 'jpeg', quality: 1 },
             html2canvas: { scale: 3, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
