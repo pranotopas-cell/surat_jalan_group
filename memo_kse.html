@@ -29,12 +29,10 @@
         .address-meta-row { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 10px; }
         .content-body { margin-top: 40px; line-height: 1.5; }
         
-        /* PERBAIKAN LEBAR KOLOM TABEL */
         .table-main { width: 100%; border: 1.5px solid #000; border-collapse: collapse; margin: 15px 0; table-layout: fixed; }
         .table-main th { background-color: var(--kse-primary) !important; color: white !important; border: 1px solid #000; padding: 8px 4px; text-align: center; font-size: 10px; }
         .table-main td { border: 1px solid #000; padding: 6px 4px; vertical-align: middle; text-align: center; font-size: 10px; word-wrap: break-word; }
 
-        /* Kolom Transportir diperlebar agar tidak turun */
         .col-no { width: 30px; }
         .col-trans { width: 180px; text-align: left !important; padding-left: 8px !important; }
         .col-nopol { width: 90px; }
@@ -76,7 +74,14 @@
                 <div class="col-12"><label class="small fw-bold">Tanggal Surat</label><input type="text" id="in_tgl_surat" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">No. Memo (Bisa Edit)</label><input type="text" id="in_no_memo" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">Perihal</label><input type="text" id="in_hal" class="form-control form-control-sm" value="Memo Pengaliran BBM" oninput="updateView()"></div>
-                <div class="col-12"><label class="small fw-bold">Kepada</label><input type="text" id="in_kepada" class="form-control form-control-sm" oninput="updateView()"></div>
+                <div class="col-12">
+                    <label class="small fw-bold">Kepada</label>
+                    <input type="text" id="in_kepada" class="form-control form-control-sm" list="listKepada" oninput="handleKepadaChange()">
+                    <datalist id="listKepada">
+                        <option value="PT. JAYA ABADI">
+                    </datalist>
+                </div>
+                <div class="col-12"><label class="small fw-bold">Alamat</label><input type="text" id="in_alamat" class="form-control form-control-sm" value="Di - Tempat" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">No. PO</label><input type="text" id="in_po" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">Tanggal Muat</label><input type="text" id="in_tgl_muat" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-12"><label class="small fw-bold">Lokasi Muat</label><input type="text" id="in_lokasi" class="form-control form-control-sm" oninput="updateView()"></div>
@@ -123,7 +128,7 @@
                     <div class="text-start">
                         Kepada yang terhormat,<br>
                         <b id="out_kepada" style="font-size: 13px;">-</b><br>
-                        Di - Tempat
+                        <span id="out_alamat">Di - Tempat</span>
                     </div>
                     <div>
                         <table class="meta-table" style="margin-left: auto;">
@@ -240,7 +245,10 @@
             "KH 8943 GN": { tera: "114,6", qty: 5000 },
             "L 9761 UJ": { tera: "124,0", qty: 8000 }
         },
-        drivers: ["AGUS WIYANTO", "WAHID", "SUPRIYADI", "ADI SUCIPTO", "RONNY PRASTIANSYAH"]
+        drivers: ["AGUS WIYANTO", "WAHID", "SUPRIYADI", "ADI SUCIPTO", "RONNY PRASTIANSYAH"],
+        kepada: {
+            "PT. JAYA ABADI": "Jl. Merdeka No. 45"
+        }
     };
 
     function updateView() {
@@ -248,12 +256,21 @@
         document.getElementById('out_no_memo').innerText = document.getElementById('in_no_memo').value;
         document.getElementById('out_hal').innerText = document.getElementById('in_hal').value;
         document.getElementById('out_kepada').innerText = document.getElementById('in_kepada').value || "-";
+        document.getElementById('out_alamat').innerText = document.getElementById('in_alamat').value || "Di - Tempat";
         document.getElementById('out_po').innerText = document.getElementById('in_po').value;
         document.getElementById('out_tgl_muat').innerText = document.getElementById('in_tgl_muat').value;
         document.getElementById('out_lokasi').innerText = document.getElementById('in_lokasi').value;
         
         const qrData = `Memo: ${document.getElementById('in_no_memo').value} | To: ${document.getElementById('in_kepada').value}`;
         document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=50x50&data=${encodeURIComponent(qrData)}`;
+    }
+
+    function handleKepadaChange() {
+        const val = document.getElementById('in_kepada').value;
+        if(masterData.kepada[val]) {
+            document.getElementById('in_alamat').value = masterData.kepada[val];
+        }
+        updateView();
     }
 
     function handleNopolChange(index) {
@@ -277,20 +294,26 @@
 
         for(let i=0; i<5; i++) {
             const vQty = parseFloat(qty[i].value) || 0;
-            if(nopol[i].value || vQty > 0) {
+            const vNopol = nopol[i].value;
+            const vDriver = driver[i].value;
+            const vTera = tera[i].value;
+            const vTrans = trans[i].value;
+
+            if(vNopol || vQty > 0) {
                 total += vQty;
                 html += `<tr>
                     <td>${i+1}</td>
-                    <td class="col-trans">${trans[i].value}</td>
-                    <td>${nopol[i].value}</td>
-                    <td>${driver[i].value}</td>
+                    <td class="col-trans">${vTrans}</td>
+                    <td>${vNopol}</td>
+                    <td>${vDriver}</td>
                     <td class="fw-bold">${vQty.toLocaleString('id-ID')}</td>
-                    <td>${tera[i].value}</td>
+                    <td>${vTera}</td>
                 </tr>`;
             }
         }
         document.getElementById('table-body').innerHTML = html || '<tr><td colspan="6">...</td></tr>';
         document.getElementById('out_total').innerText = total.toLocaleString('id-ID') + " Ltr";
+        updateView();
     }
 
     async function setAutomaticMemoNumber() {
@@ -362,14 +385,12 @@
     }
 
     window.onload = function() {
-        // SET TANGGAL OTOMATIS
         const today = new Date();
         const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
         const tglFull = `${today.getDate().toString().padStart(2, '0')} ${months[today.getMonth()]} ${today.getFullYear()}`;
         document.getElementById('in_tgl_surat').value = tglFull;
         document.getElementById('in_tgl_muat').value = tglFull;
         
-        // Populate Datalists
         document.getElementById('listNopol').innerHTML = Object.keys(masterData.nopol).map(n => `<option value="${n}">`).join('');
         document.getElementById('listDriver').innerHTML = masterData.drivers.map(d => `<option value="${d}">`).join('');
         
