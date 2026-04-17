@@ -117,17 +117,41 @@
         <input type="text" id="inNoFormat" placeholder="/MEMO-KSE/IX/2026">
     </div>
     
-    <div class="input-group"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="inTglMemo"></div>
-    <div class="input-group"><label>Perihal / Subject</label><textarea id="inPerihal" rows="2">MEMO PENGALIRAN BBM</textarea></div>
+    <div class="input-group">
+        <label>Tanggal Memo</label>
+        <input type="date" id="inTglMemo">
+    </div>
+    <div class="input-group">
+        <label>Perihal / Subject</label>
+        <textarea id="inPerihal" rows="2">MEMO PENGALIRAN BBM</textarea>
+    </div>
 
     <div class="section-title">Tujuan Surat</div>
-    <div class="input-group"><label>Nama Perusahaan Tujuan</label><input type="text" id="inTujuanPT" value="PT. SINARINDO SUKSES SELALU"></div>
-    <div class="input-group"><label>Alamat/Keterangan</label><input type="text" id="inAlamatPT" value="JL. Ahmad Yani Km.2,2 Pangkalan Bun."></div>
+    <div class="input-group">
+        <label>Pilih Perusahaan Tujuan</label>
+        <select id="selectTujuanPT" onchange="fillTujuan()">
+            <option value="">-- Pilih Perusahaan --</option>
+            <option value="PT. SINARINDO SUKSES SELALU" data-alamat="JL. Ahmad Yani Km.2,2 Pangkalan Bun.">PT. SINARINDO SUKSES SELALU</option>
+            <option value="PT. KHATULISTIWA SINAR ENERGI" data-alamat="Jln. H.M Rafi'i RT 24 Pangkalan Bun.">PT. KHATULISTIWA SINAR ENERGI</option>
+            <option value="PT. SURYA PANEN SUBUR" data-alamat="Kecamatan Tadu Raya, Nagan Raya, Aceh.">PT. SURYA PANEN SUBUR</option>
+        </select>
+    </div>
+    <div class="input-group">
+        <label>Nama Perusahaan (Manual Edit)</label>
+        <input type="text" id="inTujuanPT">
+    </div>
+    <div class="input-group">
+        <label>Alamat/Keterangan</label>
+        <input type="text" id="inAlamatPT">
+    </div>
 
     <div class="section-title">Informasi Loading</div>
     <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="-"></div>
     <div class="input-group"><label>Tanggal PO</label><input type="text" id="inTglPO" value="-"></div>
-    <div class="input-group"><label>Tanggal Loading</label><input type="text" id="inTglLoad" value="25 Maret 2026"></div>
+    <div class="input-group">
+        <label>Tanggal Loading</label>
+        <input type="date" id="inTglLoad">
+    </div>
     <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value=" - "></div>
 
     <div class="section-title">Data Armada</div>
@@ -234,7 +258,6 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Data List sesuai permintaan
     const listTransportir = [
         "PT. KHATULISTIWA SINAR ENERGI", 
         "PT. BERKAH SARANA MAKMUR BENUA", 
@@ -290,7 +313,16 @@
         document.querySelectorAll('.unit-card input').forEach(el => el.addEventListener('input', update));
     }
 
-    // FUNGSI AUTOFILL BERDASARKAN NOPOL
+    function fillTujuan() {
+        const sel = document.getElementById('selectTujuanPT');
+        const opt = sel.options[sel.selectedIndex];
+        if(opt.value !== "") {
+            document.getElementById('inTujuanPT').value = opt.value;
+            document.getElementById('inAlamatPT').value = opt.getAttribute('data-alamat');
+            update();
+        }
+    }
+
     function autoFillArmada(index) {
         const nopolVal = document.getElementById(`inNopol${index}`).value.trim();
         const found = dataArmada.find(item => item.nopol === nopolVal);
@@ -301,7 +333,10 @@
         update();
     }
 
-    function formatIndoDate(dateObj) {
+    function formatIndoDate(dateStr) {
+        if(!dateStr) return "-";
+        const dateObj = new Date(dateStr);
+        if(isNaN(dateObj)) return dateStr;
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
     }
@@ -310,11 +345,12 @@
         generateArmadaInputs();
         const now = new Date();
         const yyyy = now.getFullYear();
-        const mmNum = now.getMonth() + 1;
-        const mmStr = mmNum.toString().padStart(2, '0');
+        const mm = (now.getMonth() + 1).toString().padStart(2, '0');
         const dd = now.getDate().toString().padStart(2, '0');
         
-        document.getElementById('inTglMemo').value = `${yyyy}/${mmStr}/${dd}`;
+        const dateValue = `${yyyy}-${mm}-${dd}`;
+        document.getElementById('inTglMemo').value = dateValue;
+        document.getElementById('inTglLoad').value = dateValue;
         
         const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         const bulanRomawi = roman[now.getMonth()];
@@ -350,16 +386,10 @@
         qrContainer.innerHTML = "";
         new QRCode(qrContainer, { text: fullNomor, width: 45, height: 45 });
 
-        const rawDate = document.getElementById('inTglMemo').value;
-        const dParts = rawDate.split('/');
-        if(dParts.length === 3) {
-            const d = new Date(dParts[0], dParts[1]-1, dParts[2]);
-            document.getElementById('outTglMemo').innerText = isNaN(d) ? rawDate : formatIndoDate(d);
-        }
-
+        document.getElementById('outTglMemo').innerText = formatIndoDate(document.getElementById('inTglMemo').value);
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
         document.getElementById('outTglPO').innerText = document.getElementById('inTglPO').value;
-        document.getElementById('outTglLoad').innerText = document.getElementById('inTglLoad').value;
+        document.getElementById('outTglLoad').innerText = formatIndoDate(document.getElementById('inTglLoad').value);
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
         let total = 0, tableHTML = "", rowNum = 1;
@@ -394,7 +424,7 @@
             if(nopol) {
                 const qtyStr = document.getElementById(`inQty${i}`).value || "0";
                 payloads.push({
-                    tanggal: document.getElementById('inTglMemo').value.replace(/\//g, '-'),
+                    tanggal: document.getElementById('inTglMemo').value,
                     no_dokumen: fullNomor,
                     jenis_dokumen: "MEMO PENGALIRAN",
                     tujuan: document.getElementById('inTujuanPT').value,
