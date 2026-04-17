@@ -199,7 +199,7 @@
     <h2>3. Rincian Tambahan</h2>
     <div class="field"><label>Nomor DO</label><input type="text" id="i-do-desc" value="-"></div>
     <div class="field"><label>Nomor SO</label><input type="text" id="i-so-desc" value="-"></div>
-    <div class="field"><label>Nomor PIC</label><input type="text" id="i-pic-desc" value="-"></div>
+    <div class="field"><label>Lokasi Pengiriman</label><input type="text" id="i-lokasi-input" value="-"></div>
     <div class="field"><label>Produk</label><input type="text" id="i-prod" value="BBM Solar Industri"></div>
     <div class="field"><label>Tgl Pengisian</label><input type="date" id="i-load-date"></div>
     <div class="field"><label>Nomor Segel</label><input type="text" id="i-segel" value="-"></div>
@@ -208,6 +208,7 @@
 
     <h2>4. Deskripsi Pesanan</h2>
     <div class="field"><label>Nomor PO</label><input type="text" id="i-po-num" value="-"></div>
+    <div class="field"><label>Nomor PIC</label><input type="text" id="i-pic-desc" value="-"></div>
     <div class="field"><label>PO Quantity (L)</label><input type="number" id="i-poqty" value="0"></div>
 
     <h2>5. Pengesahan</h2>
@@ -234,7 +235,6 @@
                 <tr><td class="meta-label">Tanggal / Date</td><td>: <span id="v-tgl" class="meta-val"></span></td></tr>
                 <tr><td class="meta-label">No. Dokumen</td><td>: <span id="v-no" class="meta-val"></span></td></tr>
                 <tr><td class="meta-label">Tujuan / To</td><td>: <span id="v-po-to-header" class="meta-val"></span></td></tr>
-                <tr><td class="meta-label">Lokasi / Location</td><td>: <span id="v-lokasi" class="meta-val"> - </span></td></tr>
             </table>
         </div>
     </div>
@@ -282,7 +282,7 @@
             <td><div class="val-container"><span>:</span><span class="val" id="v-t2">-</span> Cm</div></td>
         </tr>
         <tr>
-            <td><div class="label-group"><span class="label-id">Tujuan</span><span class="label-en">Destination</span></div></td>
+            <td><div class="label-group"><span class="label-id">Lokasi Pengiriman</span><span class="label-en">Delivery Location</span></div></td>
             <td colspan="3"><div class="val-container"><span>:</span><span class="val" id="v-dest-table">-</span></div></td>
         </tr>
     </table>
@@ -420,7 +420,8 @@
             ['v-vol', 'i-vol'], ['v-so-top', 'i-so-desc'], ['v-load', 'i-load-date'], ['v-plat', 'i-plat'], 
             ['v-m1', 'i-m1'], ['v-m2', 'i-m2'], ['v-segel', 'i-segel'], ['v-t2', 'i-t2'], 
             ['v-po-num', 'i-po-num'], ['v-pic-v', 'i-pic-desc'], ['v-poqty-v', 'i-poqty'], 
-            ['v-driver', 'i-driver'], ['v-mgr', 'i-mgr'], ['v-other-note', 'i-other-note']
+            ['v-driver', 'i-driver'], ['v-mgr', 'i-mgr'], ['v-other-note', 'i-other-note'],
+            ['v-dest-table', 'i-lokasi-input']
         ];
         
         fields.forEach(p => {
@@ -431,7 +432,6 @@
         
         document.getElementById('v-tgl').innerText = formatTanggalIndonesia(document.getElementById('i-tgl').value);
         document.getElementById('v-po-to-header').innerText = document.getElementById('i-po-to').value;
-        document.getElementById('v-dest-table').innerText = document.getElementById('i-po-to').value;
         
         adjustFontSize();
         qrcode.clear();
