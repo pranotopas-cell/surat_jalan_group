@@ -18,7 +18,7 @@
         .input-sidebar { background: #fff; height: calc(100vh - 65px); overflow-y: auto; padding: 20px; border-right: 1px solid #e2e8f0; }
         .document-canvas { 
             background: white; width: 210mm; min-height: 297mm; 
-            margin: 20px auto; padding: 10mm 15mm 10mm 15mm; position: relative;
+            margin: 20px auto; padding: 5mm 15mm 5mm 15mm; position: relative;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1); color: #000;
         }
         .header-section { display: flex; align-items: center; justify-content: space-between; margin-bottom: 50px; }
@@ -63,7 +63,7 @@
             <div class="alert alert-success py-2 mb-3" id="statusMsg"><i class="bi bi-database-check me-2"></i><b>INPUT DATA</b></div>
             
             <label class="form-label-custom">Nomor BA (Edit Manual)</label>
-            <input type="text" id="in_no" class="form-control form-control-sm mb-2 fw-bold" oninput="updateView(); updateQR();" placeholder="Ketik No Urut...">
+            <input type="text" id="in_no" class="form-control form-control-sm mb-2 fw-bold" oninput="updateView(); updateQR();">
             
             <div class="row g-2">
                 <div class="col-6">
@@ -86,14 +86,51 @@
             <input type="text" id="s_sopir" class="form-control form-control-sm" placeholder="Sopir" oninput="updateView()">
 
             <label class="form-label-custom text-danger">Unit Penerima (Tujuan)</label>
-            <input type="text" id="t_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol" oninput="updateView()">
-            <input type="text" id="t_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT Penerima" oninput="updateView()">
-            <input type="number" id="t_qty" class="form-control form-control-sm mb-1" placeholder="Qty Diterima" oninput="updateView()">
-            <input type="text" id="t_segel" class="form-control form-control-sm mb-1" placeholder="Nomor Segel" oninput="updateView()">
-            <input type="text" id="t_tinggi" class="form-control form-control-sm mb-1" placeholder="Tinggi Cairan (cm)" oninput="updateView()">
-            <input type="text" id="t_sopir" class="form-control form-control-sm" placeholder="Sopir" oninput="updateView()">
+            
+            <select id="t_pt_select" class="form-select form-select-sm mb-1" onchange="handlePenerimaDropdown('pt')">
+                <option value="">-- Pilih PT Penerima --</option>
+                <option value="PT. KHATULISTIWA SINAR ENERGI">PT. KHATULISTIWA SINAR ENERGI</option>
+                <option value="PT. BERKAH SARANA MAKMUR BENUA">PT. BERKAH SARANA MAKMUR BENUA</option>
+                <option value="PT. INDO DHARMA ENERGI">PT. INDO DHARMA ENERGI</option>
+                <option value="PT. TRANS GLOBAL ENERGI">PT. TRANS GLOBAL ENERGI</option>
+                <option value="PT. INVESTAMA KALIMANTAN ENERGI">PT. INVESTAMA KALIMANTAN ENERGI</option>
+            </select>
+            <input type="hidden" id="t_pt">
 
-            <label class="form-label-custom">Staff Operasional</label>
+            <select id="t_unit_select" class="form-select form-select-sm mb-1" onchange="handlePenerimaDropdown('unit')">
+                <option value="">-- Pilih Nopol & Tera --</option>
+                <option value="KH 8141 GH|5000|100,5">KH 8141 GH (Tera 100,5 - 5K)</option>
+                <option value="KH 8139 GM|10000|133,5">KH 8139 GM (Tera 133,5 - 10K)</option>
+                <option value="KH 8942 GN|5000|115,4">KH 8942 GN (Tera 115,4 - 5K)</option>
+                <option value="KH 8943 GN|5000|114,6">KH 8943 GN (Tera 114,6 - 5K)</option>
+                <option value="KH 8273 RM|5000|109,5">KH 8273 RM (Tera 109,5 - 5K)</option>
+                <option value="KH 8256 RM|5000|104,3">KH 8256 RM (Tera 104,3 - 5K)</option>
+                <option value="KH 8641 GN|5000|113,8">KH 8641 GN (Tera 113,8 - 5K)</option>
+                <option value="KH 8206 GN|5000|106,2">KH 8206 GN (Tera 106,2 - 5K)</option>
+                <option value="L 9761 UJ|8000|124,0">L 9761 UJ (Tera 124,0 - 8K)</option>
+            </select>
+            <input type="hidden" id="t_nopol">
+            <input type="hidden" id="t_qty">
+            <input type="hidden" id="t_tinggi">
+
+            <input type="text" id="t_segel" class="form-control form-control-sm mb-1" placeholder="Nomor Segel Manual" oninput="updateView()">
+
+            <select id="t_sopir_select" class="form-select form-select-sm mb-1" onchange="handlePenerimaDropdown('sopir')">
+                <option value="">-- Pilih Nama Sopir --</option>
+                <option value="AGUS WIYANTO">AGUS WIYANTO</option>
+                <option value="WAHID">WAHID</option>
+                <option value="SUPRIYADI">SUPRIYADI</option>
+                <option value="AGUS WANTO">AGUS WANTO</option>
+                <option value="NUR KHOLIS">NUR KHOLIS</option>
+                <option value="FARID HABIBI">FARID HABIBI</option>
+                <option value="RONNY PRASTIANSYAH">RONNY PRASTIANSYAH</option>
+                <option value="ADI SUCIPTO">ADI SUCIPTO</option>
+                <option value="AGUS MULYANTO">AGUS MULYANTO</option>
+                <option value="AGUS INDRA">AGUS INDRA</option>
+            </select>
+            <input type="hidden" id="t_sopir">
+
+            <label class="form-label-custom">Admin Operasional</label>
             <input type="text" id="in_sig_operasional" class="form-control form-control-sm" placeholder="Nama Admin" oninput="updateView()">
         </div>
 
@@ -105,12 +142,12 @@
                 </div>
 
                 <div class="ba-title">
-                    <h5>BERITA ACARA OPER MUATAN BBM SOLAR INDUSTRI</h5>
+                    <h5>BERITA ACARA OPER MUATAN BAHAN BAKAR MINYAK (BBM)</h5>
                     <span>NOMOR: <span id="out_no"></span></span>
                 </div>
 
                 <p style="text-align: justify; line-height: 1.5;">
-                    Pada hari ini <b id="out_hari"></b>, <span id="out_tgl_lengkap"></span>, bertempat di <b>Pangkalan Bun</b>, telah dilaksanakan kegiatan pemindahan (oper) muatan BBM Solar Industri dengan rincian:
+                    Pada hari ini <b id="out_hari"></b>, <span id="out_tgl_lengkap"></span>, bertempat di <b>Pangkalan Bun</b>, telah dilaksanakan kegiatan pemindahan (oper) muatan BBM Non-Subsidi dengan rincian:
                 </p>
 
                 <div class="section-title">I. DATA UNIT PENYERAH (SUMBER)</div>
@@ -132,7 +169,7 @@
                     <div class="data-row"><div class="data-label">Tinggi Cairan</div><div class="data-value" id="ot_tinggi"></div></div>
                     <div class="data-row"><div class="data-label">Nama Pengemudi</div><div class="data-value" id="ot_sopir"></div></div>
                 </div><br><br>
-                 Demikian berita acara oper muatan  ini di buat dan dapat di pergunakan sebagaimana mestinya,atas perhatian dan kerjasamanya kami ucapkan Terima Kasih.
+                 Demikian berita acara oper muatan ini di buat dan dapat di pergunakan sebagaimana mestinya,atas perhatian dan kerjasamanya kami ucapkan Terima Kasih.
                 
                 <div class="signature-grid">
                     <div class="sig-box"><span>Penyerah,</span><div class="mt-auto sig-name" id="os_sopir_sig"></div><div>Sopir Penyerah</div></div>
@@ -162,13 +199,10 @@
 
     async function generateAutoNumber() {
         try {
-            // Mengambil jumlah data untuk saran nomor otomatis
             const { count } = await _supabase.from('data_logistik').select('*', { count: 'exact', head: true });
             const nextNo = (count || 0) + 1;
             const romanMonth = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][new Date().getMonth()];
             const year = new Date().getFullYear();
-            
-            // Mengisi input dengan format standar, namun bisa dihapus/edit manual oleh user
             const formattedNo = `${String(nextNo).padStart(3, '0')} / BA-OM / KSE / ${romanMonth} / ${year}`;
             document.getElementById('in_no').value = formattedNo;
             document.getElementById('out_no').innerText = formattedNo;
@@ -177,20 +211,38 @@
     }
 
     function updateQR() {
-        const val = document.getElementById('in_no').value;
-        qr.makeCode(val || "KSE-DOCUMENT");
+        qr.makeCode(document.getElementById('in_no').value || "KSE-DOCUMENT");
+    }
+
+    // FUNGSI KHUSUS DROPDOWN PENERIMA
+    function handlePenerimaDropdown(type) {
+        if(type === 'pt') {
+            document.getElementById('t_pt').value = document.getElementById('t_pt_select').value;
+        } else if(type === 'unit') {
+            const val = document.getElementById('t_unit_select').value;
+            if(val) {
+                const parts = val.split('|');
+                document.getElementById('t_nopol').value = parts[0];
+                document.getElementById('t_qty').value = parts[1];
+                document.getElementById('t_tinggi').value = parts[2];
+            } else {
+                document.getElementById('t_nopol').value = "";
+                document.getElementById('t_qty').value = "";
+                document.getElementById('t_tinggi').value = "";
+            }
+        } else if(type === 'sopir') {
+            document.getElementById('t_sopir').value = document.getElementById('t_sopir_select').value;
+        }
+        updateView();
     }
 
     async function saveToLogistik() {
         const btn = document.getElementById('btnLogistik');
         const tglInput = document.getElementById('in_tgl_input').value;
         const ptName = document.getElementById('s_pt').value;
-
         if (!tglInput || !ptName) { alert("Tanggal dan Nama PT Penyerah wajib diisi!"); return; }
-
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-
         try {
             const { error } = await _supabase.from('data_logistik').insert([{ 
                 tanggal: tglInput,
@@ -199,18 +251,12 @@
                 pt: ptName,
                 sopir: document.getElementById('s_sopir').value
             }]);
-
             if (error) throw error;
-            
             alert("Berhasil Simpan ke Database!");
             document.getElementById('statusMsg').innerHTML = "<b>DATA BERHASIL TERKIRIM</b>";
             document.getElementById('statusMsg').className = "alert alert-primary py-2 mb-3";
-        } catch (err) {
-            alert("Gagal Simpan: " + err.message);
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="bi bi-database-fill-add"></i> SIMPAN DATA';
-        }
+        } catch (err) { alert("Gagal Simpan: " + err.message); } 
+        finally { btn.disabled = false; btn.innerHTML = '<i class="bi bi-database-fill-add"></i> SIMPAN DATA'; }
     }
 
     function formatDateText() {
@@ -235,7 +281,7 @@
         for (let id in mapping) {
             const target = document.getElementById(mapping[id]);
             const source = document.getElementById(id);
-            if(target && source) target.innerText = source.value || source.innerText;
+            if(target && source) target.innerText = source.value;
         }
         document.getElementById('os_sopir_sig').innerText = document.getElementById('s_sopir').value;
         document.getElementById('ot_sopir_sig').innerText = document.getElementById('t_sopir').value;
