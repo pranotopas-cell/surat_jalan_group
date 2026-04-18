@@ -44,15 +44,15 @@
         .meta-info-grid table { width: auto; margin-left: auto; border-collapse: collapse; }
         .meta-info-grid td { vertical-align: top; padding: 2px 0; text-align: left; }
         
-        /* CSS Tambahan untuk Alih Bahasa Header */
         .meta-label-box { display: flex; flex-direction: column; width: 50px; }
         .meta-label-id { font-weight: bold; color: #333; font-size: 8.5pt; }
         .meta-label-en { font-style: italic; color: #666; font-size: 7pt; margin-top: -2px; }
         .meta-val { font-weight: bold; color: #000; font-size: 8.5pt; }
         
-        .title-block { text-align: center; margin: 35px 0 20px 0; color: #000; }
-        .title-block h1 { font-size: 20pt; margin: 0; display: inline-block; border-bottom: 3px solid #000; font-weight: bold; letter-spacing: 2px; color: #000; padding-bottom: 2px; }
-        .title-block p { margin: 5px 0 0 0; font-size: 11pt; font-weight: bold; color: #444; text-decoration: none; }
+        /* Update Visual Title Block */
+        .title-block { text-align: center; margin: 30px 0 20px 0; color: #000; }
+        .title-block h1 { font-size: 24pt; margin: 0; display: inline-block; border-bottom: 3px solid #000; font-weight: bold; letter-spacing: 3px; color: #000; padding-bottom: 2px; text-transform: uppercase; }
+        .title-block p { margin: 2px 0 0 0; font-size: 10pt; font-weight: bold; color: #555; font-style: italic; text-transform: uppercase; letter-spacing: 1px; }
         
         .main-table { width: 100%; border-top: 2.5px solid var(--primary-green); border-bottom: 2.5px solid var(--primary-green); border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
         .main-table td { padding: 6px 4px; vertical-align: top; border-bottom: 0.5px solid #eee; }
@@ -146,8 +146,6 @@
             <option value="PT. KORINTIGA HUTANI">
             <option value="PT. SAMANDITA ADI MAKMUR">
             <option value="PT. BOR">
-            <option value="PT. ANGKASA MITRA SEJATI">
-            <option value="PT. TRIDEA SENADA">
         </datalist>
     </div>
 
@@ -255,8 +253,8 @@
     </div>
 
     <div class="title-block">
-        <h1 id="v-title-main">DELIVERY ORDER</h1>
-        <p id="v-title-sub">Surat Jalan</p>
+        <h1 id="v-title-main">SURAT JALAN</h1>
+        <p id="v-title-sub">DELIVERY ORDER</p>
     </div>
 
     <table class="main-table">
@@ -424,8 +422,17 @@
 
         document.getElementById('i-no').value = `${nextNum.toString().padStart(3, '0')}/${codeDoc}-${companyCode}/${monthRoman}/${now.getFullYear()}`;
         
-        document.getElementById('v-title-main').innerText = docType === "MEMO" ? "INTERNAL MEMO" : docType === "BERITA ACARA" ? "BERITA ACARA" : "DELIVERY ORDER";
-        document.getElementById('v-title-sub').innerText = docType === "MEMO" ? "MEMO PERUSAHAAN" : docType === "BERITA ACARA" ? "BERITA ACARA SERAH TERIMA" : "Surat Jalan";
+        // Logical update for title mapping
+        if(docType === "MEMO") {
+            document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
+            document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
+        } else if(docType === "BERITA ACARA") {
+            document.getElementById('v-title-main').innerText = "BERITA ACARA";
+            document.getElementById('v-title-sub').innerText = "BERITA ACARA SERAH TERIMA";
+        } else {
+            document.getElementById('v-title-main').innerText = "SURAT JALAN";
+            document.getElementById('v-title-sub').innerText = "DELIVERY ORDER";
+        }
         upd();
     }
 
