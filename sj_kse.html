@@ -36,8 +36,19 @@
         .header { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .logo-area { display: flex; align-items: center; gap: 15px; }
         .main-logo { height: 45px; width: auto; }
-        .logo-text b { font-size: 17pt; display: block; line-height: 1; color: var(--primary-green); }
-        .logo-text span { font-size: 9pt; color: var(--tosca); font-weight: bold; letter-spacing: 1px; }
+
+        /* Update Logo Text: Meratakan S I N A R E N E R G I dengan KHATULISTIWA */
+        .logo-text { display: flex; flex-direction: column; }
+        .logo-text b { font-size: 17pt; display: block; line-height: 1; color: var(--primary-green); letter-spacing: 0.5px; }
+        .logo-text span { 
+            font-size: 8.2pt; 
+            color: var(--tosca); 
+            font-weight: bold; 
+            display: flex; 
+            justify-content: space-between; 
+            width: 100%; 
+            margin-top: 1px;
+        }
         
         .company-address { font-size: 8.5pt; margin-top: 8px; line-height: 1.4; width: 50%; }
         .meta-info-grid { text-align: right; font-size: 8.5pt; width: 45%; margin-top: 8px; }
@@ -49,7 +60,6 @@
         .meta-label-en { font-style: italic; color: #666; font-size: 7pt; margin-top: -2px; }
         .meta-val { font-weight: bold; color: #000; font-size: 8.5pt; }
         
-        /* Update Visual Title Block */
         .title-block { text-align: center; margin: 30px 0 20px 0; color: #000; }
         .title-block h1 { font-size: 24pt; margin: 0; display: inline-block; border-bottom: 3px solid #000; font-weight: bold; letter-spacing: 3px; color: #000; padding-bottom: 2px; text-transform: uppercase; }
         .title-block p { margin: 2px 0 0 0; font-size: 10pt; font-weight: bold; color: #555; font-style: italic; text-transform: uppercase; letter-spacing: 1px; }
@@ -118,7 +128,7 @@
     <div class="field"><label>Tanggal (YYYY/MM/DD)</label><input type="text" id="i-tgl"></div>
     <div class="field"><label>Nomor Dokumen </label><input type="text" id="i-no"></div>
     <div class="field">
-        <label>Pilih Tujuan Perusahaan)</label>
+        <label>Tujuan (To)</label>
         <input list="listTujuan" id="i-po-to" value="PT. ">
         <datalist id="listTujuan">
             <option value="PT. NEW WAHYU BAOKAH">
@@ -151,7 +161,7 @@
 
     <h2>2. Data Logistik</h2>
     <div class="field">
-        <label>Pilih Nama Transportir</label>
+        <label>Transportir</label>
         <input list="listTransportir" id="i-trans" onchange="upd(); adjustFontSize()">
         <datalist id="listTransportir">
             <option value="PT. KHATULISTIWA SINAR ENERGI">
@@ -163,7 +173,7 @@
     </div>
 
     <div class="field">
-        <label>Pilih Nomor Polisi (Nopol)</label>
+        <label>Nomor Polisi (Nopol)</label>
         <input list="listNopol" id="i-plat" onchange="applyUnitData(this.value)">
         <datalist id="listNopol">
             <option value="KH 8141 GH">
@@ -209,7 +219,10 @@
     <div class="header">
         <div class="logo-area">
             <img src="header1.png" alt="Logo" class="main-logo">
-            <div class="logo-text"><b>KHATULISTIWA</b><span>   S I N A R  E N E R G I </span></div>
+            <div class="logo-text">
+                <b>KHATULISTIWA</b>
+                <span><span>S</span><span>I</span><span>N</span><span>A</span><span>R</span><span>&nbsp;</span><span>E</span><span>N</span><span>E</span><span>R</span><span>G</span><span>I</span></span>
+            </div>
         </div>
     </div>
     
@@ -422,7 +435,6 @@
 
         document.getElementById('i-no').value = `${nextNum.toString().padStart(3, '0')}/${codeDoc}-${companyCode}/${monthRoman}/${now.getFullYear()}`;
         
-        // Logical update for title mapping
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
