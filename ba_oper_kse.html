@@ -18,7 +18,7 @@
         .input-sidebar { background: #fff; height: calc(100vh - 65px); overflow-y: auto; padding: 20px; border-right: 1px solid #e2e8f0; }
         .document-canvas { 
             background: white; width: 210mm; min-height: 297mm; 
-            margin: 20px auto; padding: 5mm 15mm 5mm 15mm; position: relative;
+            margin: 20px auto; padding: 10mm 15mm 10mm 15mm; position: relative;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1); color: #000;
         }
         .header-section { display: flex; align-items: center; justify-content: space-between; margin-bottom: 50px; }
@@ -62,8 +62,8 @@
         <div class="col-lg-3 input-sidebar shadow-sm">
             <div class="alert alert-success py-2 mb-3" id="statusMsg"><i class="bi bi-database-check me-2"></i><b>INPUT DATA</b></div>
             
-            <label class="form-label-custom">Nomor BA (Auto)</label>
-            <input type="text" id="in_no" class="form-control form-control-sm mb-2 bg-light" readonly>
+            <label class="form-label-custom">Nomor BA (Edit Manual)</label>
+            <input type="text" id="in_no" class="form-control form-control-sm mb-2 fw-bold" oninput="updateView(); updateQR();" placeholder="Ketik No Urut...">
             
             <div class="row g-2">
                 <div class="col-6">
@@ -105,12 +105,12 @@
                 </div>
 
                 <div class="ba-title">
-                    <h5>BERITA ACARA OPER MUATAN BAHAN BAKAR MINYAK (BBM)</h5>
+                    <h5>BERITA ACARA OPER MUATAN BAHAN BAKAR MINYAK (BBM) SOLAR INDUSTRI</h5>
                     <span>NOMOR: <span id="out_no"></span></span>
                 </div>
 
                 <p style="text-align: justify; line-height: 1.5;">
-                    Pada hari ini <b id="out_hari"></b>, <span id="out_tgl_lengkap"></span>, bertempat di <b>Pangkalan Bun</b>, telah dilaksanakan kegiatan pemindahan (oper) muatan BBM Non-Subsidi dengan rincian:
+                    Pada hari ini <b id="out_hari"></b>, <span id="out_tgl_lengkap"></span>, bertempat di <b>Pangkalan Bun</b>, telah dilaksanakan kegiatan pemindahan (oper) muatan BBM Solar Industri dengan rincian:
                 </p>
 
                 <div class="section-title">I. DATA UNIT PENYERAH (SUMBER)</div>
@@ -131,7 +131,7 @@
                     <div class="data-row"><div class="data-label">Nomor Segel</div><div class="data-value" id="ot_segel"></div></div>
                     <div class="data-row"><div class="data-label">Tinggi Cairan</div><div class="data-value" id="ot_tinggi"></div></div>
                     <div class="data-row"><div class="data-label">Nama Pengemudi</div><div class="data-value" id="ot_sopir"></div></div>
-                </div<br><br>
+                </div><br><br>
                  Demikian berita acara oper muatan  ini di buat dan dapat di pergunakan sebagaimana mestinya,atas perhatian dan kerjasamanya kami ucapkan Terima Kasih.
                 
                 <div class="signature-grid">
@@ -162,15 +162,23 @@
 
     async function generateAutoNumber() {
         try {
+            // Mengambil jumlah data untuk saran nomor otomatis
             const { count } = await _supabase.from('data_logistik').select('*', { count: 'exact', head: true });
             const nextNo = (count || 0) + 1;
             const romanMonth = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][new Date().getMonth()];
             const year = new Date().getFullYear();
+            
+            // Mengisi input dengan format standar, namun bisa dihapus/edit manual oleh user
             const formattedNo = `${String(nextNo).padStart(3, '0')} / BA-OM / KSE / ${romanMonth} / ${year}`;
             document.getElementById('in_no').value = formattedNo;
             document.getElementById('out_no').innerText = formattedNo;
             qr.makeCode(formattedNo);
         } catch (e) { console.error(e); }
+    }
+
+    function updateQR() {
+        const val = document.getElementById('in_no').value;
+        qr.makeCode(val || "KSE-DOCUMENT");
     }
 
     async function saveToLogistik() {
@@ -226,14 +234,14 @@
         };
         for (let id in mapping) {
             const target = document.getElementById(mapping[id]);
-            if(target) target.innerText = document.getElementById(id).value;
+            const source = document.getElementById(id);
+            if(target && source) target.innerText = source.value || source.innerText;
         }
         document.getElementById('os_sopir_sig').innerText = document.getElementById('s_sopir').value;
         document.getElementById('ot_sopir_sig').innerText = document.getElementById('t_sopir').value;
         document.getElementById('os_qty').innerText = (document.getElementById('s_qty').value || "0") + " Liter";
         document.getElementById('ot_qty').innerText = (document.getElementById('t_qty').value || "0") + " Liter";
         
-        // Penambahan CM untuk unit tinggi jika diisi
         const sTinggi = document.getElementById('s_tinggi').value;
         const tTinggi = document.getElementById('t_tinggi').value;
         if(sTinggi) document.getElementById('os_tinggi').innerText = sTinggi + " cm";
