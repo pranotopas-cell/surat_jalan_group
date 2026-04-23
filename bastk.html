@@ -24,11 +24,16 @@
             font-size: 13px;
         }
         
-        .header-section { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
+        .header-section { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
         .logo-img { height: 45px; }
         
-        .ba-title { text-align: center; margin-bottom: 30px; }
-        .ba-title h5 { font-weight: 900; text-decoration: underline; font-size: 18px; color: #000; }
+        /* Updated Title Section */
+        .ba-title-block { margin-bottom: 30px; line-height: 1.4; }
+        .title-row { display: flex; margin-bottom: 2px; }
+        .title-label { width: 80px; font-weight: bold; }
+        .title-sep { width: 20px; }
+        .title-value { font-weight: bold; text-transform: uppercase; }
+        .translation-italics { font-style: italic; font-weight: normal; color: #444; font-size: 12px; display: block; margin-top: -2px; }
         
         .section-title { background: #f8fafc; padding: 8px 12px; font-weight: 800; margin: 15px 0 10px 0; border-left: 5px solid var(--kse-primary); text-transform: uppercase; font-size: 13px; }
         
@@ -42,7 +47,6 @@
         .table-bbm th { background-color: var(--kse-primary); color: #ffffff; text-align: center; font-weight: 800; border: 1px solid #000; padding: 10px; }
         .table-bbm td { border: 1px solid #000; padding: 10px; text-align: center; font-weight: 700; }
 
-        /* Signature Grid - Tiga Kolom Sejajar */
         .signature-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 40px; text-align: center; }
         .sig-box { height: 160px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 13px; z-index: 2; }
@@ -122,9 +126,25 @@
                     <div class="text-end"><small class="fw-bold" style="color: #64748b;">FORM: KSE-BAST-2026</small></div>
                 </div>
 
-                <div class="ba-title">
-                    <h5>BERITA ACARA SERAH TERIMA BBM</h5>
-                    <span>NOMOR: <span id="out_no"></span></span>
+                <div class="ba-title-block">
+                    <div class="title-row">
+                        <div class="title-label">Tanggal <br><span class="translation-italics">Date</span></div>
+                        <div class="title-sep">:</div>
+                        <div class="title-value" id="out_tgl_header"></div>
+                    </div>
+                    <div class="title-row">
+                        <div class="title-label">Nomor <br><span class="translation-italics">Number</span></div>
+                        <div class="title-sep">:</div>
+                        <div class="title-value" id="out_no"></div>
+                    </div>
+                    <div class="title-row">
+                        <div class="title-label">Perihal <br><span class="translation-italics">Subject</span></div>
+                        <div class="title-sep">:</div>
+                        <div class="title-value">
+                            BERITA ACARA SERAH TERIMA BBM
+                            <span class="translation-italics" style="text-transform: none;">Handover Notes of Fuel (BBM) Delivery</span>
+                        </div>
+                    </div>
                 </div>
 
                 <p style="text-align: justify; line-height: 1.6; margin-bottom: 15px;">
@@ -260,6 +280,7 @@
         document.getElementById('in_hari').value = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][dateObj.getDay()];
         document.getElementById('in_tgl_lengkap').value = `tanggal ${dateObj.getDate()} bulan ${formatted.split(' ')[1]} tahun ${dateObj.getFullYear()}`;
         document.getElementById('out_tgl_footer').innerText = formatted;
+        document.getElementById('out_tgl_header').innerText = formatted; // Update header date
         updateView();
     }
 
