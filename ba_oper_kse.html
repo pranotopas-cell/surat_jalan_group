@@ -18,22 +18,22 @@
         .input-sidebar { background: #fff; height: calc(100vh - 65px); overflow-y: auto; padding: 20px; border-right: 1px solid #e2e8f0; }
         .document-canvas { 
             background: white; width: 210mm; min-height: 297mm; 
-            margin: 20px auto; padding: 5mm 15mm 5mm 15mm; position: relative;
+            margin: 20px auto; padding: 10mm 20mm 10mm 20mm; position: relative;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1); color: #000;
         }
-        .header-section { display: flex; align-items: center; justify-content: space-between; margin-bottom: 50px; }
+        .header-section { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
         .logo-img { height: 45px; }
         .ba-title { text-align: center; margin-bottom: 25px; }
-        .ba-title h5 { font-weight: 900; text-decoration: underline; font-size: 16px; color: #000; }
+        .ba-title h5 { font-weight: 900; text-decoration: underline; font-size: 16px; color: #000; margin-bottom: 5px; }
         .section-title { background: #f8fafc; padding: 6px 12px; font-weight: 800; margin: 20px 0 10px 0; border-left: 5px solid var(--kse-primary); text-transform: uppercase; }
         .data-grid { display: grid; gap: 4px; margin-left: 15px; }
         .data-row { display: flex; align-items: baseline; }
-        .data-label { width: 190px; position: relative; }
+        .data-label { width: 190px; position: relative; font-weight: 600; }
         .data-label::after { content: ":"; position: absolute; right: 15px; }
-        .data-value { font-weight: 600; flex: 1; border-bottom: 1px dotted #ccc; }
+        .data-value { font-weight: 700; flex: 1; border-bottom: 1px dotted #ccc; }
         .signature-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 50px; text-align: center; }
-        .sig-box { height: 140px; display: flex; flex-direction: column; justify-content: space-between; }
-        .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; }
+        .sig-box { height: 150px; display: flex; flex-direction: column; justify-content: space-between; }
+        .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 12px; }
         .footer-kse { position: absolute; bottom: 10mm; width: calc(100% - 40mm); border-top: 1px solid #eee; padding-top: 10px; }
         .form-label-custom { font-size: 10px; font-weight: 800; color: #475569; margin-top: 12px; display: block; text-transform: uppercase; }
         @media print { .control-nav, .input-sidebar { display: none !important; } body { background: white; } .document-canvas { margin: 0; box-shadow: none; width: 210mm; } }
@@ -44,7 +44,7 @@
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
         <img src="header1.png" style="height: 30px;" onerror="this.src='https://via.placeholder.com/100x30?text=KSE+LOGISTICS'">
-        <h6 class="mb-0 fw-bold">E-BAOM SYSTEM</h6>
+        <h6 class="mb-0 fw-bold">E-BAOM SYSTEM v2.2</h6>
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-dark btn-sm fw-bold px-3" id="btnLogistik" onclick="saveToLogistik()">
@@ -60,33 +60,33 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-3 input-sidebar shadow-sm">
-            <div class="alert alert-success py-2 mb-3" id="statusMsg"><i class="bi bi-database-check me-2"></i><b>INPUT DATA</b></div>
+            <div class="alert alert-success py-2 mb-3" id="statusMsg"><i class="bi bi-database-check me-2"></i><b>INPUT DATA BA-OM</b></div>
             
-            <label class="form-label-custom">Nomor BA (Edit Manual)</label>
+            <label class="form-label-custom">Nomor Dokumen</label>
             <input type="text" id="in_no" class="form-control form-control-sm mb-2 fw-bold" oninput="updateView(); updateQR();">
             
             <div class="row g-2">
-                <div class="col-6">
-                    <label class="form-label-custom">Hari</label>
-                    <input type="text" id="in_hari" class="form-control form-control-sm" oninput="updateView()">
-                </div>
-                <div class="col-6">
-                    <label class="form-label-custom">Tanggal</label>
-                    <input type="date" id="in_tgl_input" class="form-control form-control-sm" onchange="formatDateText()">
-                </div>
+                <div class="col-6"><label class="form-label-custom">Hari</label><input type="text" id="in_hari" class="form-control form-control-sm" oninput="updateView()"></div>
+                <div class="col-6"><label class="form-label-custom">Tanggal</label><input type="date" id="in_tgl_input" class="form-control form-control-sm" onchange="formatDateText()"></div>
             </div>
             <input type="hidden" id="in_tgl_lengkap">
 
             <label class="form-label-custom text-success">Unit Penyerah (Sumber)</label>
-            <input type="text" id="s_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol" oninput="updateView()">
-            <input type="text" id="s_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT Penyerah" oninput="updateView()">
-            <input type="number" id="s_qty" class="form-control form-control-sm mb-1" placeholder="Qty Liter" oninput="updateView()">
-            <input type="text" id="s_segel" class="form-control form-control-sm mb-1" placeholder="Nomor Segel" oninput="updateView()">
+            <input type="text" id="s_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol Armada" oninput="updateView()">
+            <select id="s_pt" class="form-select form-select-sm mb-1" onchange="updateView()">
+                <option value="">-- Pilih PT Penyerah --</option>
+                <option value="PT. KHATULISTIWA SINAR ENERGI">PT. KHATULISTIWA SINAR ENERGI</option>
+                <option value="PT. BERKAH SARANA MAKMUR BENUA">PT. BERKAH SARANA MAKMUR BENUA</option>
+                <option value="PT. INDO DHARMA ENERGI">PT. INDO DHARMA ENERGI</option>
+                <option value="PT. TRANS GLOBAL ENERGI">PT. TRANS GLOBAL ENERGI</option>
+                <option value="PT. INVESTAMA KALIMANTAN ENERGI">PT. INVESTAMA KALIMANTAN ENERGI</option>
+            </select>
+            <input type="number" id="s_qty" class="form-control form-control-sm mb-1" placeholder="Volume (Liter)" oninput="updateView()">
+            <input type="text" id="s_segel" class="form-control form-control-sm mb-1" placeholder="No. Segel" oninput="updateView()">
             <input type="text" id="s_tinggi" class="form-control form-control-sm mb-1" placeholder="Tinggi Cairan (cm)" oninput="updateView()">
-            <input type="text" id="s_sopir" class="form-control form-control-sm" placeholder="Sopir" oninput="updateView()">
+            <input type="text" id="s_sopir" class="form-control form-control-sm" placeholder="Nama Sopir" oninput="updateView()">
 
             <label class="form-label-custom text-danger">Unit Penerima (Tujuan)</label>
-            
             <select id="t_pt_select" class="form-select form-select-sm mb-1" onchange="handlePenerimaDropdown('pt')">
                 <option value="">-- Pilih PT Penerima --</option>
                 <option value="PT. KHATULISTIWA SINAR ENERGI">PT. KHATULISTIWA SINAR ENERGI</option>
@@ -113,13 +113,12 @@
             <input type="hidden" id="t_qty">
             <input type="hidden" id="t_tinggi">
 
-            <input type="text" id="t_segel" class="form-control form-control-sm mb-1" placeholder="Nomor Segel Manual" oninput="updateView()">
+            <input type="text" id="t_segel" class="form-control form-control-sm mb-1" placeholder="No. Segel Penerima" oninput="updateView()">
 
             <select id="t_sopir_select" class="form-select form-select-sm mb-1" onchange="handlePenerimaDropdown('sopir')">
                 <option value="">-- Pilih Nama Sopir --</option>
                 <option value="AGUS WIYANTO">AGUS WIYANTO</option>
-                <option value="WAHID">WAHID</option>
-                <option value="SUPRIYADI">SUPRIYADI</option>
+                <option value="WAHID SUPRIYADI">WAHID SUPRIYADI</option>
                 <option value="AGUS WANTO">AGUS WANTO</option>
                 <option value="NUR KHOLIS">NUR KHOLIS</option>
                 <option value="FARID HABIBI">FARID HABIBI</option>
@@ -143,11 +142,11 @@
 
                 <div class="ba-title">
                     <h5>BERITA ACARA OPER MUATAN BAHAN BAKAR MINYAK (BBM)</h5>
-                    <span>NOMOR: <span id="out_no"></span></span>
+                    <span class="fw-bold">NOMOR: <span id="out_no"></span></span>
                 </div>
 
-                <p style="text-align: justify; line-height: 1.5;">
-                    Pada hari ini <b id="out_hari"></b>, <span id="out_tgl_lengkap"></span>, bertempat di <b>Pangkalan Bun</b>, telah dilaksanakan kegiatan pemindahan (oper) muatan BBM Non-Subsidi dengan rincian:
+                <p style="text-align: justify; line-height: 1.6; margin-bottom: 15px;">
+                    Pada hari ini <b id="out_hari"></b>, <span id="out_tgl_lengkap"></span>, bertempat di <b>Pangkalan Bun</b>, telah dilaksanakan pemindahan (oper) muatan BBM Non-Subsidi dengan rincian data sebagai berikut:
                 </p>
 
                 <div class="section-title">I. DATA UNIT PENYERAH (SUMBER)</div>
@@ -168,13 +167,28 @@
                     <div class="data-row"><div class="data-label">Nomor Segel</div><div class="data-value" id="ot_segel"></div></div>
                     <div class="data-row"><div class="data-label">Tinggi Cairan</div><div class="data-value" id="ot_tinggi"></div></div>
                     <div class="data-row"><div class="data-label">Nama Pengemudi</div><div class="data-value" id="ot_sopir"></div></div>
-                </div><br><br>
-                 Demikian berita acara oper muatan ini di buat dan dapat di pergunakan sebagaimana mestinya,atas perhatian dan kerjasamanya kami ucapkan Terima Kasih.
+                </div>
+
+                <p style="text-align: justify; line-height: 1.6; margin-top: 25px;">
+                    Demikian Berita Acara Oper Muatan ini dibuat dengan sebenar-benarnya untuk dipergunakan sebagaimana mestinya. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.
+                </p>
                 
                 <div class="signature-grid">
-                    <div class="sig-box"><span>Penyerah,</span><div class="mt-auto sig-name" id="os_sopir_sig"></div><div>Sopir Penyerah</div></div>
-                    <div class="sig-box"><span>Penerima,</span><div class="mt-auto sig-name" id="ot_sopir_sig"></div><div>Sopir Penerima</div></div>
-                    <div class="sig-box"><span>Pangkalan Bun, <span id="out_tgl_footer"></span></span><div class="mt-auto sig-name" id="out_operasional_sig"></div><div>Operasional KSE</div></div>
+                    <div class="sig-box">
+                        <span>Pihak Penyerah,</span>
+                        <div class="mt-auto sig-name" id="os_sopir_sig"></div>
+                        <div>( Pengemudi Penyerah )</div>
+                    </div>
+                    <div class="sig-box">
+                        <span>Pihak Penerima,</span>
+                        <div class="mt-auto sig-name" id="ot_sopir_sig"></div>
+                        <div>( Pengemudi Penerima )</div>
+                    </div>
+                    <div class="sig-box">
+                        <span>Pangkalan Bun, <span id="out_tgl_footer"></span></span>
+                        <div class="mt-auto sig-name" id="out_operasional_sig"></div>
+                        <div>( Operasional KSE )</div>
+                    </div>
                 </div>
 
                 <div class="footer-kse">
@@ -214,7 +228,6 @@
         qr.makeCode(document.getElementById('in_no').value || "KSE-DOCUMENT");
     }
 
-    // FUNGSI KHUSUS DROPDOWN PENERIMA
     function handlePenerimaDropdown(type) {
         if(type === 'pt') {
             document.getElementById('t_pt').value = document.getElementById('t_pt_select').value;
@@ -239,8 +252,7 @@
     async function saveToLogistik() {
         const btn = document.getElementById('btnLogistik');
         const tglInput = document.getElementById('in_tgl_input').value;
-        const ptName = document.getElementById('s_pt').value;
-        if (!tglInput || !ptName) { alert("Tanggal dan Nama PT Penyerah wajib diisi!"); return; }
+        if (!tglInput) { alert("Tanggal wajib diisi!"); return; }
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
         try {
@@ -248,13 +260,12 @@
                 tanggal: tglInput,
                 jenis_dokumen: 'Berita Acara Oper Muatan', 
                 no_dokumen: document.getElementById('in_no').value,
-                pt: ptName,
+                pt: document.getElementById('s_pt').value,
                 sopir: document.getElementById('s_sopir').value
             }]);
             if (error) throw error;
-            alert("Berhasil Simpan ke Database!");
-            document.getElementById('statusMsg').innerHTML = "<b>DATA BERHASIL TERKIRIM</b>";
-            document.getElementById('statusMsg').className = "alert alert-primary py-2 mb-3";
+            alert("Berhasil Simpan!");
+            document.getElementById('statusMsg').innerHTML = "<b>DATA TERKIRIM</b>";
         } catch (err) { alert("Gagal Simpan: " + err.message); } 
         finally { btn.disabled = false; btn.innerHTML = '<i class="bi bi-database-fill-add"></i> SIMPAN DATA'; }
     }
@@ -290,13 +301,13 @@
         
         const sTinggi = document.getElementById('s_tinggi').value;
         const tTinggi = document.getElementById('t_tinggi').value;
-        if(sTinggi) document.getElementById('os_tinggi').innerText = sTinggi + " cm";
-        if(tTinggi) document.getElementById('ot_tinggi').innerText = tTinggi + " cm";
+        document.getElementById('os_tinggi').innerText = sTinggi ? sTinggi + " cm" : "";
+        document.getElementById('ot_tinggi').innerText = tTinggi ? tTinggi + " cm" : "";
     }
 
     function downloadPDF() {
         const element = document.getElementById('pdf-area');
-        const opt = { margin: 0, filename: `BAOM_${document.getElementById('in_no').value}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4' } };
+        const opt = { margin: 0, filename: `BAOM_${document.getElementById('in_no').value}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
         html2pdf().set(opt).from(element).save();
     }
 
