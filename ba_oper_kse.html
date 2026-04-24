@@ -27,7 +27,6 @@
         .header-section { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
         .logo-img { height: 45px; }
         
-        /* Format Header Identik BAST */
         .ba-title-block { margin-bottom: 30px; line-height: 1.4; }
         .title-row { display: flex; margin-bottom: 2px; }
         .title-label { width: 80px; font-weight: bold; }
@@ -81,7 +80,7 @@
             
             <div class="row g-2">
                 <div class="col-6"><label class="form-label-custom">Hari</label><input type="text" id="in_hari" class="form-control form-control-sm" oninput="updateView()"></div>
-                <div class="col-6"><label class="form-label-custom">Tanggal</label><input type="date" id="in_tgl_input" class="form-control form-control-sm" onchange="formatDateText()"></div>
+                <div class="col-6"><label class="form-label-custom">Tanggal</label><input type="date" id="in_tgl_input" class="form-control form-control-sm" onchange="formatDateText(); generateAutoNumber();"></div>
             </div>
             <input type="hidden" id="in_tgl_lengkap">
 
@@ -248,15 +247,30 @@
 
     async function generateAutoNumber() {
         try {
-            const { count } = await _supabase.from('data_logistik').select('*', { count: 'exact', head: true });
+            const dateInput = document.getElementById('in_tgl_input').value;
+            const targetDate = dateInput ? new Date(dateInput) : new Date();
+            const year = targetDate.getFullYear();
+            const month = targetDate.getMonth();
+            const romanMonth = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][month];
+            
+            // Logika reset bulanan: Cari data terakhir pada bulan & tahun yang dipilih saja
+            const firstDay = new Date(year, month, 1).toISOString();
+            const lastDay = new Date(year, month + 1, 0, 23, 59, 59).toISOString();
+
+            const { count } = await _supabase
+                .from('data_logistik')
+                .select('*', { count: 'exact', head: true })
+                .eq('jenis_dokumen', 'Berita Acara Oper Muatan')
+                .gte('tanggal', firstDay)
+                .lte('tanggal', lastDay);
+
             const nextNo = (count || 0) + 1;
-            const romanMonth = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][new Date().getMonth()];
-            const year = new Date().getFullYear();
             const formattedNo = `${String(nextNo).padStart(3, '0')} / BA-OM / KSE / ${romanMonth} / ${year}`;
+            
             document.getElementById('in_no').value = formattedNo;
             document.getElementById('out_no').innerText = formattedNo;
-            qr.makeCode(formattedNo);
-        } catch (e) { console.error(e); }
+            updateQR();
+        } catch (e) { console.error("Error penomoran:", e); }
     }
 
     function updateQR() {
@@ -284,8 +298,10 @@
         const btn = document.getElementById('btnLogistik');
         const tglInput = document.getElementById('in_tgl_input').value;
         if (!tglInput) { alert("Tanggal wajib diisi!"); return; }
+        
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+        
         try {
             const { error } = await _supabase.from('data_logistik').insert([{ 
                 tanggal: tglInput,
@@ -294,6 +310,7 @@
                 pt: document.getElementById('s_pt').value,
                 sopir: document.getElementById('s_sopir').value
             }]);
+            
             if (error) throw error;
             alert("Berhasil Simpan!");
             document.getElementById('statusMsg').innerHTML = "<b>DATA TERKIRIM</b>";
@@ -348,7 +365,13 @@
         html2pdf().set(opt).from(element).save();
     }
 
-    window.onload = generateAutoNumber;
+    // Set default tanggal hari ini
+    window.onload = () => {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('in_tgl_input').value = today;
+        formatDateText();
+        generateAutoNumber();
+    };
 </script>
 </body>
 </html>
