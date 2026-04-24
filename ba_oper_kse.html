@@ -84,23 +84,29 @@
             </div>
             <input type="hidden" id="in_tgl_lengkap">
 
+            <label class="form-label-custom">Lokasi Kejadian</label>
+            <input type="text" id="in_lokasi" class="form-control form-control-sm mb-2 fw-bold" value="Pangkalan Bun" oninput="updateView()">
+
             <label class="form-label-custom text-success">I. Unit Penyerah (Sumber)</label>
             <input type="text" id="s_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol Penyerah" oninput="updateView()">
-            <select id="s_pt" class="form-select form-select-sm mb-1" onchange="updateView()">
+            
+            <select id="s_pt_select" class="form-select form-select-sm mb-1" onchange="document.getElementById('s_pt').value = this.value; updateView();">
                 <option value="">-- Pilih PT Penyerah --</option>
-                <option value="PT. KHATULISTIWA SINAR ENERGI">PT. TELADAN MAKMUR JAYA</option>
+                <option value="PT. TELADAN MAKMUR JAYA">PT. TELADAN MAKMUR JAYA</option>
                 <option value="PT. BERKAH SARANA MAKMUR BENUA">PT. BERKAH SARANA MAKMUR BENUA</option>
                 <option value="PT. INDO DHARMA ENERGI">PT. INDO DHARMA ENERGI</option>
                 <option value="PT. TRANS GLOBAL ENERGI">PT. TRANS GLOBAL ENERGI</option>
-                <option value="PT. INVESTAMA KALIMANTAN ENERGI">PT. TELADAN BERKAH </option>
+                <option value="PT. TELADAN BERKAH">PT. TELADAN BERKAH </option>
             </select>
+            <input type="text" id="s_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT (Bisa Edit)" oninput="updateView()">
+            
             <input type="number" id="s_qty" class="form-control form-control-sm mb-1" placeholder="Volume (Liter)" oninput="updateView()">
             <input type="text" id="s_segel" class="form-control form-control-sm mb-1" placeholder="No. Segel" oninput="updateView()">
             <input type="text" id="s_tinggi" class="form-control form-control-sm mb-1" placeholder="Tinggi Cairan (cm)" oninput="updateView()">
             <input type="text" id="s_sopir" class="form-control form-control-sm" placeholder="Nama Sopir" oninput="updateView()">
 
             <label class="form-label-custom text-danger">II. Unit Penerima (Tujuan)</label>
-            <select id="t_pt_select" class="form-select form-select-sm mb-1" onchange="handlePenerimaDropdown('pt')">
+            <select id="t_pt_select" class="form-select form-select-sm mb-1" onchange="document.getElementById('t_pt').value = this.value; updateView();">
                 <option value="">-- Pilih PT Penerima --</option>
                 <option value="PT. KHATULISTIWA SINAR ENERGI">PT. KHATULISTIWA SINAR ENERGI</option>
                 <option value="PT. BERKAH SARANA MAKMUR BENUA">PT. BERKAH SARANA MAKMUR BENUA</option>
@@ -108,7 +114,7 @@
                 <option value="PT. TRANS GLOBAL ENERGI">PT. TRANS GLOBAL ENERGI</option>
                 <option value="PT. INVESTAMA KALIMANTAN ENERGI">PT. INVESTAMA KALIMANTAN ENERGI</option>
             </select>
-            <input type="hidden" id="t_pt">
+            <input type="text" id="t_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT (Bisa Edit)" oninput="updateView()">
 
             <select id="t_unit_select" class="form-select form-select-sm mb-1" onchange="handlePenerimaDropdown('unit')">
                 <option value="">-- Pilih Nopol & Tera --</option>
@@ -122,13 +128,13 @@
                 <option value="KH 8206 GN|5000|106,2">KH 8206 GN (Tera 1062 - 5K)</option>
                 <option value="L 9761 UJ|8000|124,0">L 9761 UJ (Tera 1240 - 8K)</option>
             </select>
-            <input type="hidden" id="t_nopol">
-            <input type="hidden" id="t_qty">
-            <input type="hidden" id="t_tinggi">
+            <input type="text" id="t_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol Penerima" oninput="updateView()">
+            <input type="text" id="t_qty" class="form-control form-control-sm mb-1" placeholder="Volume Penerima" oninput="updateView()">
+            <input type="text" id="t_tinggi" class="form-control form-control-sm mb-1" placeholder="Tinggi Penerima" oninput="updateView()">
 
             <input type="text" id="t_segel" class="form-control form-control-sm mb-1" placeholder="No. Segel Manual" oninput="updateView()">
 
-            <select id="t_sopir_select" class="form-select form-select-sm mb-1" onchange="handlePenerimaDropdown('sopir')">
+            <select id="t_sopir_select" class="form-select form-select-sm mb-1" onchange="document.getElementById('t_sopir').value = this.value; updateView();">
                 <option value="">-- Pilih Nama Sopir --</option>
                 <option value="AGUS WIYANTO">AGUS WIYANTO</option>
                 <option value="WAHID SUPRIYADI">WAHID SUPRIYADI</option>
@@ -140,7 +146,7 @@
                 <option value="AGUS MULYANTO">AGUS MULYANTO</option>
                 <option value="AGUS INDRA">AGUS INDRA</option>
             </select>
-            <input type="hidden" id="t_sopir">
+            <input type="text" id="t_sopir" class="form-control form-control-sm" placeholder="Nama Sopir" oninput="updateView()">
 
             <label class="form-label-custom">Admin Operasional</label>
             <input type="text" id="in_sig_operasional" class="form-control form-control-sm" placeholder="Nama Admin" oninput="updateView()">
@@ -175,7 +181,7 @@
                 </div>
 
                 <p style="text-align: justify; line-height: 1.6; margin-bottom: 15px;">
-                    Pada hari ini <b id="out_hari"></b>, <span id="out_tgl_lengkap"></span>, bertempat di <b>Pangkalan Bun</b>, telah dilaksanakan pemindahan (oper) muatan BBM Non-Subsidi dengan rincian data sebagai berikut:
+                    Pada hari ini <b id="out_hari"></b>, <span id="out_tgl_lengkap"></span>, bertempat di <b id="out_lokasi">Pangkalan Bun</b>, telah dilaksanakan pemindahan (oper) muatan BBM Non-Subsidi dengan rincian data sebagai berikut:
                 </p>
 
                 <div class="section-title">I. DATA UNIT PENYERAH (SUMBER)</div>
@@ -202,18 +208,16 @@
                     Demikian Berita Acara Oper Muatan ini dibuat dengan sebenar-benarnya untuk dipergunakan sebagaimana mestinya. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.
                 </p>
 
-                <p class="text-end mb-4">Pangkalan Bun, <span id="out_tgl_footer"></span></p>
+                <p class="text-end mb-4"><span id="out_lokasi_footer">Pangkalan Bun</span>, <span id="out_tgl_footer"></span></p>
 
                 <div class="signature-grid">
                     <div class="sig-box">
                         <div>Pihak Penyerah,</div>
-                        <div style="margin-top: -5px;"><b></b></div>
                         <div class="mt-auto sig-name" id="os_sopir_sig"></div>
                         <div>Driver</div>
                     </div>
                     <div class="sig-box">
                         <div>Pihak Penerima,</div>
-                        <div style="margin-top: -5px;"><b></b></div>
                         <div class="mt-auto sig-name" id="ot_sopir_sig"></div>
                         <div>Driver</div>
                     </div>
@@ -253,7 +257,6 @@
             const month = targetDate.getMonth();
             const romanMonth = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][month];
             
-            // Logika reset bulanan: Cari data terakhir pada bulan & tahun yang dipilih saja
             const firstDay = new Date(year, month, 1).toISOString();
             const lastDay = new Date(year, month + 1, 0, 23, 59, 59).toISOString();
 
@@ -270,7 +273,7 @@
             document.getElementById('in_no').value = formattedNo;
             document.getElementById('out_no').innerText = formattedNo;
             updateQR();
-        } catch (e) { console.error("Error penomoran:", e); }
+        } catch (e) { console.error(e); }
     }
 
     function updateQR() {
@@ -278,9 +281,7 @@
     }
 
     function handlePenerimaDropdown(type) {
-        if(type === 'pt') {
-            document.getElementById('t_pt').value = document.getElementById('t_pt_select').value;
-        } else if(type === 'unit') {
+        if(type === 'unit') {
             const val = document.getElementById('t_unit_select').value;
             if(val) {
                 const parts = val.split('|');
@@ -288,8 +289,6 @@
                 document.getElementById('t_qty').value = parts[1];
                 document.getElementById('t_tinggi').value = parts[2];
             }
-        } else if(type === 'sopir') {
-            document.getElementById('t_sopir').value = document.getElementById('t_sopir_select').value;
         }
         updateView();
     }
@@ -298,10 +297,8 @@
         const btn = document.getElementById('btnLogistik');
         const tglInput = document.getElementById('in_tgl_input').value;
         if (!tglInput) { alert("Tanggal wajib diisi!"); return; }
-        
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-        
         try {
             const { error } = await _supabase.from('data_logistik').insert([{ 
                 tanggal: tglInput,
@@ -310,7 +307,6 @@
                 pt: document.getElementById('s_pt').value,
                 sopir: document.getElementById('s_sopir').value
             }]);
-            
             if (error) throw error;
             alert("Berhasil Simpan!");
             document.getElementById('statusMsg').innerHTML = "<b>DATA TERKIRIM</b>";
@@ -336,13 +332,14 @@
             'in_no': 'out_no', 'in_hari': 'out_hari', 'in_tgl_lengkap': 'out_tgl_lengkap',
             's_nopol': 'os_nopol', 's_pt': 'os_pt', 's_sopir': 'os_sopir', 's_segel': 'os_segel', 's_tinggi': 'os_tinggi',
             't_nopol': 'ot_nopol', 't_pt': 'ot_pt', 't_sopir': 'ot_sopir', 't_segel': 'ot_segel', 't_tinggi': 'ot_tinggi',
-            'in_sig_operasional': 'out_operasional_sig'
+            'in_sig_operasional': 'out_operasional_sig', 'in_lokasi': 'out_lokasi'
         };
         for (let id in mapping) {
             const target = document.getElementById(mapping[id]);
             const source = document.getElementById(id);
             if(target && source) target.innerText = source.value;
         }
+        document.getElementById('out_lokasi_footer').innerText = document.getElementById('in_lokasi').value;
         document.getElementById('os_sopir_sig').innerText = document.getElementById('s_sopir').value;
         document.getElementById('ot_sopir_sig').innerText = document.getElementById('t_sopir').value;
         document.getElementById('os_qty').innerText = (document.getElementById('s_qty').value || "0") + " Liter";
@@ -365,7 +362,6 @@
         html2pdf().set(opt).from(element).save();
     }
 
-    // Set default tanggal hari ini
     window.onload = () => {
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('in_tgl_input').value = today;
