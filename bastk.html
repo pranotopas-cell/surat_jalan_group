@@ -27,7 +27,6 @@
         .header-section { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
         .logo-img { height: 45px; }
         
-        /* Updated Title Section */
         .ba-title-block { margin-bottom: 30px; line-height: 1.4; }
         .title-row { display: flex; margin-bottom: 2px; }
         .title-label { width: 80px; font-weight: bold; }
@@ -95,15 +94,44 @@
             </div>
             <input type="hidden" id="in_tgl_lengkap">
 
-            <label class="form-label-custom text-success">Pihak Pertama (Penyerah)</label>
-            <input type="text" id="s_pt" class="form-control form-control-sm mb-1" value="PT. KHATULISTIWA SINAR ENERGI" oninput="updateView()">
-            <input type="text" id="s_transportir" class="form-control form-control-sm mb-1" placeholder="Nama Transportir" oninput="updateView()">
-            <input type="text" id="s_sopir" class="form-control form-control-sm" placeholder="Sopir Penyerah" oninput="updateView()">
+            <label class="form-label-custom text-success">Pihak Pertama / Transportir</label>
+            <select id="s_pt_select" class="form-select form-select-sm mb-1" onchange="syncTransportir()">
+                <option value="PT. KHATULISTIWA SINAR ENERGI">PT. KHATULISTIWA SINAR ENERGI</option>
+                <option value="PT. BERKAH SARANA MAKMUR BENUA">PT. BERKAH SARANA MAKMUR BENUA</option>
+                <option value="PT. INDO DHARMA ENERGI">PT. INDO DHARMA ENERGI</option>
+                <option value="PT. TRANS GLOBAL ENERGI">PT. TRANS GLOBAL ENERGI</option>
+                <option value="PT. INVESTAMA KALIMANTAN ENERGI">PT. INVESTAMA KALIMANTAN ENERGI</option>
+            </select>
+            <input type="hidden" id="s_pt" value="PT. KHATULISTIWA SINAR ENERGI">
+            <input type="hidden" id="s_transportir" value="PT. KHATULISTIWA SINAR ENERGI">
+            
+            <label class="form-label-custom">Nama Sopir Penyerah</label>
+            <select id="s_sopir" class="form-select form-select-sm mb-1" onchange="updateView()">
+                <option value="">-- Pilih Sopir --</option>
+                <option value="AGUS WIYANTO">AGUS WIYANTO</option>
+                <option value="WAHID SUPRIYADI">WAHID SUPRIYADI</option>
+                <option value="AGUS WANTO">AGUS WANTO</option>
+                <option value="NUR KHOLIS">NUR KHOLIS</option>
+                <option value="FARID HABIBI">FARID HABIBI</option>
+                <option value="RONNY PRASTIANSYAH">RONNY PRASTIANSYAH</option>
+                <option value="ADI SUCIPTO">ADI SUCIPTO</option>
+                <option value="AGUS MULYANTO">AGUS MULYANTO</option>
+                <option value="AGUS INDRA">AGUS INDRA</option>
+            </select>
 
             <label class="form-label-custom text-danger">Pihak Kedua (Penerima)</label>
-            <input type="text" id="t_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT Penerima" oninput="updateView()">
+            <select id="t_pt_select" class="form-select form-select-sm mb-1" onchange="syncPenerima()">
+                <option value="">-- Pilih Perusahaan Penerima --</option>
+                <option value="PT. KHATULISTIWA SINAR ENERGI">PT. KHATULISTIWA SINAR ENERGI</option>
+                <option value="PT. BERKAH SARANA MAKMUR BENUA">PT. BERKAH SARANA MAKMUR BENUA</option>
+                <option value="PT. INDO DHARMA ENERGI">PT. INDO DHARMA ENERGI</option>
+                <option value="PT. TRANS GLOBAL ENERGI">PT. TRANS GLOBAL ENERGI</option>
+                <option value="PT. INVESTAMA KALIMANTAN ENERGI">PT. INVESTAMA KALIMANTAN ENERGI</option>
+            </select>
+            <input type="hidden" id="t_pt">
+            
             <input type="text" id="t_lokasi" class="form-control form-control-sm mb-1" placeholder="Lokasi Penerimaan" oninput="updateView()">
-            <input type="text" id="t_sopir" class="form-control form-control-sm" placeholder="Nama Penerima" oninput="updateView()">
+            <input type="text" id="t_sopir" class="form-control form-control-sm" placeholder="Nama Personil Penerima" oninput="updateView()">
 
             <label class="form-label-custom text-primary">Rincian Barang</label>
             <select id="in_jenis_bbm" class="form-select form-select-sm mb-1" onchange="updateView()">
@@ -112,7 +140,21 @@
                 <option value="MFO">MFO</option>
             </select>
             <input type="number" id="s_qty" class="form-control form-control-sm mb-1" placeholder="Kuantitas (Liter)" oninput="updateView()">
-            <input type="text" id="s_nopol" class="form-control form-control-sm mb-1" placeholder="No. Polisi Armada" oninput="updateView()">
+            
+            <label class="form-label-custom">No. Polisi Armada</label>
+            <select id="s_nopol" class="form-select form-select-sm mb-1" onchange="updateView()">
+                <option value="">-- Pilih Nopol --</option>
+                <option value="KH 8141 GH – TERA 100,5- 5.000">KH 8141 GH – TERA 100,5- 5.000</option>
+                <option value="KH 8139 GM -TERA 133,5 – 10.000">KH 8139 GM -TERA 133,5 – 10.000</option>
+                <option value="KH 8942 GN - TERA 115,4 – 5.000">KH 8942 GN - TERA 115,4 – 5.000</option>
+                <option value="KH 8943 GN – TERA 114,6 – 5.000">KH 8943 GN – TERA 114,6 – 5.000</option>
+                <option value="KH 8273 RM – TERA 109,5 – 5.000">KH 8273 RM – TERA 109,5 – 5.000</option>
+                <option value="KH 8256 RM – TERA 104,3 - 5.000">KH 8256 RM – TERA 104,3 - 5.000</option>
+                <option value="KH 8641 GN – TERA 113,8 – 5.000">KH 8641 GN – TERA 113,8 – 5.000</option>
+                <option value="KH 8206 GN - TERA 106,2 – 5.000">KH 8206 GN - TERA 106,2 – 5.000</option>
+                <option value="L 9761 UJ - TERA 124,0 – 8.000">L 9761 UJ - TERA 124,0 – 8.000</option>
+            </select>
+
             <input type="text" id="in_keterangan" class="form-control form-control-sm mb-1" placeholder="Keterangan" oninput="updateView()">
 
             <label class="form-label-custom">Admin Operasional</label>
@@ -233,6 +275,21 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     var qr = new QRCode(document.getElementById("qrcode"), { width: 60, height: 60 });
 
+    // Sync Pihak Pertama dan Transportir
+    function syncTransportir() {
+        const val = document.getElementById('s_pt_select').value;
+        document.getElementById('s_pt').value = val;
+        document.getElementById('s_transportir').value = val;
+        updateView();
+    }
+
+    // Sync Pihak Kedua
+    function syncPenerima() {
+        const val = document.getElementById('t_pt_select').value;
+        document.getElementById('t_pt').value = val;
+        updateView();
+    }
+
     async function generateAutoNumber() {
         try {
             const { count } = await _supabase.from('data_logistik').select('*', { count: 'exact', head: true });
@@ -280,7 +337,7 @@
         document.getElementById('in_hari').value = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][dateObj.getDay()];
         document.getElementById('in_tgl_lengkap').value = `tanggal ${dateObj.getDate()} bulan ${formatted.split(' ')[1]} tahun ${dateObj.getFullYear()}`;
         document.getElementById('out_tgl_footer').innerText = formatted;
-        document.getElementById('out_tgl_header').innerText = formatted; // Update header date
+        document.getElementById('out_tgl_header').innerText = formatted;
         updateView();
     }
 
@@ -315,7 +372,10 @@
         html2pdf().set(opt).from(element).save();
     }
 
-    window.onload = generateAutoNumber;
+    window.onload = function() {
+        generateAutoNumber();
+        syncTransportir(); // Initialize first value
+    };
 </script>
 </body>
 </html>
