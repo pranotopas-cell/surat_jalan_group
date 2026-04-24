@@ -495,23 +495,33 @@
     }
 
     async function saveData() {
-        const btn = document.querySelector('.btn-save');
-        btn.innerText = 'SAVING...'; btn.disabled = true;
-        const payload = {
-            tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
-            no_dokumen: document.getElementById('i-no').value,
-            jenis_dokumen: document.getElementById('i-doc-type').value,
-            tujuan: document.getElementById('i-po-to').value,
-            nopol: document.getElementById('i-plat').value,
-            sopir: document.getElementById('i-driver').value,
-            qty: parseFloat(document.getElementById('i-vol').value) || 0,
-            pt: document.getElementById('i-trans').value 
-        };
-        const { error } = await _supabase.from('data_logistik').insert([payload]);
-        if (error) alert('Gagal Simpan: ' + error.message);
-        else { alert('Sukses Tersimpan!'); generateAutoNumber(); }
-        btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
+    const btn = document.querySelector('.btn-save');
+    btn.innerText = 'SAVING...'; btn.disabled = true;
+    
+    const payload = {
+        tanggal: document.getElementById('i-tgl').value.replace(/\//g, '-'),
+        no_dokumen: document.getElementById('i-no').value,
+        jenis_dokumen: document.getElementById('i-doc-type').value,
+        tujuan: document.getElementById('i-po-to').value,
+        nopol: document.getElementById('i-plat').value,
+        sopir: document.getElementById('i-driver').value,
+        qty: parseFloat(document.getElementById('i-vol').value) || 0,
+        
+        // UBAH BAGIAN INI:
+        // Paksa simpan sebagai KSE ke database, tidak peduli apa yang dipilih di input
+        pt: "PT. KHATULISTIWA SINAR ENERGI" 
+    };
+
+    const { error } = await _supabase.from('data_logistik').insert([payload]);
+    
+    if (error) {
+        alert('Gagal Simpan: ' + error.message);
+    } else { 
+        alert('Sukses Tersimpan!'); 
+        generateAutoNumber(); 
     }
+    btn.innerText = 'SIMPAN DATA'; btn.disabled = false;
+}
 
     function downloadPDF() {
         const opt = { margin: 0, filename: 'DOC_' + document.getElementById('i-no').value.replace(/\//g, '-') + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
