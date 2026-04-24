@@ -160,7 +160,7 @@
 
     <h2>2. Data Logistik</h2>
     <div class="field">
-        <label>Transportir</label>
+        <label>Pilih Transportir</label>
         <input list="listTransportir" id="i-trans" onchange="generateAutoNumber()">
         <datalist id="listTransportir">
             <option value="PT. KHATULISTIWA SINAR ENERGI">
@@ -172,7 +172,7 @@
     </div>
 
     <div class="field">
-        <label> Nomor Polisi (Nopol)</label>
+        <label>Pilih Nomor Polisi (Nopol)</label>
         <input list="listNopol" id="i-plat" onchange="applyUnitData(this.value)">
         <datalist id="listNopol">
             <option value="KH 8141 GH">
@@ -210,7 +210,7 @@
     <div class="field"><label>PO Quantity (L)</label><input type="number" id="i-poqty" value="0"></div>
 
     <h2>5. Pengesahan</h2>
-    <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="Mangaer Operasional"></div>
+    <div class="field"><label>Nama Manager</label><input type="text" id="i-mgr" value="Staff Operasional"></div>
     <div class="field"><label>Catatan Tambahan</label><textarea id="i-other-note" rows="2"></textarea></div>
 </div>
 
@@ -304,7 +304,7 @@
             <td><div class="label-group"><span class="label-id">Nomor Segel</span><span class="label-en">Seal Number</span></div></td>
             <td><div class="val-container"><span>:</span><span class="val" id="v-segel">-</span></div></td>
             <td><div class="label-group"><span class="label-id">Tera / TC (T2)</span><span class="label-en">Calibration / TC</span></div></td>
-            <td><div class="val-container"><span>:</span><span class="val" id="v-t2">-</span> mm</div></td>
+            <td><div class="val-container"><span>:</span><span class="val" id="v-t2">-</span> Cm</div></td>
         </tr>
         <tr>
             <td><div class="label-group"><span class="label-id">Lokasi Pengiriman</span><span class="label-en">Delivery Location</span></div></td>
@@ -353,7 +353,7 @@
             <td><span id="v-driver">-</span></td>
             <td>
                 <img src="stempel.png" alt="Stempel" class="stamp-container">
-                <div style="position:relative; z-index:2;"><br><br><span id="v-mgr"> Manager Operasional</span></div>
+                <div style="position:relative; z-index:2;"><br><br><span id="v-mgr"> Staff Operasional</span></div>
             </td>
         </tr>
     </table>
@@ -377,15 +377,15 @@
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
     const dataMasterUnit = {
-        "KH 8141 GH": { sopir: "AGUS WANTO", qty: "5.000", tera: "1005" },
-        "KH 8139 GM": { sopir: "ADI SUCIPTO", qty: "10.000", tera: "1335" },
-        "KH 8942 GN": { sopir: "AGUS MULYANTO", qty: "5.000", tera: "1154" },
-        "KH 8943 GN": { sopir: "NUR KHOLIS", qty: "5.000", tera: "1146" },
-        "KH 8273 RM": { sopir: "FARID HABIBI", qty: "5.000", tera: "1095" },
-        "KH 8256 RM": { sopir: "RONNY PRASTIANSYAH", qty: "5.000", tera: "1043" },
-        "KH 8641 GN": { sopir: "AGUS ", qty: "5.000", tera: "1138" },
-        "KH 8206 GN": { sopir: "INDRA", qty: "5.000", tera: "1062" },
-        "L 9761 UJ":   { sopir: "SUPRIYADI", qty: "8.000", tera: "1240" }
+        "KH 8141 GH": { sopir: "AGUS WANTO", qty: "5.000", tera: "100,5" },
+        "KH 8139 GM": { sopir: "ADI SUCIPTO", qty: "10.000", tera: "133,5" },
+        "KH 8942 GN": { sopir: "AGUS MULYANTO", qty: "5.000", tera: "115,4" },
+        "KH 8943 GN": { sopir: "NUR KHOLIS", qty: "5.000", tera: "114,6" },
+        "KH 8273 RM": { sopir: "FARID HABIBI", qty: "5.000", tera: "109,5" },
+        "KH 8256 RM": { sopir: "RONNY PRASTIANSYAH", qty: "5.000", tera: "104,3" },
+        "KH 8641 GN": { sopir: "AGUS ", qty: "5.000", tera: "113,8" },
+        "KH 8206 GN": { sopir: "INDRA", qty: "5.000", tera: "106,2" },
+        "L 9761 UJ":   { sopir: "SUPRIYADI", qty: "8.000", tera: "124,0" }
     };
 
     function adjustFontSize() {
@@ -418,7 +418,6 @@
         const docType = document.getElementById('i-doc-type').value;
         const now = new Date();
         
-        // Format Tanggal Input
         if(!document.getElementById('i-tgl').value) {
             document.getElementById('i-tgl').value = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
         }
@@ -431,12 +430,11 @@
         const currentYear = now.getFullYear();
         const currentMonth = (now.getMonth() + 1).toString().padStart(2, '0');
 
-        // AMBIL DATA TERAKHIR DARI DATABASE
+        // PEMBAHARUAN LOGIKA: Ambil nomor terakhir GLOBAL per Jenis Dokumen (tidak filter berdasarkan PT)
         const { data } = await _supabase
             .from('data_logistik')
             .select('no_dokumen, created_at')
-            .eq('pt', transValue)
-            .eq('jenis_dokumen', docType)
+            .eq('jenis_dokumen', docType) // Filter hanya berdasarkan SJ/Memo/BA saja
             .order('created_at', { ascending: false })
             .limit(1);
 
@@ -447,19 +445,18 @@
             const lastMonth = (lastDocDate.getMonth() + 1).toString().padStart(2, '0');
             const lastYear = lastDocDate.getFullYear();
 
-            // LOGIKA RESET: Jika Bulan/Tahun saat ini berbeda dengan data terakhir di DB, kembali ke 1
+            // Reset hanya jika ganti bulan/tahun
             if (currentMonth === lastMonth && currentYear === lastYear) {
                 const lastFullNo = data[0].no_dokumen;
                 const lastNumPart = parseInt(lastFullNo.split('/')[0]);
                 if(!isNaN(lastNumPart)) nextNum = lastNumPart + 1;
             } else {
-                nextNum = 1; // Reset ke 001 karena ganti bulan/tahun
+                nextNum = 1; 
             }
         }
 
         document.getElementById('i-no').value = `${nextNum.toString().padStart(3, '0')}/${codeDoc}-${companyCode}/${monthRoman}/${currentYear}`;
         
-        // Update Label Judul
         if(docType === "MEMO") {
             document.getElementById('v-title-main').innerText = "INTERNAL MEMO";
             document.getElementById('v-title-sub').innerText = "MEMO PERUSAHAAN";
