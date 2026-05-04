@@ -47,21 +47,23 @@
         .main-logo { height: 50px; width: auto; }
         
         .title-doc { text-align: center; margin-top: 15px; margin-bottom: 15px; }
-        .title-doc h1 { font-size: 16pt; font-weight: 800; margin: 0; letter-spacing: 2px; }
+        .title-doc h1 { font-size: 18pt; font-weight: 800; margin: 0; letter-spacing: 2px; }
+        .title-doc span { font-size: 10pt; color: #444; font-style: italic; display: block; }
 
         .info-table { width: 100%; margin-bottom: 15px; border-collapse: collapse; border: 1.5px solid #000; }
         .info-table th, .info-table td { padding: 6px 10px; border: 1px solid #000; vertical-align: middle; }
-        .label-cell { background-color: #f1f5f9; font-weight: 700; width: 25%; font-size: 8pt; }
+        .label-cell { background-color: #f1f5f9; font-weight: 700; width: 25%; font-size: 8.5pt; }
+        .label-cell small { display: block; font-weight: 400; font-style: italic; color: #475569; font-size: 7pt; }
         
         .divider-line { border-top: 1.5px dashed #000; margin: 30px 0 20px 0; position: relative; }
-        .divider-line span { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 20px; font-weight: bold; }
+        .divider-line span { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 20px; font-weight: bold; font-size: 9pt; }
 
         .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; margin-top: 20px; }
         .sig-box { height: 110px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         
         .stamp-img {
             position: absolute;
-            width: 90px;
+            width: 95px;
             bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
@@ -69,7 +71,7 @@
             z-index: 1;
         }
 
-        .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 9pt; position: relative; z-index: 2; }
+        .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 9.5pt; position: relative; z-index: 2; }
 
         .footer-ornament { display: flex; height: 6px; width: 100%; margin-top: 20px; margin-bottom: 10px; }
         .orn-1 { background: var(--kse-primary); flex: 4; }
@@ -93,17 +95,18 @@
         <h6 class="mb-0 fw-bold text-success"><i class="bi bi-patch-check-fill"></i> KSE SYSTEM v6.0</h6>
     </div>
     <div class="d-flex gap-2">
-        <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> PRINT</button>
-        <button class="btn btn-primary btn-sm fw-bold px-4" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> SIMPAN PDF</button>
+        <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> PRINT DOCUMENT</button>
+        <button class="btn btn-primary btn-sm fw-bold px-4" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> SIMPAN KE PDF</button>
     </div>
 </div>
 
 <div class="container-fluid">
     <div class="row">
+        <!-- INPUT SIDEBAR -->
         <div class="col-lg-3 input-sidebar shadow-sm">
-            <div class="alert alert-success py-2 mb-3"><b>INPUT DATA DOKUMEN</b></div>
+            <div class="alert alert-success py-2 mb-3"><b style="font-size: 10px;">CORE DATA INPUT</b></div>
             
-            <label class="form-label-custom">Tanggal Pengiriman</label>
+            <label class="form-label-custom">Tanggal Kirim</label>
             <input type="date" id="in_tgl" class="form-control form-control-sm mb-2">
 
             <div class="row g-2">
@@ -117,7 +120,7 @@
                 </div>
             </div>
 
-            <label class="form-label-custom">Transportir (Edit Nama)</label>
+            <label class="form-label-custom">Transportir (Edit)</label>
             <input type="text" id="in_trans" class="form-control form-control-sm mb-2 fw-bold" value="PT. KHATULISTIWA SINAR ENERGI">
 
             <label class="form-label-custom">Kepada (Penerima)</label>
@@ -158,6 +161,7 @@
             <input type="text" id="in_adm" class="form-control form-control-sm" placeholder="Nama Admin">
         </div>
 
+        <!-- CANVAS AREA -->
         <div class="col-lg-9 p-0 bg-secondary bg-opacity-10">
             <div class="canvas-container">
                 <div class="document-canvas" id="printable-area">
@@ -165,98 +169,104 @@
                     <!-- HEADER -->
                     <div class="header-sj">
                         <div class="d-flex align-items-center gap-3">
-                            <img src="header1.png" class="main-logo" alt="Logo">
+                            <img src="header1.png" class="main-logo" alt="Logo KSE">
                             <div>
-                                <b style="font-size: 18pt; color: var(--kse-primary); display: block; line-height: 1;">KHATULISTIWA</b>
-                                <span style="font-size: 9pt; letter-spacing: 2px; font-weight: bold; color: var(--tosca);">S I N A R &nbsp; E N E R G I</span>
+                                <b style="font-size: 20pt; color: var(--kse-primary); display: block; line-height: 1;">KHATULISTIWA</b>
+                                <span style="font-size: 10pt; letter-spacing: 3px; font-weight: bold; color: var(--tosca);">S I N A R &nbsp; E N E R G I</span>
                             </div>
                         </div>
-                        <div class="text-end" style="font-size: 7.5pt; line-height: 1.3; border-left: 2px solid var(--gold); padding-left: 10px;">
+                        <div class="text-end" style="font-size: 8pt; line-height: 1.4; border-left: 2px solid var(--gold); padding-left: 15px;">
                             Jln. H.M Rafi'i Rt.24 Kel. Madurejo, Arut Selatan<br>
                             Kotawaringin Barat, Kalimantan Tengah<br>
-                            <b>pt.khatulistiwa.sinar.energi@gmail.com</b>
+                            <b>Email: pt.khatulistiwa.sinar.energi@gmail.com</b>
                         </div>
                     </div>
 
                     <!-- SURAT JALAN -->
                     <div class="title-doc">
                         <h1>SURAT JALAN</h1>
+                        <span>Delivery Order / Waybill</span>
                     </div>
 
-                    <div class="row mb-3" style="font-size: 9.5pt;">
+                    <div class="row mb-3" style="font-size: 10pt;">
                         <div class="col-7">
                             <table width="100%">
-                                <tr><td width="35%">No. Surat Jalan</td><td>: <b id="out_no_sj">-</b></td></tr>
+                                <tr><td width="35%">No. Surat / <i style="font-size: 8pt;">Ref No</i></td><td>: <b id="out_no_sj">-</b></td></tr>
                                 <tr><td>No. SO / DO</td><td>: <b id="out_so_sj">-</b></td></tr>
-                                <tr><td>Tanggal Kirim</td><td>: <span id="out_tgl_sj">-</span></td></tr>
+                                <tr><td>Tanggal / <i style="font-size: 8pt;">Date</i></td><td>: <span id="out_tgl_sj">-</span></td></tr>
                             </table>
                         </div>
                         <div class="col-5">
-                            <div style="border: 1.5px solid var(--kse-primary); padding: 8px; background: #fdfdfd;">
-                                <small class="text-uppercase fw-bold" style="font-size: 7pt;">Tujuan Pengiriman:</small><br>
-                                <b id="out_tujuan_sj" style="font-size: 10pt;">-</b>
+                            <div style="border: 2px solid var(--kse-primary); padding: 10px; border-radius: 5px; background: #fdfdfd;">
+                                <small class="text-uppercase fw-bold" style="font-size: 7.5pt; color: var(--kse-primary);">Tujuan Pengiriman:</small><br>
+                                <b id="out_tujuan_sj" style="font-size: 11pt; display: block; margin-top: 5px;">-</b>
                             </div>
                         </div>
                     </div>
 
                     <table class="info-table">
                         <tr>
-                            <td class="label-cell">Transportir</td>
+                            <td class="label-cell">Transportir <small>Transporter</small></td>
                             <td colspan="3"><b id="out_trans_sj">-</b></td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Pengemudi</td>
+                            <td class="label-cell">Pengemudi <small>Driver Name</small></td>
                             <td width="30%" id="out_driver_sj">-</td>
-                            <td class="label-cell">No. Polisi</td>
+                            <td class="label-cell">No. Polisi <small>Vehicle No.</small></td>
                             <td id="out_nopol_sj">-</td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Jenis Barang</td>
+                            <td class="label-cell">Jenis Barang <small>Description</small></td>
                             <td>BBM Solar Industri (HSD)</td>
-                            <td class="label-cell">Kuantitas</td>
+                            <td class="label-cell">Kuantitas <small>Quantity</small></td>
                             <td><b id="out_qty_sj">0</b> Liter</td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Tinggi Cairan</td>
+                            <td class="label-cell">Tinggi Cairan <small>Liquid Level</small></td>
                             <td><span id="out_tinggi_sj">-</span> mm</td>
-                            <td class="label-cell">No. Segel</td>
+                            <td class="label-cell">No. Segel <small>Seal Number</small></td>
                             <td id="out_segel_sj">-</td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Lokasi Kirim</td>
+                            <td class="label-cell">Lokasi Kirim <small>Delivery Location</small></td>
                             <td colspan="3" id="out_lokasi_sj">-</td>
                         </tr>
                     </table>
 
                     <div class="signature-section">
-                        <div class="sig-box"><div>Penerima,</div><div class="sig-name">. . . . . . . . . .</div></div>
-                        <div class="sig-box"><div>Pengemudi,</div><div class="sig-name" id="sig_driver_sj"></div></div>
+                        <div class="sig-box"><div>Penerima, / <br><i>Receiver</i></div><div class="sig-name">. . . . . . . . . .</div></div>
+                        <div class="sig-box"><div>Pengemudi, / <br><i>Driver</i></div><div class="sig-name" id="sig_driver_sj"></div></div>
                         <div class="sig-box">
-                            <div>Hormat Kami,</div>
+                            <div>Hormat Kami, <br><i>Authorized Signatory</i></div>
                             <img src="stempel.png" class="stamp-img" alt="Stempel">
                             <div class="sig-name" id="sig_adm_sj"></div>
                         </div>
                     </div>
 
                     <!-- BAST -->
-                    <div class="divider-line"><span>BAST (BERITA ACARA SERAH TERIMA)</span></div>
+                    <div class="divider-line"><span>BERITA ACARA SERAH TERIMA (BAST)</span></div>
 
-                    <div class="title-doc mb-2">
-                        <h1 style="font-size: 13pt;">BERITA ACARA SERAH TERIMA BBM</h1>
-                        <div style="font-weight: bold; font-size: 10pt;">Nomor: <span id="out_no_ba">-</span></div>
+                    <div class="title-doc mb-3" style="margin-top: 0;">
+                        <h1 style="font-size: 14pt;">BERITA ACARA SERAH TERIMA BBM</h1>
+                        <div style="font-weight: bold; margin-top: 5px; color: #444;">Nomor: <span id="out_no_ba">-</span></div>
                     </div>
 
-                    <p style="font-size: 9.5pt; text-align: justify; margin-bottom: 10px;">
-                        Pada hari ini <b id="out_hari_ba">..........</b>, Tanggal <b id="out_tgl_ba">..........</b>, bertempat di <b id="out_lokasi_ba">..........</b>, telah dilakukan serah terima BBM:
+                    <p style="font-size: 10pt; text-align: justify; line-height: 1.6; margin-bottom: 15px;">
+                        Pada hari ini <b id="out_hari_ba">..........</b>, Tanggal <b id="out_tgl_ba">..........</b>, bertempat di <b id="out_lokasi_ba">..........</b>, telah dilakukan serah terima komoditas BBM dari Pihak Pertama kepada Pihak Kedua dengan rincian:
                     </p>
 
-                    <div style="margin-left: 20px; font-size: 9.5pt;" class="mb-3">
-                        <div class="row"><div class="col-4">Pihak I (Penyerah)</div><div class="col-8">: <b id="out_trans_ba">-</b></div></div>
-                        <div class="row"><div class="col-4">Pihak II (Penerima)</div><div class="col-8">: <b id="out_tujuan_ba">-</b></div></div>
-                        <div class="row"><div class="col-4">Volume Barang</div><div class="col-8">: <b id="out_qty_ba">0</b> Liter</div></div>
+                    <div style="margin: 0 0 20px 25px; font-size: 10pt;">
+                        <div class="row mb-1"><div class="col-4">Pihak I (Penyerah)</div><div class="col-8">: <b id="out_trans_ba">-</b></div></div>
+                        <div class="row mb-1"><div class="col-4">Pihak II (Penerima)</div><div class="col-8">: <b id="out_tujuan_ba"></b></div></div>
+                        <div class="row mb-1"><div class="col-4">No. SO / DO</div><div class="col-8">: <span id="out_so_ba"></span></div></div>
+                        <div class="row mb-1"><div class="col-4">Volume Barang</div><div class="col-8">: <b id="out_qty_ba">0</b> Liter</div></div>
                     </div>
 
-                    <div class="signature-section" style="margin-top: 10px;">
+                    <p style="font-size: 9.5pt; font-style: italic; color: #555; background: #f9f9f9; padding: 10px; border-left: 4px solid var(--tosca);">
+                        "Menyatakan bahwa Pihak Kedua telah menerima produk dalam volume yang tepat, kondisi segel baik, dan spesifikasi yang sesuai."
+                    </p>
+
+                    <div class="signature-section" style="margin-top: 20px;">
                         <div class="sig-box"><div>Pihak Pertama,</div><div class="sig-name" id="sig_p1_ba"></div></div>
                         <div class="sig-box"><div>Pihak Kedua,</div><div class="sig-name" id="sig_p2_ba"></div></div>
                         <div class="sig-box">
@@ -266,15 +276,16 @@
                         </div>
                     </div>
 
+                    <!-- FOOTER -->
                     <div class="footer-ornament">
                         <div class="orn-1"></div><div class="orn-2"></div><div class="orn-3"></div>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-end">
                         <div id="qrcode"></div>
-                        <div class="text-end" style="font-size: 6.5pt; color: #666;">
-                            <b>KSE SMART LOGISTICS v6.0</b><br>
-                            Dicetak pada: <span id="out_sys_date"></span>
+                        <div class="text-end" style="font-size: 7pt; color: #666;">
+                            <b style="color: var(--kse-primary);">KSE SMART LOGISTICS SYSTEM</b><br>
+                            Dokumen sah dicetak secara sistem pada: <span id="out_sys_date"></span>
                         </div>
                     </div>
                 </div>
@@ -284,16 +295,25 @@
 </div>
 
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
+    var qrcode = new QRCode(document.getElementById("qrcode"), { width: 50, height: 50 });
 
     function getRomawi(month) {
         const romawi = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
         return romawi[month];
     }
 
+    function formatTglIndo(dateStr) {
+        if(!dateStr) return "-";
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        return new Date(dateStr).toLocaleDateString('id-ID', options);
+    }
+
     function syncData() {
         const val = (id) => document.getElementById(id).value;
-        const set = (id, text) => { if(document.getElementById(id)) document.getElementById(id).innerText = text || "-"; };
+        const set = (id, text) => { 
+            const el = document.getElementById(id);
+            if(el) el.innerText = text || "-";
+        };
 
         const tglInput = val('in_tgl');
         let displayTgl = "-";
@@ -302,22 +322,22 @@
 
         if(tglInput) {
             const d = new Date(tglInput);
-            const options = { day: 'numeric', month: 'long', year: 'numeric' };
-            displayTgl = d.toLocaleDateString('id-ID', options);
+            displayTgl = formatTglIndo(tglInput);
             displayHari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][d.getDay()];
             autoSuffix = "/" + getRomawi(d.getMonth()) + "/" + d.getFullYear();
         }
 
-        // Format No SJ & BAST
         const fullNoSJ = val('in_no_sj') + "/PO-KSE" + autoSuffix;
         const fullNoBA = val('in_no_bast') + "/BAST-KSE" + autoSuffix;
 
+        const qtyFormatted = Number(val('in_qty')).toLocaleString('id-ID');
+        
         set('out_no_sj', fullNoSJ);
         set('out_no_ba', fullNoBA);
-        
         set('out_trans_sj', val('in_trans'));
         set('out_trans_ba', val('in_trans'));
         set('out_so_sj', val('in_so'));
+        set('out_so_ba', val('in_so'));
         set('out_tujuan_sj', val('in_tujuan'));
         set('out_tujuan_ba', val('in_tujuan'));
         set('out_tgl_sj', displayTgl);
@@ -327,15 +347,15 @@
         set('out_lokasi_ba', val('in_lokasi'));
         set('out_driver_sj', val('in_driver'));
         set('out_nopol_sj', val('in_nopol'));
-        set('out_qty_sj', Number(val('in_qty')).toLocaleString('id-ID'));
-        set('out_qty_ba', Number(val('in_qty')).toLocaleString('id-ID'));
+        set('out_qty_sj', qtyFormatted);
+        set('out_qty_ba', qtyFormatted);
         set('out_tinggi_sj', val('in_tinggi'));
         set('out_segel_sj', val('in_segel'));
         
         set('sig_driver_sj', val('in_driver'));
+        set('sig_adm_sj', val('in_adm'));
         set('sig_p1_ba', val('in_driver'));
         set('sig_p2_ba', val('in_tujuan'));
-        set('sig_adm_sj', val('in_adm'));
         set('sig_adm_ba', val('in_adm'));
 
         set('out_sys_date', new Date().toLocaleString('id-ID'));
@@ -346,9 +366,9 @@
         const element = document.getElementById('printable-area');
         const opt = { 
             margin: 0, 
-            filename: 'KSE_DOC_' + document.getElementById('in_no_sj').value + '.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true }, 
+            filename: 'DOKUMEN_KSE_' + document.getElementById('in_no_sj').value + '.pdf',
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 2.5, useCORS: true }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
         };
         html2pdf().set(opt).from(element).save();
@@ -358,7 +378,6 @@
         el.addEventListener('input', syncData);
     });
 
-    // Inisialisasi tanggal hari ini
     window.onload = () => {
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('in_tgl').value = today;
