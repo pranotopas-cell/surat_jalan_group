@@ -332,7 +332,7 @@
             autoSuffix = "/" + getRomawi(d.getMonth()) + "/" + d.getFullYear();
         }
 
-        const fullNoSJ = (val('in_no_sj') || "000") + "/PO-KSE" + autoSuffix;
+        const fullNoSJ = (val('in_no_sj') || "000") + "/SJ-KSE" + autoSuffix;
         const fullNoBA = (val('in_no_bast') || "000") + "/BAST-KSE" + autoSuffix;
 
         const qtyFormatted = Number(val('in_qty')).toLocaleString('id-ID');
