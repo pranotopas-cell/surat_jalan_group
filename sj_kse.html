@@ -16,7 +16,6 @@
             --kse-dark: #022c22; 
             --tosca: #008080; 
             --gold: #d4af37;
-            /* Font Monospace untuk efek Dot Matrix */
             --dot-font: 'Courier New', Courier, monospace;
         }
         
@@ -59,32 +58,30 @@
             transform-origin: top center;
         }
 
-        /* Tipografi Printer Dot Matrix untuk data */
         .dot-matrix {
             font-family: var(--dot-font);
             font-weight: bold;
             text-transform: uppercase;
         }
 
-        .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .main-logo { height: 45px; width: auto; }
         
-        .title-doc { text-align: center; margin-bottom: 12px; }
-        .title-doc h1 { font-size: 18pt; font-weight: 900; margin: 0; letter-spacing: 3px; }
-        .title-doc span { font-size: 8pt; color: #444; font-style: italic; display: block; }
+        /* Judul diperbesar sesuai instruksi */
+        .title-doc { text-align: center; margin-bottom: 15px; }
+        .title-doc h1 { font-size: 24pt; font-weight: 900; margin: 0; letter-spacing: 4px; }
+        .title-doc span { font-size: 10pt; color: #333; font-style: italic; display: block; font-weight: 500; }
 
-        /* Update Tabel Teks lebih Besar */
         .info-table { width: 100%; margin-bottom: 12px; border-collapse: collapse; border: 1.5px solid #000; }
         .info-table th, .info-table td { 
-            padding: 6px 12px; 
+            padding: 8px 12px; 
             border: 1px solid #000; 
             vertical-align: middle; 
-            font-size: 10pt; /* Diperbesar sedikit */
+            font-size: 10pt;
         }
-        .label-cell { background-color: #f1f5f9; font-weight: 700; width: 22%; font-size: 8.5pt; }
-        .label-cell small { display: block; font-weight: 400; font-style: italic; color: #475569; font-size: 7pt; }
+        .label-cell { background-color: #f1f5f9; font-weight: 700; width: 22%; font-size: 9pt; }
+        .label-cell small { display: block; font-weight: 400; font-style: italic; color: #475569; font-size: 7.5pt; }
         
-        /* Style data di dalam tabel */
         .data-cell { font-family: var(--dot-font); font-size: 11pt; letter-spacing: 0.5px; }
 
         .divider-line { border-top: 2px dashed #000; margin: 25px 0 15px 0; position: relative; }
@@ -125,7 +122,7 @@
 
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
-        <h6 class="mb-0 fw-bold text-success"><i class="bi bi-patch-check-fill"></i> KSE</h6>
+        <h6 class="mb-0 fw-bold text-success"><i class="bi bi-patch-check-fill"></i> KSE SMART LOGISTICS</h6>
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> CETAK</button>
@@ -150,6 +147,9 @@
                     <input type="text" id="in_no_bast" class="form-control form-control-sm mb-1 fw-bold" placeholder="001">
                 </div>
             </div>
+
+            <label class="form-label-custom">Transportir</label>
+            <input type="text" id="in_trans" class="form-control form-control-sm mb-1" value="PT. KHATULISTIWA SINAR ENERGI">
 
             <label class="form-label-custom">Penerima (Perusahaan)</label>
             <input type="text" id="in_tujuan" class="form-control form-control-sm mb-1">
@@ -187,8 +187,6 @@
 
             <label class="form-label-custom">Admin KSE</label>
             <input type="text" id="in_adm" class="form-control form-control-sm mb-1" placeholder="Admin">
-
-            <input type="hidden" id="in_trans" value="PT. KHATULISTIWA SINAR ENERGI">
         </div>
 
         <!-- CANVAS AREA -->
@@ -277,7 +275,8 @@
                     <div class="divider-line"><span>BERITA ACARA SERAH TERIMA (BAST)</span></div>
 
                     <div class="title-doc" style="margin-top: 0;">
-                        <h1 style="font-size: 13pt;">BERITA ACARA SERAH TERIMA BBM</h1>
+                        <h1 style="font-size: 14pt;">BERITA ACARA SERAH TERIMA BBM</h1>
+                        <span style="font-size: 8.5pt;">Minutes of Handover</span>
                     </div>
 
                     <p style="font-size: 10pt; text-align: justify; line-height: 1.5; margin-bottom: 12px;">
@@ -392,7 +391,7 @@
         const element = document.getElementById('printable-area');
         const opt = { 
             margin: 0, 
-            filename: 'KSE_DOC_' + (document.getElementById('in_no_sj').value || '61') + '.pdf',
+            filename: 'KSE_DOC_' + (document.getElementById('in_no_sj').value || 'SJ') + '.pdf',
             image: { type: 'jpeg', quality: 1 },
             html2canvas: { scale: 2, useCORS: true }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
