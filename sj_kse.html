@@ -64,10 +64,9 @@
             text-transform: uppercase;
         }
 
-        .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .main-logo { height: 45px; width: auto; }
         
-        /* Judul diperbesar sesuai instruksi */
         .title-doc { text-align: center; margin-bottom: 15px; }
         .title-doc h1 { font-size: 24pt; font-weight: 900; margin: 0; letter-spacing: 4px; }
         .title-doc span { font-size: 10pt; color: #333; font-style: italic; display: block; font-weight: 500; }
@@ -262,12 +261,12 @@
                     </table>
 
                     <div class="signature-section">
-                        <div class="sig-box"><div>Penerima / <i>Receiver</i></div><div class="sig-name">. . . . . . . . .</div></div>
-                        <div class="sig-box"><div>Pengemudi / <i>Driver</i></div><div class="sig-name" id="sig_driver_sj"></div></div>
+                        <div class="sig-box"><div>Penerima / <i>Receiver</i></div><div class="sig-name fw-bold">. . . . . . . . .</div></div>
+                        <div class="sig-box"><div>Pengemudi / <i>Driver</i></div><div class="sig-name fw-bold" id="sig_driver_sj"></div></div>
                         <div class="sig-box">
                             <div>Hormat Kami,</div>
                             <img src="stempel.png" class="stamp-img" alt="Stamp">
-                            <div class="sig-name" id="sig_adm_sj"></div>
+                            <div class="sig-name fw-bold" id="sig_adm_sj"></div>
                         </div>
                     </div>
 
@@ -295,12 +294,12 @@
                     </p>
 
                     <div class="signature-section">
-                        <div class="sig-box"><div>Pihak Pertama,</div><div class="sig-name" id="sig_p1_ba"></div></div>
-                        <div class="sig-box"><div>Pihak Kedua,</div><div class="sig-name" id="sig_p2_ba"></div></div>
+                        <div class="sig-box"><div>Pihak Pertama,</div><div class="sig-name fw-bold" id="sig_p1_ba"></div></div>
+                        <div class="sig-box"><div>Pihak Kedua,</div><div class="sig-name fw-bold" id="sig_p2_ba"></div></div>
                         <div class="sig-box">
                             <div>Mengetahui,</div>
                             <img src="stempel.png" class="stamp-img" alt="Stamp">
-                            <div class="sig-name" id="sig_adm_ba"></div>
+                            <div class="sig-name fw-bold" id="sig_adm_ba"></div>
                         </div>
                     </div>
 
@@ -377,11 +376,14 @@
         set('out_qty_ba', qtyFormatted);
         set('out_tinggi_sj', val('in_tinggi'));
         set('out_segel_sj', val('in_segel'));
+        
+        // TANDA TANGAN DI BOLD MELALUI CLASS FW-BOLD PADA HTML
         set('sig_driver_sj', val('in_driver'));
         set('sig_adm_sj', val('in_adm'));
         set('sig_p1_ba', val('in_driver'));
         set('sig_p2_ba', val('in_tujuan'));
         set('sig_adm_ba', val('in_adm'));
+        
         set('out_sys_date', new Date().toLocaleString('id-ID'));
         
         qrcode.makeCode("KSE-V6-" + fullNoSJ);
