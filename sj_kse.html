@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KSE - SJ & BAST Premium v6.1</title>
+    <title>KSE - SJ & BAST Premium v5.1</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root { 
@@ -20,84 +19,76 @@
         }
         
         body { 
-            background-color: #f4f4f4; 
+            background-color: #4a4d4a; 
             font-family: 'Segoe UI', Arial, sans-serif; 
+            font-size: 11px; 
             color: #000;
-            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         
-        .control-nav { background: #fff; border-bottom: 2px solid #dee2e6; padding: 8px 24px; height: 55px; }
+        .control-nav { background: #fff; border-bottom: 2px solid #dee2e6; padding: 12px 24px; position: sticky; top: 0; z-index: 1000; }
+        .input-sidebar { background: #fff; height: calc(100vh - 65px); overflow-y: auto; padding: 20px; border-right: 1px solid #dee2e6; }
         
-        .input-sidebar { 
-            background: #fff; 
-            height: calc(100vh - 55px); 
-            padding: 15px; 
-            border-right: 1px solid #dee2e6;
-            overflow-y: auto; 
-        }
-        
-        /* TAMPILAN NORMAL TANPA BAGIAN HITAM DI KANAN KIRI */
         .canvas-container {
             display: flex;
             justify-content: center;
-            padding: 20px 0;
-            height: calc(100vh - 55px);
-            overflow-y: auto;
-            background-color: #fff; 
+            align-items: flex-start;
+            padding: 20px;
+            width: 100%;
         }
 
         .document-canvas { 
             background: white; 
             width: 210mm; 
             min-height: 297mm; 
-            padding: 12mm 15mm; 
+            padding: 10mm 15mm; 
             position: relative;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1); 
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #eee;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
         }
 
-        .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .main-logo { height: 55px; width: auto; }
+        .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .main-logo { height: 50px; width: auto; object-fit: contain; }
         
-        .title-doc { text-align: center; margin-bottom: 15px; }
-        .title-doc h1 { font-size: 22pt; font-weight: 800; margin: 0; letter-spacing: 2px; }
+        .title-doc { text-align: center; margin-top: 20px; margin-bottom: 20px; }
+        .title-doc h1 { font-size: 18pt; font-weight: 800; margin: 0; letter-spacing: 2px; }
         .title-doc span { font-size: 10pt; color: #444; font-style: italic; display: block; }
 
-        .info-table { width: 100%; margin-bottom: 15px; border-collapse: collapse; border: 2px solid #000; }
-        .info-table th, .info-table td { padding: 8px 12px; border: 1px solid #000; vertical-align: middle; font-size: 11pt; }
-        .label-cell { background-color: #f8fafc; font-weight: 700; width: 28%; }
-        .label-cell small { display: block; font-weight: 400; font-style: italic; color: #475569; font-size: 8pt; }
+        .info-table { width: 100%; margin-bottom: 15px; border-collapse: collapse; border: 1.5px solid #000; }
+        .info-table th, .info-table td { padding: 8px 12px; border: 1px solid #000; vertical-align: middle; }
+        .label-cell { background-color: #f1f5f9; font-weight: 700; width: 25%; font-size: 8.5pt; }
         
-        /* KETERANGAN BAST DENGAN GARIS KUNING EMAS */
-        .keterangan-emas {
-            border-left: 5px solid var(--gold);
-            padding: 10px 15px;
-            background-color: #fffdf5;
-            margin: 15px 0;
-            font-size: 11pt;
-            line-height: 1.5;
+        .divider-line { border-top: 1.5px dashed #000; margin: 30px 0 20px 0; position: relative; }
+        .divider-line span { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 20px; font-weight: bold; font-size: 9pt; }
+
+        .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; margin-top: 20px; }
+        .sig-box { height: 110px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        
+        .stamp-img {
+            position: absolute;
+            width: 90px;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0.85;
+            z-index: 1;
         }
 
-        .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; margin-top: 10px; }
-        .sig-box { height: 100px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
-        .stamp-img { position: absolute; width: 100px; bottom: 25px; left: 50%; transform: translateX(-50%); opacity: 0.8; z-index: 1; }
-        
-        /* BOLD PADA LABEL TANDA TANGAN */
-        .sig-label { font-weight: 800; text-transform: uppercase; font-size: 10pt; margin-bottom: 5px; }
-        .sig-name { font-weight: 900; text-transform: uppercase; font-size: 10pt; position: relative; z-index: 2; border-bottom: 1.5px solid #000; display: inline-block; padding: 0 10px; }
-        .sig-name.no-line { border-bottom: none; }
+        .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 10pt; z-index: 2; }
 
-        /* PANEL INPUT TEXT DIPERBESAR */
-        .form-label-custom { font-size: 11px; font-weight: 800; color: #1e293b; margin-top: 8px; display: block; text-transform: uppercase; }
-        .form-control-sm { font-size: 12px; padding: 0.4rem 0.6rem; border: 1.5px solid #cbd5e1; }
+        .footer-ornament { display: flex; height: 8px; width: 100%; margin-top: 30px; margin-bottom: 10px; }
+        .orn-1 { background: var(--kse-primary); flex: 4; }
+        .orn-2 { background: var(--tosca); flex: 2; }
+        .orn-3 { background: var(--gold); flex: 1; }
+
+        .form-label-custom { font-size: 9px; font-weight: 800; color: #475569; margin-top: 12px; display: block; text-transform: uppercase; }
         
         @media print { 
             .control-nav, .input-sidebar { display: none !important; } 
-            body { background: white; overflow: visible; } 
-            .canvas-container { padding: 0; height: auto; overflow: visible; }
-            .document-canvas { box-shadow: none; border: none; margin: 0; width: 100%; } 
+            body { background: white; padding: 0; } 
+            .canvas-container { padding: 0; }
+            .document-canvas { margin: 0; box-shadow: none; width: 210mm; } 
         }
     </style>
 </head>
@@ -105,12 +96,11 @@
 
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
-        <h6 class="mb-0 fw-bold text-success"><i class="bi bi-patch-check-fill"></i> KSE SYSTEM v6.1</h6>
+        <h6 class="mb-0 fw-bold text-success"><i class="bi bi-patch-check-fill"></i> KSE SYSTEM v5.1</h6>
     </div>
     <div class="d-flex gap-2">
-        <button class="btn btn-success btn-sm fw-bold" onclick="saveData()"><i class="bi bi-database-fill-check"></i> SIMPAN</button>
         <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> PRINT</button>
-        <button class="btn btn-primary btn-sm fw-bold px-4" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> PDF</button>
+        <button class="btn btn-primary btn-sm fw-bold px-4" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> DOWNLOAD PDF</button>
     </div>
 </div>
 
@@ -118,87 +108,69 @@
     <div class="row">
         <!-- INPUT SIDEBAR -->
         <div class="col-lg-3 input-sidebar shadow-sm">
-            <label class="form-label-custom">Tanggal Kirim</label>
-            <input type="date" id="in_tgl" class="form-control form-control-sm mb-1">
-
-            <div class="row g-2">
-                <div class="col-6">
-                    <label class="form-label-custom">No. SJ</label>
-                    <input type="text" id="in_no_sj" class="form-control form-control-sm mb-1 fw-bold" placeholder="001">
-                </div>
-                <div class="col-6">
-                    <label class="form-label-custom">No. BAST</label>
-                    <input type="text" id="in_no_bast" class="form-control form-control-sm mb-1 fw-bold" placeholder="001">
-                </div>
-            </div>
-
-            <label class="form-label-custom">Transportir</label>
-            <input list="listTrans" id="in_trans" class="form-control form-control-sm mb-1" value="PT. KHATULISTIWA SINAR ENERGI">
-            <datalist id="listTrans">
+            <div class="alert alert-dark py-2 mb-3"><b style="font-size: 10px;">DATA PENGIRIMAN</b></div>
+            
+            <label class="form-label-custom">Transportir (Pihak I)</label>
+            <input list="listTransportir" id="in_transportir" class="form-control form-control-sm mb-2 fw-bold" value="PT. KHATULISTIWA SINAR ENERGI">
+            <datalist id="listTransportir">
                 <option value="PT. KHATULISTIWA SINAR ENERGI">
-                <option value="PT. BERKAH SARANA MAKMUR BENUA">
-                <option value="PT. INDO DHARMA ENERGI">
+                <option value="PT. INDODHARMA ENERGI">
+                <option value="PT. INVESTAMA KALIMANTAN ENERGI">
             </datalist>
 
-            <label class="form-label-custom">Kepada (Penerima)</label>
-            <input list="listTujuan" id="in_tujuan" class="form-control form-control-sm mb-1" placeholder="Pilih atau Ketik Nama PT">
-            <datalist id="listTujuan">
+            <label class="form-label-custom">No. Surat / BAST</label>
+            <input type="text" id="in_no" class="form-control form-control-sm mb-2 fw-bold" placeholder="001/SJ-KSE/V/2026">
+            
+            <label class="form-label-custom">No. SO / DO</label>
+            <input type="text" id="in_so" class="form-control form-control-sm mb-2" placeholder="SO-998822">
+
+            <label class="form-label-custom">Kepada (Penerima - Pihak II)</label>
+            <input list="listPenerima" id="in_tujuan" class="form-control form-control-sm mb-2" placeholder="Cari Nama Perusahaan...">
+            <datalist id="listPenerima">
                 <option value="PT. SINAR ALAM PERMAI (SAP)">
                 <option value="PT. KORINDO ARIABIMA SARI">
                 <option value="PT. SURYA BORNEO INDUSTRI">
-                <option value="PT. BUMITAMA GUNAJAYA AGRO">
-                <option value="PT. KAPUAS PRIMA COAL, Tbk">
+                <option value="CV. SAMI JAYA">
             </datalist>
 
-            <label class="form-label-custom">No. SO / DO</label>
-            <input type="text" id="in_so" class="form-control form-control-sm mb-1" placeholder="SO-998822">
+            <label class="form-label-custom">Tanggal Kirim</label>
+            <input type="date" id="in_tgl" class="form-control form-control-sm mb-2">
 
             <div class="row g-2">
-                <div class="col-6">
-                    <label class="form-label-custom">Driver</label>
-                    <input type="text" id="in_driver" class="form-control form-control-sm mb-1">
-                </div>
-                <div class="col-6">
-                    <label class="form-label-custom">No. Polisi</label>
-                    <input type="text" id="in_nopol" class="form-control form-control-sm mb-1">
-                </div>
+                <div class="col-6"><label class="form-label-custom">Driver</label><input type="text" id="in_driver" class="form-control form-control-sm"></div>
+                <div class="col-6"><label class="form-label-custom">No. Polisi</label><input type="text" id="in_nopol" class="form-control form-control-sm"></div>
             </div>
 
             <div class="row g-2">
-                <div class="col-6">
-                    <label class="form-label-custom">Tinggi (mm)</label>
-                    <input type="text" id="in_tinggi" class="form-control form-control-sm mb-1" placeholder="1250">
-                </div>
-                <div class="col-6">
-                    <label class="form-label-custom">No. Segel</label>
-                    <input type="text" id="in_segel" class="form-control form-control-sm mb-1" placeholder="KSE-001">
-                </div>
+                <div class="col-6"><label class="form-label-custom">Tinggi (mm)</label><input type="text" id="in_tinggi" class="form-control form-control-sm"></div>
+                <div class="col-6"><label class="form-label-custom">No. Segel</label><input type="text" id="in_segel" class="form-control form-control-sm"></div>
             </div>
 
-            <label class="form-label-custom">Kuantitas (Liter)</label>
-            <input type="number" id="in_qty" class="form-control form-control-sm mb-1">
+            <label class="form-label-custom">Volume (Liter)</label>
+            <input type="number" id="in_qty" class="form-control form-control-sm mb-2">
 
             <label class="form-label-custom">Lokasi Tujuan</label>
-            <input type="text" id="in_lokasi" class="form-control form-control-sm mb-1" value="Pangkalan Bun">
+            <input type="text" id="in_lokasi" class="form-control form-control-sm mb-2" value="Pangkalan Bun">
 
-            <label class="form-label-custom">Admin KSE</label>
-            <input type="text" id="in_adm" class="form-control form-control-sm mb-1" placeholder="Nama Admin">
+            <label class="form-label-custom">Admin Opr.</label>
+            <input type="text" id="in_adm" class="form-control form-control-sm" placeholder="Nama Admin">
         </div>
 
-        <!-- PREVIEW AREA -->
-        <div class="col-lg-9 p-0">
+        <!-- CANVAS AREA -->
+        <div class="col-lg-9 p-0 bg-secondary bg-opacity-10">
             <div class="canvas-container">
                 <div class="document-canvas" id="printable-area">
                     
+                    <!-- HEADER SJ -->
                     <div class="header-sj">
                         <div class="d-flex align-items-center gap-3">
-                            <img src="header1.png" class="main-logo" alt="Logo KSE">
+                            <img src="header1.png" class="main-logo" alt="Logo">
                             <div>
                                 <b style="font-size: 20pt; color: var(--kse-primary); display: block; line-height: 1;">KHATULISTIWA</b>
-                                <span style="font-size: 10pt; letter-spacing: 2.5px; font-weight: bold; color: var(--tosca);">S I N A R &nbsp; E N E R G I</span>
+                                <span style="font-size: 10pt; letter-spacing: 3px; font-weight: bold; color: var(--tosca);">S I N A R &nbsp; E N E R G I</span>
                             </div>
                         </div>
-                        <div class="text-end" style="font-size: 9pt; line-height: 1.4; border-left: 3px solid var(--gold); padding-left: 15px;">
+                        <div class="text-end" style="font-size: 8pt; line-height: 1.4; border-left: 2px solid var(--gold); padding-left: 15px;">
                             Jln. H.M Rafi'i Rt.24 Kel. Madurejo, Arut Selatan<br>
                             Kotawaringin Barat, Kalimantan Tengah<br>
                             <b>Email: pt.khatulistiwa.sinar.energi@gmail.com</b>
@@ -210,107 +182,108 @@
                         <span>Delivery Order / Waybill</span>
                     </div>
 
-                    <div class="row mb-3" style="font-size: 11pt;">
+                    <div class="row mb-3" style="font-size: 10pt;">
                         <div class="col-7">
                             <table width="100%">
-                                <!-- NOMOR, SO, TANGGAL DI BOLD -->
-                                <tr><td width="35%">No. Surat</td><td>: <b id="out_no_sj">-</b></td></tr>
+                                <tr><td width="35%">No. Surat / Ref No</td><td>: <b id="out_no_sj">-</b></td></tr>
                                 <tr><td>No. SO / DO</td><td>: <b id="out_so_sj">-</b></td></tr>
-                                <tr><td>Tanggal</td><td>: <b id="out_tgl_sj">-</b></td></tr>
+                                <tr><td>Tanggal / Date</td><td>: <span id="out_tgl_sj">-</span></td></tr>
                             </table>
                         </div>
                         <div class="col-5">
-                            <div style="border: 2px solid var(--kse-primary); padding: 8px; border-radius: 4px; background: #fdfdfd;">
-                                <small class="text-uppercase fw-bold" style="font-size: 8pt; color: var(--kse-primary);">Tujuan Pengiriman:</small><br>
-                                <b id="out_tujuan_sj" style="font-size: 12pt; display: block; margin-top: 2px;">-</b>
+                            <div style="border: 2px solid var(--kse-primary); padding: 10px; border-radius: 5px; background: #fdfdfd;">
+                                <small class="text-uppercase fw-bold" style="font-size: 7.5pt; color: var(--kse-primary);">Tujuan Pengiriman:</small><br>
+                                <b id="out_tujuan_sj" style="font-size: 11pt; display: block; margin-top: 5px;">-</b>
                             </div>
                         </div>
                     </div>
 
                     <table class="info-table">
                         <tr>
-                            <td class="label-cell">Transportir <small>Transporter</small></td>
-                            <td colspan="3"><b id="out_trans_sj" style="font-size: 12pt;">-</b></td>
+                            <td class="label-cell">Transportir</td>
+                            <td colspan="3"><b id="out_transportir_sj">PT. KHATULISTIWA SINAR ENERGI</b></td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Pengemudi <small>Driver Name</small></td>
-                            <td width="30%"><b id="out_driver_sj">-</b></td>
-                            <td class="label-cell">No. Polisi <small>Vehicle No.</small></td>
-                            <td><b id="out_nopol_sj">-</b></td>
+                            <td class="label-cell">Pengemudi</td>
+                            <td width="30%" id="out_driver_sj">-</td>
+                            <td class="label-cell">No. Polisi</td>
+                            <td id="out_nopol_sj">-</td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Jenis Barang <small>Description</small></td>
-                            <td><b>BBM Solar Industri (HSD)</b></td>
-                            <td class="label-cell">Kuantitas <small>Quantity</small></td>
-                            <td><b id="out_qty_sj" style="font-size: 12pt;">0</b> <b>Liter</b></td>
+                            <td class="label-cell">Jenis Barang</td>
+                            <td>BBM Solar Industri (HSD)</td>
+                            <td class="label-cell">Kuantitas</td>
+                            <td><b id="out_qty_sj">0</b> Liter</td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Tinggi Cairan <small>Liquid Level</small></td>
-                            <td><b id="out_tinggi_sj">-</b> mm</td>
-                            <td class="label-cell">No. Segel <small>Seal Number</small></td>
-                            <td><b id="out_segel_sj">-</b></td>
+                            <td class="label-cell">Tinggi Cairan</td>
+                            <td><span id="out_tinggi_sj">-</span> mm</td>
+                            <td class="label-cell">No. Segel</td>
+                            <td id="out_segel_sj">-</td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Lokasi Kirim <small>Delivery Location</small></td>
-                            <td colspan="3"><b id="out_lokasi_sj">-</b></td>
+                            <td class="label-cell">Lokasi Kirim</td>
+                            <td colspan="3" id="out_lokasi_sj">-</td>
                         </tr>
                     </table>
 
                     <div class="signature-section">
+                        <div class="sig-box"><div>Penerima,</div><div class="sig-name">. . . . . . . . . .</div></div>
+                        <div class="sig-box"><div>Pengemudi,</div><div class="sig-name" id="sig_driver_sj"></div></div>
                         <div class="sig-box">
-                            <div class="sig-label">Penerima,</div>
-                            <div class="sig-name no-line">. . . . . . . . . .</div>
-                        </div>
-                        <div class="sig-box">
-                            <div class="sig-label">Pengemudi,</div>
-                            <div class="sig-name" id="sig_driver_sj"></div>
-                        </div>
-                        <div class="sig-box">
-                            <div class="sig-label">Hormat Kami,</div>
-                            <img src="stempel.png" class="stamp-img" alt="Stempel">
+                            <div>Hormat Kami,</div>
+                            <img src="stam.png" class="stamp-img" alt="Stempel">
                             <div class="sig-name" id="sig_adm_sj"></div>
                         </div>
                     </div>
 
-                    <div style="border-top: 2px dashed #000; margin: 30px 0 20px 0; position: relative; text-align: center;">
-                        <span style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 15px; font-weight: bold; font-size: 10pt;">BERITA ACARA SERAH TERIMA (BAST)</span>
+                    <!-- BAST AREA -->
+                    <div class="divider-line"><span>BERITA ACARA SERAH TERIMA (BAST)</span></div>
+
+                    <div class="title-doc mb-3" style="margin-top: 0;">
+                        <h1 style="font-size: 14pt;">BERITA ACARA SERAH TERIMA BBM</h1>
                     </div>
 
-                    <!-- KETERANGAN BAST SESUAI AWAL (EMAS) -->
-                    <div class="keterangan-emas">
-                        Pada hari ini <b id="out_hari_ba">..........</b>, Tanggal <b id="out_tgl_ba">..........</b>, bertempat di <b id="out_lokasi_ba">..........</b>, telah dilakukan serah terima komoditas BBM dengan rincian sebagai berikut:
-                    </div>
+                    <p style="font-size: 10pt; text-align: justify; line-height: 1.6; margin-bottom: 15px;">
+                        Pada hari ini <b id="out_hari_ba">..........</b>, Tanggal <b id="out_tgl_ba">..........</b>, bertempat di <b id="out_lokasi_ba">..........</b>, telah dilakukan serah terima komoditas BBM dari Pihak Pertama kepada Pihak Kedua dengan rincian:
+                    </p>
 
-                    <div style="margin: 0 0 20px 30px; font-size: 11pt;">
+                    <!-- Row BAST yang Sejajar -->
+                    <div style="margin: 0 0 20px 25px; font-size: 10pt;">
                         <div class="row mb-1"><div class="col-4">Nomor BAST</div><div class="col-8">: <b id="out_no_ba">-</b></div></div>
-                        <div class="row mb-1"><div class="col-4">Pihak I (Penyerah)</div><div class="col-8">: <b id="out_trans_ba">-</b></div></div>
-                        <div class="row mb-1"><div class="col-4">Pihak II (Penerima)</div><div class="col-8">: <b id="out_tujuan_ba"></b></div></div>
+                        <div class="row mb-1"><div class="col-4">Pihak I (Penyerah)</div><div class="col-8">: <b id="out_transportir_ba">PT. KHATULISTIWA SINAR ENERGI</b></div></div>
+                        <div class="row mb-1"><div class="col-4">Pihak II (Penerima)</div><div class="col-8">: <b id="out_tujuan_ba">-</b></div></div>
+                        <div class="row mb-1"><div class="col-4">No. SO / DO</div><div class="col-8">: <span id="out_so_ba">-</span></div></div>
                         <div class="row mb-1"><div class="col-4">Volume Barang</div><div class="col-8">: <b id="out_qty_ba">0</b> Liter</div></div>
                     </div>
 
-                    <div class="signature-section">
+                    <p style="font-size: 9.5pt; font-style: italic; color: #555; background: #f9f9f9; padding: 10px; border-left: 4px solid var(--tosca);">
+                        "Menyatakan bahwa Pihak Kedua telah menerima produk dalam volume yang tepat, kondisi segel baik, dan spesifikasi yang sesuai."
+                    </p>
+
+                    <div class="signature-section" style="margin-top: 20px;">
+                        <div class="sig-box"><div>Pihak Pertama,</div><div class="sig-name" id="sig_p1_ba"></div></div>
+                        <div class="sig-box"><div>Pihak Kedua,</div><div class="sig-name" id="sig_p2_ba"></div></div>
                         <div class="sig-box">
-                            <div class="sig-label">Pihak Pertama,</div>
-                            <div class="sig-name" id="sig_p1_ba"></div>
-                        </div>
-                        <div class="sig-box">
-                            <div class="sig-label">Pihak Kedua,</div>
-                            <div class="sig-name" id="sig_p2_ba"></div>
-                        </div>
-                        <div class="sig-box">
-                            <div class="sig-label">Mengetahui,</div>
-                            <img src="stempel.png" class="stamp-img" alt="Stempel">
+                            <div>Mengetahui,</div>
+                            <img src="stam.png" class="stamp-img" alt="Stempel">
                             <div class="sig-name" id="sig_adm_ba"></div>
                         </div>
                     </div>
 
-                    <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-end">
+                    <!-- FOOTER -->
+                    <div class="footer-ornament">
+                        <div class="orn-1"></div><div class="orn-2"></div><div class="orn-3"></div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-end">
                         <div id="qrcode"></div>
-                        <div class="text-end" style="font-size: 8pt; color: #666;">
-                            <b style="color: var(--kse-primary);">KSE SMART LOGISTICS SYSTEM v6.1</b><br>
-                            Dokumen sah diverifikasi secara sistem pada: <span id="out_sys_date"></span>
+                        <div class="text-end" style="font-size: 7pt; color: #666;">
+                            <b style="color: var(--kse-primary);">KSE SMART LOGISTICS SYSTEM</b><br>
+                            Dokumen sah dicetak secara sistem pada: <span id="out_sys_date"></span>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -318,14 +291,12 @@
 </div>
 
 <script>
-    const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 50, height: 50 });
 
-    function getRomawi(month) {
-        return ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][month];
+    function formatTglIndo(dateStr) {
+        if(!dateStr) return "-";
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        return new Date(dateStr).toLocaleDateString('id-ID', options);
     }
 
     function syncData() {
@@ -335,80 +306,70 @@
             if(el) el.innerText = text || "-";
         };
 
-        const tglInput = val('in_tgl');
-        let d = new Date();
-        if(tglInput) d = new Date(tglInput);
-
-        const suffix = `/${getRomawi(d.getMonth())}/${d.getFullYear()}`;
-        const noSJ = (val('in_no_sj') || "000") + "/SJ-KSE" + suffix;
-        const noBA = (val('in_no_bast') || "000") + "/BAST-KSE" + suffix;
+        const tglFormatted = formatTglIndo(val('in_tgl'));
         const qtyFormatted = Number(val('in_qty')).toLocaleString('id-ID');
-
-        set('out_no_sj', noSJ);
-        set('out_no_ba', noBA);
-        set('out_trans_sj', val('in_trans'));
-        set('out_trans_ba', val('in_trans'));
+        
+        set('out_no_sj', val('in_no'));
         set('out_so_sj', val('in_so'));
         set('out_tujuan_sj', val('in_tujuan'));
-        set('out_tujuan_ba', val('in_tujuan'));
-        set('out_tgl_sj', d.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}));
-        set('out_tgl_ba', d.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}));
-        set('out_hari_ba', ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][d.getDay()]);
+        set('out_tgl_sj', tglFormatted);
         set('out_lokasi_sj', val('in_lokasi'));
-        set('out_lokasi_ba', val('in_lokasi'));
         set('out_driver_sj', val('in_driver'));
         set('out_nopol_sj', val('in_nopol'));
         set('out_qty_sj', qtyFormatted);
-        set('out_qty_ba', qtyFormatted);
         set('out_tinggi_sj', val('in_tinggi'));
         set('out_segel_sj', val('in_segel'));
+        set('out_transportir_sj', val('in_transportir'));
+        
         set('sig_driver_sj', val('in_driver'));
         set('sig_adm_sj', val('in_adm'));
+
+        set('out_no_ba', val('in_no'));
+        set('out_so_ba', val('in_so'));
+        set('out_tgl_ba', tglFormatted);
+        set('out_lokasi_ba', val('in_lokasi'));
+        set('out_tujuan_ba', val('in_tujuan'));
+        set('out_qty_ba', qtyFormatted);
+        set('out_transportir_ba', val('in_transportir'));
+        
         set('sig_p1_ba', val('in_driver'));
         set('sig_p2_ba', val('in_tujuan'));
         set('sig_adm_ba', val('in_adm'));
+
         set('out_sys_date', new Date().toLocaleString('id-ID'));
-        
-        qrcode.makeCode("KSE-VERIFIED-" + noSJ);
-    }
-
-    async function saveData() {
-        const btn = document.querySelector('.btn-success');
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>...';
-        
-        const payload = {
-            tanggal: document.getElementById('in_tgl').value,
-            no_dokumen: document.getElementById('out_no_sj').innerText,
-            jenis_dokumen: "SJ & BAST",
-            tujuan: document.getElementById('in_tujuan').value,
-            nopol: document.getElementById('in_nopol').value,
-            sopir: document.getElementById('in_driver').value,
-            qty: parseFloat(document.getElementById('in_qty').value) || 0,
-            pt: document.getElementById('in_trans').value 
-        };
-
-        const { error } = await _supabase.from('data_logistik').insert([payload]);
-        if (error) alert('Error: ' + error.message);
-        else alert('Data tersimpan di Database KSE!');
-        btn.innerHTML = '<i class="bi bi-database-fill-check"></i> SIMPAN';
+        qrcode.makeCode("VERIFIED-" + val('in_no'));
     }
 
     function downloadPDF() {
         const element = document.getElementById('printable-area');
         const opt = { 
             margin: 0, 
-            filename: 'KSE_DOC_' + document.getElementById('in_no_sj').value + '.pdf',
-            html2canvas: { scale: 2, useCORS: true }, 
+            filename: 'DOKUMEN_LOGISTIK_' + document.getElementById('in_no').value + '.pdf',
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 2.5, useCORS: true }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
         };
         html2pdf().set(opt).from(element).save();
     }
 
-    document.querySelectorAll('input').forEach(el => el.addEventListener('input', syncData));
+    document.querySelectorAll('input, select').forEach(el => {
+        el.addEventListener('input', syncData);
+    });
+
+    document.getElementById('in_tgl').addEventListener('change', function() {
+        if(this.value) {
+            const d = new Date(this.value);
+            const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+            document.getElementById('out_hari_ba').innerText = days[d.getDay()];
+        }
+        syncData();
+    });
+
     window.onload = () => {
         document.getElementById('in_tgl').value = new Date().toISOString().split('T')[0];
         syncData();
     };
 </script>
+
 </body>
 </html>
