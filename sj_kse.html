@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KSE - SJ & BAST Premium v5.1</title>
+    <title>KSE - SJ & BAST Premium v5.0</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
@@ -43,7 +43,7 @@
             background: white; 
             width: 210mm; 
             min-height: 297mm; 
-            padding: 10mm 15mm; 
+            padding: 7mm 10mm 7mm 10mm; 
             position: relative;
             box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
         }
@@ -51,33 +51,42 @@
         .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .main-logo { height: 50px; width: auto; object-fit: contain; }
         
-        .title-doc { text-align: center; margin-top: 20px; margin-bottom: 20px; }
+        .title-doc { text-align: center; margin-top: 30px; margin-bottom: 25px; }
         .title-doc h1 { font-size: 18pt; font-weight: 800; margin: 0; letter-spacing: 2px; }
         .title-doc span { font-size: 10pt; color: #444; font-style: italic; display: block; }
 
-        .info-table { width: 100%; margin-bottom: 15px; border-collapse: collapse; border: 1.5px solid #000; }
+        .info-table { width: 100%; margin-bottom: 20px; border-collapse: collapse; border: 1.5px solid #000; }
         .info-table th, .info-table td { padding: 8px 12px; border: 1px solid #000; vertical-align: middle; }
         .label-cell { background-color: #f1f5f9; font-weight: 700; width: 25%; font-size: 8.5pt; }
+        .label-cell small { display: block; font-weight: 400; font-style: italic; color: #475569; font-size: 7pt; }
         
-        .divider-line { border-top: 1.5px dashed #000; margin: 30px 0 20px 0; position: relative; }
+        .divider-line { border-top: 1.5px dashed #000; margin: 40px 0 30px 0; position: relative; }
         .divider-line span { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 20px; font-weight: bold; font-size: 9pt; }
 
-        .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; margin-top: 20px; }
-        .sig-box { height: 110px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; margin-top: 30px; }
+        .sig-box { height: 120px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         
         .stamp-img {
             position: absolute;
-            width: 90px;
+            width: 100px;
             bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
             opacity: 0.85;
+            pointer-events: none;
             z-index: 1;
         }
 
-        .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 10pt; z-index: 2; }
+        /* Update: Hilangkan Text Decoration (Underline) */
+        .sig-name { font-weight: 900; text-decoration: none; text-transform: uppercase; font-size: 10pt; position: relative; z-index: 2; }
 
-        .footer-ornament { display: flex; height: 8px; width: 100%; margin-top: 30px; margin-bottom: 10px; }
+        .footer-ornament {
+            display: flex;
+            height: 8px;
+            width: 100%;
+            margin-top: 40px;
+            margin-bottom: 10px;
+        }
         .orn-1 { background: var(--kse-primary); flex: 4; }
         .orn-2 { background: var(--tosca); flex: 2; }
         .orn-3 { background: var(--gold); flex: 1; }
@@ -96,11 +105,11 @@
 
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
-        <h6 class="mb-0 fw-bold text-success"><i class="bi bi-patch-check-fill"></i> KSE SYSTEM v5.1</h6>
+        <h6 class="mb-0 fw-bold text-success"><i class="bi bi-patch-check-fill"></i> KSE SYSTEM v5.0</h6>
     </div>
     <div class="d-flex gap-2">
-        <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> PRINT</button>
-        <button class="btn btn-primary btn-sm fw-bold px-4" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> DOWNLOAD PDF</button>
+        <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> PRINT DOCUMENT</button>
+        <button class="btn btn-primary btn-sm fw-bold px-4" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> SIMPAN KE PDF</button>
     </div>
 </div>
 
@@ -108,51 +117,66 @@
     <div class="row">
         <!-- INPUT SIDEBAR -->
         <div class="col-lg-3 input-sidebar shadow-sm">
-            <div class="alert alert-dark py-2 mb-3"><b style="font-size: 10px;">DATA PENGIRIMAN</b></div>
+            <div class="alert alert-success py-2 mb-3"><b style="font-size: 10px;">CORE DATA INPUT</b></div>
             
-            <label class="form-label-custom">Transportir (Pihak I)</label>
-            <input list="listTransportir" id="in_transportir" class="form-control form-control-sm mb-2 fw-bold" value="PT. KHATULISTIWA SINAR ENERGI">
-            <datalist id="listTransportir">
-                <option value="PT. KHATULISTIWA SINAR ENERGI">
-                <option value="PT. INDODHARMA ENERGI">
-                <option value="PT. INVESTAMA KALIMANTAN ENERGI">
-            </datalist>
-
-            <label class="form-label-custom">No. Surat / BAST</label>
-            <input type="text" id="in_no" class="form-control form-control-sm mb-2 fw-bold" placeholder="001/SJ-KSE/V/2026">
-            
-            <label class="form-label-custom">No. SO / DO</label>
-            <input type="text" id="in_so" class="form-control form-control-sm mb-2" placeholder="SO-998822">
-
-            <label class="form-label-custom">Kepada (Penerima - Pihak II)</label>
-            <input list="listPenerima" id="in_tujuan" class="form-control form-control-sm mb-2" placeholder="Cari Nama Perusahaan...">
-            <datalist id="listPenerima">
-                <option value="PT. SINAR ALAM PERMAI (SAP)">
-                <option value="PT. KORINDO ARIABIMA SARI">
-                <option value="PT. SURYA BORNEO INDUSTRI">
-                <option value="CV. SAMI JAYA">
-            </datalist>
-
             <label class="form-label-custom">Tanggal Kirim</label>
             <input type="date" id="in_tgl" class="form-control form-control-sm mb-2">
 
+            <label class="form-label-custom">No. Surat / Ref No.</label>
+            <input type="text" id="in_no" class="form-control form-control-sm mb-2 fw-bold" placeholder="001/SJ-KSE/V/2026">
+            
+            <label class="form-label-custom">PO Customer</label>
+            <input type="text" id="in_po" class="form-control form-control-sm mb-2" placeholder="PO-12345">
+
+            <label class="form-label-custom">No. SO / DO</label>
+            <input type="text" id="in_so" class="form-control form-control-sm mb-2" placeholder="SO-998822">
+
+            <!-- Update: Dropdown Edit Transportir -->
+            <label class="form-label-custom">Transportir</label>
+            <input list="list_transportir" id="in_transportir" class="form-control form-control-sm mb-2" placeholder="Pilih atau Ketik Transportir">
+            <datalist id="list_transportir">
+                <option value="PT. KHATULISTIWA SINAR ENERGI">
+                <option value="PT. SINARINDO SUKSES SELALU">
+                <option value="PT. BERKAH SARANA MAKMUR BENUA">
+            </datalist>
+
+            <!-- Update: Dropdown Edit Penerima -->
+            <label class="form-label-custom">Kepada (Penerima)</label>
+            <input list="list_penerima" id="in_tujuan" class="form-control form-control-sm mb-2" placeholder="Pilih atau Ketik Penerima">
+            <datalist id="list_penerima">
+                <option value="PT. KALIMANTAN ENERGI">
+                <option value="PT. MAJU JAYA LOGISTIK">
+            </datalist>
+
             <div class="row g-2">
-                <div class="col-6"><label class="form-label-custom">Driver</label><input type="text" id="in_driver" class="form-control form-control-sm"></div>
-                <div class="col-6"><label class="form-label-custom">No. Polisi</label><input type="text" id="in_nopol" class="form-control form-control-sm"></div>
+                <div class="col-6">
+                    <label class="form-label-custom">Driver</label>
+                    <input type="text" id="in_driver" class="form-control form-control-sm">
+                </div>
+                <div class="col-6">
+                    <label class="form-label-custom">No. Polisi</label>
+                    <input type="text" id="in_nopol" class="form-control form-control-sm">
+                </div>
             </div>
 
             <div class="row g-2">
-                <div class="col-6"><label class="form-label-custom">Tinggi (mm)</label><input type="text" id="in_tinggi" class="form-control form-control-sm"></div>
-                <div class="col-6"><label class="form-label-custom">No. Segel</label><input type="text" id="in_segel" class="form-control form-control-sm"></div>
+                <div class="col-6">
+                    <label class="form-label-custom">Tinggi Cairan (mm)</label>
+                    <input type="text" id="in_tinggi" class="form-control form-control-sm" placeholder="Contoh: 1250">
+                </div>
+                <div class="col-6">
+                    <label class="form-label-custom">No. Segel</label>
+                    <input type="text" id="in_segel" class="form-control form-control-sm" placeholder="KSE-00123">
+                </div>
             </div>
 
-            <label class="form-label-custom">Volume (Liter)</label>
+            <label class="form-label-custom">Kuantitas (Liter)</label>
             <input type="number" id="in_qty" class="form-control form-control-sm mb-2">
 
             <label class="form-label-custom">Lokasi Tujuan</label>
             <input type="text" id="in_lokasi" class="form-control form-control-sm mb-2" value="Pangkalan Bun">
 
-            <label class="form-label-custom">Admin Opr.</label>
+            <label class="form-label-custom">Admin KSE</label>
             <input type="text" id="in_adm" class="form-control form-control-sm" placeholder="Nama Admin">
         </div>
 
@@ -161,10 +185,10 @@
             <div class="canvas-container">
                 <div class="document-canvas" id="printable-area">
                     
-                    <!-- HEADER SJ -->
+                    <!-- HEADER -->
                     <div class="header-sj">
                         <div class="d-flex align-items-center gap-3">
-                            <img src="header1.png" class="main-logo" alt="Logo">
+                            <img src="header1.png" class="main-logo" alt="Logo KSE">
                             <div>
                                 <b style="font-size: 20pt; color: var(--kse-primary); display: block; line-height: 1;">KHATULISTIWA</b>
                                 <span style="font-size: 10pt; letter-spacing: 3px; font-weight: bold; color: var(--tosca);">S I N A R &nbsp; E N E R G I</span>
@@ -177,22 +201,25 @@
                         </div>
                     </div>
 
+                    <!-- SURAT JALAN -->
                     <div class="title-doc">
                         <h1>SURAT JALAN</h1>
                         <span>Delivery Order / Waybill</span>
                     </div>
 
+                    <!-- Update: Urutan Header & Bold Text dengan Laik Bahasa -->
                     <div class="row mb-3" style="font-size: 10pt;">
                         <div class="col-7">
                             <table width="100%">
-                                <tr><td width="35%">No. Surat / Ref No</td><td>: <b id="out_no_sj">-</b></td></tr>
-                                <tr><td>No. SO / DO</td><td>: <b id="out_so_sj">-</b></td></tr>
-                                <tr><td>Tanggal / Date</td><td>: <span id="out_tgl_sj">-</span></td></tr>
+                                <tr><td width="40%">Tanggal / <i style="font-size: 8pt;">Date</i></td><td>: <b id="out_tgl_sj">-</b></td></tr>
+                                <tr><td>No. Surat / <i style="font-size: 8pt;">Ref No</i></td><td>: <b id="out_no_sj">-</b></td></tr>
+                                <tr><td>PO Customer / <i style="font-size: 8pt;">Customer PO</i></td><td>: <b id="out_po_sj">-</b></td></tr>
+                                <tr><td>No. SO / DO / <i style="font-size: 8pt;">SO-DO No.</i></td><td>: <b id="out_so_sj">-</b></td></tr>
                             </table>
                         </div>
                         <div class="col-5">
                             <div style="border: 2px solid var(--kse-primary); padding: 10px; border-radius: 5px; background: #fdfdfd;">
-                                <small class="text-uppercase fw-bold" style="font-size: 7.5pt; color: var(--kse-primary);">Tujuan Pengiriman:</small><br>
+                                <small class="text-uppercase fw-bold" style="font-size: 7.5pt; color: var(--kse-primary);">Tujuan Pengiriman / <i style="font-style: italic; font-weight: normal;">Delivery To:</i></small><br>
                                 <b id="out_tujuan_sj" style="font-size: 11pt; display: block; margin-top: 5px;">-</b>
                             </div>
                         </div>
@@ -200,38 +227,39 @@
 
                     <table class="info-table">
                         <tr>
-                            <td class="label-cell">Transportir</td>
+                            <td class="label-cell">Transportir <small>Transporter</small></td>
+                            <!-- Dinamis sesuai input -->
                             <td colspan="3"><b id="out_transportir_sj">PT. KHATULISTIWA SINAR ENERGI</b></td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Pengemudi</td>
+                            <td class="label-cell">Pengemudi <small>Driver Name</small></td>
                             <td width="30%" id="out_driver_sj">-</td>
-                            <td class="label-cell">No. Polisi</td>
+                            <td class="label-cell">No. Polisi <small>Vehicle No.</small></td>
                             <td id="out_nopol_sj">-</td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Jenis Barang</td>
+                            <td class="label-cell">Jenis Barang <small>Description</small></td>
                             <td>BBM Solar Industri (HSD)</td>
-                            <td class="label-cell">Kuantitas</td>
+                            <td class="label-cell">Kuantitas <small>Quantity</small></td>
                             <td><b id="out_qty_sj">0</b> Liter</td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Tinggi Cairan</td>
+                            <td class="label-cell">Tinggi Cairan <small>Liquid Level</small></td>
                             <td><span id="out_tinggi_sj">-</span> mm</td>
-                            <td class="label-cell">No. Segel</td>
+                            <td class="label-cell">No. Segel <small>Seal Number</small></td>
                             <td id="out_segel_sj">-</td>
                         </tr>
                         <tr>
-                            <td class="label-cell">Lokasi Kirim</td>
+                            <td class="label-cell">Lokasi Kirim <small>Delivery Location</small></td>
                             <td colspan="3" id="out_lokasi_sj">-</td>
                         </tr>
                     </table>
 
                     <div class="signature-section">
-                        <div class="sig-box"><div>Penerima,</div><div class="sig-name">. . . . . . . . . .</div></div>
-                        <div class="sig-box"><div>Pengemudi,</div><div class="sig-name" id="sig_driver_sj"></div></div>
+                        <div class="sig-box"><div>Penerima, / <br><i>Receiver</i></div><div class="sig-name">. . . . . . . . . .</div></div>
+                        <div class="sig-box"><div>Pengemudi, / <br><i>Driver</i></div><div class="sig-name" id="sig_driver_sj"></div></div>
                         <div class="sig-box">
-                            <div>Hormat Kami,</div>
+                            <div>Hormat Kami, <br><i>Authorized Signatory</i></div>
                             <img src="stam.png" class="stamp-img" alt="Stempel">
                             <div class="sig-name" id="sig_adm_sj"></div>
                         </div>
@@ -242,18 +270,18 @@
 
                     <div class="title-doc mb-3" style="margin-top: 0;">
                         <h1 style="font-size: 14pt;">BERITA ACARA SERAH TERIMA BBM</h1>
+                        <!-- Update: Nomor ditaruh di bawah BAST -->
+                        <div style="font-weight: bold; margin-top: 5px; color: #444;">Nomor: <span id="out_no_ba">001/bast-kse/v/2026</span></div>
                     </div>
 
                     <p style="font-size: 10pt; text-align: justify; line-height: 1.6; margin-bottom: 15px;">
                         Pada hari ini <b id="out_hari_ba">..........</b>, Tanggal <b id="out_tgl_ba">..........</b>, bertempat di <b id="out_lokasi_ba">..........</b>, telah dilakukan serah terima komoditas BBM dari Pihak Pertama kepada Pihak Kedua dengan rincian:
                     </p>
 
-                    <!-- Row BAST yang Sejajar -->
                     <div style="margin: 0 0 20px 25px; font-size: 10pt;">
-                        <div class="row mb-1"><div class="col-4">Nomor BAST</div><div class="col-8">: <b id="out_no_ba">-</b></div></div>
-                        <div class="row mb-1"><div class="col-4">Pihak I (Penyerah)</div><div class="col-8">: <b id="out_transportir_ba">PT. KHATULISTIWA SINAR ENERGI</b></div></div>
-                        <div class="row mb-1"><div class="col-4">Pihak II (Penerima)</div><div class="col-8">: <b id="out_tujuan_ba">-</b></div></div>
-                        <div class="row mb-1"><div class="col-4">No. SO / DO</div><div class="col-8">: <span id="out_so_ba">-</span></div></div>
+                        <div class="row mb-1"><div class="col-4">Pihak I (Penyerah)</div><div class="col-8">: <b id="out_pihak1_ba">PT. Khatulistiwa Sinar Energi</b></div></div>
+                        <div class="row mb-1"><div class="col-4">Pihak II (Penerima)</div><div class="col-8">: <b id="out_tujuan_ba"></b></div></div>
+                        <div class="row mb-1"><div class="col-4">No. SO / DO</div><div class="col-8">: <span id="out_so_ba"></span></div></div>
                         <div class="row mb-1"><div class="col-4">Volume Barang</div><div class="col-8">: <b id="out_qty_ba">0</b> Liter</div></div>
                     </div>
 
@@ -273,7 +301,9 @@
 
                     <!-- FOOTER -->
                     <div class="footer-ornament">
-                        <div class="orn-1"></div><div class="orn-2"></div><div class="orn-3"></div>
+                        <div class="orn-1"></div>
+                        <div class="orn-2"></div>
+                        <div class="orn-3"></div>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-end">
@@ -310,6 +340,7 @@
         const qtyFormatted = Number(val('in_qty')).toLocaleString('id-ID');
         
         set('out_no_sj', val('in_no'));
+        set('out_po_sj', val('in_po'));
         set('out_so_sj', val('in_so'));
         set('out_tujuan_sj', val('in_tujuan'));
         set('out_tgl_sj', tglFormatted);
@@ -319,32 +350,33 @@
         set('out_qty_sj', qtyFormatted);
         set('out_tinggi_sj', val('in_tinggi'));
         set('out_segel_sj', val('in_segel'));
-        set('out_transportir_sj', val('in_transportir'));
+        set('out_transportir_sj', val('in_transportir') || "PT. KHATULISTIWA SINAR ENERGI");
         
         set('sig_driver_sj', val('in_driver'));
         set('sig_adm_sj', val('in_adm'));
 
-        set('out_no_ba', val('in_no'));
+        // Update No BAST tetap atau mengikuti No Surat sesuai kebutuhan user
+        // set('out_no_ba', val('in_no')); 
         set('out_so_ba', val('in_so'));
         set('out_tgl_ba', tglFormatted);
         set('out_lokasi_ba', val('in_lokasi'));
         set('out_tujuan_ba', val('in_tujuan'));
         set('out_qty_ba', qtyFormatted);
-        set('out_transportir_ba', val('in_transportir'));
+        set('out_pihak1_ba', val('in_transportir') || "PT. Khatulistiwa Sinar Energi");
         
         set('sig_p1_ba', val('in_driver'));
         set('sig_p2_ba', val('in_tujuan'));
         set('sig_adm_ba', val('in_adm'));
 
         set('out_sys_date', new Date().toLocaleString('id-ID'));
-        qrcode.makeCode("VERIFIED-" + val('in_no'));
+        qrcode.makeCode("KSE-VERIFIED-" + val('in_no'));
     }
 
     function downloadPDF() {
         const element = document.getElementById('printable-area');
         const opt = { 
             margin: 0, 
-            filename: 'DOKUMEN_LOGISTIK_' + document.getElementById('in_no').value + '.pdf',
+            filename: 'DOKUMEN_KSE_' + document.getElementById('in_no').value + '.pdf',
             image: { type: 'jpeg', quality: 1 },
             html2canvas: { scale: 2.5, useCORS: true }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
@@ -365,10 +397,10 @@
         syncData();
     });
 
-    window.onload = () => {
-        document.getElementById('in_tgl').value = new Date().toISOString().split('T')[0];
-        syncData();
-    };
+    // Inisialisasi awal nomor BAST sesuai permintaan
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('out_no_ba').innerText = "001/bast-kse/v/2026";
+    });
 </script>
 
 </body>
