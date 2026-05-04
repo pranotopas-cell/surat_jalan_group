@@ -69,7 +69,7 @@
         .stamp-img {
             position: absolute;
             width: 100px;
-            bottom: 15px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
             opacity: 0.85;
@@ -105,7 +105,7 @@
 
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
-        <h6 class="mb-0 fw-bold text-success"><i class="bi bi-patch-check-fill"></i> KSE SYSTEM v5.0</h6>
+        <h6 class="mb-0 fw-bold text-success"><i class="bi bi-patch-check-fill"></i> KSE</h6>
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> PRINT DOCUMENT</button>
@@ -136,7 +136,7 @@
             <input list="list_transportir" id="in_transportir" class="form-control form-control-sm mb-2" placeholder="Pilih atau Ketik Transportir">
             <datalist id="list_transportir">
                 <option value="PT. KHATULISTIWA SINAR ENERGI">
-                <option value="PT. SINARINDO SUKSES SELALU">
+                <option value="PT. GLOBAL BORNEO ENERGI">
                 <option value="PT. BERKAH SARANA MAKMUR BENUA">
             </datalist>
 
@@ -264,7 +264,7 @@
                         <div class="sig-box"><div>Pengemudi, / <br><i>Driver</i></div><div class="sig-name" id="sig_driver_sj"></div></div>
                         <div class="sig-box">
                             <div>Hormat Kami, <br><i>Authorized Signatory</i></div>
-                            <img src="stempel.png" class="stamp-img" alt="Stempel">
+                            <img src="stempel.png" class="stempel.png" alt="Stempel">
                             <div class="sig-name" id="sig_adm_sj"></div>
                         </div>
                     </div>
@@ -366,7 +366,7 @@
         set('out_lokasi_ba', val('in_lokasi'));
         set('out_tujuan_ba', val('in_tujuan'));
         set('out_qty_ba', qtyFormatted);
-        set('out_pihak1_ba', val('in_transportir') || "PT. Khatulistiwa Sinar Energi");
+        set('out_pihak1_ba', val('in_transportir') || "PT. KHATULISTIWA SINAR ENERGI");
         
         set('sig_p1_ba', val('in_driver'));
         set('sig_p2_ba', val('in_tujuan'));
@@ -403,7 +403,7 @@
 
     // Inisialisasi awal nomor BAST sesuai permintaan
     document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById('out_no_ba').innerText = "001/bast-kse/v/2026";
+        document.getElementById('out_no_ba').innerText = "001/BAST-KSE/V/2026";
     });
 </script>
 
