@@ -67,6 +67,7 @@
         .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .main-logo { height: 45px; width: auto; }
         
+        /* Judul diperbesar sesuai instruksi */
         .title-doc { text-align: center; margin-bottom: 15px; }
         .title-doc h1 { font-size: 24pt; font-weight: 900; margin: 0; letter-spacing: 4px; }
         .title-doc span { font-size: 10pt; color: #333; font-style: italic; display: block; font-weight: 500; }
@@ -275,7 +276,6 @@
 
                     <div class="title-doc" style="margin-top: 0;">
                         <h1 style="font-size: 14pt;">BERITA ACARA SERAH TERIMA BBM</h1>
-                        <b id="out_no_ba" class="dot-matrix" style="font-size: 11pt; display: block; margin-top: 5px;">-</b>
                         <span style="font-size: 8.5pt;">Minutes of Handover</span>
                     </div>
 
@@ -284,6 +284,7 @@
                     </p>
 
                     <div style="margin: 0 0 15px 30px; font-size: 10.5pt;">
+                        <div class="row mb-1"><div class="col-4">Nomor BAST</div><div class="col-8">: <b id="out_no_ba" class="dot-matrix">-</b></div></div>
                         <div class="row mb-1"><div class="col-4">Pihak I (Penyerah)</div><div class="col-8">: <b id="out_trans_ba" class="dot-matrix">-</b></div></div>
                         <div class="row mb-1"><div class="col-4">Pihak II (Penerima)</div><div class="col-8">: <b id="out_tujuan_ba" class="dot-matrix"></b></div></div>
                         <div class="row mb-1"><div class="col-4">Volume Barang</div><div class="col-8">: <b id="out_qty_ba" class="dot-matrix">0</b> LITER</div></div>
@@ -339,12 +340,7 @@
         const val = (id) => document.getElementById(id).value;
         const set = (id, text) => { 
             const el = document.getElementById(id);
-            if(el) {
-                el.innerText = text || "-";
-                if(id.startsWith('sig_')) {
-                    el.style.fontWeight = '900';
-                }
-            }
+            if(el) el.innerText = text || "-";
         };
 
         const tglInput = val('in_tgl');
@@ -381,13 +377,11 @@
         set('out_qty_ba', qtyFormatted);
         set('out_tinggi_sj', val('in_tinggi'));
         set('out_segel_sj', val('in_segel'));
-        
         set('sig_driver_sj', val('in_driver'));
         set('sig_adm_sj', val('in_adm'));
         set('sig_p1_ba', val('in_driver'));
         set('sig_p2_ba', val('in_tujuan'));
         set('sig_adm_ba', val('in_adm'));
-        
         set('out_sys_date', new Date().toLocaleString('id-ID'));
         
         qrcode.makeCode("KSE-V6-" + fullNoSJ);
