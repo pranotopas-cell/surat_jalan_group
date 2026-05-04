@@ -29,7 +29,6 @@
         
         .control-nav { background: #fff; border-bottom: 2px solid #dee2e6; padding: 8px 24px; height: 55px; }
         
-        /* Panel input kembali ke gaya awal */
         .input-sidebar { 
             background: #fff; 
             height: calc(100vh - 55px); 
@@ -46,7 +45,6 @@
             overflow-y: auto; 
         }
 
-        /* Dokumen Preview dengan teks yang diperbesar */
         .document-canvas { 
             background: white; 
             width: 210mm; 
@@ -78,7 +76,8 @@
         .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center; margin-top: 5px; }
         .sig-box { height: 95px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         .stamp-img { position: absolute; width: 90px; bottom: 25px; left: 50%; transform: translateX(-50%); opacity: 0.85; z-index: 1; }
-        .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 10pt; position: relative; z-index: 2; }
+        .sig-name { font-weight: 900; text-transform: uppercase; font-size: 10pt; position: relative; z-index: 2; }
+        .sig-name.underline { text-decoration: underline; }
 
         .footer-ornament { display: flex; height: 6px; width: 100%; margin-top: auto; margin-bottom: 5px; }
         .orn-1 { background: var(--kse-primary); flex: 4; }
@@ -136,7 +135,14 @@
             </datalist>
 
             <label class="form-label-custom">Kepada (Penerima)</label>
-            <input type="text" id="in_tujuan" class="form-control form-control-sm mb-1" placeholder="Nama Perusahaan">
+            <input list="listTujuan" id="in_tujuan" class="form-control form-control-sm mb-1" placeholder="Pilih atau Ketik Nama PT">
+            <datalist id="listTujuan">
+                <option value="PT. SINAR ALAM PERMAI (SAP)">
+                <option value="PT. KORINDO ARIABIMA SARI">
+                    <option value="PT. SURYA BORNEO INDUSTRI">
+                <option value="PT. BUMITAMA GUNAJAYA AGRO">
+                <option value="PT. KAPUAS PRIMA COAL, Tbk">
+            </datalist>
 
             <label class="form-label-custom">No. SO / DO</label>
             <input type="text" id="in_so" class="form-control form-control-sm mb-1" placeholder="SO-998822">
@@ -243,13 +249,18 @@
                         </tr>
                     </table>
 
+                    <!-- Keterangan Penerimaan di Bawah Tabel SJ -->
+                    <p style="font-size: 9pt; margin-top: 5px;">
+                        <i>Barang sudah diterima dalam keadaan baik dan cukup, sesuai dengan spesifikasi yang telah ditentukan.</i>
+                    </p>
+
                     <div class="signature-section">
-                        <div class="sig-box"><div>Penerima,</div><div class="sig-name">. . . . . . . . . .</div></div>
-                        <div class="sig-box"><div>Pengemudi,</div><div class="sig-name" id="sig_driver_sj"></div></div>
+                        <div class="sig-box"><div><b style="text-transform: uppercase;">Penerima,</b></div><div class="sig-name">. . . . . . . . . .</div></div>
+                        <div class="sig-box"><div><b style="text-transform: uppercase;">Pengemudi,</b></div><div class="sig-name underline" id="sig_driver_sj"></div></div>
                         <div class="sig-box">
-                            <div>Hormat Kami,</div>
+                            <div><b style="text-transform: uppercase;">Hormat Kami,</b></div>
                             <img src="stempel.png" class="stamp-img" alt="Stempel">
-                            <div class="sig-name" id="sig_adm_sj"></div>
+                            <div class="sig-name underline" id="sig_adm_sj"></div>
                         </div>
                     </div>
 
@@ -271,12 +282,12 @@
                     </div>
 
                     <div class="signature-section">
-                        <div class="sig-box"><div>Pihak Pertama,</div><div class="sig-name" id="sig_p1_ba"></div></div>
-                        <div class="sig-box"><div>Pihak Kedua,</div><div class="sig-name" id="sig_p2_ba"></div></div>
+                        <div class="sig-box"><div><b style="text-transform: uppercase;">Pihak Pertama,</b></div><div class="sig-name underline" id="sig_p1_ba"></div></div>
+                        <div class="sig-box"><div><b style="text-transform: uppercase;">Pihak Kedua,</b></div><div class="sig-name underline" id="sig_p2_ba"></div></div>
                         <div class="sig-box">
-                            <div>Mengetahui,</div>
+                            <div><b style="text-transform: uppercase;">Mengetahui,</b></div>
                             <img src="stempel.png" class="stamp-img" alt="Stempel">
-                            <div class="sig-name" id="sig_adm_ba"></div>
+                            <div class="sig-name underline" id="sig_adm_ba"></div>
                         </div>
                     </div>
 
@@ -298,7 +309,6 @@
 </div>
 
 <script>
-    // Konfigurasi Supabase[cite: 1]
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -394,3 +404,4 @@
 </script>
 </body>
 </html>
+```[cite: 1]
