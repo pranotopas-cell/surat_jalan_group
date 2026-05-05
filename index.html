@@ -291,10 +291,10 @@
 
                 html += `
                     <tr>
-                        <td><span class="text-white fw-bold">${formattedDate || '-'}</span></td>
-                        <td><span class="text-number">${row.doc_no || 'KOLOM TIDAK SESUAI'}</span></td>
+                        <td><span class="text-white fw-bold">${formattedDate || row.tanggal || "-"}</span></td>
+                        <td><span class="text-number">${row.doc_no || row.no_dokumen || "-"}</span></td>
                         <td><span class="badge-tag">${row.tag}</span></td>
-                        <td><span class="small text-light">${row.tujuan || row.lokasi || '-'}</span></td>
+                        <td><span class="small text-light">${row.tujuan || row.penerima || '-'}</span></td>
                         <td class="fw-bold text-white">${row.sopir || row.driver || '-'}</td>
                         <td class="text-warning font-monospace">${row.nopol || '-'}</td>
                         <td class="text-end"><span class="text-qty">${Number(displayQty).toLocaleString('id-ID')} L</span></td>
