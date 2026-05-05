@@ -80,6 +80,7 @@
         <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> CETAK</button>
         <button class="btn btn-success btn-sm fw-bold px-3" onclick="saveToCloud()"><i class="bi bi-cloud-arrow-up"></i> SAVE CLOUD</button>
         <button class="btn btn-primary btn-sm fw-bold px-3" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> PDF</button>
+        <button class="btn btn-dark btn-sm fw-bold px-3" onclick="window.location.href='index.html'"><i class="bi bi-house"></i> HOME</button>
     </div>
 </div>
 
@@ -168,7 +169,6 @@
                         <span>Delivery Order / Waybill</span>
                     </div>
 
-                    <!-- UPDATED: SEJAJAR SECTION -->
                     <div class="row mb-2" style="font-size: 9.5pt;">
                         <div class="col-7">
                             <table width="100%">
@@ -244,7 +244,7 @@
                     </div>
 
                     <p style="font-size: 8.5pt; font-style: italic; color: #333; background: #f0f0f0; padding: 8px; border-left: 5px solid var(--tosca); margin-bottom: 8px;">
-                        "Pihak Kedua telah menerima produk dalam volume yang sesuai, kondisi segel utuh, dan spesifikasi yang benar,komplain tidak berlaku apabila sudah di tanda tangani BA ini"
+                        "Pihak Kedua telah menerima produk dalam volume yang sesuai, kondisi segel utuh, dan spesifikasi yang benar, komplain tidak berlaku apabila sudah di tanda tangani BA ini"
                     </p>
 
                     <div class="signature-section">
@@ -283,15 +283,12 @@
     <option value="PT. GLOBAL BORNEO ENERGI">
     <option value="PT. TELADAN MAKMUR SEJAHTERA">
     <option value="PT. BANUA PUTRA PRIMA">
-    
 </datalist>
 
 <datalist id="listTujuan">
     <option value="PT. NEW WAHYU BAOKAH">
     <option value="PT. BORNEO ARMADA PERKASA">
     <option value="PT. GERBANG PERKASA PRATAMA">
-    <option value="PT. NEW WAHYU BAOKAH">
-    <option value="PT. BORNEO ARMADA PERKASA">
     <option value="PT. BORNEO TRENGGINAS MANDIRI">
     <option value="PT. ANGKASA MITRA SEJATI">
     <option value="PT. TRIDEA SENADA">
@@ -314,7 +311,6 @@
     <option value="PT. KORINTIGA HUTANI">
     <option value="PT. SAMANDITA ADI MAKMUR">
     <option value="PT. MEGA KARYA NUSA">
-
 </datalist>
 
 <datalist id="listNopol">
@@ -371,7 +367,7 @@
 
     async function fetchLastNumber() {
         try {
-            const { data } = await supabaseClient.from('sj_kse').select('nomor_dokumen').order('created_at', { ascending: false }).limit(1);
+            const { data, error } = await supabaseClient.from('sj_kse').select('nomor_dokumen').order('created_at', { ascending: false }).limit(1);
             if (data && data.length > 0) {
                 const lastNum = data[0].nomor_dokumen.split('/')[0];
                 document.getElementById('in_no_sj').value = (parseInt(lastNum) + 1).toString().padStart(3, '0');
@@ -380,6 +376,41 @@
             }
             syncData();
         } catch (e) { document.getElementById('in_no_sj').value = "001"; }
+    }
+
+    async function saveToCloud() {
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+        const payload = {
+            tanggal: document.getElementById('in_tgl').value,
+            nomor_dokumen: document.getElementById('out_no_sj').innerText,
+            transportir: document.getElementById('in_trans').value,
+            penerima: document.getElementById('in_tujuan').value,
+            no_po: document.getElementById('in_po').value,
+            no_so: document.getElementById('in_so').value,
+            jenis_barang: document.getElementById('in_barang').value,
+            nopol: document.getElementById('in_nopol').value,
+            driver: document.getElementById('in_driver').value,
+            qty: parseInt(document.getElementById('in_qty').value),
+            segel: document.getElementById('in_segel').value,
+            tinggi: document.getElementById('in_tinggi').value,
+            lokasi: document.getElementById('in_lokasi').value,
+            admin: document.getElementById('in_adm').value
+        };
+
+        try {
+            const { error } = await supabaseClient.from('sj_kse').insert([payload]);
+            if (error) throw error;
+            alert("✅ Data Berhasil Disimpan ke Cloud!");
+        } catch (err) {
+            console.error(err);
+            alert("❌ Gagal Simpan: " + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> SAVE CLOUD';
+        }
     }
 
     function syncData() {
@@ -391,7 +422,7 @@
 
         if(tglInput) {
             const d = new Date(tglInput);
-            displayTgl = new Date(tglInput).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            displayTgl = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             displayHari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][d.getDay()];
             const romawi = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
             autoSuffix = "/" + romawi[d.getMonth()] + "/" + d.getFullYear();
