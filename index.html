@@ -12,13 +12,15 @@
 
     <style>
         :root { 
-            --bg-dark: #061614; /* Hijau Sangat Tua */
-            --sidebar-bg: #020617; /* Biru Donker Pekat */
+            --bg-dark: #061614; 
+            --sidebar-bg: #020617; 
             --sidebar-width: 280px;
-            --ind-emerald: #10b981; /* Hijau Terang */
-            --ind-gold: #d4af37; /* Emas Klasik */
-            --ind-navy: #1e293b; /* Biru Donker Abu */
+            --ind-emerald: #10b981; 
+            --ind-gold: #fbbf24; 
+            --ind-navy: #1e293b; 
             --glass-border: rgba(212, 175, 55, 0.2);
+            --text-number: #38bdf8;
+            --text-qty: #f87171;
         }
 
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-dark); color: #f1f5f9; overflow-x: hidden; }
@@ -49,7 +51,7 @@
             padding: 0.7rem 1rem; transition: all 0.3s ease; font-size: 0.85rem;
             display: flex; align-items: center; text-decoration: none;
         }
-        .nav-link:hover, .nav-link.active { background: rgba(212, 175, 55, 0.15); color: var(--ind-gold); }
+        .nav-link:hover, .nav-link.active { background: rgba(251, 191, 36, 0.15); color: var(--ind-gold); }
         .submenu { padding-left: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 10px; margin: 0.3rem 0 0.8rem 0; }
         .submenu .nav-link { font-size: 0.8rem; padding: 0.5rem 1rem; }
         .pt-label { font-size: 0.65rem; color: var(--ind-emerald); padding: 1.2rem 1rem 0.4rem; display: block; font-weight: 800; letter-spacing: 1px; }
@@ -78,17 +80,55 @@
 
         .main-content { margin-left: var(--sidebar-width); padding: 2rem; min-height: 100vh; }
 
-        /* Table Style */
-        .card-table { background: rgba(30, 41, 59, 0.3); border: 1px solid var(--glass-border); border-radius: 15px; }
-        .table { font-size: 0.75rem; text-transform: uppercase; color: #cbd5e1; }
-        .table thead th { 
-            background: rgba(16, 185, 129, 0.05); color: var(--ind-gold);
-            font-size: 0.7rem; font-weight: 700; border-bottom: 2px solid var(--ind-gold);
-            white-space: nowrap; padding: 12px 10px;
+        /* Modern Table Style (High Contrast) */
+        .card-table { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 15px; }
+        
+        .table-responsive { border-radius: 12px; }
+        
+        .table { 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            color: #cbd5e1; 
+            border-collapse: separate; 
+            border-spacing: 0 4px;
         }
 
-        .badge-kse { background-color: var(--ind-gold); color: black; font-weight: bold; }
-        .text-emerald { color: var(--ind-emerald) !important; }
+        .table thead th { 
+            background: #1e293b !important; 
+            color: var(--ind-gold) !important;
+            font-size: 0.7rem; font-weight: 700; border-bottom: 2px solid var(--ind-gold) !important;
+            white-space: nowrap; padding: 15px 10px !important;
+            letter-spacing: 1px;
+        }
+
+        .table tbody tr { 
+            background: rgba(30, 41, 59, 0.5); 
+            transition: all 0.2s; 
+        }
+
+        .table tbody tr:hover { 
+            background: rgba(51, 65, 85, 0.8) !important; 
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .table td { 
+            padding: 15px 10px !important; 
+            border-top: 1px solid rgba(255,255,255,0.05);
+            vertical-align: middle;
+        }
+
+        /* Highlight Colors */
+        .text-number { color: var(--text-number); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+        .text-qty { color: var(--text-qty); font-weight: 800; font-size: 0.85rem; }
+        .badge-tag {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            background: var(--ind-emerald);
+            color: white;
+            font-weight: bold;
+        }
         
         .btn-view {
             padding: 4px 12px; font-size: 0.65rem; border-radius: 6px;
@@ -100,8 +140,8 @@
         .btn-tracking { border: 1px solid var(--ind-emerald); color: var(--ind-emerald); }
         .btn-tracking:hover { background: var(--ind-emerald); color: white; }
 
-        input.form-control { border: 1px solid rgba(212, 175, 55, 0.3); }
-        input.form-control:focus { border-color: var(--ind-gold); box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25); }
+        input.form-control { border: 1px solid rgba(251, 191, 36, 0.3); }
+        input.form-control:focus { border-color: var(--ind-gold); box-shadow: 0 0 0 0.25rem rgba(251, 191, 36, 0.25); }
     </style>
 </head>
 <body>
@@ -132,16 +172,16 @@
             <small class="pt-label">PT. KHATULISTIWA SINAR ENERGI</small>
             <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-lightning-fill me-2 text-warning"></i> KSE <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu show" id="mKse">
-                <a href="sj_kse.html" class="nav-link">Surat Jalan</a>
-                <a href="memo_kse.html" class="nav-link">Memo</a>
-                <a href="ba_oper_kse.html" class="nav-link">BA Oper Muatan</a>
-                <a href="bastk.html" class="nav-link">BA Penerimaan</a>
+                <a href="#" class="nav-link">Surat Jalan</a>
+                <a href="#" class="nav-link">Memo</a>
+                <a href="#" class="nav-link">BA Oper Muatan</a>
+                <a href="#" class="nav-link">BA Penerimaan</a>
             </div>
 
             <small class="pt-label">PT. INDO DHARMA ENERGI</small>
             <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-droplet-fill me-2 text-info"></i> IDE <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu" id="mIde">
-                <a href="sj_ide.html" class="nav-link">Surat Jalan</a>
+                <a href="#" class="nav-link">Surat Jalan</a>
             </div>
 
             <small class="pt-label">PT. INVESTAMA KALIMANTAN ENERGI</small>
@@ -208,7 +248,6 @@
     async function fetchLogistikData() {
         const tbody = document.getElementById('logistik-table-body');
         try {
-            // Mengambil data dari 4 tabel berbeda
             const [sj, memo, baom, bastk] = await Promise.all([
                 _supabase.from('sj_kse').select('*'),
                 _supabase.from('memo_kse').select('*'),
@@ -216,31 +255,32 @@
                 _supabase.from('bastk_kse').select('*')
             ]);
 
-            // Gabungkan semua data
             let allData = [
-                ...(sj.data || []).map(d => ({...d, tag: 'SURAT JALAN'})),
-                ...(memo.data || []).map(d => ({...d, tag: 'MEMO'})),
-                ...(baom.data || []).map(d => ({...d, tag: 'BA OPER'})),
-                ...(bastk.data || []).map(d => ({...d, tag: 'BA TERIMA'}))
+                ...(sj.data || []).map(d => ({...d, tag: 'SURAT JALAN', doc_no: d.no_sj || d.no_dokumen || d.nomor})),
+                ...(memo.data || []).map(d => ({...d, tag: 'MEMO', doc_no: d.no_memo || d.nomor_memo || d.no_dokumen})),
+                ...(baom.data || []).map(d => ({...d, tag: 'BA OPER', doc_no: d.no_ba || d.no_dokumen})),
+                ...(bastk.data || []).map(d => ({...d, tag: 'BA TERIMA', doc_no: d.no_bastk || d.no_dokumen}))
             ];
 
-            // Urutkan berdasarkan tanggal terbaru (asumsi ada kolom created_at atau tanggal)
-            allData.sort((a, b) => new Date(b.created_at || b.tanggal) - new Date(a.created_at || a.tanggal));
+            allData.sort((a, b) => new Date(b.tanggal || b.created_at) - new Date(a.tanggal || a.created_at));
 
             let html = '';
             if (allData.length === 0) {
-                html = '<tr><td colspan="8" class="text-center py-4">TIDAK ADA DATA DITEMUKAN</td></tr>';
+                html = '<tr><td colspan="8" class="text-center py-5 text-secondary">TIDAK ADA DATA DITEMUKAN</td></tr>';
             } else {
                 allData.forEach(row => {
+                    const displayQty = row.qty || row.liter || row.vol || 0;
+                    const displayDate = row.tanggal || (row.created_at ? row.created_at.split('T')[0] : '-');
+
                     html += `
                         <tr>
-                            <td><span class="text-emerald">${row.tanggal || '-'}</span></td>
-                            <td class="fw-bold text-white">${row.no_dokumen || row.nomor_memo || '-'}</td>
-                            <td><span class="badge badge-kse">${row.tag}</span></td>
-                            <td>${row.tujuan || row.lokasi || '-'}</td>
-                            <td class="fw-bold">${row.sopir || row.driver || '-'}</td>
-                            <td class="font-monospace text-warning">${row.nopol || '-'}</td>
-                            <td class="text-end fw-bold text-white">${(row.qty || row.liter || 0).toLocaleString('id-ID')}</td>
+                            <td><span class="text-white fw-bold">${displayDate}</span></td>
+                            <td><span class="text-number">${row.doc_no || '-'}</span></td>
+                            <td><span class="badge-tag">${row.tag}</span></td>
+                            <td><span class="small text-light">${row.tujuan || row.lokasi || '-'}</span></td>
+                            <td class="fw-bold text-white">${row.sopir || row.driver || '-'}</td>
+                            <td class="text-warning font-monospace">${row.nopol || '-'}</td>
+                            <td class="text-end"><span class="text-qty">${Number(displayQty).toLocaleString('id-ID')} L</span></td>
                             <td class="text-center">
                                 <button class="btn btn-view" onclick="viewPDF('${row.id}', '${row.tag}')">
                                     <i class="bi bi-file-earmark-pdf"></i> VIEW
@@ -252,7 +292,7 @@
             tbody.innerHTML = html;
         } catch (err) {
             console.error(err);
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-danger">ERROR: GAGAL MENGHUBUNGKAN KE SUPABASE.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-danger">ERROR: GAGAL MENGHUBUNGKAN KE SUPABASE.</td></tr>`;
         }
     }
 
@@ -274,7 +314,7 @@
     }
 
     function handleLogout() { localStorage.removeItem('kse_session'); location.reload(); }
-    function openMaps() { window.open("https://www.google.com/maps", "_blank"); }
+    function openMaps() { window.open("https://maps.google.com", "_blank"); }
     function viewPDF(id, type) { alert('Membuka Dokumen ' + type + ' ID: ' + id); }
 
     window.onload = () => { if (localStorage.getItem('kse_session') === 'active') showDashboard(); };
