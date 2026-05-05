@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KSE - SJ & BAST (Letter Size)</title>
+    <title>KSE SURAT JALAN</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
@@ -74,7 +74,7 @@
 
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
-        <h6 class="mb-0 fw-bold text-success">KSE SMART LOGISTICS V2.1</h6>
+        <h6 class="mb-0 fw-bold text-success">KSE SMART LOGISTICS</h6>
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> CETAK</button>
@@ -276,13 +276,45 @@
 
 <datalist id="listTrans">
     <option value="PT. KHATULISTIWA SINAR ENERGI">
+    <option value="PT. INVESTAMA KALIMANTAN ENERGI">
     <option value="PT. BERKAH SARANA MAKMUR BENUA">
+    <option value="PT. INDO DHARMA ENERGI">
+    <option value="PT. TRANS GLOBAL ENERGI">
+    <option value="PT. GLOBAL BORNEO ENERGI">
+    <option value="PT. TELADAN MAKMUR SEJAHTERA">
+    <option value="PT. BANUA PUTRA PRIMA">
+    
 </datalist>
 
 <datalist id="listTujuan">
     <option value="PT. NEW WAHYU BAOKAH">
     <option value="PT. BORNEO ARMADA PERKASA">
     <option value="PT. GERBANG PERKASA PRATAMA">
+    <option value="PT. NEW WAHYU BAOKAH">
+    <option value="PT. BORNEO ARMADA PERKASA">
+    <option value="PT. BORNEO TRENGGINAS MANDIRI">
+    <option value="PT. ANGKASA MITRA SEJATI">
+    <option value="PT. TRIDEA SENADA">
+    <option value="CV. SAMI JAYA">
+    <option value="PT. PELAYARAN JASA SAMUDRA SHIPPING">
+    <option value="PT. EXPLOITASI ENERGI INDONESIA,TBK">
+    <option value="PT. SINAR BAHAGIA INDAH">
+    <option value="PT. FORTUNA LANCAR ADIMAKMUR">
+    <option value="PT. BUMI RAYA NUSANTARA">
+    <option value="PT. BUMI AGRO PRIMA">
+    <option value="PT. INTI DAYA MANDIRI SERVITAMA">
+    <option value="PT. GADING SAWIT KENCANA">
+    <option value="PT. KORINDO ARIABIMA SARI">
+    <option value="PT. HATAKO KHARISMA ABADI">
+    <option value="PT. ARUT SAWIT MANDIRI">
+    <option value="PT. KURNIA TUNGGAL NUGRAHA">
+    <option value="CV. TIGA SAUDARA MAJU BERSAMA">
+    <option value="PT. PELAYARAN SAHABAT SETIA BAHARI">
+    <option value="PT. PARAMITA BANGUN SARANA, TBK">
+    <option value="PT. KORINTIGA HUTANI">
+    <option value="PT. SAMANDITA ADI MAKMUR">
+    <option value="PT. MEGA KARYA NUSA">
+
 </datalist>
 
 <datalist id="listNopol">
@@ -298,10 +330,14 @@
 </datalist>
 
 <datalist id="listDriver">
-    <option value="AGUS">
-    <option value="WIYANTO">
-    <option value="WAHID">
+    <option value="AGUS WANTO">
+    <option value="ADI SUCIPTO">
+    <option value="AGUS MULYANTO">
     <option value="SUPRIYADI">
+    <option value="NUR KHOLIS">
+    <option value="FARID HABIBI">
+    <option value="RONNI">
+    <option value="AGUS">
 </datalist>
 
 <script>
@@ -312,15 +348,15 @@
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 40, height: 40 });
 
     const dataArmada = [
-        { nopol: "KH 8141 GH", tera: "100.5 cm", qty: 5000, sopir: "AGUS" },
-        { nopol: "KH 8139 GM", tera: "133.5 cm", qty: 10000, sopir: "WIYANTO" },
-        { nopol: "KH 8942 GN", tera: "115.4 cm", qty: 5000, sopir: "WAHID" },
-        { nopol: "KH 8943 GN", tera: "114.6 cm", qty: 5000, sopir: "SUPRIYADI" },
-        { nopol: "KH 8273 RM", tera: "109.5 cm", qty: 5000, sopir: "AGUS WANTO" },
-        { nopol: "KH 8256 RM", tera: "104.3 cm", qty: 5000, sopir: "NUR KHOLIS" },
+        { nopol: "KH 8141 GH", tera: "100.5 cm", qty: 5000, sopir: "AGUS WANTO" },
+        { nopol: "KH 8139 GM", tera: "133.5 cm", qty: 10000, sopir: "ADI SUCIPTO" },
+        { nopol: "KH 8942 GN", tera: "115.4 cm", qty: 5000, sopir: "AGUS MULYANTO" },
+        { nopol: "KH 8943 GN", tera: "114.6 cm", qty: 5000, sopir: "NUR KHOLIS" },
+        { nopol: "KH 8273 RM", tera: "109.5 cm", qty: 5000, sopir: "FARID HABIBI" },
+        { nopol: "KH 8256 RM", tera: "104.3 cm", qty: 5000, sopir: "RONNI" },
         { nopol: "KH 8641 GN", tera: "113.8 cm", qty: 5000, sopir: "FARID HABIBI" },
         { nopol: "KH 8206 GN", tera: "106.2 cm", qty: 5000, sopir: "RONNY PRASTIANSYAH" },
-        { nopol: "L 9761 UJ", tera: "124.0 cm", qty: 8000, sopir: "ADI SUCIPTO" }
+        { nopol: "L 9761 UJ", tera: "124.0 cm", qty: 8000, sopir: "SUPRIYADI" }
     ];
 
     function autoFillArmada(nopol) {
