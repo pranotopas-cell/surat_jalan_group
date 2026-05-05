@@ -19,8 +19,8 @@
             --ind-gold: #fbbf24; 
             --ind-navy: #1e293b; 
             --glass-border: rgba(212, 175, 55, 0.2);
-            --text-number: #38bdf8;
-            --text-qty: #f87171;
+            --text-number: #000000;
+            --text-qty: #000000;
         }
 
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-dark); color: #f1f5f9; overflow-x: hidden; }
@@ -82,13 +82,11 @@
 
         /* Modern Table Style (High Contrast) */
         .card-table { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 15px; }
-        
         .table-responsive { border-radius: 12px; }
         
         .table { 
             font-size: 0.75rem; 
             text-transform: uppercase; 
-            color: #cbd5e1; 
             border-collapse: separate; 
             border-spacing: 0 4px;
         }
@@ -101,41 +99,39 @@
             letter-spacing: 1px;
         }
 
-        .table tbody tr { 
-            background: rgba(30, 41, 59, 0.5); 
-            transition: all 0.2s; 
-        }
-
-        .table tbody tr:hover { 
-            background: rgba(51, 65, 85, 0.8) !important; 
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
+        /* Teks Hitam di Body Tabel */
+        .table tbody tr { background: rgba(255, 255, 255, 0.9) !important; transition: all 0.2s; }
+        .table tbody tr:hover { background: rgba(255, 255, 255, 1) !important; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
 
         .table td { 
             padding: 15px 10px !important; 
-            border-top: 1px solid rgba(255,255,255,0.05);
+            border-top: 1px solid rgba(0,0,0,0.05);
             vertical-align: middle;
+            color: #000000 !important; /* Warna teks hitam sesuai instruksi */
         }
 
-        /* Highlight Colors */
-        .text-number { color: var(--text-number); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
-        .text-qty { color: var(--text-qty); font-weight: 800; font-size: 0.85rem; }
+        .table td span, .table td .fw-bold, .table td .text-number, .table td .text-qty {
+            color: #000000 !important;
+        }
+
+        .text-number { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+        .text-qty { font-weight: 800; font-size: 0.85rem; }
+        
         .badge-tag {
             padding: 5px 10px;
             border-radius: 4px;
             font-size: 0.65rem;
             background: var(--ind-emerald);
-            color: white;
+            color: white !important; /* Badge tetap putih teksnya agar terbaca */
             font-weight: bold;
         }
         
         .btn-view {
             padding: 4px 12px; font-size: 0.65rem; border-radius: 6px;
-            transition: all 0.2s; border: 1px solid var(--ind-gold);
-            color: var(--ind-gold); background: transparent; font-weight: 600;
+            transition: all 0.2s; border: 1px solid #000000;
+            color: #000000; background: transparent; font-weight: 600;
         }
-        .btn-view:hover { background: var(--ind-gold); color: black; }
+        .btn-view:hover { background: #000000; color: #ffffff !important; }
         
         .btn-tracking { border: 1px solid var(--ind-emerald); color: var(--ind-emerald); }
         .btn-tracking:hover { background: var(--ind-emerald); color: white; }
@@ -232,7 +228,7 @@
                         </tr>
                     </thead>
                     <tbody id="logistik-table-body">
-                        <tr><td colspan="8" class="text-center py-5">MENYINKRONKAN DATA...</td></tr>
+                        <tr><td colspan="8" class="text-center py-5" style="color:black;">MENYINKRONKAN DATA...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -246,72 +242,63 @@
     const _supabase = supabase.createClient(SB_URL, SB_KEY);
 
     async function fetchLogistikData() {
-    const tbody = document.getElementById('logistik-table-body');
-    try {
-        const [sj, memo, baom, bastk] = await Promise.all([
-            _supabase.from('sj_kse').select('*'),
-            _supabase.from('memo_kse').select('*'),
-            _supabase.from('baom_kse').select('*'),
-            _supabase.from('bastk_kse').select('*')
-        ]);
+        const tbody = document.getElementById('logistik-table-body');
+        try {
+            const [sj, memo, baom, bastk] = await Promise.all([
+                _supabase.from('sj_kse').select('*'),
+                _supabase.from('memo_kse').select('*'),
+                _supabase.from('baom_kse').select('*'),
+                _supabase.from('bastk_kse').select('*')
+            ]);
 
-        let allData = [
-            ...(sj.data || []).map(d => ({...d, tag: 'SURAT JALAN', 
-                // Cek semua kemungkinan nama kolom nomor & tanggal
-                doc_no: d.no_sj || d.no_dokumen || d.nomor || d.no_surat,
-                tgl: d.tanggal || d.tgl_sj || d.created_at 
-            })),
-            ...(memo.data || []).map(d => ({...d, tag: 'MEMO', 
-                doc_no: d.no_memo || d.nomor_memo || d.no_dokumen || d.no_surat,
-                tgl: d.tanggal || d.tgl_memo || d.created_at
-            })),
-            ...(baom.data || []).map(d => ({...d, tag: 'BA OPER', 
-                doc_no: d.no_ba || d.no_baom || d.no_dokumen,
-                tgl: d.tanggal || d.tgl_ba || d.created_at
-            })),
-            ...(bastk.data || []).map(d => ({...d, tag: 'BA TERIMA', 
-                doc_no: d.no_bastk || d.no_penerimaan || d.no_dokumen,
-                tgl: d.tanggal || d.tgl_terima || d.created_at
-            }))
-        ];
+            let allData = [
+                ...(sj.data || []).map(d => ({...d, tag: 'SURAT JALAN'})),
+                ...(memo.data || []).map(d => ({...d, tag: 'MEMO'})),
+                ...(baom.data || []).map(d => ({...d, tag: 'BA OPER'})),
+                ...(bastk.data || []).map(d => ({...d, tag: 'BA TERIMA'}))
+            ];
 
-        // Urutkan tanggal terbaru
-        allData.sort((a, b) => new Date(b.tgl) - new Date(a.tgl));
+            // Urutkan berdasarkan kolom tanggal terbaru[cite: 1]
+            allData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
 
-        let html = '';
-        if (allData.length === 0) {
-            html = '<tr><td colspan="8" class="text-center py-5">DATA TIDAK DITEMUKAN</td></tr>';
-        } else {
-            allData.forEach(row => {
-                const displayQty = row.qty || row.liter || row.vol || 0;
-                
-                // Format tanggal agar rapi (DD/MM/YYYY)
-                const dateObj = new Date(row.tgl);
-                const formattedDate = isNaN(dateObj) ? row.tgl : dateObj.toLocaleDateString('id-ID');
+            let html = '';
+            if (allData.length === 0) {
+                html = '<tr><td colspan="8" class="text-center py-5" style="color:black;">DATA TIDAK DITEMUKAN</td></tr>';
+            } else {
+                allData.forEach(row => {
+                    // Mapping kolom sesuai permintaan[cite: 1]
+                    const tgl_tampil = row.tanggal || "-";
+                    const no_dok = row.nomor_dokumen || "-";
+                    const tujuan = row.penerima || "-";
+                    const sopir = row.driver || "-";
+                    const qty = row.qty || row.liter || 0;
 
-                html += `
-                    <tr>
-                        <td><span class="text-white fw-bold">${formattedDate || row.tanggal || "-"}</span></td>
-                        <td><span class="text-number">${row.doc_no || row.no_dokumen || "-"}</span></td>
-                        <td><span class="badge-tag">${row.tag}</span></td>
-                        <td><span class="small text-light">${row.tujuan || row.penerima || '-'}</span></td>
-                        <td class="fw-bold text-white">${row.sopir || row.driver || '-'}</td>
-                        <td class="text-warning font-monospace">${row.nopol || '-'}</td>
-                        <td class="text-end"><span class="text-qty">${Number(displayQty).toLocaleString('id-ID')} L</span></td>
-                        <td class="text-center">
-                            <button class="btn btn-view" onclick="viewPDF('${row.id}', '${row.tag}')">
-                                <i class="bi bi-file-earmark-pdf"></i> VIEW
-                            </button>
-                        </td>
-                    </tr>`;
-            });
+                    const dateObj = new Date(tgl_tampil);
+                    const formattedDate = isNaN(dateObj) ? tgl_tampil : dateObj.toLocaleDateString('id-ID');
+
+                    html += `
+                        <tr>
+                            <td><span class="fw-bold">${formattedDate}</span></td>
+                            <td><span class="text-number">${no_dok}</span></td>
+                            <td><span class="badge-tag">${row.tag}</span></td>
+                            <td><span class="small">${tujuan}</span></td>
+                            <td class="fw-bold">${sopir}</td>
+                            <td class="font-monospace">${row.nopol || '-'}</td>
+                            <td class="text-end"><span class="text-qty">${Number(qty).toLocaleString('id-ID')} L</span></td>
+                            <td class="text-center">
+                                <button class="btn btn-view" onclick="viewPDF('${row.id}', '${row.tag}')">
+                                    <i class="bi bi-file-earmark-pdf"></i> VIEW
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            }
+            tbody.innerHTML = html;
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-danger">GAGAL LOAD DATA.</td></tr>`;
         }
-        tbody.innerHTML = html;
-    } catch (err) {
-        console.error(err);
-        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-danger">GAGAL LOAD DATA. CEK KONSOL BROWSER.</td></tr>`;
     }
-}
 
     function handleLogin() {
         const u = document.getElementById('user').value;
