@@ -162,9 +162,9 @@
             <small class="pt-label">PT. KHATULISTIWA SINAR ENERGI</small>
             <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-lightning-fill me-2 text-warning"></i> KSE <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu show" id="mKse">
-                <a href="javascript:void(0)" class="nav-link" onclick="filterByTag('SURAT JALAN')">Surat Jalan</a>
-                <a href="javascript:void(0)" class="nav-link" onclick="filterByTag('MEMO')">Memo</a>
-                <a href="javascript:void(0)" class="nav-link" onclick="filterByTag('BA OPER')">BA Oper Muatan</a>
+                <a href="sj_kse.html" class="nav-link" onclick="filterByTag('SURAT JALAN')">Surat Jalan</a>
+                <a href="memo_kse.html" class="nav-link" onclick="filterByTag('MEMO')">Memo</a>
+                <a href="baom_kse.html" class="nav-link" onclick="filterByTag('BA OPER')">BA Oper Muatan</a>
                 <a href="javascript:void(0)" class="nav-link" onclick="filterByTag('BA TERIMA')">BA Penerimaan</a>
             </div>
 
@@ -269,7 +269,7 @@
     }
 
     function renderTable(data) {
-        const tbody = document.getElementById('logistik-table-body');
+        const tbody = document.getElementById(sj_kse);
         let html = '';
         if (data.length === 0) {
             html = '<tr><td colspan="8" class="text-center py-5" style="color:black;">DATA TIDAK DITEMUKAN</td></tr>';
