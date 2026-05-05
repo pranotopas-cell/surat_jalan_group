@@ -7,7 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
-    <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -21,68 +20,28 @@
             --dot-font: 'Courier New', Courier, monospace;
         }
         
-        body { 
-            background-color: #4a4d4a; 
-            font-family: 'Segoe UI', Arial, sans-serif; 
-            font-size: 11px; 
-            color: #000;
-            overflow: hidden;
-        }
-        
+        body { background-color: #4a4d4a; font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; color: #000; overflow: hidden; }
         .control-nav { background: #fff; border-bottom: 2px solid #dee2e6; padding: 8px 24px; height: 55px; }
+        .input-sidebar { background: #fff; height: calc(100vh - 55px); padding: 10px 15px; border-right: 1px solid #dee2e6; overflow-y: auto; }
         
-        .input-sidebar { 
-            background: #fff; 
-            height: calc(100vh - 55px); 
-            padding: 10px 15px; 
-            border-right: 1px solid #dee2e6;
-            overflow-y: auto; 
-        }
-        
-        .canvas-container {
-            display: flex;
-            justify-content: center;
-            padding: 15px;
-            height: calc(100vh - 55px);
-            overflow-y: auto;
-        }
-
+        .canvas-container { display: flex; justify-content: center; padding: 15px; height: calc(100vh - 55px); overflow-y: auto; }
         .document-canvas { 
-            background: white; 
-            width: 215.9mm; 
-            height: 279.4mm; 
-            padding: 8mm 12mm; 
-            position: relative;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
-            display: flex;
-            flex-direction: column;
-            transform: scale(0.85);
-            transform-origin: top center;
+            background: white; width: 215.9mm; height: 279.4mm; padding: 8mm 12mm; 
+            position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
+            display: flex; flex-direction: column; transform: scale(0.85); transform-origin: top center;
         }
 
-        .dot-matrix {
-            font-family: var(--dot-font);
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
+        .dot-matrix { font-family: var(--dot-font); font-weight: bold; text-transform: uppercase; }
         .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .main-logo { height: 45px; width: auto; }
-        
         .title-doc { text-align: center; margin-bottom: 10px; }
         .title-doc h1 { font-size: 22pt; font-weight: 900; margin: 0; letter-spacing: 4px; }
         .title-doc span { font-size: 9pt; color: #333; font-style: italic; display: block; font-weight: 500; }
 
         .info-table { width: 100%; margin-bottom: 10px; border-collapse: collapse; border: 1.5px solid #000; }
-        .info-table th, .info-table td { 
-            padding: 6px 10px; 
-            border: 1px solid #000; 
-            vertical-align: middle; 
-            font-size: 9.5pt;
-        }
+        .info-table th, .info-table td { padding: 6px 10px; border: 1px solid #000; vertical-align: middle; font-size: 9.5pt; }
         .label-cell { background-color: #f1f5f9; font-weight: 700; width: 22%; font-size: 8.5pt; }
         .label-cell small { display: block; font-weight: 400; font-style: italic; color: #475569; font-size: 7pt; }
-        
         .data-cell { font-family: var(--dot-font); font-size: 10.5pt; letter-spacing: 0.5px; }
 
         .divider-line { border-top: 2px dashed #000; margin: 20px 0 10px 0; position: relative; }
@@ -91,16 +50,8 @@
         .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 5px; }
         .sig-box { height: 85px; display: flex; flex-direction: column; justify-content: space-between; position: relative; font-size: 8.5pt; }
         
-        .stamp-img {
-            position: absolute;
-            width: 80px;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0.8;
-            z-index: 1;
-        }
-
+        /* Stempel digeser ke atas sedikit sesuai permintaan */
+        .stamp-img { position: absolute; width: 85px; bottom: 35px; left: 50%; transform: translateX(-50%); opacity: 0.8; z-index: 1; }
         .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 9pt; position: relative; z-index: 2; font-family: var(--dot-font); }
 
         .footer-ornament { display: flex; height: 6px; width: 100%; margin-top: auto; margin-bottom: 5px; }
@@ -124,8 +75,7 @@
 
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
-        <a href="index.htm" class="btn btn-outline-secondary btn-sm"><i class="bi bi-house"></i></a>
-        <h6 class="mb-0 fw-bold text-success">KSE SMART LOGISTICS</h6>
+        <h6 class="mb-0 fw-bold text-success">KSE SMART LOGISTICS V2.1</h6>
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> CETAK</button>
@@ -142,7 +92,7 @@
             <input type="date" id="in_tgl" class="form-control form-control-sm mb-1">
 
             <label class="form-label-custom">Nomor Dokumen (Auto)</label>
-            <input type="text" id="in_no_sj" class="form-control form-control-sm mb-1 fw-bold" placeholder="Loading...">
+            <input type="text" id="in_no_sj" class="form-control form-control-sm mb-1 fw-bold">
 
             <label class="form-label-custom">Transportir</label>
             <input type="text" id="in_trans" list="listTrans" class="form-control form-control-sm mb-1" value="PT. KHATULISTIWA SINAR ENERGI">
@@ -150,8 +100,17 @@
             <label class="form-label-custom">Penerima (Perusahaan)</label>
             <input type="text" id="in_tujuan" list="listTujuan" class="form-control form-control-sm mb-1">
 
-            <label class="form-label-custom">No. SO / DO</label>
+            <label class="form-label-custom">No. PO Customer</label>
+            <input type="text" id="in_po" class="form-control form-control-sm mb-1" placeholder="Masukkan No PO">
+
+            <label class="form-label-custom">No. SO / DO KSE</label>
             <input type="text" id="in_so" class="form-control form-control-sm mb-1">
+
+            <label class="form-label-custom">Jenis Barang</label>
+            <select id="in_barang" class="form-select form-select-sm mb-1">
+                <option value="BBM SOLAR INDUSTRI (HSD)">BBM SOLAR INDUSTRI (HSD)</option>
+                <option value="BIO SOLAR B40">BIO SOLAR B40</option>
+            </select>
 
             <div class="row g-2">
                 <div class="col-6">
@@ -182,7 +141,7 @@
             <input type="text" id="in_lokasi" class="form-control form-control-sm mb-1" value="Pangkalan Bun">
 
             <label class="form-label-custom">Admin KSE</label>
-            <input type="text" id="in_adm" class="form-control form-control-sm mb-1" placeholder="Admin">
+            <input type="text" id="in_adm" class="form-control form-control-sm mb-1" value="STAFF OPERASIONAL">
         </div>
 
         <!-- CANVAS AREA -->
@@ -190,7 +149,6 @@
             <div class="canvas-container">
                 <div class="document-canvas" id="printable-area">
                     
-                    <!-- HEADER -->
                     <div class="header-sj">
                         <div class="d-flex align-items-center gap-3">
                             <img src="header1.png" class="main-logo" alt="Logo">
@@ -206,7 +164,6 @@
                         </div>
                     </div>
 
-                    <!-- SURAT JALAN -->
                     <div class="title-doc">
                         <h1>SURAT JALAN</h1>
                         <span>Delivery Order / Waybill</span>
@@ -222,8 +179,10 @@
                         </div>
                         <div class="col-5">
                             <div style="border: 1.5px solid #000; padding: 6px; background: #fdfdfd;">
-                                <small class="text-uppercase fw-bold" style="font-size: 7pt; color: #555;">Tujuan Pengiriman:</small><br>
-                                <b id="out_tujuan_sj" class="dot-matrix" style="font-size: 10.5pt; display: block; margin-top: 2px;">-</b>
+                                <small class="text-uppercase fw-bold" style="font-size: 6.5pt; color: #555;">No. PO Customer:</small>
+                                <b id="out_po_sj" class="dot-matrix" style="font-size: 9pt; display: block; border-bottom: 1px solid #ccc; margin-bottom: 4px;">-</b>
+                                <small class="text-uppercase fw-bold" style="font-size: 6.5pt; color: #555;">Tujuan Pengiriman:</small>
+                                <b id="out_tujuan_sj" class="dot-matrix" style="font-size: 10.5pt; display: block;">-</b>
                             </div>
                         </div>
                     </div>
@@ -241,7 +200,7 @@
                         </tr>
                         <tr>
                             <td class="label-cell">Jenis Barang <small>Description</small></td>
-                            <td class="data-cell">BBM Solar Industri (HSD)</td>
+                            <td class="data-cell" id="out_barang_sj">-</td>
                             <td class="label-cell">Kuantitas <small>Quantity</small></td>
                             <td class="data-cell"><b id="out_qty_sj">0</b> LITER</td>
                         </tr>
@@ -267,7 +226,6 @@
                         </div>
                     </div>
 
-                    <!-- BAST -->
                     <div class="divider-line"><span>BERITA ACARA SERAH TERIMA (BAST)</span></div>
 
                     <div class="title-doc" style="margin-top: 0;">
@@ -300,7 +258,6 @@
                         </div>
                     </div>
 
-                    <!-- FOOTER -->
                     <div class="footer-ornament">
                         <div class="orn-1"></div><div class="orn-2"></div><div class="orn-3"></div>
                     </div>
@@ -318,41 +275,15 @@
     </div>
 </div>
 
-<!-- DATA LIST UNTUK DROPDOWN -->
 <datalist id="listTrans">
     <option value="PT. KHATULISTIWA SINAR ENERGI">
     <option value="PT. BERKAH SARANA MAKMUR BENUA">
-    <option value="PT. INDO DHARMA ENERGI">
-    <option value="PT. TRANS GLOBAL ENERGI">
-    <option value="PT. INVESTAMA KALIMANTAN ENERGI">
 </datalist>
 
 <datalist id="listTujuan">
     <option value="PT. NEW WAHYU BAOKAH">
     <option value="PT. BORNEO ARMADA PERKASA">
     <option value="PT. GERBANG PERKASA PRATAMA">
-    <option value="PT. BORNEO TRENGGINAS MANDIRI">
-    <option value="PT. ANGKASA MITRA SEJATI">
-    <option value="PT. TRIDEA SENADA">
-    <option value="CV. SAMI JAYA">
-    <option value="PT. PELAYARAN JASA SAMUDRA SHIPPING">
-    <option value="PT. EXPLOITASI ENERGI INDONESIA,TBK">
-    <option value="PT. SINAR BAHAGIA INDAH">
-    <option value="PT. FORTUNA LANCAR ADIMAKMUR">
-    <option value="PT. BUMI RAYA NUSANTARA">
-    <option value="PT. BUMI AGRO PRIMA">
-    <option value="PT. INTI DAYA MANDIRI SERVITAMA">
-    <option value="PT. GADING SAWIT KENCANA">
-    <option value="PT. KORINDO ARIABIMA SARI">
-    <option value="PT. HATAKO KHARISMA ABADI">
-    <option value="PT. ARUT SAWIT MANDIRI">
-    <option value="PT. KURNIA TUNGGAL NUGRAHA">
-    <option value="CV. TIGA SAUDARA MAJU BERSAMA">
-    <option value="PT. PELAYARAN SAHABAT SETIA BAHARI">
-    <option value="PT. PARAMITA BANGUN SARANA, TBK">
-    <option value="PT. KORINTIGA HUTANI">
-    <option value="PT. SAMANDITA ADI MAKMUR">
-    <option value="PT. BOR">
 </datalist>
 
 <datalist id="listNopol">
@@ -372,24 +303,15 @@
     <option value="WIYANTO">
     <option value="WAHID">
     <option value="SUPRIYADI">
-    <option value="AGUS WANTO">
-    <option value="NUR KHOLIS">
-    <option value="FARID HABIBI">
-    <option value="RONNY PRASTIANSYAH">
-    <option value="ADI SUCIPTO">
-    <option value="AGUS MULYANTO">
-    <option value="INDRA">
 </datalist>
 
 <script>
-    // Config Supabase
     const SB_URL = "https://qnamtickoteyvydayyor.supabase.co";
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYW10aWNrb3RleXZ5ZGF5eW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTU2MzksImV4cCI6MjA5MzQ3MTYzOX0.VAeN0JVnz4WNPzY5NTGmtGeHD-Da_qkCvy84ZDYZNHo";
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 40, height: 40 });
 
-    // Data Master Armada & Driver
     const dataArmada = [
         { nopol: "KH 8141 GH", tera: "100.5 cm", qty: 5000, sopir: "AGUS" },
         { nopol: "KH 8139 GM", tera: "133.5 cm", qty: 10000, sopir: "WIYANTO" },
@@ -414,107 +336,57 @@
 
     async function fetchLastNumber() {
         try {
-            const { data, error } = await supabaseClient
-                .from('sj_kse')
-                .select('nomor_dokumen')
-                .order('created_at', { ascending: false })
-                .limit(1);
-
+            const { data } = await supabaseClient.from('sj_kse').select('nomor_dokumen').order('created_at', { ascending: false }).limit(1);
             if (data && data.length > 0) {
                 const lastNum = data[0].nomor_dokumen.split('/')[0];
-                const nextNum = (parseInt(lastNum) + 1).toString().padStart(3, '0');
-                document.getElementById('in_no_sj').value = nextNum;
+                document.getElementById('in_no_sj').value = (parseInt(lastNum) + 1).toString().padStart(3, '0');
             } else {
                 document.getElementById('in_no_sj').value = "001";
             }
             syncData();
-        } catch (e) {
-            document.getElementById('in_no_sj').value = "001";
-        }
-    }
-
-    async function saveToCloud() {
-        const btn = event.target;
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
-
-        const payload = {
-            tanggal: document.getElementById('in_tgl').value,
-            nomor_dokumen: document.getElementById('out_no_sj').innerText,
-            tujuan: document.getElementById('in_tujuan').value,
-            nomor_polisi: document.getElementById('in_nopol').value,
-            sopir: document.getElementById('in_driver').value,
-            jumlah: parseInt(document.getElementById('in_qty').value || 0)
-        };
-
-        const { error } = await supabaseClient.from('sj_kse').insert([payload]);
-
-        if (error) {
-            alert("Gagal menyimpan: " + error.message);
-        } else {
-            alert("Data Berhasil Disimpan ke Cloud!");
-        }
-        btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> SAVE CLOUD';
-    }
-
-    function getRomawi(month) {
-        const romawi = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
-        return romawi[month];
-    }
-
-    function formatTglIndo(dateStr) {
-        if(!dateStr) return "-";
-        const options = { day: 'numeric', month: 'long', year: 'numeric' };
-        return new Date(dateStr).toLocaleDateString('id-ID', options);
+        } catch (e) { document.getElementById('in_no_sj').value = "001"; }
     }
 
     function syncData() {
         const val = (id) => document.getElementById(id).value;
-        const set = (id, text) => { 
-            const el = document.getElementById(id);
-            if(el) {
-                el.innerText = text || "-";
-                if(id.startsWith('sig_')) el.style.fontWeight = '900';
-            }
-        };
+        const set = (id, text) => { if(document.getElementById(id)) document.getElementById(id).innerText = text || "-"; };
 
         const tglInput = val('in_tgl');
-        let displayTgl = "-";
-        let displayHari = "..........";
-        let autoSuffix = "";
+        let displayTgl = "-", displayHari = "..........", autoSuffix = "";
 
         if(tglInput) {
             const d = new Date(tglInput);
-            displayTgl = formatTglIndo(tglInput);
+            displayTgl = new Date(tglInput).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             displayHari = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][d.getDay()];
-            autoSuffix = "/" + getRomawi(d.getMonth()) + "/" + d.getFullYear();
+            const romawi = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+            autoSuffix = "/" + romawi[d.getMonth()] + "/" + d.getFullYear();
         }
 
         const rawNo = val('in_no_sj') || "000";
         const fullNoSJ = rawNo + "/SJ-KSE" + autoSuffix;
         const fullNoBA = rawNo + "/BAST-KSE" + autoSuffix;
-        const qtyFormatted = Number(val('in_qty')).toLocaleString('id-ID');
         
         set('out_no_sj', fullNoSJ);
         set('out_no_ba', fullNoBA);
+        set('out_so_sj', val('in_so'));
+        set('out_po_sj', val('in_po'));
+        set('out_tujuan_sj', val('in_tujuan'));
+        set('out_tgl_sj', displayTgl);
+        set('out_hari_ba', displayHari);
+        set('out_tgl_ba', displayTgl);
         set('out_trans_sj', val('in_trans'));
         set('out_trans_ba', val('in_trans'));
-        set('out_so_sj', val('in_so'));
-        set('out_tujuan_sj', val('in_tujuan'));
-        set('out_tujuan_ba', val('in_tujuan'));
-        set('out_tgl_sj', displayTgl);
-        set('out_tgl_ba', displayTgl);
-        set('out_hari_ba', displayHari);
-        set('out_lokasi_sj', val('in_lokasi'));
-        set('out_lokasi_ba', val('in_lokasi'));
+        set('out_barang_sj', val('in_barang'));
+        set('out_qty_sj', Number(val('in_qty')).toLocaleString('id-ID'));
+        set('out_qty_ba', Number(val('in_qty')).toLocaleString('id-ID'));
         set('out_driver_sj', val('in_driver'));
         set('out_nopol_sj', val('in_nopol'));
-        set('out_qty_sj', qtyFormatted);
-        set('out_qty_ba', qtyFormatted);
         set('out_tinggi_sj', val('in_tinggi'));
         set('out_segel_sj', val('in_segel'));
-        
+        set('out_lokasi_sj', val('in_lokasi'));
+        set('out_lokasi_ba', val('in_lokasi'));
+        set('out_tujuan_ba', val('in_tujuan'));
+
         set('sig_driver_sj', val('in_driver'));
         set('sig_adm_sj', val('in_adm'));
         set('sig_p1_ba', val('in_driver'));
@@ -522,28 +394,20 @@
         set('sig_adm_ba', val('in_adm'));
         
         set('out_sys_date', new Date().toLocaleString('id-ID'));
-        qrcode.makeCode("KSE-V6-" + fullNoSJ);
+        qrcode.makeCode("KSE-V2-" + fullNoSJ);
     }
 
     function downloadPDF() {
         const element = document.getElementById('printable-area');
-        const opt = { 
-            margin: 0, 
-            filename: 'KSE_LETTER_' + (document.getElementById('in_no_sj').value || 'SJ') + '.pdf',
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2, useCORS: true }, 
+        html2pdf().set({ 
+            margin: 0, filename: 'SJ_KSE_' + val('in_no_sj') + '.pdf',
             jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' } 
-        };
-        html2pdf().set(opt).from(element).save();
+        }).from(element).save();
     }
 
-    document.querySelectorAll('input').forEach(el => {
-        el.addEventListener('input', syncData);
-    });
-
+    document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', syncData));
     window.onload = () => {
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('in_tgl').value = today;
+        document.getElementById('in_tgl').value = new Date().toISOString().split('T')[0];
         fetchLastNumber();
     };
 </script>
