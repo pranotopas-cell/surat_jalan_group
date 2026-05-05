@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KSE - SJ & BAST</title>
+    <title>KSE - SJ & BAST (Letter Size)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
@@ -45,16 +45,17 @@
             overflow-y: auto;
         }
 
+        /* UKURAN KERTAS LETTER */
         .document-canvas { 
             background: white; 
-            width: 210mm; 
-            height: 297mm; 
-            padding: 5mm 10mm 5mm 10mm; 
+            width: 215.9mm; 
+            height: 279.4mm; 
+            padding: 8mm 12mm; 
             position: relative;
             box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
             display: flex;
             flex-direction: column;
-            transform: scale(0.9);
+            transform: scale(0.85);
             transform-origin: top center;
         }
 
@@ -64,42 +65,42 @@
             text-transform: uppercase;
         }
 
-        .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .main-logo { height: 45px; width: auto; }
         
-        .title-doc { text-align: center; margin-bottom: 15px; }
-        .title-doc h1 { font-size: 24pt; font-weight: 900; margin: 0; letter-spacing: 4px; }
-        .title-doc span { font-size: 10pt; color: #333; font-style: italic; display: block; font-weight: 500; }
+        .title-doc { text-align: center; margin-bottom: 10px; }
+        .title-doc h1 { font-size: 22pt; font-weight: 900; margin: 0; letter-spacing: 4px; }
+        .title-doc span { font-size: 9pt; color: #333; font-style: italic; display: block; font-weight: 500; }
 
-        .info-table { width: 100%; margin-bottom: 12px; border-collapse: collapse; border: 1.5px solid #000; }
+        .info-table { width: 100%; margin-bottom: 10px; border-collapse: collapse; border: 1.5px solid #000; }
         .info-table th, .info-table td { 
-            padding: 8px 12px; 
+            padding: 6px 10px; 
             border: 1px solid #000; 
             vertical-align: middle; 
-            font-size: 10pt;
+            font-size: 9.5pt;
         }
-        .label-cell { background-color: #f1f5f9; font-weight: 700; width: 22%; font-size: 9pt; }
-        .label-cell small { display: block; font-weight: 400; font-style: italic; color: #475569; font-size: 7.5pt; }
+        .label-cell { background-color: #f1f5f9; font-weight: 700; width: 22%; font-size: 8.5pt; }
+        .label-cell small { display: block; font-weight: 400; font-style: italic; color: #475569; font-size: 7pt; }
         
-        .data-cell { font-family: var(--dot-font); font-size: 11pt; letter-spacing: 0.5px; }
+        .data-cell { font-family: var(--dot-font); font-size: 10.5pt; letter-spacing: 0.5px; }
 
-        .divider-line { border-top: 2px dashed #000; margin: 25px 0 15px 0; position: relative; }
+        .divider-line { border-top: 2px dashed #000; margin: 20px 0 10px 0; position: relative; }
         .divider-line span { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 20px; font-weight: bold; font-size: 9pt; }
 
-        .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center; margin-top: 10px; }
-        .sig-box { height: 95px; display: flex; flex-direction: column; justify-content: space-between; position: relative; font-size: 9pt; }
+        .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 5px; }
+        .sig-box { height: 85px; display: flex; flex-direction: column; justify-content: space-between; position: relative; font-size: 8.5pt; }
         
         .stamp-img {
             position: absolute;
-            width: 90px;
-            bottom: 25px;
+            width: 80px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             opacity: 0.8;
             z-index: 1;
         }
 
-        .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 9.5pt; position: relative; z-index: 2; font-family: var(--dot-font); }
+        .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 9pt; position: relative; z-index: 2; font-family: var(--dot-font); }
 
         .footer-ornament { display: flex; height: 6px; width: 100%; margin-top: auto; margin-bottom: 5px; }
         .orn-1 { background: var(--kse-primary); flex: 4; }
@@ -110,10 +111,11 @@
         .form-control-sm { font-size: 11px; padding: 0.2rem 0.5rem; }
         
         @media print { 
+            @page { size: letter; margin: 0; }
             .control-nav, .input-sidebar { display: none !important; } 
             body { background: white; overflow: visible; } 
             .canvas-container { padding: 0; height: auto; overflow: visible; }
-            .document-canvas { box-shadow: none; margin: 0; width: 100%; transform: scale(1); } 
+            .document-canvas { box-shadow: none; margin: 0; width: 215.9mm; height: 279.4mm; transform: scale(1); } 
         }
     </style>
 </head>
@@ -122,6 +124,7 @@
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
         <h6 class="mb-0 fw-bold text-success"><i class="bi bi-patch-check-fill"></i> KSE SMART LOGISTICS</h6>
+        <span class="badge bg-secondary">Format Letter (8.5" x 11")</span>
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> CETAK</button>
@@ -215,7 +218,7 @@
                         <span>Delivery Order / Waybill</span>
                     </div>
 
-                    <div class="row mb-3" style="font-size: 10pt;">
+                    <div class="row mb-2" style="font-size: 9.5pt;">
                         <div class="col-7">
                             <table width="100%">
                                 <tr><td width="35%">No. Surat</td><td class="dot-matrix">: <span id="out_no_sj">-</span></td></tr>
@@ -224,9 +227,9 @@
                             </table>
                         </div>
                         <div class="col-5">
-                            <div style="border: 1.5px solid #000; padding: 8px; background: #fdfdfd;">
-                                <small class="text-uppercase fw-bold" style="font-size: 7.5pt; color: #555;">Tujuan Pengiriman:</small><br>
-                                <b id="out_tujuan_sj" class="dot-matrix" style="font-size: 11pt; display: block; margin-top: 4px;">-</b>
+                            <div style="border: 1.5px solid #000; padding: 6px; background: #fdfdfd;">
+                                <small class="text-uppercase fw-bold" style="font-size: 7pt; color: #555;">Tujuan Pengiriman:</small><br>
+                                <b id="out_tujuan_sj" class="dot-matrix" style="font-size: 10.5pt; display: block; margin-top: 2px;">-</b>
                             </div>
                         </div>
                     </div>
@@ -274,22 +277,22 @@
                     <div class="divider-line"><span>BERITA ACARA SERAH TERIMA (BAST)</span></div>
 
                     <div class="title-doc" style="margin-top: 0;">
-                        <h1 style="font-size: 14pt;">BERITA ACARA SERAH TERIMA BBM</h1>
-                        <b id="out_no_ba" class="dot-matrix" style="font-size: 11pt; display: block; margin-top: 5px;">-</b>
-                        <span style="font-size: 8.5pt;">Minutes of Handover</span>
+                        <h1 style="font-size: 13pt;">BERITA ACARA SERAH TERIMA BBM</h1>
+                        <b id="out_no_ba" class="dot-matrix" style="font-size: 10.5pt; display: block; margin-top: 3px;">-</b>
+                        <span style="font-size: 8pt;">Minutes of Handover</span>
                     </div>
 
-                    <p style="font-size: 10pt; text-align: justify; line-height: 1.5; margin-bottom: 12px;">
+                    <p style="font-size: 9.5pt; text-align: justify; line-height: 1.4; margin-bottom: 8px;">
                         Pada hari ini <b id="out_hari_ba" class="dot-matrix">..........</b>, Tanggal <b id="out_tgl_ba" class="dot-matrix">..........</b>, bertempat di <b id="out_lokasi_ba" class="dot-matrix">..........</b>, telah dilakukan serah terima komoditas BBM dengan rincian:
                     </p>
 
-                    <div style="margin: 0 0 15px 30px; font-size: 10.5pt;">
+                    <div style="margin: 0 0 10px 30px; font-size: 10pt;">
                         <div class="row mb-1"><div class="col-4">Pihak I (Penyerah)</div><div class="col-8">: <b id="out_trans_ba" class="dot-matrix">-</b></div></div>
                         <div class="row mb-1"><div class="col-4">Pihak II (Penerima)</div><div class="col-8">: <b id="out_tujuan_ba" class="dot-matrix"></b></div></div>
                         <div class="row mb-1"><div class="col-4">Volume Barang</div><div class="col-8">: <b id="out_qty_ba" class="dot-matrix">0</b> LITER</div></div>
                     </div>
 
-                    <p style="font-size: 9pt; font-style: italic; color: #333; background: #f0f0f0; padding: 10px; border-left: 5px solid var(--tosca); margin-bottom: 12px;">
+                    <p style="font-size: 8.5pt; font-style: italic; color: #333; background: #f0f0f0; padding: 8px; border-left: 5px solid var(--tosca); margin-bottom: 8px;">
                         "Pihak Kedua telah menerima produk dalam volume yang sesuai, kondisi segel utuh, dan spesifikasi yang benar."
                     </p>
 
@@ -308,9 +311,9 @@
                         <div class="orn-1"></div><div class="orn-2"></div><div class="orn-3"></div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-end" style="margin-top: 8px;">
+                    <div class="d-flex justify-content-between align-items-end" style="margin-top: 5px;">
                         <div id="qrcode"></div>
-                        <div class="text-end" style="font-size: 7pt; color: #444;">
+                        <div class="text-end" style="font-size: 6.5pt; color: #444;">
                             <b style="color: var(--kse-primary);">KSE SMART LOGISTICS SYSTEM</b><br>
                             Cetakan Sistem: <span id="out_sys_date"></span>
                         </div>
@@ -322,7 +325,7 @@
 </div>
 
 <script>
-    var qrcode = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
+    var qrcode = new QRCode(document.getElementById("qrcode"), { width: 40, height: 40 });
 
     function getRomawi(month) {
         const romawi = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
@@ -397,10 +400,10 @@
         const element = document.getElementById('printable-area');
         const opt = { 
             margin: 0, 
-            filename: 'KSE_DOC_' + (document.getElementById('in_no_sj').value || 'SJ') + '.pdf',
+            filename: 'KSE_LETTER_' + (document.getElementById('in_no_sj').value || 'SJ') + '.pdf',
             image: { type: 'jpeg', quality: 1 },
             html2canvas: { scale: 2, useCORS: true }, 
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+            jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' } 
         };
         html2pdf().set(opt).from(element).save();
     }
