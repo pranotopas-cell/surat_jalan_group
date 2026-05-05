@@ -248,6 +248,7 @@
         </div>
     </div>
 </div>
+/* --- HANYA BAGIAN SCRIPT YANG DIUPDATE, BAGIAN LAIN TETAP --- */
 
 <script>
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
@@ -261,6 +262,23 @@
         { nopol: "L 9761 UJ", tera: "124.0", qty: 8000 }
     ];
     const listDriver = ["AGUS", "WIYANTO", "WAHID", "SUPRIYADI", "INDRA"];
+
+    // Fungsi Helper untuk format bulan Romawi
+    function getRomanMonth(monthIdx) {
+        const roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+        return roman[monthIdx];
+    }
+
+    // Fungsi Helper untuk format tanggal Indonesia (01 Mei 2026)
+    function formatDateIndo(dateString) {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }
 
     function createDatalist(id, list, key = null) {
         return `<datalist id="${id}">` + list.map(item => `<option value="${key ? item[key] : item}">`).join('') + `</datalist>`;
@@ -310,9 +328,12 @@
         document.getElementById('outPerihal').innerText = document.getElementById('inPerihal').value;
         document.getElementById('outTujuanPT').innerText = document.getElementById('inTujuanPT').value;
         document.getElementById('outAlamatPT').innerText = document.getElementById('inAlamatPT').value;
-        document.getElementById('outTglMemo').innerText = document.getElementById('inTglMemo').value;
+        
+        // Update format tanggal ke Indo
+        document.getElementById('outTglMemo').innerText = formatDateIndo(document.getElementById('inTglMemo').value);
+        document.getElementById('outTglLoad').innerText = formatDateIndo(document.getElementById('inTglLoad').value);
+        
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
-        document.getElementById('outTglLoad').innerText = document.getElementById('inTglLoad').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
         const qrContainer = document.getElementById("qrcode");
@@ -345,7 +366,11 @@
         document.getElementById('inTglMemo').valueAsDate = d;
         document.getElementById('inTglLoad').valueAsDate = d;
         document.getElementById('inNoUrut').value = "001";
-        document.getElementById('inNoFormat').value = `/MEMO-KSE/${d.getMonth()+1}/${d.getFullYear()}`;
+        
+        // Update Format No dengan Romawi
+        const romanMonth = getRomanMonth(d.getMonth());
+        document.getElementById('inNoFormat').value = `/MEMO-KSE/${romanMonth}/${d.getFullYear()}`;
+        
         update();
     }
 
@@ -371,5 +396,6 @@
     document.addEventListener('input', update);
     window.onload = initPage;
 </script>
+
 </body>
 </html>
