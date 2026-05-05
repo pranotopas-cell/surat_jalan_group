@@ -396,15 +396,15 @@
             return val.replace(/[^0-9.]/g, ''); 
         };
 
-        // PAYLOAD DISESUAIKAN: Hanya kolom yang diminta
         const payload = {
-            tanggal: document.getElementById('in_tgl').value,
-            nomor_dokumen: document.getElementById('out_no_sj').innerText,
-            penerima: document.getElementById('in_tujuan').value, // Tujuan
-            nopol: document.getElementById('in_nopol').value,
-            driver: document.getElementById('in_driver').value,
-            qty: parseFloat(cleanNumber('in_qty')) || 0
-        };
+        tanggal: document.getElementById('in_tgl').value,
+        nomor_dokumen: document.getElementById('out_no_sj').innerText,
+        penerima: document.getElementById('in_tujuan').value,
+        nopol: document.getElementById('in_nopol').value,
+        driver: document.getElementById('in_driver').value,
+        // Menghapus titik ribuan/karakter lain agar terbaca sebagai angka murni oleh Supabase
+        qty: parseFloat(document.getElementById('in_qty').value.replace(/[^0-9.]/g, '')) || 0
+    };
 
         try {
             const { error } = await supabaseClient
