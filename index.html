@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SURAT JALAN</title>
+    <title>INTEGRATED SYSTEM - DASHBOARD</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -12,13 +12,13 @@
 
     <style>
         :root { 
-            --bg-dark: #0f172a;
-            --sidebar-bg: #0f172a;
+            --bg-dark: #061614; /* Hijau Sangat Tua */
+            --sidebar-bg: #020617; /* Biru Donker Pekat */
             --sidebar-width: 280px;
-            --ind-red: #ef4444; 
-            --ind-blue: #3b82f6; 
-            --ind-gold: #f59e0b;
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --ind-emerald: #10b981; /* Hijau Terang */
+            --ind-gold: #d4af37; /* Emas Klasik */
+            --ind-navy: #1e293b; /* Biru Donker Abu */
+            --glass-border: rgba(212, 175, 55, 0.2);
         }
 
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-dark); color: #f1f5f9; overflow-x: hidden; }
@@ -26,19 +26,16 @@
         /* Login Page */
         #login-page { 
             height: 100vh; display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), 
+            background: linear-gradient(rgba(6, 22, 20, 0.9), rgba(2, 6, 23, 0.9)), 
                         url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop');
             background-size: cover; background-position: center;
         }
 
         .login-card {
-            background: rgba(30, 41, 59, 0.7); border: 1px solid var(--ind-blue);
-            border-radius: 1.5rem; width: 100%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            background: rgba(15, 23, 42, 0.8); border: 2px solid var(--ind-gold);
+            border-radius: 1.5rem; width: 100%; max-width: 400px; box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
             backdrop-filter: blur(15px); padding: 3rem !important;
         }
-
-        .logo-container { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 25px; }
-        .logo-container img { height: 35px; width: auto; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
 
         /* Sidebar */
         .sidebar { 
@@ -52,21 +49,21 @@
             padding: 0.7rem 1rem; transition: all 0.3s ease; font-size: 0.85rem;
             display: flex; align-items: center; text-decoration: none;
         }
-        .nav-link:hover, .nav-link.active { background: rgba(59, 130, 246, 0.15); color: var(--ind-blue); }
-        .submenu { padding-left: 0.5rem; background: rgba(0,0,0,0.15); border-radius: 10px; margin: 0.3rem 0 0.8rem 0; }
+        .nav-link:hover, .nav-link.active { background: rgba(212, 175, 55, 0.15); color: var(--ind-gold); }
+        .submenu { padding-left: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 10px; margin: 0.3rem 0 0.8rem 0; }
         .submenu .nav-link { font-size: 0.8rem; padding: 0.5rem 1rem; }
-        .pt-label { font-size: 0.65rem; color: #64748b; padding: 1.2rem 1rem 0.4rem; display: block; font-weight: 800; letter-spacing: 1px; }
+        .pt-label { font-size: 0.65rem; color: var(--ind-emerald); padding: 1.2rem 1rem 0.4rem; display: block; font-weight: 800; letter-spacing: 1px; }
 
-        /* Top Nav & Running Text */
+        /* Top Nav & Marquee */
         .top-nav {
             margin-left: var(--sidebar-width); padding: 0.8rem 2rem;
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
+            background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--glass-border); display: flex;
             flex-direction: column; position: sticky; top: 0; z-index: 999;
         }
 
         .running-text-container {
-            width: 100%; overflow: hidden; background: rgba(0,0,0,0.4);
+            width: 100%; overflow: hidden; background: rgba(16, 185, 129, 0.1);
             border-radius: 6px; margin-bottom: 10px; padding: 6px 0;
             border-left: 4px solid var(--ind-gold);
         }
@@ -77,55 +74,47 @@
             font-size: 0.8rem; color: #e2e8f0; font-weight: 500;
         }
 
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
         .main-content { margin-left: var(--sidebar-width); padding: 2rem; min-height: 100vh; }
 
-        /* Logistics Table */
-        .card-table { background: rgba(30, 41, 59, 0.4); border: 1px solid var(--glass-border); border-radius: 15px; }
-        .table { font-size: 0.75rem; text-transform: uppercase; }
+        /* Table Style */
+        .card-table { background: rgba(30, 41, 59, 0.3); border: 1px solid var(--glass-border); border-radius: 15px; }
+        .table { font-size: 0.75rem; text-transform: uppercase; color: #cbd5e1; }
         .table thead th { 
-            background: rgba(59, 130, 246, 0.05); color: var(--ind-blue);
-            font-size: 0.7rem; font-weight: 700; border-bottom: 2px solid var(--ind-blue);
-            white-space: nowrap; padding: 12px 10px; letter-spacing: 0.5px;
+            background: rgba(16, 185, 129, 0.05); color: var(--ind-gold);
+            font-size: 0.7rem; font-weight: 700; border-bottom: 2px solid var(--ind-gold);
+            white-space: nowrap; padding: 12px 10px;
         }
 
-        .row-ikaen { color: #fca5a5 !important; }
-        .row-ide { color: #93c5fd !important; }
-        .row-kse { color: #fcd34d !important; }
+        .badge-kse { background-color: var(--ind-gold); color: black; font-weight: bold; }
+        .text-emerald { color: var(--ind-emerald) !important; }
         
-        .bg-ikaen { background-color: var(--ind-red) !important; color: white; }
-        .bg-ide { background-color: var(--ind-blue) !important; color: white; }
-        .bg-kse { background-color: var(--ind-gold) !important; color: black; }
-
-        .table tbody td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .btn-view {
             padding: 4px 12px; font-size: 0.65rem; border-radius: 6px;
-            transition: all 0.2s; border: 1px solid var(--ind-blue);
-            color: var(--ind-blue); background: transparent; font-weight: 600;
+            transition: all 0.2s; border: 1px solid var(--ind-gold);
+            color: var(--ind-gold); background: transparent; font-weight: 600;
         }
-        .btn-view:hover { background: var(--ind-blue); color: white; }
+        .btn-view:hover { background: var(--ind-gold); color: black; }
         
-        .btn-tracking { border: 1px solid var(--ind-gold); color: var(--ind-gold); }
-        .btn-tracking:hover { background: var(--ind-gold); color: black; }
+        .btn-tracking { border: 1px solid var(--ind-emerald); color: var(--ind-emerald); }
+        .btn-tracking:hover { background: var(--ind-emerald); color: white; }
+
+        input.form-control { border: 1px solid rgba(212, 175, 55, 0.3); }
+        input.form-control:focus { border-color: var(--ind-gold); box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25); }
     </style>
 </head>
 <body>
 
 <div id="login-page">
     <div class="card login-card text-center">
-        <div class="logo-container">
-            <img src="header1.png" alt="Header">
-            <img src="ide1.png" alt="IDE">
-            <img src="ikaen.png" alt="IKAEN">
+        <div class="mb-4">
+            <i class="bi bi-shield-lock-fill text-warning fs-1"></i>
         </div>
         <h4 class="fw-bold mb-4 text-white" style="letter-spacing: 3px;">SYSTEM LOGIN</h4>
-        <input type="text" id="user" class="form-control mb-3 bg-dark border-secondary text-white" placeholder="Username">
-        <input type="password" id="pass" class="form-control mb-4 bg-dark border-secondary text-white" placeholder="Password">
-        <button class="btn btn-primary w-100 py-2 fw-bold" onclick="handleLogin()">ACCESS SYSTEM</button>
+        <input type="text" id="user" class="form-control mb-3 bg-dark text-white" placeholder="Username">
+        <input type="password" id="pass" class="form-control mb-4 bg-dark text-white" placeholder="Password">
+        <button class="btn btn-warning w-100 py-2 fw-bold" onclick="handleLogin()">ACCESS SYSTEM</button>
         <p id="error-msg" class="text-danger mt-3 small" style="display:none;">Autentikasi Gagal!</p>
     </div>
 </div>
@@ -133,12 +122,12 @@
 <div id="dashboard-page" style="display:none;">
     <aside class="sidebar d-flex flex-column">
         <div class="mb-4 px-3 d-flex align-items-center">
-            <i class="bi bi-terminal-fill text-primary fs-3 me-2"></i>
-            <h6 class="fw-bold mb-0 text-white">INTEGRATED SYSTEM</h6>
+            <i class="bi bi-cpu-fill text-emerald fs-3 me-2"></i>
+            <h6 class="fw-bold mb-0 text-white">CORE DASHBOARD</h6>
         </div>
         
         <nav class="flex-grow-1">
-            <a href="#" class="nav-link active mb-3"><i class="bi bi-grid-1x2-fill me-2"></i> DASHBOARD UTAMA </a>
+            <a href="#" class="nav-link active mb-3"><i class="bi bi-speedometer2 me-2"></i> DASHBOARD UTAMA </a>
 
             <small class="pt-label">PT. KHATULISTIWA SINAR ENERGI</small>
             <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-lightning-fill me-2 text-warning"></i> KSE <i class="bi bi-chevron-down ms-auto small"></i></a>
@@ -153,48 +142,37 @@
             <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-droplet-fill me-2 text-info"></i> IDE <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu" id="mIde">
                 <a href="sj_ide.html" class="nav-link">Surat Jalan</a>
-                <a href="memo_ide.html" class="nav-link">Memo</a>
-                <a href="ba_oper_ide.html" class="nav-link">BA Oper Muatan</a>
-                <a href="ba_penerimaan_ide.html" class="nav-link">BA Penerimaan</a>
             </div>
 
             <small class="pt-label">PT. INVESTAMA KALIMANTAN ENERGI</small>
             <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2 text-danger"></i> IKAEN <i class="bi bi-chevron-down ms-auto small"></i></a>
-            <div class="collapse submenu" id="mIkaen">
-                <a href="sj_ikaen.html" class="nav-link">Surat Jalan</a>
-                <a href="memo_ikaen.html" class="nav-link">Memo</a>
-                <a href="ba_oper_ikaen.html" class="nav-link">BA Oper Muatan</a>
-                <a href="ba_penerimaan_ikaen.html" class="nav-link">BA Penerimaan</a>
-            </div>
         </nav>
     </aside>
 
     <header class="top-nav">
         <div class="running-text-container">
             <div class="marquee-text">
-                <span class="text-warning fw-bold">SOP BONGKAR MUAT BBM:</span> 
-                1. PASTIKAN AREA STERIL DARI API & ROKOK | 2. PASANG GROUNDING & SIAPKAN APAR | 
-                3. PERIKSA SEGEL & VOLUME TANGKI | 4. LAKUKAN PENYAMBUNGAN HOSE DENGAN RAPAT | 
-                5. PANTAU ALIRAN SECARA BERKALA | 6. PAKAI APD LENGKAP
-                <span class="text-info ms-4 fw-bold">NOTE:</span> 
-                "KESELAMATAN KERJA ADALAH KUNCI KEBERLANGSUNGAN USAHA. KEDISIPLINAN HARI INI ADALAH FONDASI KESUKSESAN HARI ESOK." - SINERGI MENGALIRKAN ENERGI - SALAM PEJUANG ENERGI
+                <span class="text-warning fw-bold">SOP OPERASIONAL:</span> 
+                1. STERILKAN AREA | 2. PASANG GROUNDING | 3. PERIKSA SEGEL | 4. GUNAKAN APD LENGKAP | 
+                <span class="text-emerald ms-4 fw-bold">MOTTO:</span> 
+                "SINERGI MENGALIRKAN ENERGI - KESELAMATAN ADALAH PRIORITAS UTAMA KITA SEMUA"
             </div>
         </div>
         <div class="d-flex justify-content-end">
-            <button class="btn btn-outline-danger btn-sm fw-bold px-3" onclick="handleLogout()">SIGN OUT</button>
+            <button class="btn btn-outline-warning btn-sm fw-bold px-3" onclick="handleLogout()">SIGN OUT</button>
         </div>
     </header>
 
     <main class="main-content">
         <div class="card card-table border-0 p-4 shadow-lg">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-activity me-2 text-primary"></i>HISTORY LOGISTICS REAL-TIME</h6>
+                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-database-fill-check me-2 text-emerald"></i>HISTORY LOGISTIK KSE (REAL-TIME)</h6>
                 <div class="d-flex gap-2">
                     <button class="btn btn-sm btn-tracking rounded-pill px-3 fw-bold" onclick="openMaps()">
-                        <i class="bi bi-geo-alt-fill me-1"></i> TRACKING UNIT
+                        <i class="bi bi-geo-alt-fill me-1"></i> TRACKING
                     </button>
-                    <button class="btn btn-sm btn-primary rounded-pill px-4 fw-bold" onclick="fetchLogistikData()">
-                        <i class="bi bi-arrow-clockwise me-1"></i> SYNC DATA
+                    <button class="btn btn-sm btn-warning rounded-pill px-4 fw-bold" onclick="fetchLogistikData()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> SYNC
                     </button>
                 </div>
             </div>
@@ -203,18 +181,18 @@
                 <table class="table align-middle">
                     <thead>
                         <tr>
-                            <th>IDENTITAS & TANGGAL</th>
+                            <th>TANGGAL</th>
                             <th>NOMOR DOKUMEN</th>
                             <th>JENIS</th>
                             <th>TUJUAN</th>
-                            <th>NAMA SOPIR</th>
+                            <th>SOPIR</th>
                             <th>NO. POLISI</th>
                             <th class="text-end">QTY (L)</th>
                             <th class="text-center">AKSI</th>
                         </tr>
                     </thead>
                     <tbody id="logistik-table-body">
-                        <tr><td colspan="8" class="text-center py-5">MEMUAT DATA SISTEM...</td></tr>
+                        <tr><td colspan="8" class="text-center py-5">MENYINKRONKAN DATA...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -223,70 +201,70 @@
 </div>
 
 <script>
-    const SB_URL = "https://ntaectphgoelmhzrkatp.supabase.co"; 
-    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg";
+    const SB_URL = "https://qnamtickoteyvydayyor.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYW10aWNrb3RleXZ5ZGF5eW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTU2MzksImV4cCI6MjA5MzQ3MTYzOX0.VAeN0JVnz4WNPzY5NTGmtGeHD-Da_qkCvy84ZDYZNHo";
     const _supabase = supabase.createClient(SB_URL, SB_KEY);
 
     async function fetchLogistikData() {
         const tbody = document.getElementById('logistik-table-body');
         try {
-            const { data, error } = await _supabase.from('data_logistik').select('*').order('created_at', { ascending: false });
-            if (error) throw error;
+            // Mengambil data dari 4 tabel berbeda
+            const [sj, memo, baom, bastk] = await Promise.all([
+                _supabase.from('sj_kse').select('*'),
+                _supabase.from('memo_kse').select('*'),
+                _supabase.from('baom_kse').select('*'),
+                _supabase.from('bastk_kse').select('*')
+            ]);
+
+            // Gabungkan semua data
+            let allData = [
+                ...(sj.data || []).map(d => ({...d, tag: 'SURAT JALAN'})),
+                ...(memo.data || []).map(d => ({...d, tag: 'MEMO'})),
+                ...(baom.data || []).map(d => ({...d, tag: 'BA OPER'})),
+                ...(bastk.data || []).map(d => ({...d, tag: 'BA TERIMA'}))
+            ];
+
+            // Urutkan berdasarkan tanggal terbaru (asumsi ada kolom created_at atau tanggal)
+            allData.sort((a, b) => new Date(b.created_at || b.tanggal) - new Date(a.created_at || a.tanggal));
 
             let html = '';
-            data.forEach(row => {
-                let badgeClass = 'bg-secondary';
-                let rowColorClass = 'text-white';
-                const ptRaw = (row.pt || '').toUpperCase();
-
-                if (ptRaw.includes('IKAEN') || ptRaw.includes('INVESTAMA')) {
-                    badgeClass = 'bg-ikaen'; rowColorClass = 'row-ikaen';
-                } else if (ptRaw.includes('IDE') || ptRaw.includes('DHARMA')) {
-                    badgeClass = 'bg-ide'; rowColorClass = 'row-ide';
-                } else if (ptRaw.includes('KSE') || ptRaw.includes('KHATULISTIWA')) {
-                    badgeClass = 'bg-kse'; rowColorClass = 'row-kse';
-                }
-
-                // PERBAIKAN: Memastikan pemanggilan kolom tujuan dan sopir sesuai data row
-                html += `
-                    <tr class="${rowColorClass}">
-                        <td>
-                            <div class="d-flex flex-column gap-1">
-                                <span class="badge ${badgeClass}" style="font-size:0.6rem; width: fit-content;">${ptRaw}</span>
-                                <span class="text-secondary" style="font-size:0.65rem">${row.tanggal || '-'}</span>
-                            </div>
-                        </td>
-                        <td class="fw-bold">${row.no_dokumen || '-'}</td>
-                        <td class="opacity-75">${row.jenis_dokumen || '-'}</td>
-                        <td>${row.tujuan || '-'}</td>
-                        <td class="fw-bold">${row.sopir || '-'}</td>
-                        <td class="font-monospace" style="letter-spacing:1px;">${row.nopol || '-'}</td>
-                        <td class="text-end fw-bold">${(row.qty || 0).toLocaleString('id-ID')}</td>
-                        <td class="text-center">
-                            <button class="btn btn-view" onclick="viewPDF('${row.id}')">
-                                <i class="bi bi-file-earmark-pdf"></i> VIEW
-                            </button>
-                        </td>
-                    </tr>`;
-            });
+            if (allData.length === 0) {
+                html = '<tr><td colspan="8" class="text-center py-4">TIDAK ADA DATA DITEMUKAN</td></tr>';
+            } else {
+                allData.forEach(row => {
+                    html += `
+                        <tr>
+                            <td><span class="text-emerald">${row.tanggal || '-'}</span></td>
+                            <td class="fw-bold text-white">${row.no_dokumen || row.nomor_memo || '-'}</td>
+                            <td><span class="badge badge-kse">${row.tag}</span></td>
+                            <td>${row.tujuan || row.lokasi || '-'}</td>
+                            <td class="fw-bold">${row.sopir || row.driver || '-'}</td>
+                            <td class="font-monospace text-warning">${row.nopol || '-'}</td>
+                            <td class="text-end fw-bold text-white">${(row.qty || row.liter || 0).toLocaleString('id-ID')}</td>
+                            <td class="text-center">
+                                <button class="btn btn-view" onclick="viewPDF('${row.id}', '${row.tag}')">
+                                    <i class="bi bi-file-earmark-pdf"></i> VIEW
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            }
             tbody.innerHTML = html;
         } catch (err) {
             console.error(err);
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-danger">GAGAL MEMUAT DATA. PERIKSA KONEKSI.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-danger">ERROR: GAGAL MENGHUBUNGKAN KE SUPABASE.</td></tr>`;
         }
     }
 
-    function viewPDF(id) { 
-        window.open(`view_document.html?id=${id}`, "_blank"); 
-    }
-
-    function openMaps() { window.open("https://www.google.com/maps", "_blank"); }
-
     function handleLogin() {
-        if(document.getElementById('user').value === "admin" && document.getElementById('pass').value === "adm123") {
-            localStorage.setItem('ide_session', 'active');
+        const u = document.getElementById('user').value;
+        const p = document.getElementById('pass').value;
+        if(u === "admin" && p === "adm123") {
+            localStorage.setItem('kse_session', 'active');
             showDashboard();
-        } else { document.getElementById('error-msg').style.display = 'block'; }
+        } else { 
+            document.getElementById('error-msg').style.display = 'block'; 
+        }
     }
 
     function showDashboard() {
@@ -295,8 +273,11 @@
         fetchLogistikData();
     }
 
-    function handleLogout() { localStorage.removeItem('ide_session'); location.reload(); }
-    window.onload = () => { if (localStorage.getItem('ide_session') === 'active') showDashboard(); };
+    function handleLogout() { localStorage.removeItem('kse_session'); location.reload(); }
+    function openMaps() { window.open("https://www.google.com/maps", "_blank"); }
+    function viewPDF(id, type) { alert('Membuka Dokumen ' + type + ' ID: ' + id); }
+
+    window.onload = () => { if (localStorage.getItem('kse_session') === 'active') showDashboard(); };
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
