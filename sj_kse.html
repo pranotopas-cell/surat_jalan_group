@@ -50,7 +50,6 @@
         .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 5px; }
         .sig-box { height: 85px; display: flex; flex-direction: column; justify-content: space-between; position: relative; font-size: 8.5pt; }
         
-        /* Stempel digeser ke atas sedikit sesuai permintaan */
         .stamp-img { position: absolute; width: 85px; bottom: 35px; left: 50%; transform: translateX(-50%); opacity: 0.8; z-index: 1; }
         .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 9pt; position: relative; z-index: 2; font-family: var(--dot-font); }
 
@@ -169,18 +168,18 @@
                         <span>Delivery Order / Waybill</span>
                     </div>
 
+                    <!-- UPDATED: SEJAJAR SECTION -->
                     <div class="row mb-2" style="font-size: 9.5pt;">
                         <div class="col-7">
                             <table width="100%">
                                 <tr><td width="35%">No. Surat</td><td class="dot-matrix">: <span id="out_no_sj">-</span></td></tr>
                                 <tr><td>No. SO / DO</td><td class="dot-matrix">: <span id="out_so_sj">-</span></td></tr>
+                                <tr><td>No. PO Customer</td><td class="dot-matrix">: <span id="out_po_sj">-</span></td></tr>
                                 <tr><td>Tanggal</td><td class="dot-matrix">: <span id="out_tgl_sj">-</span></td></tr>
                             </table>
                         </div>
                         <div class="col-5">
-                            <div style="border: 1.5px solid #000; padding: 6px; background: #fdfdfd;">
-                                <small class="text-uppercase fw-bold" style="font-size: 6.5pt; color: #555;">No. PO Customer:</small>
-                                <b id="out_po_sj" class="dot-matrix" style="font-size: 9pt; display: block; border-bottom: 1px solid #ccc; margin-bottom: 4px;">-</b>
+                            <div style="border: 1.5px solid #000; padding: 6px; background: #fdfdfd; height: 100%; display: flex; flex-direction: column; justify-content: center;">
                                 <small class="text-uppercase fw-bold" style="font-size: 6.5pt; color: #555;">Tujuan Pengiriman:</small>
                                 <b id="out_tujuan_sj" class="dot-matrix" style="font-size: 10.5pt; display: block;">-</b>
                             </div>
@@ -400,7 +399,7 @@
     function downloadPDF() {
         const element = document.getElementById('printable-area');
         html2pdf().set({ 
-            margin: 0, filename: 'SJ_KSE_' + val('in_no_sj') + '.pdf',
+            margin: 0, filename: 'SJ_KSE_' + (document.getElementById('in_no_sj').value) + '.pdf',
             jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' } 
         }).from(element).save();
     }
