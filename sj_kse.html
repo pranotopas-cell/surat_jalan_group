@@ -141,30 +141,26 @@
             <label class="form-label-custom">Tanggal Kirim</label>
             <input type="date" id="in_tgl" class="form-control form-control-sm mb-1">
 
-            <div class="row g-2">
-                <div class="col-12">
-                    <label class="form-label-custom">Nomor Dokumen (Auto)</label>
-                    <input type="text" id="in_no_sj" class="form-control form-control-sm mb-1 fw-bold" placeholder="Loading...">
-                </div>
-            </div>
+            <label class="form-label-custom">Nomor Dokumen (Auto)</label>
+            <input type="text" id="in_no_sj" class="form-control form-control-sm mb-1 fw-bold" placeholder="Loading...">
 
             <label class="form-label-custom">Transportir</label>
-            <input type="text" id="in_trans" class="form-control form-control-sm mb-1" value="PT. KHATULISTIWA SINAR ENERGI">
+            <input type="text" id="in_trans" list="listTrans" class="form-control form-control-sm mb-1" value="PT. KHATULISTIWA SINAR ENERGI">
 
             <label class="form-label-custom">Penerima (Perusahaan)</label>
-            <input type="text" id="in_tujuan" class="form-control form-control-sm mb-1">
+            <input type="text" id="in_tujuan" list="listTujuan" class="form-control form-control-sm mb-1">
 
             <label class="form-label-custom">No. SO / DO</label>
             <input type="text" id="in_so" class="form-control form-control-sm mb-1">
 
             <div class="row g-2">
                 <div class="col-6">
-                    <label class="form-label-custom">Driver</label>
-                    <input type="text" id="in_driver" class="form-control form-control-sm mb-1">
+                    <label class="form-label-custom">No. Polisi</label>
+                    <input type="text" id="in_nopol" list="listNopol" class="form-control form-control-sm mb-1" onchange="autoFillArmada(this.value)">
                 </div>
                 <div class="col-6">
-                    <label class="form-label-custom">No. Polisi</label>
-                    <input type="text" id="in_nopol" class="form-control form-control-sm mb-1">
+                    <label class="form-label-custom">Driver</label>
+                    <input type="text" id="in_driver" list="listDriver" class="form-control form-control-sm mb-1">
                 </div>
             </div>
 
@@ -251,7 +247,7 @@
                         </tr>
                         <tr>
                             <td class="label-cell">Tinggi Cairan <small>Liquid Level</small></td>
-                            <td class="data-cell"><span id="out_tinggi_sj">-</span> MM</td>
+                            <td class="data-cell"><span id="out_tinggi_sj">-</span></td>
                             <td class="label-cell">No. Segel <small>Seal Number</small></td>
                             <td id="out_segel_sj" class="data-cell">-</td>
                         </tr>
@@ -322,6 +318,69 @@
     </div>
 </div>
 
+<!-- DATA LIST UNTUK DROPDOWN -->
+<datalist id="listTrans">
+    <option value="PT. KHATULISTIWA SINAR ENERGI">
+    <option value="PT. BERKAH SARANA MAKMUR BENUA">
+    <option value="PT. INDO DHARMA ENERGI">
+    <option value="PT. TRANS GLOBAL ENERGI">
+    <option value="PT. INVESTAMA KALIMANTAN ENERGI">
+</datalist>
+
+<datalist id="listTujuan">
+    <option value="PT. NEW WAHYU BAOKAH">
+    <option value="PT. BORNEO ARMADA PERKASA">
+    <option value="PT. GERBANG PERKASA PRATAMA">
+    <option value="PT. BORNEO TRENGGINAS MANDIRI">
+    <option value="PT. ANGKASA MITRA SEJATI">
+    <option value="PT. TRIDEA SENADA">
+    <option value="CV. SAMI JAYA">
+    <option value="PT. PELAYARAN JASA SAMUDRA SHIPPING">
+    <option value="PT. EXPLOITASI ENERGI INDONESIA,TBK">
+    <option value="PT. SINAR BAHAGIA INDAH">
+    <option value="PT. FORTUNA LANCAR ADIMAKMUR">
+    <option value="PT. BUMI RAYA NUSANTARA">
+    <option value="PT. BUMI AGRO PRIMA">
+    <option value="PT. INTI DAYA MANDIRI SERVITAMA">
+    <option value="PT. GADING SAWIT KENCANA">
+    <option value="PT. KORINDO ARIABIMA SARI">
+    <option value="PT. HATAKO KHARISMA ABADI">
+    <option value="PT. ARUT SAWIT MANDIRI">
+    <option value="PT. KURNIA TUNGGAL NUGRAHA">
+    <option value="CV. TIGA SAUDARA MAJU BERSAMA">
+    <option value="PT. PELAYARAN SAHABAT SETIA BAHARI">
+    <option value="PT. PARAMITA BANGUN SARANA, TBK">
+    <option value="PT. KORINTIGA HUTANI">
+    <option value="PT. SAMANDITA ADI MAKMUR">
+    <option value="PT. BOR">
+</datalist>
+
+<datalist id="listNopol">
+    <option value="KH 8141 GH">
+    <option value="KH 8139 GM">
+    <option value="KH 8942 GN">
+    <option value="KH 8943 GN">
+    <option value="KH 8273 RM">
+    <option value="KH 8256 RM">
+    <option value="KH 8641 GN">
+    <option value="KH 8206 GN">
+    <option value="L 9761 UJ">
+</datalist>
+
+<datalist id="listDriver">
+    <option value="AGUS">
+    <option value="WIYANTO">
+    <option value="WAHID">
+    <option value="SUPRIYADI">
+    <option value="AGUS WANTO">
+    <option value="NUR KHOLIS">
+    <option value="FARID HABIBI">
+    <option value="RONNY PRASTIANSYAH">
+    <option value="ADI SUCIPTO">
+    <option value="AGUS MULYANTO">
+    <option value="INDRA">
+</datalist>
+
 <script>
     // Config Supabase
     const SB_URL = "https://qnamtickoteyvydayyor.supabase.co";
@@ -329,6 +388,29 @@
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 40, height: 40 });
+
+    // Data Master Armada & Driver
+    const dataArmada = [
+        { nopol: "KH 8141 GH", tera: "100.5 cm", qty: 5000, sopir: "AGUS" },
+        { nopol: "KH 8139 GM", tera: "133.5 cm", qty: 10000, sopir: "WIYANTO" },
+        { nopol: "KH 8942 GN", tera: "115.4 cm", qty: 5000, sopir: "WAHID" },
+        { nopol: "KH 8943 GN", tera: "114.6 cm", qty: 5000, sopir: "SUPRIYADI" },
+        { nopol: "KH 8273 RM", tera: "109.5 cm", qty: 5000, sopir: "AGUS WANTO" },
+        { nopol: "KH 8256 RM", tera: "104.3 cm", qty: 5000, sopir: "NUR KHOLIS" },
+        { nopol: "KH 8641 GN", tera: "113.8 cm", qty: 5000, sopir: "FARID HABIBI" },
+        { nopol: "KH 8206 GN", tera: "106.2 cm", qty: 5000, sopir: "RONNY PRASTIANSYAH" },
+        { nopol: "L 9761 UJ", tera: "124.0 cm", qty: 8000, sopir: "ADI SUCIPTO" }
+    ];
+
+    function autoFillArmada(nopol) {
+        const unit = dataArmada.find(a => a.nopol === nopol);
+        if (unit) {
+            document.getElementById('in_tinggi').value = unit.tera;
+            document.getElementById('in_qty').value = unit.qty;
+            document.getElementById('in_driver').value = unit.sopir;
+            syncData();
+        }
+    }
 
     async function fetchLastNumber() {
         try {
