@@ -19,8 +19,6 @@
             --ind-gold: #fbbf24; 
             --ind-navy: #1e293b; 
             --glass-border: rgba(212, 175, 55, 0.2);
-            --text-number: #000000;
-            --text-qty: #000000;
         }
 
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-dark); color: #f1f5f9; overflow-x: hidden; }
@@ -82,60 +80,22 @@
 
         /* Table Styling */
         .card-table { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 15px; }
-        .table-responsive { border-radius: 12px; }
-        
-        .table { 
-            font-size: 0.75rem; 
-            text-transform: uppercase; 
-            border-collapse: separate; 
-            border-spacing: 0 4px;
-            width: 100%;
-        }
-
-        .table thead th { 
-            background: #1e293b !important; 
-            color: var(--ind-gold) !important;
-            font-size: 0.7rem; font-weight: 700; border-bottom: 2px solid var(--ind-gold) !important;
-            white-space: nowrap; padding: 15px 10px !important;
-            letter-spacing: 1px;
-        }
-
+        .table { font-size: 0.75rem; text-transform: uppercase; width: 100%; }
+        .table thead th { background: #1e293b !important; color: var(--ind-gold) !important; border-bottom: 2px solid var(--ind-gold) !important; padding: 15px 10px !important; }
         .table tbody tr { background: rgba(255, 255, 255, 0.9) !important; transition: all 0.2s; }
-        .table tbody tr:hover { background: rgba(255, 255, 255, 1) !important; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-
-        .table td { 
-            padding: 12px 10px !important; 
-            border-top: 1px solid rgba(0,0,0,0.05);
-            vertical-align: middle;
-            color: #000000 !important;
-            white-space: nowrap; /* Memastikan satu baris tidak turun */
-        }
-
-        .table td span, .table td .fw-bold, .table td .text-number, .table td .text-qty { color: #000000 !important; }
-        .text-number { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
-        .text-qty { font-weight: 800; font-size: 0.85rem; }
+        .table td { padding: 12px 10px !important; color: #000000 !important; vertical-align: middle; white-space: nowrap; }
         
-        .badge-tag {
-            padding: 4px 8px; border-radius: 4px; font-size: 0.6rem;
-            background: var(--ind-emerald); color: white !important; font-weight: bold;
-        }
+        .text-number { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #000 !important; }
+        .text-qty { font-weight: 800; font-size: 0.85rem; color: #000 !important; }
+        .badge-tag { padding: 4px 8px; border-radius: 4px; font-size: 0.6rem; background: var(--ind-emerald); color: white !important; font-weight: bold; }
         
-        .btn-view {
-            padding: 4px 12px; font-size: 0.65rem; border-radius: 6px;
-            transition: all 0.2s; border: 1px solid #000000;
-            color: #000000; background: transparent; font-weight: 600;
-        }
-        .btn-view:hover { background: #000000; color: #ffffff !important; }
-        
-        .btn-tracking { border: 1px solid var(--ind-emerald); color: var(--ind-emerald); }
-        .btn-tracking:hover { background: var(--ind-emerald); color: white; }
-
-        input.form-control { border: 1px solid rgba(251, 191, 36, 0.3); }
-        input.form-control:focus { border-color: var(--ind-gold); box-shadow: 0 0 0 0.25rem rgba(251, 191, 36, 0.25); }
+        .btn-view { padding: 4px 12px; font-size: 0.65rem; border-radius: 6px; border: 1px solid #000; color: #000; font-weight: 600; }
+        .btn-view:hover { background: #000; color: #fff !important; }
     </style>
 </head>
 <body>
 
+<!-- Login Section -->
 <div id="login-page">
     <div class="card login-card text-center">
         <div class="mb-4">
@@ -149,6 +109,7 @@
     </div>
 </div>
 
+<!-- Dashboard Section -->
 <div id="dashboard-page" style="display:none;">
     <aside class="sidebar d-flex flex-column">
         <div class="mb-4 px-3 d-flex align-items-center">
@@ -157,27 +118,29 @@
         </div>
         
         <nav class="flex-grow-1">
-            <a href="javascript:void(0)" class="nav-link active mb-3" onclick="fetchLogistikData()"><i class="bi bi-speedometer2 me-2"></i> DASHBOARD UTAMA </a>
+            <a href="javascript:void(0)" class="nav-link active mb-3" onclick="fetchLogistikData()">
+                <i class="bi bi-speedometer2 me-2"></i> DASHBOARD UTAMA 
+            </a>
 
             <small class="pt-label">PT. KHATULISTIWA SINAR ENERGI</small>
             <a class="nav-link" data-bs-toggle="collapse" href="#mKse"><i class="bi bi-lightning-fill me-2 text-warning"></i> KSE <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu show" id="mKse">
-                <a href="sj_kse.html" class="nav-link" onclick="filterByTag('SURAT JALAN')">Surat Jalan</a>
-                <a href="memo_kse.html" class="nav-link" onclick="filterByTag('MEMO')">Memo</a>
-                <a href="baom_kse.html" class="nav-link" onclick="filterByTag('BA OPER')">BA Oper Muatan</a>
-                <a href="javascript:void(0)" class="nav-link" onclick="filterByTag('BA TERIMA')">BA Penerimaan</a>
+                <a href="sj_kse.html" class="nav-link">Surat Jalan</a>
+                <a href="memo_kse.html" class="nav-link">Memo</a>
+                <a href="baom_kse.html" class="nav-link">BA Oper Muatan</a>
+                <a href="bastk_kse.html" class="nav-link">BA Penerimaan</a>
             </div>
 
             <small class="pt-label">PT. INDO DHARMA ENERGI</small>
             <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-droplet-fill me-2 text-info"></i> IDE <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu" id="mIde">
-                <a href="javascript:void(0)" class="nav-link" onclick="alert('Menu IDE: Surat Jalan')">Surat Jalan</a>
+                <a href="sj_ide.html" class="nav-link">Surat Jalan</a>
             </div>
 
             <small class="pt-label">PT. INVESTAMA KALIMANTAN ENERGI</small>
             <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2 text-danger"></i> IKAEN <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu" id="mIkaen">
-                <a href="javascript:void(0)" class="nav-link" onclick="alert('Menu IKAEN: Data Logistik')">Data Logistik</a>
+                <a href="logistik_ikaen.html" class="nav-link">Data Logistik</a>
             </div>
         </nav>
     </aside>
@@ -199,15 +162,10 @@
     <main class="main-content">
         <div class="card card-table border-0 p-4 shadow-lg">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-database-fill-check me-2 text-emerald"></i>HISTORY LOGISTIK KSE (REAL-TIME)</h6>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-tracking rounded-pill px-3 fw-bold" onclick="openMaps()">
-                        <i class="bi bi-geo-alt-fill me-1"></i> TRACKING
-                    </button>
-                    <button class="btn btn-sm btn-warning rounded-pill px-4 fw-bold" onclick="fetchLogistikData()">
-                        <i class="bi bi-arrow-clockwise me-1"></i> SYNC
-                    </button>
-                </div>
+                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-database-fill-check me-2 text-emerald"></i>HISTORY LOGISTIK (REAL-TIME)</h6>
+                <button class="btn btn-sm btn-warning rounded-pill px-4 fw-bold" onclick="fetchLogistikData()">
+                    <i class="bi bi-arrow-clockwise me-1"></i> SYNC DATA
+                </button>
             </div>
             
             <div class="table-responsive">
@@ -238,12 +196,12 @@
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYW10aWNrb3RleXZ5ZGF5eW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTU2MzksImV4cCI6MjA5MzQ3MTYzOX0.VAeN0JVnz4WNPzY5NTGmtGeHD-Da_qkCvy84ZDYZNHo";
     const _supabase = supabase.createClient(SB_URL, SB_KEY);
 
-    let cachedData = []; // Untuk menyimpan data agar bisa difilter submenu
-
     async function fetchLogistikData() {
         const tbody = document.getElementById('logistik-table-body');
         tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5" style="color:black;">MENYINKRONKAN DATA...</td></tr>';
+        
         try {
+            // Tarik data gabungan dari semua tabel KSE[cite: 1]
             const [sj, memo, baom, bastk] = await Promise.all([
                 _supabase.from('sj_kse').select('*'),
                 _supabase.from('memo_kse').select('*'),
@@ -251,7 +209,7 @@
                 _supabase.from('bastk_kse').select('*')
             ]);
 
-            cachedData = [
+            const allData = [
                 ...(sj.data || []).map(d => ({...d, tag: 'SURAT JALAN'})),
                 ...(memo.data || []).map(d => ({...d, tag: 'MEMO'})),
                 ...(baom.data || []).map(d => ({...d, tag: 'BA OPER'})),
@@ -259,38 +217,34 @@
             ];
 
             // Urutkan berdasarkan tanggal terbaru[cite: 1]
-            cachedData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-            renderTable(cachedData);
+            allData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            renderTable(allData);
 
         } catch (err) {
             console.error(err);
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-danger">GAGAL LOAD DATA.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-danger">GAGAL LOAD DATA DARI SUPABASE.</td></tr>`;
         }
     }
 
     function renderTable(data) {
-        const tbody = document.getElementById(sj_kse);
+        const tbody = document.getElementById('logistik-table-body'); // FIXED ID
         let html = '';
+
         if (data.length === 0) {
             html = '<tr><td colspan="8" class="text-center py-5" style="color:black;">DATA TIDAK DITEMUKAN</td></tr>';
         } else {
             data.forEach(row => {
-                const tgl_tampil = row.tanggal || "-";
-                const no_dok = row.nomor_dokumen || "-";
-                const tujuan = row.penerima || "-";
-                const sopir = row.driver || "-";
                 const qty = row.qty || row.liter || 0;
-
-                const dateObj = new Date(tgl_tampil);
-                const formattedDate = isNaN(dateObj) ? tgl_tampil : dateObj.toLocaleDateString('id-ID');
+                const dateObj = new Date(row.tanggal);
+                const formattedDate = isNaN(dateObj) ? (row.tanggal || "-") : dateObj.toLocaleDateString('id-ID');
 
                 html += `
                     <tr>
                         <td><span class="fw-bold">${formattedDate}</span></td>
-                        <td><span class="text-number">${no_dok}</span></td>
+                        <td><span class="text-number">${row.nomor_dokumen || "-"}</span></td>
                         <td><span class="badge-tag">${row.tag}</span></td>
-                        <td><span class="small">${tujuan}</span></td>
-                        <td class="fw-bold">${sopir}</td>
+                        <td><span class="small">${row.penerima || "-"}</span></td>
+                        <td class="fw-bold">${row.driver || "-"}</td>
                         <td class="font-monospace">${row.nopol || '-'}</td>
                         <td class="text-end"><span class="text-qty">${Number(qty).toLocaleString('id-ID')} L</span></td>
                         <td class="text-center">
@@ -302,12 +256,6 @@
             });
         }
         tbody.innerHTML = html;
-    }
-
-    // Fungsi Filter Submenu KSE
-    function filterByTag(tag) {
-        const filtered = cachedData.filter(d => d.tag === tag);
-        renderTable(filtered);
     }
 
     function handleLogin() {
@@ -328,7 +276,6 @@
     }
 
     function handleLogout() { localStorage.removeItem('kse_session'); location.reload(); }
-    function openMaps() { window.open("https://maps.google.com", "_blank"); }
     function viewPDF(id, type) { alert('Membuka Dokumen ' + type + ' ID: ' + id); }
 
     window.onload = () => { if (localStorage.getItem('kse_session') === 'active') showDashboard(); };
