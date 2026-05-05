@@ -26,30 +26,14 @@
             letter-spacing: -0.5px;
         }
         
-        /* HEADER BARU: Mengikuti gaya foto dengan 3 baris warna */
-        .header-section { 
-            position: relative;
-            margin-bottom: 25px; 
-            padding-bottom: 5px;
-        }
-        .header-main {
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
+        /* HEADER DENGAN TRIPLE COLOR BAR */
+        .header-section { position: relative; margin-bottom: 25px; padding-bottom: 5px; }
+        .header-main { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
         .logo-img { height: 55px; filter: none; }
-        
-        /* Garis Warna Horizontal (Triple Color Bar) */
-        .color-bar-container {
-            display: flex;
-            width: 100%;
-            height: 6px;
-            margin-top: 5px;
-        }
-        .bar-1 { background-color: #064e3b; flex: 6; } /* Hijau Tua */
-        .bar-2 { background-color: #008b8b; flex: 3; } /* Teal */
-        .bar-3 { background-color: #eab308; flex: 1.5; } /* Emas/Kuning */
+        .color-bar-container { display: flex; width: 100%; height: 6px; margin-top: 5px; }
+        .bar-1 { background-color: #064e3b; flex: 6; }
+        .bar-2 { background-color: #008b8b; flex: 3; }
+        .bar-3 { background-color: #eab308; flex: 1.5; }
 
         .ba-title-block { margin-bottom: 25px; line-height: 1.2; margin-top: 10px; }
         .title-row { display: flex; margin-bottom: 2px; }
@@ -69,7 +53,15 @@
         .sig-box { height: 140px; display: flex; flex-direction: column; justify-content: space-between; }
         .sig-name { font-weight: bold; text-decoration: underline; text-transform: uppercase; }
         
-        .footer-kse { position: absolute; bottom: 10mm; width: calc(100% - 30mm); border-top: 1px dashed #000; padding-top: 10px; }
+        /* FOOTER UPDATE: Border atas dihapus, QR di kanan */
+        .footer-kse { 
+            position: absolute; 
+            bottom: 10mm; 
+            width: calc(100% - 30mm); 
+            padding-top: 10px;
+            border-top: none; /* Menghilangkan garis atas */
+        }
+        
         .form-label-custom { font-size: 10px; font-weight: 800; color: #475569; margin-top: 12px; display: block; text-transform: uppercase; font-family: 'Arial'; }
         
         @media print { 
@@ -81,9 +73,8 @@
                 padding: 10mm !important;
                 font-size: 12px;
             } 
-            /* Memastikan warna bar muncul saat print */
             .bar-1, .bar-2, .bar-3 { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            #qrcode { transform: scale(0.8); transform-origin: left bottom; }
+            #qrcode { transform: scale(0.8); transform-origin: right bottom; }
         }
     </style>
 </head>
@@ -92,7 +83,7 @@
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
         <img src="header1.png" style="height: 30px;" onerror="this.src='https://via.placeholder.com/100x30?text=KSE+LOGISTICS'">
-        <h6 class="mb-0 fw-bold">E-BAOM SYSTEM v2.7 (NEW HEADER)</h6>
+        <h6 class="mb-0 fw-bold">E-BAOM SYSTEM v2.8 (FOOTER UPDATE)</h6>
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-dark btn-sm fw-bold px-3" id="btnLogistik" onclick="saveToLogistik()">
@@ -107,6 +98,7 @@
 
 <div class="container-fluid">
     <div class="row">
+        <!-- Sidebar Input (Sama seperti sebelumnya) -->
         <div class="col-lg-3 input-sidebar shadow-sm">
             <div class="alert alert-success py-2 mb-3" id="statusMsg"><i class="bi bi-database-check me-2"></i><b>INPUT DATA BA-OM</b></div>
             <label class="form-label-custom">Nomor Dokumen</label>
@@ -174,7 +166,7 @@
 
         <div class="col-lg-9 p-0" id="pdf-area">
             <div class="document-canvas">
-                <!-- HEADER BARU DENGAN TRIPLE COLOR BAR -->
+                <!-- Header (Sama) -->
                 <div class="header-section">
                     <div class="header-main">
                         <img src="header1.png" class="logo-img" onerror="this.src='https://via.placeholder.com/200x60/064e3b/FFF?text=PT.+KSE'">
@@ -184,9 +176,7 @@
                         </div>
                     </div>
                     <div class="color-bar-container">
-                        <div class="bar-1"></div>
-                        <div class="bar-2"></div>
-                        <div class="bar-3"></div>
+                        <div class="bar-1"></div><div class="bar-2"></div><div class="bar-3"></div>
                     </div>
                 </div>
 
@@ -257,13 +247,15 @@
                     </div>
                 </div>
 
+                <!-- FOOTER BARU: QR DI KANAN, NO BORDER TOP -->
                 <div class="footer-kse">
                     <div class="d-flex justify-content-between align-items-end">
-                        <div id="qrcode"></div>
-                        <div class="text-end" style="line-height: 1.2;">
-                            <b style="font-size: 11px;">PT. KHATULISTIWA SINAR ENERGI</b><br>
-                            <span style="font-size: 9px;">BA-OM E-Document | KSE DIGITAL SYSTEM</span>
+                        <div class="text-start" style="line-height: 1.2; padding-bottom: 5px;">
+                            <b style="font-size: 11px; color: #064e3b;">PT. KHATULISTIWA SINAR ENERGI</b><br>
+                            <span style="font-size: 9px; color: #64748b;">BA-OM E-Document | KSE DIGITAL LOGISTICS</span>
                         </div>
+                        <!-- QR Code Pindah ke Kanan -->
+                        <div id="qrcode"></div>
                     </div>
                 </div>
             </div>
@@ -275,7 +267,7 @@
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    var qr = new QRCode(document.getElementById("qrcode"), { width: 50, height: 50 });
+    var qr = new QRCode(document.getElementById("qrcode"), { width: 55, height: 55 });
 
     async function generateAutoNumber() {
         try {
