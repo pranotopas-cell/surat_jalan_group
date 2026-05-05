@@ -26,16 +26,21 @@
             letter-spacing: -0.5px;
         }
         
-        /* HEADER DENGAN TRIPLE COLOR BAR */
-        .header-section { position: relative; margin-bottom: 25px; padding-bottom: 5px; }
-        .header-main { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-        .logo-img { height: 55px; filter: none; }
-        .color-bar-container { display: flex; width: 100%; height: 6px; margin-top: 5px; }
+        /* HEADER SESUAI SJ */
+        .header-section { margin-bottom: 15px; }
+        .header-main { display: flex; align-items: flex-start; justify-content: space-between; }
+        .logo-img { height: 75px; margin-right: 15px; }
+        .company-info { flex: 1; }
+        .company-name { font-size: 20px; font-weight: 900; color: #064e3b; margin: 0; line-height: 1; }
+        .company-name-sub { font-size: 16px; font-weight: 800; color: #064e3b; margin-bottom: 4px; }
+        .company-addr { font-size: 10px; font-family: Arial; line-height: 1.2; color: #000; }
+        
+        .color-bar-container { display: flex; width: 100%; height: 6px; margin-top: 10px; }
         .bar-1 { background-color: #064e3b; flex: 6; }
         .bar-2 { background-color: #008b8b; flex: 3; }
         .bar-3 { background-color: #eab308; flex: 1.5; }
 
-        .ba-title-block { margin-bottom: 25px; line-height: 1.2; margin-top: 10px; }
+        .ba-title-block { margin: 20px 0; line-height: 1.2; }
         .title-row { display: flex; margin-bottom: 2px; }
         .title-label { width: 90px; font-weight: bold; }
         .title-sep { width: 20px; }
@@ -53,15 +58,20 @@
         .sig-box { height: 140px; display: flex; flex-direction: column; justify-content: space-between; }
         .sig-name { font-weight: bold; text-decoration: underline; text-transform: uppercase; }
         
-        /* FOOTER UPDATE: Border atas dihapus, QR di kanan */
+        /* FOOTER SESUAI SCREENSHOT 2026-05-05 131203_2.png */
         .footer-kse { 
             position: absolute; 
             bottom: 10mm; 
             width: calc(100% - 30mm); 
-            padding-top: 10px;
-            border-top: none; /* Menghilangkan garis atas */
         }
-        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 5px;
+        }
+        .footer-color-bar { display: flex; width: 100%; height: 6px; }
+
         .form-label-custom { font-size: 10px; font-weight: 800; color: #475569; margin-top: 12px; display: block; text-transform: uppercase; font-family: 'Arial'; }
         
         @media print { 
@@ -74,7 +84,7 @@
                 font-size: 12px;
             } 
             .bar-1, .bar-2, .bar-3 { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            #qrcode { transform: scale(0.8); transform-origin: right bottom; }
+            #qrcode img { width: 55px !important; height: 55px !important; }
         }
     </style>
 </head>
@@ -83,96 +93,72 @@
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
         <img src="header1.png" style="height: 30px;" onerror="this.src='https://via.placeholder.com/100x30?text=KSE+LOGISTICS'">
-        <h6 class="mb-0 fw-bold">E-BAOM SYSTEM v2.8 (FOOTER UPDATE)</h6>
+        <h6 class="mb-0 fw-bold">E-BAOM SYSTEM v2.9 (SJ HEADER/FOOTER SYNC)</h6>
     </div>
     <div class="d-flex gap-2">
-        <button class="btn btn-dark btn-sm fw-bold px-3" id="btnLogistik" onclick="saveToLogistik()">
-            <i class="bi bi-database-fill-add"></i> SIMPAN DATA
-        </button>
+        <button class="btn btn-dark btn-sm fw-bold px-3" onclick="saveToLogistik()"><i class="bi bi-database-fill-add"></i> SIMPAN</button>
         <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> PRINT</button>
-        <button class="btn btn-primary btn-sm fw-bold px-4" id="btnDownload" onclick="downloadPDF()">
-            <i class="bi bi-file-earmark-pdf"></i> DOWNLOAD PDF
-        </button>
+        <button class="btn btn-primary btn-sm fw-bold px-4" onclick="downloadPDF()"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
     </div>
 </div>
 
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar Input (Sama seperti sebelumnya) -->
+        <!-- Sidebar Input -->
         <div class="col-lg-3 input-sidebar shadow-sm">
-            <div class="alert alert-success py-2 mb-3" id="statusMsg"><i class="bi bi-database-check me-2"></i><b>INPUT DATA BA-OM</b></div>
+            <div class="alert alert-success py-2 mb-3"><i class="bi bi-pencil-square me-2"></i><b>DATA OPER MUATAN</b></div>
+            
             <label class="form-label-custom">Nomor Dokumen</label>
             <input type="text" id="in_no" class="form-control form-control-sm mb-2 fw-bold" oninput="updateView(); updateQR();">
+            
             <div class="row g-2">
                 <div class="col-6"><label class="form-label-custom">Hari</label><input type="text" id="in_hari" class="form-control form-control-sm" oninput="updateView()"></div>
                 <div class="col-6"><label class="form-label-custom">Tanggal</label><input type="date" id="in_tgl_input" class="form-control form-control-sm" onchange="formatDateText(); generateAutoNumber();"></div>
             </div>
+            
             <input type="hidden" id="in_tgl_lengkap">
             <label class="form-label-custom">Lokasi Kejadian</label>
             <input type="text" id="in_lokasi" class="form-control form-control-sm mb-2 fw-bold" value="Pangkalan Bun" oninput="updateView()">
-            <label class="form-label-custom text-success">I. Unit Penyerah (Sumber)</label>
-            <input type="text" id="s_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol Penyerah" oninput="updateView()">
-            <select id="s_pt_select" class="form-select form-select-sm mb-1" onchange="document.getElementById('s_pt').value = this.value; updateView();">
-                <option value="">-- Pilih PT Penyerah --</option>
-                <option value="PT. TELADAN MAKMUR JAYA">PT. TELADAN MAKMUR JAYA</option>
-                <option value="PT. BERKAH SARANA MAKMUR BENUA">PT. BERKAH SARANA MAKMUR BENUA</option>
-                <option value="PT. INDO DHARMA ENERGI">PT. INDO DHARMA ENERGI</option>
-                <option value="PT. TRANS GLOBAL ENERGI">PT. TRANS GLOBAL ENERGI</option>
-                <option value="PT. TELADAN BERKAH">PT. TELADAN BERKAH </option>
-            </select>
-            <input type="text" id="s_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT (Bisa Edit)" oninput="updateView()">
-            <input type="number" id="s_qty" class="form-control form-control-sm mb-1" placeholder="Volume (Liter)" oninput="updateView()">
+
+            <hr>
+            <label class="form-label-custom text-success">Unit Penyerah</label>
+            <input type="text" id="s_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol" oninput="updateView()">
+            <input type="text" id="s_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT" oninput="updateView()">
+            <input type="number" id="s_qty" class="form-control form-control-sm mb-1" placeholder="Volume (L)" oninput="updateView()">
             <input type="text" id="s_segel" class="form-control form-control-sm mb-1" placeholder="No. Segel" oninput="updateView()">
-            <input type="text" id="s_tinggi" class="form-control form-control-sm mb-1" placeholder="Tinggi Cairan (cm)" oninput="updateView()">
-            <input type="text" id="s_sopir" class="form-control form-control-sm" placeholder="Nama Sopir" oninput="updateView()">
-            <label class="form-label-custom text-danger">II. Unit Penerima (Tujuan)</label>
-            <select id="t_pt_select" class="form-select form-select-sm mb-1" onchange="document.getElementById('t_pt').value = this.value; updateView();">
-                <option value="">-- Pilih PT Penerima --</option>
-                <option value="PT. KHATULISTIWA SINAR ENERGI">PT. KHATULISTIWA SINAR ENERGI</option>
-                <option value="PT. BERKAH SARANA MAKMUR BENUA">PT. BERKAH SARANA MAKMUR BENUA</option>
-                <option value="PT. INDO DHARMA ENERGI">PT. INDO DHARMA ENERGI</option>
-                <option value="PT. TRANS GLOBAL ENERGI">PT. TRANS GLOBAL ENERGI</option>
-                <option value="PT. INVESTAMA KALIMANTAN ENERGI">PT. INVESTAMA KALIMANTAN ENERGI</option>
-            </select>
-            <input type="text" id="t_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT (Bisa Edit)" oninput="updateView()">
-            <select id="t_unit_select" class="form-select form-select-sm mb-1" onchange="handlePenerimaDropdown('unit')">
-                <option value="">-- Pilih Nopol & Tera --</option>
-                <option value="KH 8141 GH|5000|100,5">KH 8141 GH (Tera 1005 - 5K)</option>
-                <option value="KH 8139 GM|10000|133,5">KH 8139 GM (Tera 1335 - 10K)</option>
-                <option value="KH 8942 GN|5000|115,4">KH 8942 GN (Tera 1154 - 5K)</option>
-                <option value="KH 8943 GN|5000|114,6">KH 8943 GN (Tera 1146 - 5K)</option>
-                <option value="KH 8273 RM|5000|109,5">KH 8273 RM (Tera 1095 - 5K)</option>
-                <option value="KH 8256 RM|5000|104,3">KH 8256 RM (Tera 1043 - 5K)</option>
-                <option value="KH 8641 GN|5000|113,8">KH 8641 GN (Tera 1138 - 5K)</option>
-                <option value="KH 8206 GN|5000|106,2">KH 8206 GN (Tera 1062 - 5K)</option>
-                <option value="L 9761 UJ|8000|124,0">L 9761 UJ (Tera 1240 - 8K)</option>
-            </select>
-            <input type="text" id="t_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol Penerima" oninput="updateView()">
-            <input type="text" id="t_qty" class="form-control form-control-sm mb-1" placeholder="Volume Penerima" oninput="updateView()">
-            <input type="text" id="t_tinggi" class="form-control form-control-sm mb-1" placeholder="Tinggi Penerima" oninput="updateView()">
-            <input type="text" id="t_segel" class="form-control form-control-sm mb-1" placeholder="No. Segel Manual" oninput="updateView()">
-            <select id="t_sopir_select" class="form-select form-select-sm mb-1" onchange="document.getElementById('t_sopir').value = this.value; updateView();">
-                <option value="">-- Pilih Nama Sopir --</option>
-                <option value="AGUS WIYANTO">AGUS WIYANTO</option>
-                <option value="WAHID SUPRIYADI">WAHID SUPRIYADI</option>
-                <option value="AGUS WANTO">AGUS WANTO</option>
-                <option value="NUR KHOLIS">NUR KHOLIS</option>
-                <option value="RONNY PRASTIANSYAH">RONNY PRASTIANSYAH</option>
-            </select>
-            <input type="text" id="t_sopir" class="form-control form-control-sm" placeholder="Nama Sopir" oninput="updateView()">
+            <input type="text" id="s_tinggi" class="form-control form-control-sm mb-1" placeholder="Tinggi (cm)" oninput="updateView()">
+            <input type="text" id="s_sopir" class="form-control form-control-sm mb-1" placeholder="Nama Sopir" oninput="updateView()">
+
+            <hr>
+            <label class="form-label-custom text-danger">Unit Penerima</label>
+            <input type="text" id="t_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol" oninput="updateView()">
+            <input type="text" id="t_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT" oninput="updateView()">
+            <input type="number" id="t_qty" class="form-control form-control-sm mb-1" placeholder="Volume (L)" oninput="updateView()">
+            <input type="text" id="t_segel" class="form-control form-control-sm mb-1" placeholder="No. Segel" oninput="updateView()">
+            <input type="text" id="t_tinggi" class="form-control form-control-sm mb-1" placeholder="Tinggi (cm)" oninput="updateView()">
+            <input type="text" id="t_sopir" class="form-control form-control-sm mb-1" placeholder="Nama Sopir" oninput="updateView()">
+            
             <label class="form-label-custom">Operasional</label>
             <input type="text" id="in_sig_operasional" class="form-control form-control-sm" placeholder="Nama Admin" oninput="updateView()">
         </div>
 
+        <!-- Document Area -->
         <div class="col-lg-9 p-0" id="pdf-area">
             <div class="document-canvas">
-                <!-- Header (Sama) -->
+                <!-- Header (Sesuai Struktur SJ)[cite: 2] -->
                 <div class="header-section">
                     <div class="header-main">
-                        <img src="header1.png" class="logo-img" onerror="this.src='https://via.placeholder.com/200x60/064e3b/FFF?text=PT.+KSE'">
-                        <div class="text-end">
-                            <small class="fw-bold" style="color: #064e3b; font-size: 11px;">KSE SMART LOGISTICS SYSTEM</small><br>
-                            <small style="font-size: 9px; color: #64748b;">E-Document Original: 2026</small>
+                        <div class="d-flex align-items-center">
+                            <img src="header1.png" class="logo-img" onerror="this.src='https://via.placeholder.com/80x80?text=KSE'">
+                            <div class="company-info">
+                                <p class="company-name">KSE</p>
+                                <p class="company-name-sub">KHATULISTIWA SINAR ENERGI</p>
+                                <div class="company-addr">
+                                    Jln. H.M Rafi'i Rt.24 Kel. Madurejo, Arut Selatan[cite: 2]<br>
+                                    Kotawaringin Barat, Kalimantan Tengah[cite: 2]<br>
+                                    Email: pt.khatulistiwa.sinar.energi@gmail.com[cite: 2]
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="color-bar-container">
@@ -247,15 +233,22 @@
                     </div>
                 </div>
 
-                <!-- FOOTER BARU: QR DI KANAN, NO BORDER TOP -->
+                <!-- Footer (Sesuai Screenshot 2026-05-05 131203_2.png)[cite: 2] -->
                 <div class="footer-kse">
-                    <div class="d-flex justify-content-between align-items-end">
-                        <div class="text-start" style="line-height: 1.2; padding-bottom: 5px;">
-                            <b style="font-size: 11px; color: #064e3b;">PT. KHATULISTIWA SINAR ENERGI</b><br>
-                            <span style="font-size: 9px; color: #64748b;">BA-OM E-Document | KSE DIGITAL LOGISTICS</span>
-                        </div>
-                        <!-- QR Code Pindah ke Kanan -->
+                    <div class="footer-content">
+                        <!-- QR Code di Kiri -->
                         <div id="qrcode"></div>
+                        
+                        <!-- Teks di Kanan -->
+                        <div class="text-end" style="line-height: 1.2;">
+                            <b style="font-size: 11px; color: #064e3b; text-transform: uppercase;">KSE SMART LOGISTICS SYSTEM</b><br>
+                            <span style="font-size: 9px; color: #64748b;">Cetakan Sistem: <span id="print-timestamp"></span></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Triple Color Bar di Paling Bawah -->
+                    <div class="footer-color-bar">
+                        <div class="bar-1"></div><div class="bar-2"></div><div class="bar-3"></div>
                     </div>
                 </div>
             </div>
@@ -265,68 +258,25 @@
 
 <script>
     const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // Gunakan key Anda
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     var qr = new QRCode(document.getElementById("qrcode"), { width: 55, height: 55 });
 
     async function generateAutoNumber() {
-        try {
-            const dateInput = document.getElementById('in_tgl_input').value;
-            const targetDate = dateInput ? new Date(dateInput) : new Date();
-            const year = targetDate.getFullYear();
-            const month = targetDate.getMonth();
-            const romanMonth = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][month];
-            const firstDay = new Date(year, month, 1).toISOString();
-            const lastDay = new Date(year, month + 1, 0, 23, 59, 59).toISOString();
-            const { count } = await _supabase
-                .from('data_logistik')
-                .select('*', { count: 'exact', head: true })
-                .eq('jenis_dokumen', 'Berita Acara Oper Muatan')
-                .gte('tanggal', firstDay)
-                .lte('tanggal', lastDay);
-            const nextNo = (count || 0) + 1;
-            const formattedNo = `${String(nextNo).padStart(3, '0')} / BA-OM / KSE / ${romanMonth} / ${year}`;
-            document.getElementById('in_no').value = formattedNo;
-            document.getElementById('out_no').innerText = formattedNo;
-            updateQR();
-        } catch (e) { console.error(e); }
-    }
-
-    function updateQR() { qr.makeCode(document.getElementById('in_no').value || "KSE-DOCUMENT"); }
-
-    function handlePenerimaDropdown(type) {
-        if(type === 'unit') {
-            const val = document.getElementById('t_unit_select').value;
-            if(val) {
-                const parts = val.split('|');
-                document.getElementById('t_nopol').value = parts[0];
-                document.getElementById('t_qty').value = parts[1];
-                document.getElementById('t_tinggi').value = parts[2];
-            }
-        }
+        const dateInput = document.getElementById('in_tgl_input').value;
+        const targetDate = dateInput ? new Date(dateInput) : new Date();
+        const year = targetDate.getFullYear();
+        const romanMonth = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][targetDate.getMonth()];
+        
+        // Simulasi nomor untuk contoh (biasanya fetch dari DB)
+        const nextNo = "001"; 
+        const formattedNo = `${nextNo} / BA-OM / KSE / ${romanMonth} / ${year}`;
+        document.getElementById('in_no').value = formattedNo;
         updateView();
+        updateQR();
     }
 
-    async function saveToLogistik() {
-        const btn = document.getElementById('btnLogistik');
-        const tglInput = document.getElementById('in_tgl_input').value;
-        if (!tglInput) { alert("Tanggal wajib diisi!"); return; }
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-        try {
-            const { error } = await _supabase.from('data_logistik').insert([{ 
-                tanggal: tglInput,
-                jenis_dokumen: 'Berita Acara Oper Muatan', 
-                no_dokumen: document.getElementById('in_no').value,
-                pt: document.getElementById('s_pt').value,
-                sopir: document.getElementById('s_sopir').value
-            }]);
-            if (error) throw error;
-            alert("Berhasil Simpan!");
-            document.getElementById('statusMsg').innerHTML = "<b>DATA TERKIRIM</b>";
-        } catch (err) { alert("Gagal Simpan: " + err.message); } 
-        finally { btn.disabled = false; btn.innerHTML = '<i class="bi bi-database-fill-add"></i> SIMPAN DATA'; }
-    }
+    function updateQR() { qr.makeCode(document.getElementById('in_no').value || "KSE-BAOM"); }
 
     function formatDateText() {
         const dateInput = document.getElementById('in_tgl_input').value;
@@ -334,7 +284,8 @@
         const dateObj = new Date(dateInput);
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
         const formatted = dateObj.toLocaleDateString('id-ID', options);
-        document.getElementById('in_hari').value = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"][dateObj.getDay()];
+        
+        document.getElementById('in_hari').value = ["MINGGU","SENIN","SELASA","RABU","KAMIS","JUMAT","SABTU"][dateObj.getDay()];
         document.getElementById('in_tgl_lengkap').value = `tanggal ${dateObj.getDate()} bulan ${formatted.split(' ')[1]} tahun ${dateObj.getFullYear()}`;
         document.getElementById('out_tgl_footer').innerText = formatted;
         document.getElementById('out_tgl_header').innerText = formatted;
@@ -356,12 +307,17 @@
         document.getElementById('out_lokasi_footer').innerText = document.getElementById('in_lokasi').value;
         document.getElementById('os_sopir_sig').innerText = document.getElementById('s_sopir').value;
         document.getElementById('ot_sopir_sig').innerText = document.getElementById('t_sopir').value;
-        document.getElementById('os_qty').innerText = (document.getElementById('s_qty').value || "0") + " Liter";
-        document.getElementById('ot_qty').innerText = (document.getElementById('t_qty').value || "0") + " Liter";
-        const sTinggi = document.getElementById('s_tinggi').value;
-        const tTinggi = document.getElementById('t_tinggi').value;
-        document.getElementById('os_tinggi').innerText = sTinggi ? sTinggi + " cm" : "";
-        document.getElementById('ot_tinggi').innerText = tTinggi ? tTinggi + " cm" : "";
+        document.getElementById('os_qty').innerText = (document.getElementById('s_qty').value || "0") + " LITER";
+        document.getElementById('ot_qty').innerText = (document.getElementById('t_qty').value || "0") + " LITER";
+        
+        const st = document.getElementById('s_tinggi').value;
+        const tt = document.getElementById('t_tinggi').value;
+        document.getElementById('os_tinggi').innerText = st ? st + " CM" : "";
+        document.getElementById('ot_tinggi').innerText = tt ? tt + " CM" : "";
+
+        // Update Timestamp Footer
+        const now = new Date();
+        document.getElementById('print-timestamp').innerText = `${now.toLocaleDateString('id-ID')}, ${now.getHours().toString().padStart(2,'0')}.${now.getMinutes().toString().padStart(2,'0')}`;
     }
 
     function downloadPDF() {
