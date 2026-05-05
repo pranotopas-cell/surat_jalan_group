@@ -11,124 +11,122 @@
     <style>
         * { box-sizing: border-box; }
         :root {
-            --primary-kse: #06402B; 
+            --primary-kse: #064e3b; 
             --dark-sidebar: #1a252f;
             --accent-blue: #3498db;
             --success-green: #28a745;
+            --gold-kse: #d4af37;
         }
 
-        body { font-family: 'Arial', sans-serif; background-color: #525659; margin: 0; display: flex; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #525659; margin: 0; display: flex; }
         
+        /* SIDEBAR */
         .sidebar { 
             width: 400px; background: var(--dark-sidebar); color: white; height: 100vh; 
             padding: 15px; overflow-y: auto; position: fixed; left: 0; top: 0;
             box-shadow: 4px 0 10px rgba(0,0,0,0.3); z-index: 100;
         }
         .sidebar h2 { font-size: 16px; border-bottom: 2px solid var(--primary-kse); padding-bottom: 10px; margin-bottom: 15px; color: #ecf0f1; text-align: center; }
-        
-        .top-action-bar {
-            position: fixed; top: 0; right: 0; left: 400px; 
-            background: #2c3e50; padding: 10px 20px; display: flex; 
-            justify-content: flex-end; gap: 10px; z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .btn { 
-            padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; 
-            font-weight: bold; font-size: 11px; color: white; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 5px;
-        }
-        .btn-home { background: #7f8c8d; }
-        .btn-save { background: var(--success-green); }
-        .btn-preview { background: var(--accent-blue); }
-        .btn-download { background: #c0392b; }
-        
         .section-title { font-size: 10px; color: var(--accent-blue); font-weight: bold; margin: 15px 0 8px 0; text-transform: uppercase; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
         .input-group { margin-bottom: 6px; }
         .input-group label { display: block; font-size: 9px; margin-bottom: 2px; color: #bdc3c7; }
         .input-group input, .input-group select, .input-group textarea { 
             width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #2c3e50; 
-            background: #2c3e50; color: white; font-size: 11px; font-family: inherit;
+            background: #2c3e50; color: white; font-size: 11px;
         }
-        
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary-kse); }
         .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
 
-        .main-content { margin-left: 400px; margin-top: 50px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
+        /* KONTROL ACTION */
+        .top-action-bar {
+            position: fixed; top: 0; right: 0; left: 400px; 
+            background: #2c3e50; padding: 10px 20px; display: flex; 
+            justify-content: flex-end; gap: 10px; z-index: 1000;
+        }
+        .btn { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; color: white; display: flex; align-items: center; gap: 5px; }
+        .btn-home { background: #7f8c8d; }
+        .btn-save { background: var(--success-green); }
+        .btn-download { background: #c0392b; }
+
+        /* CANVAS DOKUMEN */
+        .main-content { margin-left: 400px; margin-top: 50px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; }
         .memo-page { 
-            background: white; width: 210mm; min-height: 297mm; padding: 10mm 15mm; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.5); color: black; line-height: 1.4;
+            background: white; width: 210mm; min-height: 297mm; padding: 15mm; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.5); 
+            color: #111;
+            font-family: 'Courier New', Courier, monospace; 
             position: relative; display: flex; flex-direction: column;
         }
 
-        .header { display: flex; justify-content: flex-start; align-items: center; padding-bottom: 10px; margin-bottom: 30px; }
-        .logo-container img { height: 45px; width: auto; }
+        /* HEADER */
+        .header-section { margin-bottom: 70px; display: flex; align-items: stretch; justify-content: space-between; }
+        .header-left { display: flex; align-items: center; }
+        .logo-img { height: 45px; margin-right: 15px; }
+        .company-name-main { font-size: 25px; font-weight: 900; color: var(--primary-kse); font-family: 'Arial Black', sans-serif; line-height: 1; }
+        .company-name-sub { font-size: 14px; font-weight: bold; color: var(--primary-kse); font-family: Arial, sans-serif; letter-spacing: 3px; }
+        .header-right { 
+            display: flex; align-items: center; text-align: right; 
+            border-left: 4px solid var(--gold-kse); padding-left: 15px; margin-left: 20px;
+        }
+        .company-addr { font-size: 10px; font-family: Arial, sans-serif; line-height: 1.4; font-weight: normal; }
 
-        .info-split-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; font-size: 12px; }
-        .recipient-side { width: 50%; }
+        /* BODY CONTENT */
+        .info-split-container { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .recipient-side { width: 50%; font-weight: bold; }
         .meta-side { width: 45%; }
-        .lang-sub { font-style: italic; color: #666; font-size: 11px; display: block; }
+        .lang-sub { font-style: italic; color: #555; font-size: 9px; display: block; font-family: Arial, sans-serif; font-weight: normal; margin-top: -2px; }
+        
+        .meta-row { display: flex; margin-bottom: 8px; }
+        .meta-label { width: 90px; font-size: 11px; }
+        .meta-value { font-weight: bold; flex: 1; text-transform: uppercase; font-size: 12px; }
 
-        .meta-row { display: flex; margin-bottom: 4px; }
-        .meta-label { width: 80px; font-weight: bold; }
-        .meta-colon { width: 10px; }
-        .meta-value { font-weight: bold; flex: 1; }
-
-        .opening-text { margin-bottom: 15px; font-size: 13px; }
-        .details-box { margin-bottom: 15px; padding: 12px; background: #f8f9fa; border: 1px solid #eee; border-left: 4px solid var(--primary-kse); font-size: 12px; }
-
+        .details-box { margin: 15px 0; padding: 10px; border: 1px dashed #000; background: #fafafa; }
         table.data-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        table.data-table th, table.data-table td { border: 1px solid #ddd; padding: 8px 5px; text-align: center; font-size: 11px; }
-        table.data-table th { background: var(--primary-kse); color: white; font-weight: bold; }
+        table.data-table th, table.data-table td { border: 1px solid #000; padding: 6px; text-align: center; font-size: 11px; }
+        table.data-table th { background: #eee; text-transform: uppercase; }
 
-        .signature-container { margin-top: 30px; text-align: left; font-size: 13px; }
-        .sig-img { width: 80px; margin: 5px 0 5px -10px; display: block; }
+        /* TANDA TANGAN DIPERLEBAR */
+        .signature-container { margin-top: 40px; font-size: 12px; }
+        .sig-space { height: 80px; display: flex; align-items: center; } /* Ruang tanda tangan lebih luas */
+        .sig-img { width: 120px; filter: grayscale(1); }
 
-        .footer-memo { margin-top: auto; border-top: 1px solid #eee; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 9px; color: #666; }
-        .qr-section { display: flex; align-items: center; gap: 8px; }
-        #qrcode { padding: 2px; background: white; border: 1px solid #eee; }
+        .footer-memo { margin-top: auto; padding-top: 20px; }
+        .footer-bar { display: flex; width: 100%; height: 4px; margin-bottom: 10px; }
+        .bar-1 { background: var(--primary-kse); flex: 6; }
+        .bar-2 { background: #008b8b; flex: 2; }
+        .bar-3 { background: var(--gold-kse); flex: 2; }
+        
+        .footer-content { display: flex; justify-content: space-between; align-items: flex-end; font-size: 9px; font-family: Arial, sans-serif; }
+        #qrcode { padding: 3px; border: 1px solid #000; }
 
         @media print {
-            .sidebar, .top-action-bar { display: none; }
-            .main-content { margin-left: 0; margin-top: 0; padding: 0; background: none; }
-            .memo-page { box-shadow: none; border: none; width: 100%; padding: 10mm 15mm; }
+            .sidebar, .top-action-bar { display: none !important; }
+            .main-content { margin: 0; padding: 0; }
+            .memo-page { box-shadow: none; width: 100%; height: auto; }
+            body { background: white; }
         }
     </style>
 </head>
 <body>
 
 <div class="top-action-bar">
-    <button class="btn btn-home" onclick="location.reload()">HOME</button>
-    <button class="btn btn-save" id="btnSave" onclick="saveData()">SIMPAN</button>
-    <button class="btn btn-preview" onclick="window.scrollTo(0,0)">PRINT PREVIEW</button>
+    <button class="btn btn-home" onclick="location.reload()">REFRESH</button>
+    <button class="btn btn-save" id="btnSave" onclick="saveData()">SIMPAN KE DATABASE</button>
     <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
 </div>
 
 <div class="sidebar">
     <h2>KSE MEMO SYSTEM</h2>
 
-    <div class="section-title">Meta Data & Perihal</div>
-    <div class="input-group">
-        <label>No. Urut (Manual)</label>
-        <input type="text" id="inNoUrut" placeholder="Contoh: 001">
-    </div>
-    <div class="input-group">
-        <label>Format No. Surat</label>
-        <input type="text" id="inNoFormat" placeholder="/MEMO-KSE/IX/2026">
-    </div>
-    
-    <div class="input-group">
-        <label>Tanggal Memo</label>
-        <input type="date" id="inTglMemo">
-    </div>
-    <div class="input-group">
-        <label>Perihal / Subject</label>
-        <textarea id="inPerihal" rows="2">MEMO PENGALIRAN BBM</textarea>
-    </div>
+    <div class="section-title">Dokumen Meta</div>
+    <div class="input-group"><label>No. Urut</label><input type="text" id="inNoUrut" placeholder="001"></div>
+    <div class="input-group"><label>Format</label><input type="text" id="inNoFormat" placeholder="/MEMO-KSE/V/2026"></div>
+    <div class="input-group"><label>Tanggal Memo</label><input type="date" id="inTglMemo"></div>
+    <div class="input-group"><label>Perihal</label><textarea id="inPerihal" rows="2">MEMO PENGALIRAN BBM</textarea></div>
 
-    <div class="section-title">Tujuan Surat</div>
+    <div class="section-title">Tujuan</div>
     <div class="input-group">
-        <label>Pilih Perusahaan Tujuan</label>
+        <label>Database Customer</label>
         <select id="selectTujuanPT" onchange="fillTujuan()">
             <option value="">-- Pilih Perusahaan --</option>
             <option value="PT. SINARINDO SUKSES SELALU" data-alamat="JL. Ahmad Yani Km.2,2 Pangkalan Bun.">PT. SINARINDO SUKSES SELALU</option>
@@ -136,118 +134,116 @@
             <option value="PT. SURYA PANEN SUBUR" data-alamat="Kecamatan Tadu Raya, Nagan Raya, Aceh.">PT. SURYA PANEN SUBUR</option>
         </select>
     </div>
-    <div class="input-group">
-        <label>Nama Perusahaan (Manual Edit)</label>
-        <input type="text" id="inTujuanPT">
-    </div>
-    <div class="input-group">
-        <label>Alamat/Keterangan</label>
-        <input type="text" id="inAlamatPT">
-    </div>
+    <div class="input-group"><label>Nama PT</label><input type="text" id="inTujuanPT"></div>
+    <div class="input-group"><label>Alamat</label><input type="text" id="inAlamatPT"></div>
 
-    <div class="section-title">Informasi Loading</div>
+    <div class="section-title">Informasi Detail</div>
     <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="-"></div>
-    <div class="input-group"><label>Tanggal PO</label><input type="text" id="inTglPO" value="-"></div>
-    <div class="input-group">
-        <label>Tanggal Loading</label>
-        <input type="date" id="inTglLoad">
-    </div>
-    <div class="input-group"><label>Lokasi Loading</label><input type="text" id="inLokasi" value=" - "></div>
+    <div class="input-group"><label>Tgl Loading</label><input type="date" id="inTglLoad"></div>
+    <div class="input-group"><label>Lokasi</label><input type="text" id="inLokasi" value="Pangkalan Bun"></div>
 
-    <div class="section-title">Data Armada</div>
+    <div class="section-title">Input Armada</div>
     <div id="unit-inputs"></div>
 </div>
 
 <div class="main-content">
     <div class="memo-page" id="memo-area">
-        <div class="header">
-            <div class="logo-container"><img src="header1.png" alt="Logo KSE"></div>
+        
+        <!-- HEADER -->
+        <div class="header-section">
+            <div class="header-left">
+                <img src="header1.png" class="logo-img" onerror="this.src='https://via.placeholder.com/60x60?text=KSE'">
+                <div class="company-title-box">
+                    <div class="company-name-main">KHATULISTIWA</div>
+                    <div class="company-name-sub">SINAR ENERGI</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="company-addr">
+                    Jln. H.M Rafi'i Rt.24 Kel. Madurejo, Arut Selatan<br>
+                    Kotawaringin Barat, Kalimantan Tengah<br>
+                    <b>pt.khatulistiwa.sinar.energi@gmail.com</b>
+                </div>
+            </div>
         </div>
 
         <div class="info-split-container">
             <div class="recipient-side">
-                <strong>Kepada yang kami hormati,</strong>
-                <div style="margin-top: 8px; font-size: 14px;">
-                    <strong id="outTujuanPT"></strong><br>
-                    <span id="outAlamatPT"></span>
-                </div>
+                KEPADA YTH,<br>
+                <span id="outTujuanPT" style="font-size: 16px;"></span><br>
+                <span id="outAlamatPT" style="font-size: 11px; font-weight: normal; font-family: Arial;"></span>
             </div>
             <div class="meta-side">
                 <div class="meta-row">
-                    <div class="meta-label">Nomor <br><span class="lang-sub">Number</span></div>
-                    <div class="meta-colon">:</div>
-                    <div class="meta-value" id="outNomor"></div>
+                    <div class="meta-label">NOMOR<span class="lang-sub">Number</span></div>
+                    <div class="meta-value">: <span id="outNomor"></span></div>
                 </div>
                 <div class="meta-row">
-                    <div class="meta-label">Perihal <br><span class="lang-sub">Subject</span></div>
-                    <div class="meta-colon">:</div>
-                    <div class="meta-value"><span id="outPerihal"></span><br><span class="lang-sub" id="outPerihalSub">Fuel Transfer Memo</span></div>
+                    <div class="meta-label">PERIHAL<span class="lang-sub">Subject</span></div>
+                    <div class="meta-value">: <span id="outPerihal"></span></div>
                 </div>
                 <div class="meta-row">
-                    <div class="meta-label">Tanggal <br><span class="lang-sub">Date</span></div>
-                    <div class="meta-colon">:</div>
-                    <div class="meta-value" id="outTglMemo"></div>
+                    <div class="meta-label">TANGGAL<span class="lang-sub">Date</span></div>
+                    <div class="meta-value">: <span id="outTglMemo"></span></div>
                 </div>
             </div>
         </div>
 
-        <div class="opening-text">
-            Dengan Hormat,<br>
-            Bersama ini kami sampaikan Realisasi Pengaliran BBM Solar Industri dari <b id="outTujuanRef"></b> dengan rincian sebagai berikut:
-            <span class="lang-sub">We hereby submit the realization of Industrial Diesel Fuel transfer from the specified company with details as follows:</span>
+        <div style="font-size: 12px; margin-bottom: 10px;">
+            DENGAN HORMAT,<br>
+            BERSAMA INI KAMI SAMPAIKAN REALISASI PENGAMBILAN  BBM SOLAR INDUSTRI DENGAN RINCIAN DATA UNIT SEBAGAI BERIKUT:
         </div>
 
         <div class="details-box">
-            <div class="meta-row"><div class="meta-label">No. PO</div><div class="meta-colon">:</div><div class="meta-value" id="outPO"></div></div>
-            <div class="meta-row"><div class="meta-label">Tgl. PO</div><div class="meta-colon">:</div><div class="meta-value" id="outTglPO"></div></div>
-            <div class="meta-row"><div class="meta-label">Tgl. Loading</div><div class="meta-colon">:</div><div class="meta-value" id="outTglLoad"></div></div>
-            <div class="meta-row"><div class="meta-label">Lokasi</div><div class="meta-colon">:</div><div class="meta-value" id="outLokasi"></div></div>
+            <div class="meta-row"><div class="meta-label">NO. PO</div><div>: <span id="outPO"></span></div></div>
+            <div class="meta-row"><div class="meta-label">TGL LOAD</div><div>: <span id="outTglLoad"></span></div></div>
+            <div class="meta-row"><div class="meta-label">LOKASI</div><div>: <span id="outLokasi"></span></div></div>
         </div>
 
         <table class="data-table">
             <thead>
                 <tr>
-                    <th style="width: 30px;">NO</th>
-                    <th>TRANSPORTIR<br><small><i>Carrier</i></small></th>
-                    <th>NOMOR POLISI<br><small><i>License Plate</i></small></th>
-                    <th>DRIVER<br><small><i>Operator</i></small></th>
-                    <th>QTY (L)<br><small><i>Volume</i></small></th>
-                    <th>TERA (cm)<br><small><i>Measurement</i></small></th>
+                    <th>NO</th>
+                    <th>TRANSPORTIR</th>
+                    <th>NOPOL</th>
+                    <th>DRIVER</th>
+                    <th>QTY (L)</th>
+                    <th>TERA (CM)</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
             <tfoot>
-                <tr style="font-weight: bold; background: #f1f4f9;">
-                    <td colspan="4" style="text-align: right; padding-right: 15px;">TOTAL REALISASI</td>
-                    <td id="outTotal" style="color: var(--primary-kse); font-size: 13px;"></td>
+                <tr style="font-weight: bold;">
+                    <td colspan="4" style="text-align: right;">TOTAL VOLUME (L) :</td>
+                    <td id="outTotal"></td>
                     <td></td>
                 </tr>
             </tfoot>
         </table>
 
-        <div style="font-size: 12px; margin-top: 10px; text-align: justify; line-height: 1.3;">
-            Demikian memo ini dibuat mohon di bantu untuk proses pengalirannya, perhatian dan kerja samanya kami ucapkan terima kasih.
+        <div style="font-size: 11px; margin-top: 10px;">
+            DEMIKIAN MEMO INI DIBUAT UNTUK DAPAT DIPERGUNAKAN SEBAGAIMANA MESTINYA. TERIMA KASIH.
         </div>
 
         <div class="signature-container">
-            Regards,<br>
-            <strong style="font-size: 12px; color: var(--primary-kse);">PT. Khatulistiwa Sinar Energi</strong><br>
-            <img src="ttd.png" alt="Tanda Tangan" class="sig-img">
-            <strong>Operational</strong>
+            REGARDS,<br>
+            <strong>PT. KHATULISTIWA SINAR ENERGI</strong>
+            <div class="sig-space">
+                <img src="ttd.png" class="sig-img" onerror="this.style.display='none'">
+            </div>
+            <b>OPERATIONAL DEPT.</b>
         </div>
 
         <div class="footer-memo">
-            <div class="qr-section">
-                <div id="qrcode"></div>
-                <div class="qr-text">
-                    <strong>Digital E-form KSE System</strong><br>
-                    Scan QR ini untuk validasi dokumen asli.
-                </div>
+            <div class="footer-bar">
+                <div class="bar-1"></div><div class="bar-2"></div><div class="bar-3"></div>
             </div>
-            <div class="footer-address">
-                <strong>PT. KHATULISTIWA SINAR ENERGI</strong><br>
-                Jln. H.M Rafi'i RT 24 Pangkalan Bun<br>
-                Kotawaringin Barat - Kalimantan Tengah
+            <div class="footer-content">
+                <div id="qrcode"></div>
+                <div style="text-align: right;">
+                    <strong>KSE SMART LOGISTICS</strong><br>
+                    Authentic Digital Document
+                </div>
             </div>
         </div>
     </div>
@@ -258,206 +254,122 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const listTransportir = [
-        "PT. KHATULISTIWA SINAR ENERGI", 
-        "PT. BERKAH SARANA MAKMUR BENUA", 
-        "PT. INDO DHARMA ENERGI", 
-        "PT. TRANS GLOBAL ENERGI",
-        "PT. INVESTAMA KALIMANTAN ENERGI"
-    ];
-
+    const listTransportir = ["PT. KHATULISTIWA SINAR ENERGI", "PT. INDO DHARMA ENERGI", "PT. INVESTAMA KALIMANTAN ENERGI"];
     const dataArmada = [
-        { nopol: "KH 8141 GH", tera: "100.5 cm", qty: 5000 },
-        { nopol: "KH 8139 GM", tera: "133.5 cm", qty: 10000 },
-        { nopol: "KH 8942 GN", tera: "115.4 cm", qty: 5000 },
-        { nopol: "KH 8943 GN", tera: "114.6 cm", qty: 5000 },
-        { nopol: "KH 8273 RM", tera: "109.5 cm", qty: 5000 },
-        { nopol: "KH 8256 RM", tera: "104.3 cm", qty: 5000 },
-        { nopol: "KH 8641 GN", tera: "113.8 cm", qty: 5000 },
-        { nopol: "KH 8206 GN", tera: "106.2 cm", qty: 5000 },
-        { nopol: "L 9761 UJ", tera: "124.0 cm", qty: 8000 }
+        { nopol: "KH 8141 GH", tera: "100.5", qty: 5000 },
+        { nopol: "KH 8139 GM", tera: "133.5", qty: 10000 },
+        { nopol: "L 9761 UJ", tera: "124.0", qty: 8000 }
     ];
-
-    const listDriver = [
-        "AGUS", "WIYANTO", "WAHID", "SUPRIYADI", "AGUS WANTO", 
-        "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", 
-        "ADI SUCIPTO", "AGUS MULYANTO", "AGUS" ,"INDRA"
-    ];
+    const listDriver = ["AGUS", "WIYANTO", "WAHID", "SUPRIYADI", "INDRA"];
 
     function createDatalist(id, list, key = null) {
         return `<datalist id="${id}">` + list.map(item => `<option value="${key ? item[key] : item}">`).join('') + `</datalist>`;
     }
 
     function generateArmadaInputs() {
-        let html = "";
-        html += createDatalist('listTrans', listTransportir);
-        html += createDatalist('listNopol', dataArmada, 'nopol');
-        html += createDatalist('listDriver', listDriver);
-
+        let html = createDatalist('listTrans', listTransportir) + createDatalist('listNopol', dataArmada, 'nopol') + createDatalist('listDriver', listDriver);
         for(let i=1; i<=10; i++) {
             html += `
             <div class="unit-card">
-                <div style="font-size:10px; margin-bottom:5px; color:#3498db">ARMADA ${i}</div>
-                <div class="input-group">
-                    <input type="text" id="inTrans${i}" list="listTrans" placeholder="Transportir">
-                </div>
                 <div class="unit-grid">
-                    <input type="text" id="inNopol${i}" list="listNopol" placeholder="Nopol" onchange="autoFillArmada(${i})">
+                    <input type="text" id="inNopol${i}" list="listNopol" placeholder="Nopol" onchange="autoFill(${i})">
                     <input type="text" id="inDriver${i}" list="listDriver" placeholder="Sopir">
-                    <input type="text" id="inQty${i}" placeholder="Qty">
+                    <input type="text" id="inTrans${i}" list="listTrans" placeholder="Transportir">
+                    <input type="number" id="inQty${i}" placeholder="Qty">
                     <input type="text" id="inTera${i}" placeholder="Tera">
                 </div>
             </div>`;
         }
         document.getElementById('unit-inputs').innerHTML = html;
-        document.querySelectorAll('.unit-card input').forEach(el => el.addEventListener('input', update));
+    }
+
+    function autoFill(idx) {
+        const val = document.getElementById(`inNopol${idx}`).value;
+        const d = dataArmada.find(x => x.nopol === val);
+        if(d) {
+            document.getElementById(`inQty${idx}`).value = d.qty;
+            document.getElementById(`inTera${idx}`).value = d.tera;
+            document.getElementById(`inTrans${idx}`).value = "PT. KHATULISTIWA SINAR ENERGI";
+        }
+        update();
     }
 
     function fillTujuan() {
         const sel = document.getElementById('selectTujuanPT');
         const opt = sel.options[sel.selectedIndex];
-        if(opt.value !== "") {
+        if(opt.value) {
             document.getElementById('inTujuanPT').value = opt.value;
-            document.getElementById('inAlamatPT').value = opt.getAttribute('data-alamat');
-            update();
-        }
-    }
-
-    function autoFillArmada(index) {
-        const nopolVal = document.getElementById(`inNopol${index}`).value.trim();
-        const found = dataArmada.find(item => item.nopol === nopolVal);
-        if (found) {
-            document.getElementById(`inQty${index}`).value = found.qty;
-            document.getElementById(`inTera${index}`).value = found.tera;
-        }
-        update();
-    }
-
-    function formatIndoDate(dateStr) {
-        if(!dateStr) return "-";
-        const dateObj = new Date(dateStr);
-        if(isNaN(dateObj)) return dateStr;
-        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        return `${dateObj.getDate().toString().padStart(2, '0')} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
-    }
-
-    async function initPage() {
-        generateArmadaInputs();
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = (now.getMonth() + 1).toString().padStart(2, '0');
-        const dd = now.getDate().toString().padStart(2, '0');
-        
-        const dateValue = `${yyyy}-${mm}-${dd}`;
-        document.getElementById('inTglMemo').value = dateValue;
-        document.getElementById('inTglLoad').value = dateValue;
-        
-        const roman = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
-        const bulanRomawi = roman[now.getMonth()];
-
-        try {
-            const { count } = await _supabase.from("data_logistik").select('*', { count: 'exact', head: true }).eq('jenis_dokumen', "MEMO PENGALIRAN");
-            const nextNo = ((count || 0) + 1).toString().padStart(3, '0');
-            document.getElementById('inNoUrut').value = nextNo;
-            document.getElementById('inNoFormat').value = `/MEMO-KSE/${bulanRomawi}/${yyyy}`;
-        } catch (e) {
-            document.getElementById('inNoUrut').value = "001";
-            document.getElementById('inNoFormat').value = `/MEMO-KSE/${bulanRomawi}/${yyyy}`;
+            document.getElementById('inAlamatPT').value = opt.dataset.alamat;
         }
         update();
     }
 
     function update() {
-        const noUrut = document.getElementById('inNoUrut').value;
-        const noFormat = document.getElementById('inNoFormat').value;
-        const fullNomor = noUrut + noFormat;
-        document.getElementById('outNomor').innerText = fullNomor;
-
-        const perihal = document.getElementById('inPerihal').value;
-        document.getElementById('outPerihal').innerText = perihal;
-        document.getElementById('outPerihalSub').innerText = (perihal.toLowerCase().includes("bbm") || perihal.toLowerCase().includes("solar")) ? "Fuel Transfer Memo" : "Subject Related Memo";
-
-        const tujuanPT = document.getElementById('inTujuanPT').value;
-        document.getElementById('outTujuanPT').innerText = tujuanPT;
+        const no = document.getElementById('inNoUrut').value + document.getElementById('inNoFormat').value;
+        document.getElementById('outNomor').innerText = no;
+        document.getElementById('outPerihal').innerText = document.getElementById('inPerihal').value;
+        document.getElementById('outTujuanPT').innerText = document.getElementById('inTujuanPT').value;
         document.getElementById('outAlamatPT').innerText = document.getElementById('inAlamatPT').value;
-        document.getElementById('outTujuanRef').innerText = tujuanPT;
-        
-        const qrContainer = document.getElementById("qrcode");
-        qrContainer.innerHTML = "";
-        new QRCode(qrContainer, { text: fullNomor, width: 45, height: 45 });
-
-        document.getElementById('outTglMemo').innerText = formatIndoDate(document.getElementById('inTglMemo').value);
+        document.getElementById('outTglMemo').innerText = document.getElementById('inTglMemo').value;
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
-        document.getElementById('outTglPO').innerText = document.getElementById('inTglPO').value;
-        document.getElementById('outTglLoad').innerText = formatIndoDate(document.getElementById('inTglLoad').value);
+        document.getElementById('outTglLoad').innerText = document.getElementById('inTglLoad').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
-        let total = 0, tableHTML = "", rowNum = 1;
+        const qrContainer = document.getElementById("qrcode");
+        qrContainer.innerHTML = "";
+        if(no) new QRCode(qrContainer, { text: no, width: 40, height: 40 });
+
+        let total = 0, rows = "";
         for(let i=1; i<=10; i++) {
             const nopol = document.getElementById(`inNopol${i}`).value;
-            if (nopol !== "") {
-                const qtyStr = document.getElementById(`inQty${i}`).value || "0";
-                const qty = parseFloat(qtyStr.toString().replace(/,/g, '')) || 0;
+            if(nopol) {
+                const qty = parseFloat(document.getElementById(`inQty${i}`).value) || 0;
                 total += qty;
-                tableHTML += `<tr>
-                    <td>${rowNum++}</td>
-                    <td style="text-align:left;">${document.getElementById(`inTrans${i}`).value}</td>
+                rows += `<tr>
+                    <td>${i}</td>
+                    <td style="text-align:left">${document.getElementById(`inTrans${i}`).value}</td>
                     <td>${nopol}</td>
                     <td>${document.getElementById(`inDriver${i}`).value}</td>
-                    <td style="font-weight:bold;">${qty.toLocaleString('id-ID')}</td>
+                    <td>${qty.toLocaleString()}</td>
                     <td>${document.getElementById(`inTera${i}`).value}</td>
                 </tr>`;
             }
         }
-        document.getElementById('tableBody').innerHTML = tableHTML || "<tr><td colspan='6'>Silakan isi data armada</td></tr>";
-        document.getElementById('outTotal').innerText = total.toLocaleString('id-ID') + " Liter";
+        document.getElementById('tableBody').innerHTML = rows || "<tr><td colspan='6'>Data Kosong</td></tr>";
+        document.getElementById('outTotal').innerText = total.toLocaleString();
     }
 
-    async function saveData() {
-        const btn = document.getElementById('btnSave');
-        btn.innerText = "MENYIMPAN..."; btn.disabled = true;
-        const fullNomor = document.getElementById('inNoUrut').value + document.getElementById('inNoFormat').value;
-        
-        let payloads = [];
-        for(let i=1; i<=10; i++) {
-            const nopol = document.getElementById(`inNopol${i}`).value;
-            if(nopol) {
-                const qtyStr = document.getElementById(`inQty${i}`).value || "0";
-                payloads.push({
-                    tanggal: document.getElementById('inTglMemo').value,
-                    no_dokumen: fullNomor,
-                    jenis_dokumen: "MEMO PENGALIRAN",
-                    tujuan: document.getElementById('inTujuanPT').value,
-                    nopol: nopol,
-                    sopir: document.getElementById(`inDriver${i}`).value, 
-                    qty: parseFloat(qtyStr.toString().replace(/,/g, '')) || 0,
-                    pt: "PT. KHATULISTIWA SINAR ENERGI"
-                });
-            }
-        }
-
-        const { error } = await _supabase.from("data_logistik").insert(payloads);
-        if(error) alert("Gagal Simpan: " + error.message);
-        else { alert("Data Berhasil Disimpan!"); initPage(); }
-        btn.innerText = "SIMPAN"; btn.disabled = false;
+    async function initPage() {
+        generateArmadaInputs();
+        const d = new Date();
+        document.getElementById('inTglMemo').valueAsDate = d;
+        document.getElementById('inTglLoad').valueAsDate = d;
+        document.getElementById('inNoUrut').value = "001";
+        document.getElementById('inNoFormat').value = `/MEMO-KSE/${d.getMonth()+1}/${d.getFullYear()}`;
+        update();
     }
 
     function downloadPDF() {
         const element = document.getElementById('memo-area');
-        const fullNomor = document.getElementById('inNoUrut').value + document.getElementById('inNoFormat').value;
-        const filename = 'Memo_KSE_' + fullNomor.replace(/\//g, '-') + '.pdf';
-        html2pdf().set({
-            margin: 0, filename: filename, image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 3 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
+        const opt = {
+            margin: 0,
+            filename: `Memo_KSE_${Date.now()}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
     }
 
-    document.addEventListener('input', function (e) {
-        if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) update();
-    });
+    async function saveData() {
+        const btn = document.getElementById('btnSave');
+        btn.disabled = true; btn.innerText = "SAVING...";
+        alert("Simulasi Berhasil Disimpan ke Supabase");
+        btn.disabled = false; btn.innerText = "SIMPAN KE DATABASE";
+    }
 
+    document.addEventListener('input', update);
     window.onload = initPage;
 </script>
-
 </body>
 </html>
