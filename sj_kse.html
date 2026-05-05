@@ -379,38 +379,46 @@
     }
 
     async function saveToCloud() {
-        const btn = event.target;
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+    const btn = event.target;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
 
-        const payload = {
-            tanggal: document.getElementById('in_tgl').value,
-            nomor_dokumen: document.getElementById('out_no_sj').innerText,
-            transportir: document.getElementById('in_trans').value,
-            penerima: document.getElementById('in_tujuan').value,
-            no_po: document.getElementById('in_po').value,
-            no_so: document.getElementById('in_so').value,
-            jenis_barang: document.getElementById('in_barang').value,
-            nopol: document.getElementById('in_nopol').value,
-            driver: document.getElementById('in_driver').value,
-            qty: parseInt(document.getElementById('in_qty').value),
-            segel: document.getElementById('in_segel').value,
-            tinggi: document.getElementById('in_tinggi').value,
-            lokasi: document.getElementById('in_lokasi').value,
-            admin: document.getElementById('in_adm').value
-        };
+    // FUNGSI MEMBERSIHKAN ANGKA (Menghapus titik ribuan dan satuan)
+    const cleanNumber = (id) => {
+        let val = document.getElementById(id).value;
+        // Hapus semua karakter kecuali angka dan titik desimal
+        return val.replace(/[^0-9.]/g, ''); 
+    };
 
-        try {
-            const { error } = await supabaseClient.from('sj_kse').insert([payload]);
-            if (error) throw error;
-            alert("✅ Data Berhasil Disimpan ke Cloud!");
-        } catch (err) {
-            console.error(err);
-            alert("❌ Gagal Simpan: " + err.message);
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> SAVE CLOUD';
-        }
+    const payload = {
+        tanggal: document.getElementById('in_tgl').value,
+        nomor_dokumen: document.getElementById('out_no_sj').innerText,
+        transportir: document.getElementById('in_trans').value,
+        penerima: document.getElementById('in_tujuan').value,
+        no_po: document.getElementById('in_po').value,
+        no_so: document.getElementById('in_so').value,
+        jenis_barang: document.getElementById('in_barang').value,
+        nopol: document.getElementById('in_nopol').value,
+        driver: document.getElementById('in_driver').value,
+        qty: parseFloat(cleanNumber('in_qty')) || 0, // Pastikan jadi angka murni
+        segel: document.getElementById('in_segel').value,
+        tinggi: document.getElementById('in_tinggi').value, // Disimpan sebagai teks (varchar)
+        lokasi: document.getElementById('in_lokasi').value,
+        admin: document.getElementById('in_adm').value
+    };
+
+    try {
+        const { error } = await supabaseClient.from('sj_kse').insert([payload]);
+        if (error) throw error;
+        alert("✅ Data Berhasil Disimpan ke Cloud!");
+    } catch (err) {
+        console.error(err);
+        alert("❌ Gagal Simpan: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> SAVE CLOUD';
+    }
+}
     }
 
     function syncData() {
