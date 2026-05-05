@@ -7,8 +7,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
+    <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root { 
@@ -45,7 +47,6 @@
             overflow-y: auto;
         }
 
-        /* UKURAN KERTAS LETTER */
         .document-canvas { 
             background: white; 
             width: 215.9mm; 
@@ -123,12 +124,13 @@
 
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
-        <h6 class="mb-0 fw-bold text-success"><i class="bi bi-patch-check-fill"></i> KSE SMART LOGISTICS</h6>
-        <span class="badge bg-secondary">Format Letter (8.5" x 11")</span>
+        <a href="index.htm" class="btn btn-outline-secondary btn-sm"><i class="bi bi-house"></i></a>
+        <h6 class="mb-0 fw-bold text-success">KSE SMART LOGISTICS</h6>
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> CETAK</button>
-        <button class="btn btn-primary btn-sm fw-bold px-4" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> SIMPAN PDF</button>
+        <button class="btn btn-success btn-sm fw-bold px-3" onclick="saveToCloud()"><i class="bi bi-cloud-arrow-up"></i> SAVE CLOUD</button>
+        <button class="btn btn-primary btn-sm fw-bold px-3" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> PDF</button>
     </div>
 </div>
 
@@ -140,13 +142,9 @@
             <input type="date" id="in_tgl" class="form-control form-control-sm mb-1">
 
             <div class="row g-2">
-                <div class="col-6">
-                    <label class="form-label-custom">No. SJ</label>
-                    <input type="text" id="in_no_sj" class="form-control form-control-sm mb-1 fw-bold" placeholder="001">
-                </div>
-                <div class="col-6">
-                    <label class="form-label-custom">No. BAST</label>
-                    <input type="text" id="in_no_bast" class="form-control form-control-sm mb-1 fw-bold" placeholder="001">
+                <div class="col-12">
+                    <label class="form-label-custom">Nomor Dokumen (Auto)</label>
+                    <input type="text" id="in_no_sj" class="form-control form-control-sm mb-1 fw-bold" placeholder="Loading...">
                 </div>
             </div>
 
@@ -325,7 +323,58 @@
 </div>
 
 <script>
+    // Config Supabase
+    const SB_URL = "https://qnamtickoteyvydayyor.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYW10aWNrb3RleXZ5ZGF5eW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTU2MzksImV4cCI6MjA5MzQ3MTYzOX0.VAeN0JVnz4WNPzY5NTGmtGeHD-Da_qkCvy84ZDYZNHo";
+    const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+
     var qrcode = new QRCode(document.getElementById("qrcode"), { width: 40, height: 40 });
+
+    async function fetchLastNumber() {
+        try {
+            const { data, error } = await supabaseClient
+                .from('sj_kse')
+                .select('nomor_dokumen')
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+            if (data && data.length > 0) {
+                const lastNum = data[0].nomor_dokumen.split('/')[0];
+                const nextNum = (parseInt(lastNum) + 1).toString().padStart(3, '0');
+                document.getElementById('in_no_sj').value = nextNum;
+            } else {
+                document.getElementById('in_no_sj').value = "001";
+            }
+            syncData();
+        } catch (e) {
+            document.getElementById('in_no_sj').value = "001";
+        }
+    }
+
+    async function saveToCloud() {
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+        const payload = {
+            tanggal: document.getElementById('in_tgl').value,
+            nomor_dokumen: document.getElementById('out_no_sj').innerText,
+            tujuan: document.getElementById('in_tujuan').value,
+            nomor_polisi: document.getElementById('in_nopol').value,
+            sopir: document.getElementById('in_driver').value,
+            jumlah: parseInt(document.getElementById('in_qty').value || 0)
+        };
+
+        const { error } = await supabaseClient.from('sj_kse').insert([payload]);
+
+        if (error) {
+            alert("Gagal menyimpan: " + error.message);
+        } else {
+            alert("Data Berhasil Disimpan ke Cloud!");
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> SAVE CLOUD';
+    }
 
     function getRomawi(month) {
         const romawi = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
@@ -344,9 +393,7 @@
             const el = document.getElementById(id);
             if(el) {
                 el.innerText = text || "-";
-                if(id.startsWith('sig_')) {
-                    el.style.fontWeight = '900';
-                }
+                if(id.startsWith('sig_')) el.style.fontWeight = '900';
             }
         };
 
@@ -362,8 +409,9 @@
             autoSuffix = "/" + getRomawi(d.getMonth()) + "/" + d.getFullYear();
         }
 
-        const fullNoSJ = (val('in_no_sj') || "000") + "/SJ-KSE" + autoSuffix;
-        const fullNoBA = (val('in_no_bast') || "000") + "/BAST-KSE" + autoSuffix;
+        const rawNo = val('in_no_sj') || "000";
+        const fullNoSJ = rawNo + "/SJ-KSE" + autoSuffix;
+        const fullNoBA = rawNo + "/BAST-KSE" + autoSuffix;
         const qtyFormatted = Number(val('in_qty')).toLocaleString('id-ID');
         
         set('out_no_sj', fullNoSJ);
@@ -392,7 +440,6 @@
         set('sig_adm_ba', val('in_adm'));
         
         set('out_sys_date', new Date().toLocaleString('id-ID'));
-        
         qrcode.makeCode("KSE-V6-" + fullNoSJ);
     }
 
@@ -415,7 +462,7 @@
     window.onload = () => {
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('in_tgl').value = today;
-        syncData();
+        fetchLastNumber();
     };
 </script>
 </body>
