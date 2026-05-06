@@ -214,39 +214,53 @@
     }
 
     async function generateDocNumber() {
-        const dateInput = document.getElementById('in_tgl_input').value;
-        if(!dateInput) return;
-        
-        const tgl = new Date(dateInput);
-        const bulanRomawi = getRomanMonth(tgl.getMonth());
-        const tahun = tgl.getFullYear();
-        const bulanIndex = (tgl.getMonth() + 1).toString().padStart(2, '0');
-        
-        // Cek nomor terakhir di database
-        try {
-            const { data, error } = await _supabase
-                .from('baom_kse')
-                .select('no_dokumen')
-                .filter('no_dokumen', 'ilike', `%/${bulanRomawi}/${tahun}`)
-                .order('no_dokumen', { ascending: false })
-                .limit(1);
+    const dateInput = document.getElementById('in_tgl_input').value;
+    if(!dateInput) return;
+    
+    const tgl = new Date(dateInput);
+    const bulanRomawi = getRomanMonth(tgl.getMonth());
+    const tahun = tgl.getFullYear();
 
-            let nextNum = 1;
-            if (data && data.length > 0) {
-                // Parsing format "001 / BAOM-KSE/V/2026"
-                const lastNoString = data[0].no_dokumen.split(' / ')[0];
-                nextNum = parseInt(lastNoString) + 1;
-            }
-            
-            const formatNo = `${nextNum.toString().padStart(3, '0')} / BAOM-KSE/${bulanRomawi}/${tahun}`;
-            document.getElementById('in_no').value = formatNo;
-            updateView();
-            updateQR();
-        } catch (e) {
-            console.error("Gagal generate nomor otomatis", e);
+    console.log("Mencari data untuk:", bulanRomawi, tahun); // Debugging
+
+    try {
+        // Gunakan filter yang lebih fleksibel
+        const { data, error } = await _supabase
+            .from('baom_kse')
+            .select('no_dokumen')
+            .filter('no_dokumen', 'ilike', `%/${bulanRomawi}/${tahun}%`)
+            .order('no_dokumen', { ascending: false })
+            .limit(1);
+
+        if (error) throw error;
+
+        let nextNum = 1;
+        if (data && data.length > 0) {
+            console.log("Data terakhir ditemukan:", data[0].no_dokumen);
+            // Membersihkan string sebelum di-parse
+            const parts = data[0].no_dokumen.split('/');
+            const lastNoString = parts[0].trim(); 
+            nextNum = parseInt(lastNoString) + 1;
+        } else {
+            console.log("Tidak ada data bulan ini, mulai dari 001");
         }
-    }
+        
+        const formatNo = `${nextNum.toString().padStart(3, '0')} / BAOM-KSE/${bulanRomawi}/${tahun}`;
+        
+        // Pastikan element ID benar
+        const inputNo = document.getElementById('in_no');
+        if(inputNo) {
+            inputNo.value = formatNo;
+            console.log("Nomor baru berhasil di-set:", formatNo);
+        }
 
+        updateView();
+        updateQR();
+
+    } catch (e) {
+        console.error("Detail Error:", e.message);
+    }
+}
     async function saveToCloud() {
         const btn = event.target;
         btn.disabled = true;
