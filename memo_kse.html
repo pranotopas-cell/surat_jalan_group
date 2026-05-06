@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <style>
+        /* Style tetap dipertahankan sesuai struktur asli */
         * { box-sizing: border-box; }
         :root {
             --primary-kse: #064e3b; 
@@ -17,107 +18,63 @@
             --success-green: #28a745;
             --gold-kse: #d4af37;
         }
-
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #525659; margin: 0; display: flex; }
-        
-        /* SIDEBAR */
-        .sidebar { 
-            width: 400px; background: var(--dark-sidebar); color: white; height: 100vh; 
-            padding: 15px; overflow-y: auto; position: fixed; left: 0; top: 0;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.3); z-index: 100;
-        }
+        .sidebar { width: 400px; background: var(--dark-sidebar); color: white; height: 100vh; padding: 15px; overflow-y: auto; position: fixed; left: 0; top: 0; box-shadow: 4px 0 10px rgba(0,0,0,0.3); z-index: 100; }
         .sidebar h2 { font-size: 16px; border-bottom: 2px solid var(--primary-kse); padding-bottom: 10px; margin-bottom: 15px; color: #ecf0f1; text-align: center; }
         .section-title { font-size: 10px; color: var(--accent-blue); font-weight: bold; margin: 15px 0 8px 0; text-transform: uppercase; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
         .input-group { margin-bottom: 6px; }
         .input-group label { display: block; font-size: 9px; margin-bottom: 2px; color: #bdc3c7; }
-        .input-group input, .input-group select, .input-group textarea { 
-            width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #2c3e50; 
-            background: #2c3e50; color: white; font-size: 11px;
-        }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #2c3e50; background: #2c3e50; color: white; font-size: 11px; }
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary-kse); }
         .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
-
-        /* KONTROL ACTION */
-        .top-action-bar {
-            position: fixed; top: 0; right: 0; left: 400px; 
-            background: #2c3e50; padding: 10px 20px; display: flex; 
-            justify-content: flex-end; gap: 10px; z-index: 1000;
-        }
+        .top-action-bar { position: fixed; top: 0; right: 0; left: 400px; background: #2c3e50; padding: 10px 20px; display: flex; justify-content: flex-end; gap: 10px; z-index: 1000; }
         .btn { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; color: white; display: flex; align-items: center; gap: 5px; }
         .btn-home { background: #7f8c8d; }
-        .btn-save { background: var(--success-green); }
+        .btn-save { background: var(--accent-blue); }
         .btn-download { background: #c0392b; }
-
-        /* CANVAS DOKUMEN */
         .main-content { margin-left: 400px; margin-top: 50px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; }
-        .memo-page { 
-            background: white; width: 210mm; min-height: 297mm; padding: 15mm; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.5); 
-            color: #111;
-            font-family: 'Courier New', Courier, monospace; 
-            position: relative; display: flex; flex-direction: column;
-        }
-
-        /* HEADER */
+        .memo-page { background: white; width: 210mm; min-height: 297mm; padding: 15mm; box-shadow: 0 0 20px rgba(0,0,0,0.5); color: #111; font-family: 'Courier New', Courier, monospace; position: relative; display: flex; flex-direction: column; }
         .header-section { margin-bottom: 70px; display: flex; align-items: stretch; justify-content: space-between; }
         .header-left { display: flex; align-items: center; }
         .logo-img { height: 45px; margin-right: 15px; }
         .company-name-main { font-size: 25px; font-weight: 900; color: var(--primary-kse); font-family: 'Arial Black', sans-serif; line-height: 1; }
         .company-name-sub { font-size: 14px; font-weight: bold; color: var(--primary-kse); font-family: Arial, sans-serif; letter-spacing: 3px; }
-        .header-right { 
-            display: flex; align-items: center; text-align: right; 
-            border-left: 4px solid var(--gold-kse); padding-left: 15px; margin-left: 20px;
-        }
+        .header-right { display: flex; align-items: center; text-align: right; border-left: 4px solid var(--gold-kse); padding-left: 15px; margin-left: 20px; }
         .company-addr { font-size: 10px; font-family: Arial, sans-serif; line-height: 1.4; font-weight: normal; }
-
-        /* BODY CONTENT */
         .info-split-container { display: flex; justify-content: space-between; margin-bottom: 20px; }
         .recipient-side { width: 50%; font-weight: bold; }
         .meta-side { width: 45%; }
         .lang-sub { font-style: italic; color: #555; font-size: 9px; display: block; font-family: Arial, sans-serif; font-weight: normal; margin-top: -2px; }
-        
         .meta-row { display: flex; margin-bottom: 8px; }
         .meta-label { width: 90px; font-size: 11px; }
         .meta-value { font-weight: bold; flex: 1; text-transform: uppercase; font-size: 12px; }
-
         .details-box { margin: 15px 0; padding: 10px; border: 1px dashed #000; background: #fafafa; }
         table.data-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
         table.data-table th, table.data-table td { border: 1px solid #000; padding: 6px; text-align: center; font-size: 11px; }
         table.data-table th { background: #eee; text-transform: uppercase; }
-
-        /* TANDA TANGAN DIPERLEBAR */
         .signature-container { margin-top: 40px; font-size: 12px; }
-        .sig-space { height: 80px; display: flex; align-items: center; } /* Ruang tanda tangan lebih luas */
+        .sig-space { height: 80px; display: flex; align-items: center; }
         .sig-img { width: 80px; filter: grayscale(1); }
-
         .footer-memo { margin-top: auto; padding-top: 20px; }
         .footer-bar { display: flex; width: 100%; height: 4px; margin-bottom: 10px; }
         .bar-1 { background: var(--primary-kse); flex: 6; }
         .bar-2 { background: #008b8b; flex: 2; }
         .bar-3 { background: var(--gold-kse); flex: 2; }
-        
         .footer-content { display: flex; justify-content: space-between; align-items: flex-end; font-size: 9px; font-family: Arial, sans-serif; }
         #qrcode { padding: 3px; border: 1px solid #000; }
-
-        @media print {
-            .sidebar, .top-action-bar { display: none !important; }
-            .main-content { margin: 0; padding: 0; }
-            .memo-page { box-shadow: none; width: 100%; height: auto; }
-            body { background: white; }
-        }
+        @media print { .sidebar, .top-action-bar { display: none !important; } .main-content { margin: 0; padding: 0; } .memo-page { box-shadow: none; width: 100%; height: auto; } body { background: white; } }
     </style>
 </head>
 <body>
 
 <div class="top-action-bar">
     <button class="btn btn-home" onclick="location.reload()">REFRESH</button>
-    <button class="btn btn-save" id="btnSave" onclick="saveData()">SIMPAN KE DATABASE</button>
-    <button class="btn btn-download" onclick="downloadPDF()">DOWNLOAD PDF</button>
+    <button class="btn btn-save" id="btnSave" onclick="saveData()">SAVE CLOUD</button>
+    <button class="btn btn-download" onclick="downloadPDF()">PRINT PDF</button>
 </div>
 
 <div class="sidebar">
     <h2>KSE MEMO SYSTEM</h2>
-
     <div class="section-title">Dokumen Meta</div>
     <div class="input-group"><label>No. Urut</label><input type="text" id="inNoUrut" placeholder="001"></div>
     <div class="input-group"><label>Format</label><input type="text" id="inNoFormat" placeholder="/MEMO-KSE/V/2026"></div>
@@ -148,8 +105,7 @@
 
 <div class="main-content">
     <div class="memo-page" id="memo-area">
-        
-        <!-- HEADER -->
+        <!-- Preview Dokumen Sesuai Kode Asli -->
         <div class="header-section">
             <div class="header-left">
                 <img src="header1.png" class="logo-img" onerror="this.src='https://via.placeholder.com/60x60?text=KSE'">
@@ -248,12 +204,12 @@
         </div>
     </div>
 </div>
-/* --- HANYA BAGIAN SCRIPT YANG DIUPDATE, BAGIAN LAIN TETAP --- */
 
 <script>
-    const SUPABASE_URL = 'https://ntaectphgoelmhzrkatp.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50YWVjdHBoZ29lbG1oenJrYXRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzExNDYsImV4cCI6MjA4ODE0NzE0Nn0.-8E98wpkzHBARRhW6PKhBtf2XKhWFjq7idAzw9jlcKg';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // Konfigurasi Supabase Baru
+    const SB_URL = "https://qnamtickoteyvydayyor.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYW10aWNrb3RleXZ5ZGF5eW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTU2MzksImV4cCI6MjA5MzQ3MTYzOX0.VAeN0JVnz4WNPzY5NTGmtGeHD-Da_qkCvy84ZDYZNHo";
+    const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
     const listTransportir = ["PT. KHATULISTIWA SINAR ENERGI", "PT. INDO DHARMA ENERGI", "PT. INVESTAMA KALIMANTAN ENERGI"];
     const dataArmada = [
@@ -263,21 +219,16 @@
     ];
     const listDriver = ["AGUS", "WIYANTO", "WAHID", "SUPRIYADI", "INDRA"];
 
-    // Fungsi Helper untuk format bulan Romawi
     function getRomanMonth(monthIdx) {
         const roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
         return roman[monthIdx];
     }
 
-    // Fungsi Helper untuk format tanggal Indonesia (01 Mei 2026)
     function formatDateIndo(dateString) {
         if (!dateString) return "";
         const date = new Date(dateString);
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = months[date.getMonth()];
-        const year = date.getFullYear();
-        return `${day} ${month} ${year}`;
+        return `${String(date.getDate()).padStart(2, '0')} ${months[date.getMonth()]} ${date.getFullYear()}`;
     }
 
     function createDatalist(id, list, key = null) {
@@ -328,11 +279,8 @@
         document.getElementById('outPerihal').innerText = document.getElementById('inPerihal').value;
         document.getElementById('outTujuanPT').innerText = document.getElementById('inTujuanPT').value;
         document.getElementById('outAlamatPT').innerText = document.getElementById('inAlamatPT').value;
-        
-        // Update format tanggal ke Indo
         document.getElementById('outTglMemo').innerText = formatDateIndo(document.getElementById('inTglMemo').value);
         document.getElementById('outTglLoad').innerText = formatDateIndo(document.getElementById('inTglLoad').value);
-        
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
@@ -346,56 +294,77 @@
             if(nopol) {
                 const qty = parseFloat(document.getElementById(`inQty${i}`).value) || 0;
                 total += qty;
-                rows += `<tr>
-                    <td>${i}</td>
-                    <td style="text-align:left">${document.getElementById(`inTrans${i}`).value}</td>
-                    <td>${nopol}</td>
-                    <td>${document.getElementById(`inDriver${i}`).value}</td>
-                    <td>${qty.toLocaleString()}</td>
-                    <td>${document.getElementById(`inTera${i}`).value}</td>
-                </tr>`;
+                rows += `<tr><td>${i}</td><td style="text-align:left">${document.getElementById(`inTrans${i}`).value}</td><td>${nopol}</td><td>${document.getElementById(`inDriver${i}`).value}</td><td>${qty.toLocaleString()}</td><td>${document.getElementById(`inTera${i}`).value}</td></tr>`;
             }
         }
         document.getElementById('tableBody').innerHTML = rows || "<tr><td colspan='6'>Data Kosong</td></tr>";
         document.getElementById('outTotal').innerText = total.toLocaleString();
     }
 
-    async function initPage() {
-        generateArmadaInputs();
-        const d = new Date();
-        document.getElementById('inTglMemo').valueAsDate = d;
-        document.getElementById('inTglLoad').valueAsDate = d;
-        document.getElementById('inNoUrut').value = "001";
+    // FUNGSI SIMPAN KE SUPABASE (memo_kse)
+    async function saveData() {
+        const btn = document.getElementById('btnSave');
+        const noDokumen = document.getElementById('inNoUrut').value + document.getElementById('inNoFormat').value;
+        const tglMemo = document.getElementById('inTglMemo').value;
+        const tujuanPT = document.getElementById('inTujuanPT').value;
+
+        let payload = [];
+        for(let i=1; i<=10; i++) {
+            const nopol = document.getElementById(`inNopol${i}`).value;
+            if(nopol) {
+                payload.push({
+                    tanggal: tglMemo,
+                    tujuan: tujuanPT,
+                    nomor_polisi: nopol,
+                    no_dokumen: noDokumen,
+                    sopir: document.getElementById(`inDriver${i}`).value,
+                    jumlah: parseFloat(document.getElementById(`inQty${i}`).value) || 0
+                });
+            }
+        }
+
+        if(payload.length === 0) return alert("Isi data armada terlebih dahulu!");
+
+        btn.disabled = true; btn.innerText = "SAVING...";
         
-        // Update Format No dengan Romawi
-        const romanMonth = getRomanMonth(d.getMonth());
-        document.getElementById('inNoFormat').value = `/MEMO-KSE/${romanMonth}/${d.getFullYear()}`;
-        
-        update();
+        try {
+            const { data, error } = await supabaseClient
+                .from('memo_kse')
+                .insert(payload);
+
+            if (error) throw error;
+            alert("Data Berhasil Disimpan ke Supabase!");
+        } catch (err) {
+            console.error(err);
+            alert("Gagal simpan: " + err.message);
+        } finally {
+            btn.disabled = false; btn.innerText = "SAVE CLOUD";
+        }
     }
 
     function downloadPDF() {
         const element = document.getElementById('memo-area');
-        const opt = {
+        html2pdf().set({
             margin: 0,
             filename: `Memo_KSE_${Date.now()}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(element).save();
+        }).from(element).save();
     }
 
-    async function saveData() {
-        const btn = document.getElementById('btnSave');
-        btn.disabled = true; btn.innerText = "SAVING...";
-        alert("Simulasi Berhasil Disimpan ke Supabase");
-        btn.disabled = false; btn.innerText = "SIMPAN KE DATABASE";
+    function initPage() {
+        generateArmadaInputs();
+        const d = new Date();
+        document.getElementById('inTglMemo').valueAsDate = d;
+        document.getElementById('inTglLoad').valueAsDate = d;
+        document.getElementById('inNoUrut').value = "001";
+        document.getElementById('inNoFormat').value = `/MEMO-KSE/${getRomanMonth(d.getMonth())}/${d.getFullYear()}`;
+        update();
     }
 
     document.addEventListener('input', update);
     window.onload = initPage;
 </script>
-
 </body>
 </html>
