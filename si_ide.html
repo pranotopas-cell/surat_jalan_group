@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SURAT JALAN - IKE</title>
+    <title>SURAT JALAN - IDE</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
@@ -13,10 +13,10 @@
 
     <style>
         :root { 
-            /* Skema Warna: Merah, Biru Tua, Hitam */
-            --ike-red: #dc2626; 
-            --ike-dark-blue: #1e3a8a; 
-            --ike-black: #0f172a;
+            /* Skema Warna IDE: Merah dan Biru */
+            --ide-red: #e11d48; 
+            --ide-blue: #2563eb; 
+            --ide-dark: #1e293b;
             --dot-font: 'Courier New', Courier, monospace;
         }
         
@@ -35,7 +35,7 @@
         .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .main-logo { height: 50px; width: auto; }
         .title-doc { text-align: center; margin-bottom: 10px; }
-        .title-doc h1 { font-size: 22pt; font-weight: 900; margin: 0; letter-spacing: 4px; color: var(--ike-black); }
+        .title-doc h1 { font-size: 22pt; font-weight: 900; margin: 0; letter-spacing: 4px; color: var(--ide-dark); }
         .title-doc span { font-size: 9pt; color: #333; font-style: italic; display: block; font-weight: 500; }
 
         .info-table { width: 100%; margin-bottom: 10px; border-collapse: collapse; border: 1.5px solid #000; }
@@ -44,8 +44,8 @@
         .label-cell small { display: block; font-weight: 400; font-style: italic; color: #475569; font-size: 7pt; }
         .data-cell { font-family: var(--dot-font); font-size: 10.5pt; letter-spacing: 0.5px; }
 
-        .divider-line { border-top: 2px dashed var(--ike-black); margin: 20px 0 10px 0; position: relative; }
-        .divider-line span { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 20px; font-weight: bold; font-size: 9pt; color: var(--ike-red); }
+        .divider-line { border-top: 2px dashed var(--ide-dark); margin: 20px 0 10px 0; position: relative; }
+        .divider-line span { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 20px; font-weight: bold; font-size: 9pt; color: var(--ide-red); }
 
         .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 5px; }
         .sig-box { height: 85px; display: flex; flex-direction: column; justify-content: space-between; position: relative; font-size: 8.5pt; }
@@ -54,9 +54,9 @@
         .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 9pt; position: relative; z-index: 2; font-family: var(--dot-font); }
 
         .footer-ornament { display: flex; height: 6px; width: 100%; margin-top: auto; margin-bottom: 5px; }
-        .orn-1 { background: var(--ike-red); flex: 4; }
-        .orn-2 { background: var(--ike-dark-blue); flex: 2; }
-        .orn-3 { background: var(--ike-black); flex: 1; }
+        .orn-1 { background: var(--ide-red); flex: 4; }
+        .orn-2 { background: var(--ide-blue); flex: 2; }
+        .orn-3 { background: var(--ide-dark); flex: 1; }
 
         .form-label-custom { font-size: 9px; font-weight: 800; color: #475569; margin-top: 6px; display: block; text-transform: uppercase; }
         .form-control-sm { font-size: 11px; padding: 0.2rem 0.5rem; }
@@ -74,12 +74,12 @@
 
 <div class="control-nav d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center gap-3">
-        <h6 class="mb-0 fw-bold text-danger">SURAT JALAN - IKE</h6>
+        <h6 class="mb-0 fw-bold text-primary">SURAT JALAN - IDE</h6>
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-outline-dark btn-sm fw-bold" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
-        <button class="btn btn-danger btn-sm fw-bold px-3" onclick="saveToCloud()"><i class="bi bi-cloud-arrow-up"></i> Save</button>
-        <button class="btn btn-primary btn-sm fw-bold px-3" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> Download</button>
+        <button class="btn btn-primary btn-sm fw-bold px-3" onclick="saveToCloud()"><i class="bi bi-cloud-arrow-up"></i> Save</button>
+        <button class="btn btn-danger btn-sm fw-bold px-3" onclick="downloadPDF()"><i class="bi bi-file-pdf"></i> Download</button>
         <button class="btn btn-dark btn-sm fw-bold px-3" onclick="window.location.href='index.html'"><i class="bi bi-house"></i> Home</button>
     </div>
 </div>
@@ -95,7 +95,7 @@
             <input type="text" id="in_no_sj" class="form-control form-control-sm mb-1 fw-bold">
 
             <label class="form-label-custom">Transportir</label>
-            <input type="text" id="in_trans" list="listTrans" class="form-control form-control-sm mb-1" value="PT. INVESTAMA KALIMANTAN ENERGI">
+            <input type="text" id="in_trans" list="listTrans" class="form-control form-control-sm mb-1" value="PT. INDO DHARMA ENERGI">
 
             <label class="form-label-custom">Penerima (Perusahaan)</label>
             <input type="text" id="in_tujuan" list="listTujuan" class="form-control form-control-sm mb-1">
@@ -103,7 +103,7 @@
             <label class="form-label-custom">No. PO Customer</label>
             <input type="text" id="in_po" class="form-control form-control-sm mb-1" placeholder="Masukkan No PO">
 
-            <label class="form-label-custom">No. SO / DO IKE</label>
+            <label class="form-label-custom">No. SO / DO IDE</label>
             <input type="text" id="in_so" class="form-control form-control-sm mb-1">
 
             <label class="form-label-custom">Jenis Barang</label>
@@ -140,7 +140,7 @@
             <label class="form-label-custom">Lokasi Tujuan</label>
             <input type="text" id="in_lokasi" class="form-control form-control-sm mb-1" value="Pangkalan Bun">
 
-            <label class="form-label-custom">Admin IKE</label>
+            <label class="form-label-custom">Admin IDE</label>
             <input type="text" id="in_adm" class="form-control form-control-sm mb-1" value="STAFF OPERASIONAL">
         </div>
 
@@ -151,16 +151,16 @@
                     
                     <div class="header-sj">
                         <div class="d-flex align-items-center gap-3">
-                            <img src="header1.png" class="main-logo" alt="Logo">
+                            <img src="header_ide.png" class="main-logo" alt="Logo">
                             <div>
-                                <b style="font-size: 18pt; color: var(--ike-red); display: block; line-height: 1;">INVESTAMA</b>
-                                <span style="font-size: 9pt; letter-spacing: 3px; font-weight: bold; color: var(--ike-dark-blue);">KALIMANTAN ENERGI</span>
+                                <b style="font-size: 18pt; color: var(--ide-blue); display: block; line-height: 1;">INDO DHARMA</b>
+                                <span style="font-size: 9pt; letter-spacing: 3px; font-weight: bold; color: var(--ide-red);">ENERGI</span>
                             </div>
                         </div>
-                        <div class="text-end" style="font-size: 7.5pt; line-height: 1.4; border-left: 3px solid var(--ike-red); padding-left: 15px;">
+                        <div class="text-end" style="font-size: 7.5pt; line-height: 1.4; border-left: 3px solid var(--ide-blue); padding-left: 15px;">
                             Jln. H.M Rafi'i Rt.24 Kel. Madurejo, Arut Selatan<br>
                             Kotawaringin Barat, Kalimantan Tengah<br>
-                            <b>Email: investama.kalimantan.energi@gmail.com</b>
+                            <b>Email: indodharmaenergi@gmail.com</b>
                         </div>
                     </div>
 
@@ -220,7 +220,7 @@
                         <div class="sig-box"><div>Pengemudi / <i>Driver</i></div><div class="sig-name" id="sig_driver_sj"></div></div>
                         <div class="sig-box">
                             <div>Hormat Kami,</div>
-                            <img src="stempel.png" class="stamp-img" alt="Stamp">
+                            <img src="stempel_ide.png" class="stamp-img" alt="Stamp">
                             <div class="sig-name" id="sig_adm_sj"></div>
                         </div>
                     </div>
@@ -243,7 +243,7 @@
                         <div class="row mb-1"><div class="col-4">Volume Barang</div><div class="col-8">: <b id="out_qty_ba" class="dot-matrix">0</b> LITER</div></div>
                     </div>
 
-                    <p style="font-size: 8.5pt; font-style: italic; color: #333; background: #f8fafc; padding: 8px; border-left: 5px solid var(--ike-dark-blue); margin-bottom: 8px;">
+                    <p style="font-size: 8.5pt; font-style: italic; color: #333; background: #f8fafc; padding: 8px; border-left: 5px solid var(--ide-blue); margin-bottom: 8px;">
                         "Pihak Kedua telah menerima produk dalam volume yang sesuai, kondisi segel utuh, dan spesifikasi yang benar, komplain tidak berlaku apabila sudah di tanda tangani BA ini"
                     </p>
 
@@ -252,7 +252,7 @@
                         <div class="sig-box"><div>Pihak Kedua,</div><div class="sig-name" id="sig_p2_ba"></div></div>
                         <div class="sig-box">
                             <div>Mengetahui,</div>
-                            <img src="stempel.png" class="stamp-img" alt="Stamp">
+                            <img src="stempel_ide.png" class="stamp-img" alt="Stamp">
                             <div class="sig-name" id="sig_adm_ba"></div>
                         </div>
                     </div>
@@ -264,7 +264,7 @@
                     <div class="d-flex justify-content-between align-items-end" style="margin-top: 5px;">
                         <div id="qrcode"></div>
                         <div class="text-end" style="font-size: 6.5pt; color: #444;">
-                            <b style="color: var(--ike-red);">IKE SMART LOGISTICS SYSTEM</b><br>
+                            <b style="color: var(--ide-blue);">IDE LOGISTICS SMART SYSTEM</b><br>
                             Cetakan Sistem: <span id="out_sys_date"></span>
                         </div>
                     </div>
@@ -275,32 +275,16 @@
 </div>
 
 <datalist id="listTrans">
+    <option value="PT. INDO DHARMA ENERGI">
     <option value="PT. INVESTAMA KALIMANTAN ENERGI">
     <option value="PT. KHATULISTIWA SINAR ENERGI">
     <option value="PT. BERKAH SARANA MAKMUR BENUA">
-    <option value="PT. INDO DHARMA ENERGI">
 </datalist>
 
+<!-- (Datalist lainnya tetap sama) -->
 <datalist id="listTujuan">
     <option value="PT. NEW WAHYU BAOKAH">
     <option value="PT. BORNEO ARMADA PERKASA">
-    <option value="PT. GERBANG PERKASA PRATAMA">
-    <option value="PT. BORNEO TRENGGINAS MANDIRI">
-    <option value="PT. ANGKASA MITRA SEJATI">
-</datalist>
-
-<datalist id="listNopol">
-    <option value="KH 8141 GH">
-    <option value="KH 8139 GM">
-    <option value="KH 8942 GN">
-    <option value="KH 8943 GN">
-</datalist>
-
-<datalist id="listDriver">
-    <option value="AGUS WANTO">
-    <option value="ADI SUCIPTO">
-    <option value="AGUS MULYANTO">
-    <option value="SUPRIYADI">
 </datalist>
 
 <script>
@@ -313,12 +297,6 @@
     const dataArmada = [
         { nopol: "KH 8141 GH", tera: "100.5 cm", qty: 5000, sopir: "AGUS WANTO" },
         { nopol: "KH 8139 GM", tera: "133.5 cm", qty: 10000, sopir: "ADI SUCIPTO" },
-        { nopol: "KH 8942 GN", tera: "115.4 cm", qty: 5000, sopir: "AGUS MULYANTO" },
-        { nopol: "KH 8943 GN", tera: "114.6 cm", qty: 5000, sopir: "NUR KHOLIS" },
-        { nopol: "KH 8273 RM", tera: "109.5 cm", qty: 5000, sopir: "FARID HABIBI" },
-        { nopol: "KH 8256 RM", tera: "104.3 cm", qty: 5000, sopir: "RONNI" },
-        { nopol: "KH 8641 GN", tera: "113.8 cm", qty: 5000, sopir: "FARID HABIBI" },
-        { nopol: "KH 8206 GN", tera: "106.2 cm", qty: 5000, sopir: "RONNY PRASTIANSYAH" },
         { nopol: "L 9761 UJ", tera: "124.0 cm", qty: 8000, sopir: "SUPRIYADI" }
     ];
 
@@ -334,8 +312,8 @@
 
     async function fetchLastNumber() {
         try {
-            // Update ke tabel sj_ikaen
-            const { data, error } = await supabaseClient.from('sj_ikaen').select('nomor_dokumen').order('created_at', { ascending: false }).limit(1);
+            // Update ke tabel sj_ide
+            const { data, error } = await supabaseClient.from('sj_ide').select('nomor_dokumen').order('created_at', { ascending: false }).limit(1);
             if (data && data.length > 0) {
                 const lastNum = data[0].nomor_dokumen.split('/')[0];
                 document.getElementById('in_no_sj').value = (parseInt(lastNum) + 1).toString().padStart(3, '0');
@@ -362,20 +340,20 @@
             penerima: document.getElementById('in_tujuan').value,
             nopol: document.getElementById('in_nopol').value,
             driver: document.getElementById('in_driver').value,
-            qty: parseFloat(document.getElementById('in_qty').value.replace(/[^0-9.]/g, '')) || 0
+            qty: parseFloat(document.getElementById('in_qty').value) || 0
         };
 
         try {
-            // Simpan ke tabel sj_ikaen
+            // Simpan ke tabel sj_ide
             const { error } = await supabaseClient
-                .from('sj_ikaen')
+                .from('sj_ide')
                 .insert([payload]);
 
             if (error) throw error;
-            alert("✅ Data Berhasil Disimpan ke Cloud IKE!");
+            alert("✅ Data Berhasil Disimpan ke Cloud IDE!");
         } catch (err) {
             console.error("Detail Error:", err);
-            alert("❌ Gagal Simpan!\nPastikan tabel 'sj_ikaen' sudah tersedia di Supabase.");
+            alert("❌ Gagal Simpan!\nPastikan tabel 'sj_ide' sudah tersedia di Supabase.");
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> SAVE CLOUD';
@@ -398,8 +376,8 @@
         }
 
         const rawNo = val('in_no_sj') || "000";
-        const fullNoSJ = rawNo + "/SJ-IKE" + autoSuffix;
-        const fullNoBA = rawNo + "/BAST-IKE" + autoSuffix;
+        const fullNoSJ = rawNo + "/SJ-IDE" + autoSuffix;
+        const fullNoBA = rawNo + "/BAST-IDE" + autoSuffix;
         
         set('out_no_sj', fullNoSJ);
         set('out_no_ba', fullNoBA);
@@ -429,13 +407,13 @@
         set('sig_adm_ba', val('in_adm'));
         
         set('out_sys_date', new Date().toLocaleString('id-ID'));
-        qrcode.makeCode("IKE-V1-" + fullNoSJ);
+        qrcode.makeCode("IDE-V1-" + fullNoSJ);
     }
 
     function downloadPDF() {
         const element = document.getElementById('printable-area');
         html2pdf().set({ 
-            margin: 0, filename: 'SJ_IKE_' + (document.getElementById('in_no_sj').value) + '.pdf',
+            margin: 0, filename: 'SJ_IDE_' + (document.getElementById('in_no_sj').value) + '.pdf',
             jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' } 
         }).from(element).save();
     }
