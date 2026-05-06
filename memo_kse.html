@@ -16,8 +16,11 @@
             --accent-blue: #3498db;
             --success-green: #28a745;
             --gold-kse: #d4af37;
+            --danger-red: #e74c3c;
         }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #525659; margin: 0; display: flex; }
+        
+        /* SIDEBAR */
         .sidebar { width: 400px; background: var(--dark-sidebar); color: white; height: 100vh; padding: 15px; overflow-y: auto; position: fixed; left: 0; top: 0; box-shadow: 4px 0 10px rgba(0,0,0,0.3); z-index: 100; }
         .sidebar h2 { font-size: 16px; border-bottom: 2px solid var(--primary-kse); padding-bottom: 10px; margin-bottom: 15px; color: #ecf0f1; text-align: center; }
         .section-title { font-size: 10px; color: var(--accent-blue); font-weight: bold; margin: 15px 0 8px 0; text-transform: uppercase; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
@@ -26,14 +29,49 @@
         .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 7px; border-radius: 4px; border: 1px solid #2c3e50; background: #2c3e50; color: white; font-size: 11px; }
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary-kse); }
         .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
-        .top-action-bar { position: fixed; top: 0; right: 0; left: 400px; background: #2c3e50; padding: 10px 20px; display: flex; justify-content: flex-end; gap: 10px; z-index: 1000; }
-        .btn { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; color: white; display: flex; align-items: center; gap: 5px; }
-        .btn-home { background: #34495e; }
-        .btn-refresh { background: #7f8c8d; }
-        .btn-save { background: var(--accent-blue); }
-        .btn-download { background: #c0392b; }
-        .main-content { margin-left: 400px; margin-top: 50px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; }
+
+        /* UPDATED TOP ACTION BAR */
+        .top-action-bar { 
+            position: fixed; 
+            top: 0; 
+            right: 0; 
+            left: 400px; 
+            background: #ffffff; 
+            padding: 10px 25px; 
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 12px; 
+            z-index: 1000; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn { 
+            padding: 10px 18px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-size: 12px; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .btn:active { transform: translateY(0); }
+        
+        .btn-home { background: #4b5563; } /* Gray */
+        .btn-print { background: #6366f1; } /* Indigo */
+        .btn-save { background: var(--success-green); } /* Green */
+        .btn-download { background: var(--danger-red); } /* Red */
+
+        /* MAIN CONTENT */
+        .main-content { margin-left: 400px; margin-top: 65px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; }
         .memo-page { background: white; width: 210mm; min-height: 297mm; padding: 15mm; box-shadow: 0 0 20px rgba(0,0,0,0.5); color: #111; font-family: 'Courier New', Courier, monospace; position: relative; display: flex; flex-direction: column; }
+        
+        /* MEMO STYLING (REMAINS SAME) */
         .header-section { margin-bottom: 70px; display: flex; align-items: stretch; justify-content: space-between; }
         .header-left { display: flex; align-items: center; }
         .logo-img { height: 45px; margin-right: 15px; }
@@ -67,11 +105,12 @@
 </head>
 <body>
 
+<!-- UPDATED BUTTONS -->
 <div class="top-action-bar">
-    <button class="btn btn-home" onclick="window.location.href='index.html'">HOME</button>
-    <button class="btn btn-refresh" onclick="location.reload()">REFRESH</button>
-    <button class="btn btn-save" id="btnSave" onclick="saveData()">SAVE CLOUD</button>
-    <button class="btn btn-download" onclick="downloadPDF()">PRINT PDF</button>
+    <button class="btn btn-home" onclick="window.location.href='index.html'">Home</button>
+    <button class="btn btn-print" onclick="window.print()">Print</button>
+    <button class="btn btn-save" id="btnSave" onclick="saveData()">Save Cloud</button>
+    <button class="btn btn-download" onclick="downloadPDF()">Download PDF</button>
 </div>
 
 <div class="sidebar">
