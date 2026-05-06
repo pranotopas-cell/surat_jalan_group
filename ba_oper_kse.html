@@ -200,9 +200,9 @@
 
 <script>
     // --- KONFIGURASI SUPABASE ---
-    const SUPABASE_URL = "URL_SUPABASE_ANDA";
-    const SUPABASE_KEY = "KEY_ANON_SUPABASE_ANDA";
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const SB_URL = "https://qnamtickoteyvydayyor.supabase.co";
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYW10aWNrb3RleXZ5ZGF5eW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTU2MzksImV4cCI6MjA5MzQ3MTYzOX0.VAeN0JVnz4WNPzY5NTGmtGeHD-Da_qkCvy84ZDYZNHo";
+    const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
     var qr = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
@@ -220,27 +220,24 @@
         const tahun = tgl.getFullYear();
 
         try {
-            // Ambil semua nomor pada bulan dan tahun tersebut untuk mencari angka tertinggi
-            const { data, error } = await _supabase
+            // Ambil nomor terakhir di bulan dan tahun yang dipilih
+            const { data, error } = await supabaseClient
                 .from('baom_kse')
                 .select('no_dokumen')
-                .ilike('no_dokumen', `%/${bulanRomawi}/${tahun}`);
+                .ilike('no_dokumen', `%/${bulanRomawi}/${tahun}`)
+                .order('no_dokumen', { ascending: false })
+                .limit(1);
 
             if (error) throw error;
 
             let nextNum = 1;
             if (data && data.length > 0) {
-                // Ekstrak angka depan dan cari yang paling besar
-                const numbers = data.map(item => {
-                    const parts = item.no_dokumen.split('/');
-                    return parseInt(parts[0]) || 0;
-                });
-                nextNum = Math.max(...numbers) + 1;
+                const lastNoString = data[0].no_dokumen.split('/')[0].trim();
+                nextNum = parseInt(lastNoString) + 1;
             }
             
             const formatNo = `${nextNum.toString().padStart(3, '0')} / BAOM-KSE/${bulanRomawi}/${tahun}`;
             document.getElementById('in_no').value = formatNo;
-            
             updateView();
             updateQR();
         } catch (e) {
@@ -250,37 +247,31 @@
 
     async function saveToCloud() {
         const btn = event.currentTarget;
-        const originalHTML = btn.innerHTML;
-        
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> SAVING...';
 
+        const payload = {
+            no_dokumen: document.getElementById('in_no').value,
+            tanggal: document.getElementById('in_tgl_input').value,
+            unit_penyerah: document.getElementById('s_pt').value,
+            unit_penerima: document.getElementById('t_pt').value,
+            sopir: document.getElementById('t_sopir').value,
+            jumlah: document.getElementById('t_qty').value,
+            nopol_sumber: document.getElementById('s_nopol').value,
+            nopol_tujuan: document.getElementById('t_nopol').value,
+            segel: document.getElementById('t_segel').value,
+            tinggi_cairan: document.getElementById('t_tinggi').value
+        };
+
         try {
-            const payload = {
-                no_dokumen: document.getElementById('in_no').value,
-                tanggal: document.getElementById('in_tgl_input').value,
-                unit_penyerah: document.getElementById('s_pt').value,
-                unit_penerima: document.getElementById('t_pt').value,
-                sopir: document.getElementById('t_sopir').value,
-                jumlah: parseFloat(document.getElementById('t_qty').value) || 0,
-                nopol_sumber: document.getElementById('s_nopol').value,
-                nopol_tujuan: document.getElementById('t_nopol').value,
-                segel: document.getElementById('t_segel').value,
-                tinggi_cairan: document.getElementById('t_tinggi').value,
-                hari: document.getElementById('in_hari').value,
-                lokasi: document.getElementById('in_lokasi').value
-            };
-
-            const { error } = await _supabase.from('baom_kse').insert([payload]);
-
+            const { error } = await supabaseClient.from('baom_kse').insert([payload]);
             if (error) throw error;
             alert("Data Berhasil Disimpan ke Cloud!");
-            
         } catch (error) {
             alert("Gagal menyimpan: " + error.message);
         } finally {
             btn.disabled = false;
-            btn.innerHTML = originalHTML;
+            btn.innerHTML = '<i class="bi bi-cloud-upload"></i> SAVE CLOUD';
         }
     }
 
@@ -326,6 +317,7 @@
         document.getElementById('ot_sopir_sig').innerText = document.getElementById('t_sopir').value;
         document.getElementById('os_qty').innerText = (document.getElementById('s_qty').value || "0") + " LITER";
         document.getElementById('ot_qty').innerText = (document.getElementById('t_qty').value || "0") + " LITER";
+        document.getElementById('ot_tinggi').innerText = (document.getElementById('t_tinggi').value || "-") + " MM";
         
         const now = new Date();
         document.getElementById('print-timestamp').innerText = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}, ${now.getHours()}.${now.getMinutes().toString().padStart(2,'0')}`;
@@ -349,8 +341,7 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('in_tgl_input').value = today;
         formatDateText();
-        // Beri jeda sedikit agar Supabase Client siap
-        setTimeout(generateDocNumber, 500);
+        generateDocNumber();
     };
 </script>
 </body>
