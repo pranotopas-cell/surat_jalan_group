@@ -13,7 +13,6 @@
 
     <style>
         :root { 
-            /* Skema Warna IDE: Merah dan Biru */
             --ide-red: #e11d48; 
             --ide-blue: #2563eb; 
             --ide-dark: #1e293b;
@@ -29,31 +28,45 @@
             background: white; width: 215.9mm; height: 279.4mm; padding: 8mm 12mm; 
             position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
             display: flex; flex-direction: column; transform: scale(0.85); transform-origin: top center;
+            overflow: hidden; /* Penting agar watermark tidak keluar batas */
         }
 
-        .dot-matrix { font-family: var(--dot-font); font-weight: bold; text-transform: uppercase; }
-        .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        /* WATERMARK LOGO BACKGROUND */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            width: 70%;
+            opacity: 0.08; /* Sangat transparan abu-abu */
+            z-index: 0;
+            pointer-events: none;
+            filter: grayscale(100%); /* Memastikan warna abu-abu */
+        }
+
+        .dot-matrix { font-family: var(--dot-font); font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; }
+        .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; position: relative; z-index: 1; }
         .main-logo { height: 50px; width: auto; }
-        .title-doc { text-align: center; margin-bottom: 10px; }
+        .title-doc { text-align: center; margin-bottom: 10px; position: relative; z-index: 1; }
         .title-doc h1 { font-size: 22pt; font-weight: 900; margin: 0; letter-spacing: 4px; color: var(--ide-dark); }
         .title-doc span { font-size: 11pt; color: #333; font-style: italic; display: block; font-weight: 500; }
 
-        .info-table { width: 100%; margin-bottom: 10px; border-collapse: collapse; border: 1.5px solid #000; }
+        .info-table { width: 100%; margin-bottom: 10px; border-collapse: collapse; border: 1.5px solid #000; position: relative; z-index: 1; background: transparent; }
         .info-table th, .info-table td { padding: 6px 10px; border: 1px solid #000; vertical-align: middle; font-size: 9.5pt; }
-        .label-cell { background-color: #f8fafc; font-weight: 700; width: 22%; font-size: 8.5pt; }
+        .label-cell { background-color: rgba(248, 250, 252, 0.7); font-weight: 700; width: 22%; font-size: 8.5pt; }
         .label-cell small { display: block; font-weight: 400; font-style: italic; color: #475569; font-size: 7pt; }
         .data-cell { font-family: var(--dot-font); font-size: 10.5pt; letter-spacing: 0.5px; }
 
-        .divider-line { border-top: 2px dashed var(--ide-dark); margin: 20px 0 10px 0; position: relative; }
-        .divider-line span { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 20px; font-weight: bold; font-size: 9pt; color: var(--ide-black); }
+        .divider-line { border-top: 2px dashed var(--ide-dark); margin: 20px 0 10px 0; position: relative; z-index: 1; }
+        .divider-line span { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 20px; font-weight: bold; font-size: 9pt; }
 
-        .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 5px; }
+        .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 5px; position: relative; z-index: 1; }
         .sig-box { height: 85px; display: flex; flex-direction: column; justify-content: space-between; position: relative; font-size: 8.5pt; }
         
         .stamp-img { position: absolute; width: 80px; bottom: 10px; left: 50%; transform: translateX(-50%); opacity: 0.8; z-index: 1; }
         .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 9pt; position: relative; z-index: 2; font-family: var(--dot-font); }
 
-        .footer-ornament { display: flex; height: 6px; width: 100%; margin-top: auto; margin-bottom: 5px; }
+        .footer-ornament { display: flex; height: 6px; width: 100%; margin-top: auto; margin-bottom: 5px; position: relative; z-index: 1; }
         .orn-1 { background: var(--ide-red); flex: 4; }
         .orn-2 { background: var(--ide-blue); flex: 2; }
         .orn-3 { background: var(--ide-dark); flex: 1; }
@@ -67,6 +80,7 @@
             body { background: white; overflow: visible; } 
             .canvas-container { padding: 0; height: auto; overflow: visible; }
             .document-canvas { box-shadow: none; margin: 0; width: 215.9mm; height: 279.4mm; transform: scale(1); } 
+            .watermark { opacity: 0.08 !important; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -149,6 +163,9 @@
             <div class="canvas-container">
                 <div class="document-canvas" id="printable-area">
                     
+                    <!-- WATERMARK LOGO -->
+                    <img src="ide1.png" class="watermark" alt="Watermark IDE">
+
                     <div class="header-sj">
                         <div class="d-flex align-items-center gap-3">
                             <img src="ide1.png" class="main-logo" alt="Logo">
@@ -160,7 +177,7 @@
                         <div class="text-end" style="font-size: 7.5pt; line-height: 1.4; border-left: 3px solid var(--ide-blue); padding-left: 15px;">
                             Jln. Natai Arahan RT.20 Kel. Baru, Arut Selatan<br>
                             Kotawaringin Barat, Kalimantan Tengah<br>
-                            <b>Email: indodharmaenergi@gmail.com |74110</b>
+                            <b>Email: indodharmaenergi@gmail.com | 74110</b>
                         </div>
                     </div>
 
@@ -179,7 +196,7 @@
                             </table>
                         </div>
                         <div class="col-5">
-                            <div style="border: 1.5px solid #000; padding: 6px; background: #fdfdfd; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="border: 1.5px solid #000; padding: 6px; background: rgba(253, 253, 253, 0.8); height: 100%; display: flex; flex-direction: column; justify-content: center;">
                                 <small class="text-uppercase fw-bold" style="font-size: 6.5pt; color: #555;">Tujuan Pengiriman:</small>
                                 <b id="out_tujuan_sj" class="dot-matrix" style="font-size: 10.5pt; display: block;">-</b>
                             </div>
@@ -233,17 +250,17 @@
                         <span style="font-size: 8pt;">Minutes of Handover</span>
                     </div>
 
-                    <p style="font-size: 9.5pt; text-align: justify; line-height: 1.4; margin-bottom: 8px;">
+                    <p style="font-size: 9.5pt; text-align: justify; line-height: 1.4; margin-bottom: 8px; position: relative; z-index: 1;">
                         Pada hari ini <b id="out_hari_ba" class="dot-matrix">..........</b>, Tanggal <b id="out_tgl_ba" class="dot-matrix">..........</b>, bertempat di <b id="out_lokasi_ba" class="dot-matrix">..........</b>, telah dilakukan serah terima komoditas BBM Solar Industri /Bio Solar B40 dengan rincian:
                     </p>
 
-                    <div style="margin: 0 0 10px 30px; font-size: 10pt;">
+                    <div style="margin: 0 0 10px 30px; font-size: 10pt; position: relative; z-index: 1;">
                         <div class="row mb-1"><div class="col-4">Pihak I (Penyerah)</div><div class="col-8">: <b id="out_trans_ba" class="dot-matrix">-</b></div></div>
                         <div class="row mb-1"><div class="col-4">Pihak II (Penerima)</div><div class="col-8">: <b id="out_tujuan_ba" class="dot-matrix"></b></div></div>
                         <div class="row mb-1"><div class="col-4">Volume Barang</div><div class="col-8">: <b id="out_qty_ba" class="dot-matrix">0</b> LITER</div></div>
                     </div>
 
-                    <p style="font-size: 8.5pt; font-style: italic; color: #333; background: #f8fafc; padding: 8px; border-left: 5px solid var(--ide-blue); margin-bottom: 8px;">
+                    <p style="font-size: 8.5pt; font-style: italic; color: #333; background: rgba(248, 250, 252, 0.7); padding: 8px; border-left: 5px solid var(--ide-blue); margin-bottom: 8px; position: relative; z-index: 1;">
                         "Pihak Kedua telah menerima produk dalam volume yang sesuai, kondisi segel utuh, dan spesifikasi yang benar, komplain tidak berlaku apabila sudah di tanda tangani BA ini"
                     </p>
 
@@ -261,7 +278,7 @@
                         <div class="orn-1"></div><div class="orn-2"></div><div class="orn-3"></div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-end" style="margin-top: 5px;">
+                    <div class="d-flex justify-content-between align-items-end" style="margin-top: 5px; position: relative; z-index: 1;">
                         <div id="qrcode"></div>
                         <div class="text-end" style="font-size: 6.5pt; color: #444;">
                             <b style="color: var(--ide-blue);">IDE LOGISTICS SMART SYSTEM</b><br>
@@ -278,10 +295,8 @@
     <option value="PT. INDO DHARMA ENERGI">
     <option value="PT. INVESTAMA KALIMANTAN ENERGI">
     <option value="PT. KHATULISTIWA SINAR ENERGI">
-    <option value="PT. BERKAH SARANA MAKMUR BENUA">
 </datalist>
 
-<!-- (Datalist lainnya tetap sama) -->
 <datalist id="listTujuan">
     <option value="PT. NEW WAHYU BAOKAH">
     <option value="PT. BORNEO ARMADA PERKASA">
@@ -312,7 +327,6 @@
 
     async function fetchLastNumber() {
         try {
-            // Update ke tabel sj_ide
             const { data, error } = await supabaseClient.from('sj_ide').select('nomor_dokumen').order('created_at', { ascending: false }).limit(1);
             if (data && data.length > 0) {
                 const lastNum = data[0].nomor_dokumen.split('/')[0];
@@ -344,16 +358,12 @@
         };
 
         try {
-            // Simpan ke tabel sj_ide
-            const { error } = await supabaseClient
-                .from('sj_ide')
-                .insert([payload]);
-
+            const { error } = await supabaseClient.from('sj_ide').insert([payload]);
             if (error) throw error;
             alert("✅ Data Berhasil Disimpan ke Cloud IDE!");
         } catch (err) {
             console.error("Detail Error:", err);
-            alert("❌ Gagal Simpan!\nPastikan tabel 'sj_ide' sudah tersedia di Supabase.");
+            alert("❌ Gagal Simpan!");
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> SAVE CLOUD';
