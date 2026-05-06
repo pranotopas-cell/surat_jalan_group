@@ -93,9 +93,10 @@
 
 <div class="container-fluid">
     <div class="row">
+        <!-- SIDEBAR INPUT -->
         <div class="col-lg-3 input-sidebar shadow-sm">
-            <label class="form-label-custom">Nomor Dokumen (Auto)</label>
-            <input type="text" id="in_no" class="form-control form-control-sm mb-2 fw-bold" readonly>
+            <label class="form-label-custom">Nomor Dokumen</label>
+            <input type="text" id="in_no" class="form-control form-control-sm mb-2 fw-bold" oninput="updateView(); updateQR();">
             
             <div class="row g-2">
                 <div class="col-6"><label class="form-label-custom">Hari</label><input type="text" id="in_hari" class="form-control form-control-sm" readonly></div>
@@ -107,18 +108,18 @@
             <input type="text" id="in_lokasi" class="form-control form-control-sm mb-2 fw-bold" value="Pangkalan Bun" oninput="updateView()">
 
             <hr>
-            <label class="form-label-custom text-success">Unit Penyerah</label>
+            <label class="form-label-custom text-success">Unit Penyerah (Sumber)</label>
             <input type="text" id="s_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol" oninput="updateView()">
             <input type="text" id="s_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT" oninput="updateView()">
             <input type="number" id="s_qty" class="form-control form-control-sm mb-1" placeholder="Volume" oninput="updateView()">
             <input type="text" id="s_sopir" class="form-control form-control-sm" placeholder="Nama Sopir" oninput="updateView()">
 
             <hr>
-            <label class="form-label-custom text-danger">Unit Penerima</label>
+            <label class="form-label-custom text-danger">Unit Penerima (Tujuan)</label>
             <input type="text" id="t_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol" oninput="updateView()">
             <input type="text" id="t_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT" oninput="updateView()">
             <input type="number" id="t_qty" class="form-control form-control-sm mb-1" placeholder="Volume" oninput="updateView()">
-            <input type="text" id="t_segel" class="form-control form-control-sm mb-1" placeholder="No. Segel" oninput="updateView()">
+            <input type="text" id="t_segel" class="form-control form-control-sm mb-1" placeholder="Nomor Segel" oninput="updateView()">
             <input type="text" id="t_tinggi" class="form-control form-control-sm mb-1" placeholder="Tinggi Cairan (mm)" oninput="updateView()">
             <input type="text" id="t_sopir" class="form-control form-control-sm" placeholder="Nama Sopir" oninput="updateView()">
             
@@ -127,6 +128,7 @@
             <input type="text" id="in_sig_operasional" class="form-control form-control-sm" placeholder="Nama Admin" oninput="updateView()">
         </div>
 
+        <!-- DOCUMENT VIEW -->
         <div class="col-lg-9 p-0" id="pdf-area">
             <div class="document-canvas">
                 <div class="header-section">
@@ -202,33 +204,47 @@
     // --- KONFIGURASI SUPABASE ---
     const SUPABASE_URL = "URL_SUPABASE_ANDA";
     const SUPABASE_KEY = "KEY_ANON_SUPABASE_ANDA";
-    const supabase = exports.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     var qr = new QRCode(document.getElementById("qrcode"), { width: 45, height: 45 });
 
-    async function generateDocNumber() {
-        const tgl = new Date(document.getElementById('in_tgl_input').value);
-        const bulan = (tgl.getMonth() + 1).toString().padStart(2, '0');
-        const tahun = tgl.getFullYear();
-        
-        // Ambil data terakhir dari supabase untuk bulan & tahun ini
-        const { data, error } = await supabase
-            .from('baom_kse')
-            .select('no_dokumen')
-            .filter('no_dokumen', 'ilike', `%/${bulan}/${tahun}`)
-            .order('no_dokumen', { ascending: false })
-            .limit(1);
+    function getRomanMonth(month) {
+        const roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+        return roman[month];
+    }
 
-        let nextNum = 1;
-        if (data && data.length > 0) {
-            const lastNo = data[0].no_dokumen.split('/')[0];
-            nextNum = parseInt(lastNo) + 1;
-        }
+    async function generateDocNumber() {
+        const dateInput = document.getElementById('in_tgl_input').value;
+        if(!dateInput) return;
         
-        const formatNo = `${nextNum.toString().padStart(3, '0')}/BAOM-KSE/${bulan}/${tahun}`;
-        document.getElementById('in_no').value = formatNo;
-        updateView();
-        updateQR();
+        const tgl = new Date(dateInput);
+        const bulanRomawi = getRomanMonth(tgl.getMonth());
+        const tahun = tgl.getFullYear();
+        const bulanIndex = (tgl.getMonth() + 1).toString().padStart(2, '0');
+        
+        // Cek nomor terakhir di database
+        try {
+            const { data, error } = await _supabase
+                .from('baom_kse')
+                .select('no_dokumen')
+                .filter('no_dokumen', 'ilike', `%/${bulanRomawi}/${tahun}`)
+                .order('no_dokumen', { ascending: false })
+                .limit(1);
+
+            let nextNum = 1;
+            if (data && data.length > 0) {
+                // Parsing format "001 / BAOM-KSE/V/2026"
+                const lastNoString = data[0].no_dokumen.split(' / ')[0];
+                nextNum = parseInt(lastNoString) + 1;
+            }
+            
+            const formatNo = `${nextNum.toString().padStart(3, '0')} / BAOM-KSE/${bulanRomawi}/${tahun}`;
+            document.getElementById('in_no').value = formatNo;
+            updateView();
+            updateQR();
+        } catch (e) {
+            console.error("Gagal generate nomor otomatis", e);
+        }
     }
 
     async function saveToCloud() {
@@ -245,10 +261,11 @@
             jumlah: document.getElementById('t_qty').value,
             nopol_sumber: document.getElementById('s_nopol').value,
             nopol_tujuan: document.getElementById('t_nopol').value,
-            segel: document.getElementById('t_segel').value
+            segel: document.getElementById('t_segel').value,
+            tinggi_cairan: document.getElementById('t_tinggi').value
         };
 
-        const { error } = await supabase.from('baom_kse').insert([payload]);
+        const { error } = await _supabase.from('baom_kse').insert([payload]);
 
         if (error) {
             alert("Gagal menyimpan: " + error.message);
@@ -265,6 +282,7 @@
         const dateObj = new Date(dateInput);
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
         const formatted = dateObj.toLocaleDateString('id-ID', options);
+        
         document.getElementById('in_hari').value = ["MINGGU","SENIN","SELASA","RABU","KAMIS","JUMAT","SABTU"][dateObj.getDay()];
         document.getElementById('in_tgl_lengkap').value = `tanggal ${dateObj.getDate()} bulan ${formatted.split(' ')[1]} tahun ${dateObj.getFullYear()}`;
         document.getElementById('out_tgl_footer').innerText = formatted;
@@ -274,17 +292,28 @@
 
     function updateView() {
         const mapping = {
-            'in_no': 'out_no', 'in_hari': 'out_hari', 'in_tgl_lengkap': 'out_tgl_lengkap',
-            's_nopol': 'os_nopol', 's_pt': 'os_pt', 's_sopir': 'os_sopir',
-            't_nopol': 'ot_nopol', 't_pt': 'ot_pt', 't_sopir': 'ot_sopir',
-            't_segel': 'ot_segel', 't_tinggi': 'ot_tinggi',
-            'in_sig_operasional': 'out_operasional_sig', 'in_lokasi': 'out_lokasi'
+            'in_no': 'out_no', 
+            'in_hari': 'out_hari', 
+            'in_tgl_lengkap': 'out_tgl_lengkap',
+            's_nopol': 'os_nopol', 
+            's_pt': 'os_pt', 
+            's_sopir': 'os_sopir',
+            't_nopol': 'ot_nopol', 
+            't_pt': 'ot_pt', 
+            't_sopir': 'ot_sopir',
+            't_segel': 'ot_segel', 
+            't_tinggi': 'ot_tinggi',
+            'in_sig_operasional': 'out_operasional_sig', 
+            'in_lokasi': 'out_lokasi'
         };
+
         for (let id in mapping) {
             const target = document.getElementById(mapping[id]);
             const source = document.getElementById(id);
             if(target && source) target.innerText = source.value;
         }
+
+        // Khusus formatting unit
         document.getElementById('out_lokasi_footer').innerText = document.getElementById('in_lokasi').value;
         document.getElementById('os_sopir_sig').innerText = document.getElementById('s_sopir').value;
         document.getElementById('ot_sopir_sig').innerText = document.getElementById('t_sopir').value;
@@ -303,7 +332,7 @@
         const element = document.getElementById('pdf-area');
         const opt = { 
             margin: 0, 
-            filename: `BAOM_${document.getElementById('in_no').value}.pdf`, 
+            filename: `BAOM_${document.getElementById('in_no').value.replace(/ \/ /g, '_')}.pdf`, 
             html2canvas: { scale: 2, useCORS: true }, 
             jsPDF: { unit: 'mm', format: [215, 278], orientation: 'portrait' } 
         };
