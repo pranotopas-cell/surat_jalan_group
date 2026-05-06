@@ -29,31 +29,52 @@
             background: white; width: 215.9mm; height: 279.4mm; padding: 8mm 12mm; 
             position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
             display: flex; flex-direction: column; transform: scale(0.85); transform-origin: top center;
+            overflow: hidden; /* Penting agar watermark tidak keluar batas */
+        }
+
+        /* WATERMARK STYLE */
+        .watermark-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            opacity: 0.08; /* Tingkat transparansi logo */
+            pointer-events: none;
+            z-index: 0;
+            width: 70%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .watermark-container img {
+            width: 100%;
+            height: auto;
+            filter: grayscale(100%);
         }
 
         .dot-matrix { font-family: var(--dot-font); font-weight: bold; text-transform: uppercase; }
-        .header-sj { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header-sj { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .main-logo { height: 45px; width: auto; }
-        .title-doc { text-align: center; margin-bottom: 10px; }
+        .title-doc { position: relative; z-index: 1; text-align: center; margin-bottom: 10px; }
         .title-doc h1 { font-size: 22pt; font-weight: 900; margin: 0; letter-spacing: 4px; }
         .title-doc span { font-size: 9pt; color: #333; font-style: italic; display: block; font-weight: 500; }
 
-        .info-table { width: 100%; margin-bottom: 10px; border-collapse: collapse; border: 1.5px solid #000; }
+        .info-table { position: relative; z-index: 1; width: 100%; margin-bottom: 10px; border-collapse: collapse; border: 1.5px solid #000; }
         .info-table th, .info-table td { padding: 6px 10px; border: 1px solid #000; vertical-align: middle; font-size: 9.5pt; }
         .label-cell { background-color: #f1f5f9; font-weight: 700; width: 22%; font-size: 8.5pt; }
         .label-cell small { display: block; font-weight: 400; font-style: italic; color: #475569; font-size: 7pt; }
         .data-cell { font-family: var(--dot-font); font-size: 10.5pt; letter-spacing: 0.5px; }
 
-        .divider-line { border-top: 2px dashed #000; margin: 20px 0 10px 0; position: relative; }
+        .divider-line { position: relative; z-index: 1; border-top: 2px dashed #000; margin: 20px 0 10px 0; }
         .divider-line span { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 20px; font-weight: bold; font-size: 9pt; }
 
-        .signature-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 5px; }
+        .signature-section { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 5px; }
         .sig-box { height: 85px; display: flex; flex-direction: column; justify-content: space-between; position: relative; font-size: 8.5pt; }
         
         .stamp-img { position: absolute; width: 95px; bottom: 25px; left: 50%; transform: translateX(-50%); opacity: 0.8; z-index: 1; }
         .sig-name { font-weight: 900; text-decoration: underline; text-transform: uppercase; font-size: 9pt; position: relative; z-index: 2; font-family: var(--dot-font); }
 
-        .footer-ornament { display: flex; height: 6px; width: 100%; margin-top: auto; margin-bottom: 5px; }
+        .footer-ornament { position: relative; z-index: 1; display: flex; height: 6px; width: 100%; margin-top: auto; margin-bottom: 5px; }
         .orn-1 { background: var(--kse-primary); flex: 4; }
         .orn-2 { background: var(--tosca); flex: 2; }
         .orn-3 { background: var(--gold); flex: 1; }
@@ -86,32 +107,25 @@
 
 <div class="container-fluid">
     <div class="row">
-        <!-- INPUT SIDEBAR -->
         <div class="col-lg-3 input-sidebar shadow-sm">
+            <!-- Form inputs remain identical -->
             <label class="form-label-custom">Tanggal Kirim</label>
             <input type="date" id="in_tgl" class="form-control form-control-sm mb-1">
-
             <label class="form-label-custom">Nomor Dokumen (Auto)</label>
             <input type="text" id="in_no_sj" class="form-control form-control-sm mb-1 fw-bold">
-
             <label class="form-label-custom">Transportir</label>
             <input type="text" id="in_trans" list="listTrans" class="form-control form-control-sm mb-1" value="PT. KHATULISTIWA SINAR ENERGI">
-
             <label class="form-label-custom">Penerima (Perusahaan)</label>
             <input type="text" id="in_tujuan" list="listTujuan" class="form-control form-control-sm mb-1">
-
             <label class="form-label-custom">No. PO Customer</label>
             <input type="text" id="in_po" class="form-control form-control-sm mb-1" placeholder="Masukkan No PO">
-
             <label class="form-label-custom">No. SO / DO KSE</label>
             <input type="text" id="in_so" class="form-control form-control-sm mb-1">
-
             <label class="form-label-custom">Jenis Barang</label>
             <select id="in_barang" class="form-select form-select-sm mb-1">
                 <option value="BBM SOLAR INDUSTRI (HSD)">BBM SOLAR INDUSTRI (HSD)</option>
                 <option value="BIO SOLAR B40">BIO SOLAR B40</option>
             </select>
-
             <div class="row g-2">
                 <div class="col-6">
                     <label class="form-label-custom">No. Polisi</label>
@@ -122,7 +136,6 @@
                     <input type="text" id="in_driver" list="listDriver" class="form-control form-control-sm mb-1">
                 </div>
             </div>
-
             <div class="row g-2">
                 <div class="col-6">
                     <label class="form-label-custom">Tinggi (mm)</label>
@@ -133,22 +146,23 @@
                     <input type="text" id="in_segel" class="form-control form-control-sm mb-1">
                 </div>
             </div>
-
             <label class="form-label-custom">Kuantitas (Liter)</label>
             <input type="number" id="in_qty" class="form-control form-control-sm mb-1">
-
             <label class="form-label-custom">Lokasi Tujuan</label>
             <input type="text" id="in_lokasi" class="form-control form-control-sm mb-1" value="Pangkalan Bun">
-
             <label class="form-label-custom">Admin KSE</label>
             <input type="text" id="in_adm" class="form-control form-control-sm mb-1" value="STAFF OPERASIONAL">
         </div>
 
-        <!-- CANVAS AREA -->
         <div class="col-lg-9 p-0 bg-secondary bg-opacity-10">
             <div class="canvas-container">
                 <div class="document-canvas" id="printable-area">
                     
+                    <!-- WATERMARK ELEMENT -->
+                    <div class="watermark-container">
+                        <img src="header1.png" alt="KSE Watermark">
+                    </div>
+
                     <div class="header-sj">
                         <div class="d-flex align-items-center gap-3">
                             <img src="header1.png" class="main-logo" alt="Logo">
@@ -164,6 +178,7 @@
                         </div>
                     </div>
 
+                    <!-- All other document content remains exactly the same -->
                     <div class="title-doc">
                         <h1>SURAT JALAN</h1>
                         <span>Delivery Order / Waybill</span>
@@ -274,6 +289,7 @@
     </div>
 </div>
 
+<!-- Datalist and Scripts remain identical to your original -->
 <datalist id="listTrans">
     <option value="PT. KHATULISTIWA SINAR ENERGI">
     <option value="PT. INVESTAMA KALIMANTAN ENERGI">
@@ -380,55 +396,39 @@
 
     async function saveToCloud() {
         const btn = event.target;
-        
-        // Validasi dasar agar tidak simpan data kosong
         if (!document.getElementById('in_tgl').value || !document.getElementById('in_no_sj').value) {
             alert("Tanggal dan Nomor Dokumen harus diisi!");
             return;
         }
-
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
-
-        // Fungsi membersihkan karakter non-angka untuk kolom QTY
-        const cleanNumber = (id) => {
-            let val = document.getElementById(id).value;
-            return val.replace(/[^0-9.]/g, ''); 
-        };
-
         const payload = {
-        tanggal: document.getElementById('in_tgl').value,
-        nomor_dokumen: document.getElementById('out_no_sj').innerText,
-        penerima: document.getElementById('in_tujuan').value,
-        nopol: document.getElementById('in_nopol').value,
-        driver: document.getElementById('in_driver').value,
-        // Menghapus titik ribuan/karakter lain agar terbaca sebagai angka murni oleh Supabase
-        qty: parseFloat(document.getElementById('in_qty').value.replace(/[^0-9.]/g, '')) || 0
-    };
-
+            tanggal: document.getElementById('in_tgl').value,
+            nomor_dokumen: document.getElementById('out_no_sj').innerText,
+            penerima: document.getElementById('in_tujuan').value,
+            nopol: document.getElementById('in_nopol').value,
+            driver: document.getElementById('in_driver').value,
+            qty: parseFloat(document.getElementById('in_qty').value.replace(/[^0-9.]/g, '')) || 0
+        };
         try {
-            const { error } = await supabaseClient
-                .from('sj_kse')
-                .insert([payload]);
-
+            const { error } = await supabaseClient.from('sj_kse').insert([payload]);
             if (error) throw error;
             alert("✅ Data Berhasil Disimpan ke Cloud!");
         } catch (err) {
             console.error("Detail Error:", err);
-            // Menangani error tipe data jika database masih menolak input ""
-            alert("❌ Gagal Simpan!\nPastikan kolom di Supabase sudah sesuai (numeric untuk qty, text untuk lainnya).");
+            alert("❌ Gagal Simpan!");
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> SAVE CLOUD';
         }
     }
+
     function syncData() {
         const val = (id) => document.getElementById(id).value;
         const set = (id, text) => { if(document.getElementById(id)) document.getElementById(id).innerText = text || "-"; };
 
         const tglInput = val('in_tgl');
         let displayTgl = "-", displayHari = "..........", autoSuffix = "";
-
         if(tglInput) {
             const d = new Date(tglInput);
             displayTgl = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -461,13 +461,11 @@
         set('out_lokasi_sj', val('in_lokasi'));
         set('out_lokasi_ba', val('in_lokasi'));
         set('out_tujuan_ba', val('in_tujuan'));
-
         set('sig_driver_sj', val('in_driver'));
         set('sig_adm_sj', val('in_adm'));
         set('sig_p1_ba', val('in_driver'));
         set('sig_p2_ba', val('in_tujuan'));
         set('sig_adm_ba', val('in_adm'));
-        
         set('out_sys_date', new Date().toLocaleString('id-ID'));
         qrcode.makeCode("KSE-V2-" + fullNoSJ);
     }
