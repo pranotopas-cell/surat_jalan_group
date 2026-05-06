@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Memo PT Khatulistiwa Sinar Energi</title>
+    <title>Memo </title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -212,11 +212,20 @@
 
     const listTransportir = ["PT. KHATULISTIWA SINAR ENERGI", "PT. INDO DHARMA ENERGI", "PT. INVESTAMA KALIMANTAN ENERGI"];
     const dataArmada = [
-        { nopol: "KH 8141 GH", tera: "100.5", qty: 5000 },
-        { nopol: "KH 8139 GM", tera: "133.5", qty: 10000 },
-        { nopol: "L 9761 UJ", tera: "124.0", qty: 8000 }
+        { nopol: "KH 8141 GH", tera: "100.5 cm", qty: 5000 },
+        { nopol: "KH 8139 GM", tera: "133.5 cm", qty: 10000 },
+        { nopol: "KH 8942 GN", tera: "115.4 cm", qty: 5000 },
+        { nopol: "KH 8943 GN", tera: "114.6 cm", qty: 5000 },
+        { nopol: "KH 8273 RM", tera: "109.5 cm", qty: 5000 },
+        { nopol: "KH 8256 RM", tera: "104.3 cm", qty: 5000 },
+        { nopol: "KH 8641 GN", tera: "113.8 cm", qty: 5000 },
+        { nopol: "KH 8206 GN", tera: "106.2 cm", qty: 5000 },
+        { nopol: "L 9761 UJ", tera: "124.0 cm", qty: 8000 }
+
     ];
-    const listDriver = ["AGUS", "WIYANTO", "WAHID", "SUPRIYADI", "INDRA"];
+    const listDriver = ["AGUS EFENDI", "WIYANTO", "WAHID", "SUPRIYADI", "INDRA" "AGUS MULYANTO", "WIYANTO", "WAHID", "SUPRIYADI", "AGUS WANTO", 
+        "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH",  "ADI SUCIPTO", "AGUS MULYANTO", "AGUS" ,"INDRA"
+ ];
 
     function getRomanMonth(monthIdx) {
         const roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
