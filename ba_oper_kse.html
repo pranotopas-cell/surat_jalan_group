@@ -200,6 +200,7 @@
 </div>
 
 <script>
+    // --- KONFIGURASI SUPABASE ---
     const SB_URL = "https://qnamtickoteyvydayyor.supabase.co";
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYW10aWNrb3RleXZ5ZGF5eW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTU2MzksImV4cCI6MjA5MzQ3MTYzOX0.VAeN0JVnz4WNPzY5NTGmtGeHD-Da_qkCvy84ZDYZNHo";
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
@@ -211,7 +212,7 @@
         return roman[month];
     }
 
-    // FUNGSI AUTO GENERATE NOMOR (DIPERBAIKI)
+    // FIX: Fungsi Auto Generate Nomor
     async function generateDocNumber() {
         const dateInput = document.getElementById('in_tgl_input').value;
         if(!dateInput) return;
@@ -221,11 +222,10 @@
         const tahun = tgl.getFullYear();
 
         try {
-            // Filter berdasarkan format bulan dan tahun di kolom no_dokumen
             const { data, error } = await supabaseClient
                 .from('baom_kse')
                 .select('no_dokumen')
-                .ilike('no_dokumen', `%/${bulanRomawi}/${tahun}`)
+                .ilike('no_dokumen', `%/${bulanRomawi}/${tahun}%`)
                 .order('created_at', { ascending: false })
                 .limit(1);
 
@@ -233,35 +233,39 @@
 
             let nextNum = 1;
             if (data && data.length > 0) {
-                // Ambil 3 digit pertama lalu tambah 1
-                const lastNoString = data[0].no_dokumen.substring(0, 3);
+                const lastNoString = data[0].no_dokumen.split('/')[0].trim();
                 nextNum = parseInt(lastNoString) + 1;
             }
             
             const formatNo = `${nextNum.toString().padStart(3, '0')} / BAOM-KSE/${bulanRomawi}/${tahun}`;
             document.getElementById('in_no').value = formatNo;
             updateView();
+            updateQR();
         } catch (e) {
             console.error("Gagal generate nomor:", e.message);
-            // Default jika gagal konek/error
-            document.getElementById('in_no').value = `001 / BAOM-KSE/${bulanRomawi}/${tahun}`;
+            const formatNoDefault = `001 / BAOM-KSE/${bulanRomawi}/${tahun}`;
+            document.getElementById('in_no').value = formatNoDefault;
             updateView();
         }
     }
 
+    // FIX: Fungsi Simpan ke Cloud (Mencegah error numeric kosong)
     async function saveToCloud() {
         const btn = event.currentTarget;
         const originalText = btn.innerHTML;
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> SAVING...';
 
+        // Pastikan input jumlah tidak kosong agar tidak error numeric
+        const valJumlah = document.getElementById('t_qty').value;
+        
         const payload = {
             no_dokumen: document.getElementById('in_no').value,
             tanggal: document.getElementById('in_tgl_input').value,
             unit_penyerah: document.getElementById('s_pt').value,
             unit_penerima: document.getElementById('t_pt').value,
             sopir: document.getElementById('t_sopir').value,
-            jumlah: document.getElementById('t_qty').value,
+            jumlah: valJumlah === "" ? 0 : parseFloat(valJumlah), // Perbaikan: Kirim 0 jika kosong
             nopol_sumber: document.getElementById('s_nopol').value,
             nopol_tujuan: document.getElementById('t_nopol').value,
             segel: document.getElementById('t_segel').value,
@@ -346,7 +350,7 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('in_tgl_input').value = today;
         formatDateText();
-        generateDocNumber(); // Panggil generate otomatis saat buka
+        setTimeout(generateDocNumber, 800); // Beri jeda agar koneksi stabil
     };
 </script>
 </body>
