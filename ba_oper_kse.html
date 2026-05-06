@@ -34,9 +34,10 @@
         .company-name-main { font-size: 20px; font-weight: 900; color: #064e3b; line-height: 1; letter-spacing: 1px; }
         .company-name-sub { font-size: 14px; font-weight: 700; color: #064e3b; letter-spacing: 4px; margin-top: 2px; }
 
-        .header-divider { width: 3px; height: 45px; background-color: #d4af37; margin: 0 25px; }
+        /* Garis kuning dipepetkan ke arah kanan/alamat */
+        .header-divider { width: 3px; height: 45px; background-color: #d4af37; margin-left: auto; margin-right: 15px; }
 
-        .header-right { flex: 1; text-align: right; }
+        .header-right { flex: 0 0 auto; text-align: right; }
         .company-addr { font-size: 10.5px; font-family: Arial, sans-serif; line-height: 1.3; color: #000; }
         .company-addr b { color: #000; }
         
@@ -199,7 +200,6 @@
 </div>
 
 <script>
-    // --- KONFIGURASI SUPABASE ---
     const SB_URL = "https://qnamtickoteyvydayyor.supabase.co";
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYW10aWNrb3RleXZ5ZGF5eW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTU2MzksImV4cCI6MjA5MzQ3MTYzOX0.VAeN0JVnz4WNPzY5NTGmtGeHD-Da_qkCvy84ZDYZNHo";
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
@@ -211,6 +211,7 @@
         return roman[month];
     }
 
+    // FUNGSI AUTO GENERATE NOMOR (DIPERBAIKI)
     async function generateDocNumber() {
         const dateInput = document.getElementById('in_tgl_input').value;
         if(!dateInput) return;
@@ -220,33 +221,37 @@
         const tahun = tgl.getFullYear();
 
         try {
-            // Ambil nomor terakhir di bulan dan tahun yang dipilih
+            // Filter berdasarkan format bulan dan tahun di kolom no_dokumen
             const { data, error } = await supabaseClient
                 .from('baom_kse')
                 .select('no_dokumen')
                 .ilike('no_dokumen', `%/${bulanRomawi}/${tahun}`)
-                .order('no_dokumen', { ascending: false })
+                .order('created_at', { ascending: false })
                 .limit(1);
 
             if (error) throw error;
 
             let nextNum = 1;
             if (data && data.length > 0) {
-                const lastNoString = data[0].no_dokumen.split('/')[0].trim();
+                // Ambil 3 digit pertama lalu tambah 1
+                const lastNoString = data[0].no_dokumen.substring(0, 3);
                 nextNum = parseInt(lastNoString) + 1;
             }
             
             const formatNo = `${nextNum.toString().padStart(3, '0')} / BAOM-KSE/${bulanRomawi}/${tahun}`;
             document.getElementById('in_no').value = formatNo;
             updateView();
-            updateQR();
         } catch (e) {
             console.error("Gagal generate nomor:", e.message);
+            // Default jika gagal konek/error
+            document.getElementById('in_no').value = `001 / BAOM-KSE/${bulanRomawi}/${tahun}`;
+            updateView();
         }
     }
 
     async function saveToCloud() {
         const btn = event.currentTarget;
+        const originalText = btn.innerHTML;
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> SAVING...';
 
@@ -271,7 +276,7 @@
             alert("Gagal menyimpan: " + error.message);
         } finally {
             btn.disabled = false;
-            btn.innerHTML = '<i class="bi bi-cloud-upload"></i> SAVE CLOUD';
+            btn.innerHTML = originalText;
         }
     }
 
@@ -341,7 +346,7 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('in_tgl_input').value = today;
         formatDateText();
-        generateDocNumber();
+        generateDocNumber(); // Panggil generate otomatis saat buka
     };
 </script>
 </body>
