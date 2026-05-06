@@ -9,7 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <style>
-        /* Style tetap dipertahankan sesuai struktur asli */
         * { box-sizing: border-box; }
         :root {
             --primary-kse: #064e3b; 
@@ -29,7 +28,8 @@
         .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
         .top-action-bar { position: fixed; top: 0; right: 0; left: 400px; background: #2c3e50; padding: 10px 20px; display: flex; justify-content: flex-end; gap: 10px; z-index: 1000; }
         .btn { padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; color: white; display: flex; align-items: center; gap: 5px; }
-        .btn-home { background: #7f8c8d; }
+        .btn-home { background: #34495e; }
+        .btn-refresh { background: #7f8c8d; }
         .btn-save { background: var(--accent-blue); }
         .btn-download { background: #c0392b; }
         .main-content { margin-left: 400px; margin-top: 50px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; }
@@ -68,7 +68,8 @@
 <body>
 
 <div class="top-action-bar">
-    <button class="btn btn-home" onclick="location.reload()">REFRESH</button>
+    <button class="btn btn-home" onclick="window.location.href='index.html'">HOME</button>
+    <button class="btn btn-refresh" onclick="location.reload()">REFRESH</button>
     <button class="btn btn-save" id="btnSave" onclick="saveData()">SAVE CLOUD</button>
     <button class="btn btn-download" onclick="downloadPDF()">PRINT PDF</button>
 </div>
@@ -76,9 +77,9 @@
 <div class="sidebar">
     <h2>KSE MEMO SYSTEM</h2>
     <div class="section-title">Dokumen Meta</div>
-    <div class="input-group"><label>No. Urut</label><input type="text" id="inNoUrut" placeholder="001"></div>
-    <div class="input-group"><label>Format</label><input type="text" id="inNoFormat" placeholder="/MEMO-KSE/V/2026"></div>
-    <div class="input-group"><label>Tanggal Memo</label><input type="date" id="inTglMemo"></div>
+    <div class="input-group"><label>No. Urut (Auto)</label><input type="text" id="inNoUrut" readonly></div>
+    <div class="input-group"><label>Format</label><input type="text" id="inNoFormat" readonly></div>
+    <div class="input-group"><label>Tanggal Memo</label><input type="date" id="inTglMemo" onchange="handleDateChange()"></div>
     <div class="input-group"><label>Perihal</label><textarea id="inPerihal" rows="2">MEMO PENGALIRAN BBM</textarea></div>
 
     <div class="section-title">Tujuan</div>
@@ -105,7 +106,6 @@
 
 <div class="main-content">
     <div class="memo-page" id="memo-area">
-        <!-- Preview Dokumen Sesuai Kode Asli -->
         <div class="header-section">
             <div class="header-left">
                 <img src="header1.png" class="logo-img" onerror="this.src='https://via.placeholder.com/60x60?text=KSE'">
@@ -206,7 +206,6 @@
 </div>
 
 <script>
-    // Konfigurasi Supabase Baru
     const SB_URL = "https://qnamtickoteyvydayyor.supabase.co";
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYW10aWNrb3RleXZ5ZGF5eW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTU2MzksImV4cCI6MjA5MzQ3MTYzOX0.VAeN0JVnz4WNPzY5NTGmtGeHD-Da_qkCvy84ZDYZNHo";
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
@@ -222,6 +221,45 @@
     function getRomanMonth(monthIdx) {
         const roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
         return roman[monthIdx];
+    }
+
+    // FUNGSI AUTO GENERATE NOMOR URUT
+    async function fetchNextNumber() {
+        const dateInput = document.getElementById('inTglMemo').value;
+        if(!dateInput) return;
+        
+        const date = new Date(dateInput);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        
+        const firstDay = `${year}-${String(month).padStart(2, '0')}-01`;
+        const lastDay = `${year}-${String(month).padStart(2, '0')}-31`;
+
+        try {
+            const { data, error } = await supabaseClient
+                .from('memo_kse')
+                .select('no_dokumen')
+                .gte('tanggal', firstDay)
+                .lte('tanggal', lastDay);
+
+            if (error) throw error;
+
+            let nextNum = 1;
+            if (data && data.length > 0) {
+                const existingNumbers = data.map(item => {
+                    const parts = item.no_dokumen.split('/');
+                    return parseInt(parts[0]) || 0;
+                });
+                nextNum = Math.max(...existingNumbers) + 1;
+            }
+
+            document.getElementById('inNoUrut').value = String(nextNum).padStart(3, '0');
+            document.getElementById('inNoFormat').value = `/MEMO-KSE/${getRomanMonth(date.getMonth())}/${year}`;
+            update();
+        } catch (err) {
+            console.error("Gagal mengambil nomor urut:", err);
+            document.getElementById('inNoUrut').value = "001";
+        }
     }
 
     function formatDateIndo(dateString) {
@@ -301,7 +339,6 @@
         document.getElementById('outTotal').innerText = total.toLocaleString();
     }
 
-    // FUNGSI SIMPAN KE SUPABASE (memo_kse)
     async function saveData() {
         const btn = document.getElementById('btnSave');
         const noDokumen = document.getElementById('inNoUrut').value + document.getElementById('inNoFormat').value;
@@ -324,18 +361,14 @@
         }
 
         if(payload.length === 0) return alert("Isi data armada terlebih dahulu!");
-
         btn.disabled = true; btn.innerText = "SAVING...";
         
         try {
-            const { data, error } = await supabaseClient
-                .from('memo_kse')
-                .insert(payload);
-
+            const { data, error } = await supabaseClient.from('memo_kse').insert(payload);
             if (error) throw error;
-            alert("Data Berhasil Disimpan ke Supabase!");
+            alert("Data Berhasil Disimpan!");
+            fetchNextNumber(); // Refresh nomor setelah simpan
         } catch (err) {
-            console.error(err);
             alert("Gagal simpan: " + err.message);
         } finally {
             btn.disabled = false; btn.innerText = "SAVE CLOUD";
@@ -353,14 +386,16 @@
         }).from(element).save();
     }
 
-    function initPage() {
+    function handleDateChange() {
+        fetchNextNumber();
+    }
+
+    async function initPage() {
         generateArmadaInputs();
         const d = new Date();
         document.getElementById('inTglMemo').valueAsDate = d;
         document.getElementById('inTglLoad').valueAsDate = d;
-        document.getElementById('inNoUrut').value = "001";
-        document.getElementById('inNoFormat').value = `/MEMO-KSE/${getRomanMonth(d.getMonth())}/${d.getFullYear()}`;
-        update();
+        await fetchNextNumber();
     }
 
     document.addEventListener('input', update);
