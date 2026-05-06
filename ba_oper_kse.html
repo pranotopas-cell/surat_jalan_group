@@ -33,9 +33,7 @@
         .company-title-box { display: flex; flex-direction: column; }
         .company-name-main { font-size: 20px; font-weight: 900; color: #064e3b; line-height: 1; letter-spacing: 1px; }
         .company-name-sub { font-size: 14px; font-weight: 700; color: #064e3b; letter-spacing: 4px; margin-top: 2px; }
-
         .header-divider { width: 3px; height: 45px; background-color: #d4af37; margin-left: auto; margin-right: 15px; }
-
         .header-right { flex: 0 0 auto; text-align: right; }
         .company-addr { font-size: 10.5px; font-family: Arial, sans-serif; line-height: 1.3; color: #000; }
         
@@ -54,15 +52,27 @@
         .data-value { font-weight: bold; flex: 1; border-bottom: 1px solid #eee; }
         
         .signature-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 30px; text-align: center; }
-        .sig-box { height: 130px; display: flex; flex-direction: column; justify-content: space-between; }
-        .sig-name { font-weight: bold; text-decoration: underline; text-transform: uppercase; }
+        .sig-box { height: 130px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .sig-name { font-weight: bold; text-decoration: underline; text-transform: uppercase; z-index: 2; }
+        
+        /* Gaya Stempel */
+        .stempel-img {
+            position: absolute;
+            width: 90px; /* Ukuran stempel disesuaikan */
+            height: auto;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0.85;
+            z-index: 1;
+            pointer-events: none;
+        }
         
         .footer-kse { position: absolute; bottom: 15mm; width: calc(100% - 30mm); }
         .footer-bar { display: flex; width: 100%; height: 6px; margin-bottom: 10px; }
         .bar-1 { background-color: #064e3b; flex: 6; }
         .bar-2 { background-color: #008b8b; flex: 3; }
         .bar-3 { background-color: #eab308; flex: 1.5; }
-
         .footer-content { display: flex; justify-content: space-between; align-items: flex-end; }
 
         .form-label-custom { font-size: 10px; font-weight: 800; color: #475569; margin-top: 12px; display: block; text-transform: uppercase; font-family: 'Arial'; }
@@ -107,7 +117,6 @@
             <input type="text" id="in_lokasi" class="form-control form-control-sm mb-2 fw-bold" value="Pangkalan Bun" oninput="updateView()">
 
             <hr>
-            <!-- UNIT PENYERAH -->
             <label class="form-label-custom text-success">Unit Penyerah (Sumber)</label>
             <input list="data_nopol" id="s_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol" oninput="handleAutoFill('s'); updateView();">
             <input list="data_pt" id="s_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT" oninput="updateView()">
@@ -115,7 +124,6 @@
             <input list="data_sopir" id="s_sopir" class="form-control form-control-sm" placeholder="Nama Sopir" oninput="updateView()">
 
             <hr>
-            <!-- UNIT PENERIMA -->
             <label class="form-label-custom text-danger">Unit Penerima (Tujuan)</label>
             <input list="data_nopol" id="t_nopol" class="form-control form-control-sm mb-1" placeholder="Nopol" oninput="handleAutoFill('t'); updateView();">
             <input list="data_pt" id="t_pt" class="form-control form-control-sm mb-1" placeholder="Nama PT" oninput="updateView()">
@@ -128,7 +136,6 @@
             <label class="form-label-custom">Operasional</label>
             <input type="text" id="in_sig_operasional" class="form-control form-control-sm" placeholder="Nama Admin" oninput="updateView()">
 
-            <!-- DATALISTS -->
             <datalist id="data_nopol"></datalist>
             <datalist id="data_pt"></datalist>
             <datalist id="data_sopir"></datalist>
@@ -137,7 +144,6 @@
         <!-- PRINTER AREA -->
         <div class="col-lg-9 p-0" id="pdf-area">
             <div class="document-canvas">
-                <!-- HEADER -->
                 <div class="header-section">
                     <div class="header-left">
                         <img src="header1.png" class="logo-img" onerror="this.src='https://via.placeholder.com/70x70?text=KSE'">
@@ -189,7 +195,14 @@
                 <div class="signature-grid">
                     <div class="sig-box"><div>Pihak Penyerah,</div><div class="mt-auto sig-name" id="os_sopir_sig"></div><div>Driver</div></div>
                     <div class="sig-box"><div>Pihak Penerima,</div><div class="mt-auto sig-name" id="ot_sopir_sig"></div><div>Driver</div></div>
-                    <div class="sig-box"><div>Mengetahui,</div><div class="mt-auto sig-name" id="out_operasional_sig"></div><div>Operasional KSE</div></div>
+                    
+                    <!-- BAGIAN MENGETAHUI DENGAN STEMPEL -->
+                    <div class="sig-box">
+                        <div>Mengetahui,</div>
+                        <img src="stempel.png" class="stempel-img" onerror="this.style.display='none'">
+                        <div class="mt-auto sig-name" id="out_operasional_sig"></div>
+                        <div>Operasional KSE</div>
+                    </div>
                 </div>
 
                 <div class="footer-kse">
@@ -250,39 +263,20 @@
         const dlNopol = document.getElementById('data_nopol');
         const dlPT = document.getElementById('data_pt');
         const dlSopir = document.getElementById('data_sopir');
-        
-        // Load Nopol
-        dataArmada.forEach(item => {
-            dlNopol.innerHTML += `<option value="${item.nopol}">`;
-        });
-        
-        // Load Transportir
-        listTransportir.forEach(pt => {
-            dlPT.innerHTML += `<option value="${pt}">`;
-        });
-        
-        // Load Drivers
-        listDriver.forEach(nama => {
-            dlSopir.innerHTML += `<option value="${nama}">`;
-        });
+        dataArmada.forEach(item => { dlNopol.innerHTML += `<option value="${item.nopol}">`; });
+        listTransportir.forEach(pt => { dlPT.innerHTML += `<option value="${pt}">`; });
+        listDriver.forEach(nama => { dlSopir.innerHTML += `<option value="${nama}">`; });
     }
 
     function handleAutoFill(type) {
         const nopolInput = document.getElementById(type === 's' ? 's_nopol' : 't_nopol');
         const nopolVal = nopolInput.value.toUpperCase();
         const match = dataArmada.find(m => m.nopol === nopolVal);
-
         if (match) {
-            // Auto fill volume
             document.getElementById(type + '_qty').value = match.qty;
-            
-            // Khusus penerima, auto fill tinggi cairan (convert cm ke mm string)
             if (type === 't') {
-                const mmValue = parseFloat(match.tera) * 10;
-                document.getElementById('t_tinggi').value = mmValue;
+                document.getElementById('t_tinggi').value = parseFloat(match.tera) * 10;
             }
-            
-            // Default PT jika nopol KH (asumsi KSE)
             if(nopolVal.startsWith("KH")) {
                 document.getElementById(type + '_pt').value = "PT. KHATULISTIWA SINAR ENERGI";
             }
@@ -302,67 +296,50 @@
         const tahun = tgl.getFullYear();
 
         try {
-            const { data, error } = await supabaseClient
+            const { data } = await supabaseClient
                 .from('baom_kse')
                 .select('no_dokumen')
                 .ilike('no_dokumen', `%/${bulanRomawi}/${tahun}%`)
-                .order('created_at', { ascending: false })
-                .limit(1);
+                .order('created_at', { ascending: false }).limit(1);
 
             let nextNum = 1;
             if (data && data.length > 0) {
-                const lastNoString = data[0].no_dokumen.split('/')[0].trim();
-                nextNum = parseInt(lastNoString) + 1;
+                nextNum = parseInt(data[0].no_dokumen.split('/')[0].trim()) + 1;
             }
-            
             const formatNo = `${nextNum.toString().padStart(3, '0')} / BAOM-KSE/${bulanRomawi}/${tahun}`;
             document.getElementById('in_no').value = formatNo;
             updateView();
-            updateQR();
-        } catch (e) {
-            console.error("Gagal generate nomor:", e.message);
-        }
+        } catch (e) { console.error(e); }
     }
 
     async function saveToCloud() {
         const btn = event.currentTarget;
-        const originalText = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> SAVING...';
-
-        const valJumlah = document.getElementById('t_qty').value;
         const payload = {
             no_dokumen: document.getElementById('in_no').value,
             tanggal: document.getElementById('in_tgl_input').value,
             unit_penyerah: document.getElementById('s_pt').value,
             unit_penerima: document.getElementById('t_pt').value,
             sopir: document.getElementById('t_sopir').value,
-            jumlah: valJumlah === "" ? 0 : parseFloat(valJumlah),
+            jumlah: parseFloat(document.getElementById('t_qty').value || 0),
             nopol_sumber: document.getElementById('s_nopol').value,
             nopol_tujuan: document.getElementById('t_nopol').value,
             segel: document.getElementById('t_segel').value,
             tinggi_cairan: document.getElementById('t_tinggi').value
         };
-
         try {
             const { error } = await supabaseClient.from('baom_kse').insert([payload]);
             if (error) throw error;
-            alert("Data Berhasil Disimpan ke Cloud!");
-        } catch (error) {
-            alert("Gagal menyimpan: " + error.message);
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        }
+            alert("Berhasil!");
+        } catch (error) { alert(error.message); }
+        finally { btn.disabled = false; }
     }
 
     function formatDateText() {
         const dateInput = document.getElementById('in_tgl_input').value;
         if(!dateInput) return;
         const dateObj = new Date(dateInput);
-        const options = { day: 'numeric', month: 'long', year: 'numeric' };
-        const formatted = dateObj.toLocaleDateString('id-ID', options);
-        
+        const formatted = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
         document.getElementById('in_hari').value = ["MINGGU","SENIN","SELASA","RABU","KAMIS","JUMAT","SABTU"][dateObj.getDay()];
         document.getElementById('in_tgl_lengkap').value = `tanggal ${dateObj.getDate()} bulan ${formatted.split(' ')[1]} tahun ${dateObj.getFullYear()}`;
         document.getElementById('out_tgl_footer').innerText = formatted;
@@ -375,23 +352,19 @@
             'in_no': 'out_no', 'in_hari': 'out_hari', 'in_tgl_lengkap': 'out_tgl_lengkap',
             's_nopol': 'os_nopol', 's_pt': 'os_pt', 's_sopir': 'os_sopir',
             't_nopol': 'ot_nopol', 't_pt': 'ot_pt', 't_sopir': 'ot_sopir',
-            't_segel': 'ot_segel', 
-            'in_sig_operasional': 'out_operasional_sig', 'in_lokasi': 'out_lokasi'
+            't_segel': 'ot_segel', 'in_sig_operasional': 'out_operasional_sig', 'in_lokasi': 'out_lokasi'
         };
-
         for (let id in mapping) {
             const target = document.getElementById(mapping[id]);
             const source = document.getElementById(id);
             if(target && source) target.innerText = source.value;
         }
-
         document.getElementById('out_lokasi_footer').innerText = document.getElementById('in_lokasi').value;
         document.getElementById('os_sopir_sig').innerText = document.getElementById('s_sopir').value;
         document.getElementById('ot_sopir_sig').innerText = document.getElementById('t_sopir').value;
         document.getElementById('os_qty').innerText = (document.getElementById('s_qty').value || "0") + " LITER";
         document.getElementById('ot_qty').innerText = (document.getElementById('t_qty').value || "0") + " LITER";
         document.getElementById('ot_tinggi').innerText = (document.getElementById('t_tinggi').value || "-") + " MM";
-        
         const now = new Date();
         document.getElementById('print-timestamp').innerText = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}, ${now.getHours()}.${now.getMinutes().toString().padStart(2,'0')}`;
         updateQR();
@@ -401,19 +374,17 @@
 
     function downloadPDF() {
         const element = document.getElementById('pdf-area');
-        const opt = { 
+        html2pdf().set({ 
             margin: 0, 
             filename: `BAOM_${document.getElementById('in_no').value.replace(/ \/ /g, '_')}.pdf`, 
             html2canvas: { scale: 2, useCORS: true }, 
             jsPDF: { unit: 'mm', format: [215, 278], orientation: 'portrait' } 
-        };
-        html2pdf().set(opt).from(element).save();
+        }).from(element).save();
     }
 
     window.onload = () => {
         initDatalists();
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('in_tgl_input').value = today;
+        document.getElementById('in_tgl_input').value = new Date().toISOString().split('T')[0];
         formatDateText();
         setTimeout(generateDocNumber, 800);
     };
