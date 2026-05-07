@@ -236,13 +236,13 @@
                             // Fallback nama kolom untuk Nomor Dokumen
                             nomor_dokumen: item.nomor_dokumen || item.no_dokumen || item.no_memo || item.no_ba || item.nomor || "-",
                             // Fallback nama kolom untuk Tujuan
-                            tujuan: item.penerima || item.tujuan || item.lokasi || "-",
+                            tujuan: item.unit_penerima || item.penerima || item.tujuan || item.lokasi || "-",
                             // Fallback nama kolom untuk Sopir
                             driver: item.driver || item.sopir || item.nama_supir || "-",
                             // Fallback nama kolom untuk No Polisi
-                            nopol: item.nopol || item.no_polisi || "-",
+                            nopol: item.nopol_tujuan || item.nopol || item.no_polisi || "-",
                             // Fallback nama kolom untuk Qty/Liter
-                            qty: item.qty || item.liter || item.vol || 0,
+                            qty: item.qty || item.liter || item.jumlah || item.vol || 0,
                             tag: tables[index].tag,
                             colorClass: tables[index].color
                         };
