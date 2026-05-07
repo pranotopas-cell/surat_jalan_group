@@ -129,6 +129,7 @@
                 <a href="memo_kse.html" class="nav-link">MEMO</a>
                 <a href="ba_oper_kse.html" class="nav-link">BA Oper Muatan</a>
             </div>
+
             <small class="pt-label">PT. INDO DHARMA ENERGI</small>
             <a class="nav-link" data-bs-toggle="collapse" href="#mIde"><i class="bi bi-droplet-fill me-2 text-info"></i> IDE <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu" id="mIde">
@@ -141,8 +142,8 @@
             <a class="nav-link" data-bs-toggle="collapse" href="#mIkaen"><i class="bi bi-building me-2 text-danger"></i> IKAEN <i class="bi bi-chevron-down ms-auto small"></i></a>
             <div class="collapse submenu" id="mIkaen">
                 <a href="sj_ikaen.html" class="nav-link">SURAT JALAN</a>
-                <a href="memo_ide.html" class="nav-link">MEMO</a>
-                <a href="ba_oper_ide.html" class="nav-link">BA Oper Muatan</a>
+                <a href="memo_ikaen.html" class="nav-link">MEMO</a>
+                <a href="baom_ikaen.html" class="nav-link">BA Oper Muatan</a>
             </div>
         </nav>
     </aside>
@@ -164,7 +165,7 @@
     <main class="main-content">
         <div class="card card-table border-0 p-4 shadow-lg">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-database-fill-check me-2 text-emerald"></i>HISTORY DOKUMENT)</h6>
+                <h6 class="fw-bold mb-0 text-white"><i class="bi bi-database-fill-check me-2 text-emerald"></i>HISTORY DOKUMEN (ALL GROUP)</h6>
                 <button class="btn btn-sm btn-warning rounded-pill px-4 fw-bold" onclick="fetchLogistikData()">
                     <i class="bi bi-arrow-clockwise me-1"></i> sync
                 </button>
@@ -203,22 +204,34 @@
         tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5" style="color:black;">MENYINKRONKAN DATA...</td></tr>';
         
         try {
-            // Tarik data gabungan dari semua tabel KSE[cite: 1]
-            const [sj, memo, baom, bastk] = await Promise.all([
-                _supabase.from('sj_kse').select('*'),
-                _supabase.from('memo_kse').select('*'),
-                _supabase.from('baom_kse').select('*'),
-                _supabase.from('bastk_kse').select('*')
-            ]);
-
-            const allData = [
-                ...(sj.data || []).map(d => ({...d, tag: 'SURAT JALAN'})),
-                ...(memo.data || []).map(d => ({...d, tag: 'MEMO'})),
-                ...(baom.data || []).map(d => ({...d, tag: 'BA OPER'})),
-                ...(bastk.data || []).map(d => ({...d, tag: 'BA TERIMA'}))
+            // Tarik data dari 9 tabel sekaligus
+            const tables = [
+                { name: 'sj_kse', tag: 'SURAT JALAN KSE' },
+                { name: 'sj_ide', tag: 'SURAT JALAN IDE' },
+                { name: 'sj_ikaen', tag: 'SURAT JALAN IKAEN' },
+                { name: 'memo_kse', tag: 'MEMO KSE' },
+                { name: 'memo_ide', tag: 'MEMO IDE' },
+                { name: 'memo_ikaen', tag: 'MEMO IKAEN' },
+                { name: 'baom_kse', tag: 'BA OPER KSE' },
+                { name: 'baom_ide', tag: 'BA OPER IDE' },
+                { name: 'baom_ikaen', tag: 'BA OPER IKAEN' }
             ];
 
-            // Urutkan berdasarkan tanggal terbaru[cite: 1]
+            const requests = tables.map(t => _supabase.from(t.name).select('*'));
+            const responses = await Promise.all(requests);
+
+            let allData = [];
+            responses.forEach((res, index) => {
+                if (res.data) {
+                    const mapped = res.data.map(item => ({
+                        ...item,
+                        tag: tables[index].tag
+                    }));
+                    allData = [...allData, ...mapped];
+                }
+            });
+
+            // Urutkan berdasarkan tanggal terbaru
             allData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
             renderTable(allData);
 
@@ -229,7 +242,7 @@
     }
 
     function renderTable(data) {
-        const tbody = document.getElementById('logistik-table-body'); // FIXED ID
+        const tbody = document.getElementById('logistik-table-body');
         let html = '';
 
         if (data.length === 0) {
