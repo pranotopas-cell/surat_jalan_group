@@ -87,7 +87,12 @@
         
         .text-number { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #000 !important; }
         .text-qty { font-weight: 800; font-size: 0.85rem; color: #000 !important; }
-        .badge-tag { padding: 4px 8px; border-radius: 4px; font-size: 0.6rem; background: var(--ind-emerald); color: white !important; font-weight: bold; }
+        
+        /* Updated Badge Classes */
+        .badge-tag { padding: 5px 10px; border-radius: 4px; font-size: 0.65rem; color: white !important; font-weight: bold; display: inline-block; }
+        .badge-kse { background-color: #059669; } /* Emerald Green */
+        .badge-ide { background-color: #1e40af; } /* Royal Blue */
+        .badge-ikaen { background-color: #b91c1c; } /* Crimson Red */
         
         .btn-view { padding: 4px 12px; font-size: 0.65rem; border-radius: 6px; border: 1px solid #000; color: #000; font-weight: 600; }
         .btn-view:hover { background: #000; color: #fff !important; }
@@ -204,17 +209,16 @@
         tbody.innerHTML = '<tr><td colspan="8" class="text-center py-5" style="color:black;">MENYINKRONKAN DATA...</td></tr>';
         
         try {
-            // Tarik data dari 9 tabel sekaligus
             const tables = [
-                { name: 'sj_kse', tag: 'SURAT JALAN KSE' },
-                { name: 'sj_ide', tag: 'SURAT JALAN IDE' },
-                { name: 'sj_ikaen', tag: 'SURAT JALAN IKAEN' },
-                { name: 'memo_kse', tag: 'MEMO KSE' },
-                { name: 'memo_ide', tag: 'MEMO IDE' },
-                { name: 'memo_ikaen', tag: 'MEMO IKAEN' },
-                { name: 'baom_kse', tag: 'BA OPER KSE' },
-                { name: 'baom_ide', tag: 'BA OPER IDE' },
-                { name: 'baom_ikaen', tag: 'BA OPER IKAEN' }
+                { name: 'sj_kse', tag: 'SURAT JALAN KSE', color: 'badge-kse' },
+                { name: 'sj_ide', tag: 'SURAT JALAN IDE', color: 'badge-ide' },
+                { name: 'sj_ikaen', tag: 'SURAT JALAN IKAEN', color: 'badge-ikaen' },
+                { name: 'memo_kse', tag: 'MEMO KSE', color: 'badge-kse' },
+                { name: 'memo_ide', tag: 'MEMO IDE', color: 'badge-ide' },
+                { name: 'memo_ikaen', tag: 'MEMO IKAEN', color: 'badge-ikaen' },
+                { name: 'baom_kse', tag: 'BA OPER KSE', color: 'badge-kse' },
+                { name: 'baom_ide', tag: 'BA OPER IDE', color: 'badge-ide' },
+                { name: 'baom_ikaen', tag: 'BA OPER IKAEN', color: 'badge-ikaen' }
             ];
 
             const requests = tables.map(t => _supabase.from(t.name).select('*'));
@@ -225,13 +229,13 @@
                 if (res.data) {
                     const mapped = res.data.map(item => ({
                         ...item,
-                        tag: tables[index].tag
+                        tag: tables[index].tag,
+                        colorClass: tables[index].color
                     }));
                     allData = [...allData, ...mapped];
                 }
             });
 
-            // Urutkan berdasarkan tanggal terbaru
             allData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
             renderTable(allData);
 
@@ -257,7 +261,7 @@
                     <tr>
                         <td><span class="fw-bold">${formattedDate}</span></td>
                         <td><span class="text-number">${row.nomor_dokumen || "-"}</span></td>
-                        <td><span class="badge-tag">${row.tag}</span></td>
+                        <td><span class="badge-tag ${row.colorClass}">${row.tag}</span></td>
                         <td><span class="small">${row.penerima || "-"}</span></td>
                         <td class="fw-bold">${row.driver || "-"}</td>
                         <td class="font-monospace">${row.nopol || '-'}</td>
