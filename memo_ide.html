@@ -239,145 +239,80 @@
         { nopol: "KH 8206 GN", tera: "106.2 cm", qty: 5000 },
         { nopol: "L 9761 UJ", tera: "124.0 cm", qty: 8000 }
     ];
-    const listDriver = ["AGUS EFENDI", "WIYANTO", "WAHID", "SUPRIYADI", "INDRA", "AGUS MULYANTO", "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", "ADI SUCIPTO", "AGUS"];
+    
+    const listDriver = [
+        "AGUS EFENDI", "WIYANTO", "WAHID", "SUPRIYADI", "INDRA", "AGUS MULYANTO", 
+        "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", 
+        "ADI SUCIPTO", "AGUS"
+    ];
 
-    function getRoman(m) { return ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][m]; }
+    function getRomanMonth(monthIdx) {
+        const roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+        return roman[monthIdx];
+    }
 
     async function fetchNextNumber() {
-        const dateVal = document.getElementById('inTglMemo').value;
-        if(!dateVal) return;
-        const date = new Date(dateVal);
+        const dateInput = document.getElementById('inTglMemo').value;
+        if(!dateInput) return;
+        
+        const date = new Date(dateInput);
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
+        
         const firstDay = `${year}-${String(month).padStart(2, '0')}-01`;
         const lastDay = `${year}-${String(month).padStart(2, '0')}-31`;
 
         try {
             const { data, error } = await supabaseClient
-                .from('memo_ide')
+                .from('memo_kse')
                 .select('no_dokumen')
                 .gte('tanggal', firstDay)
                 .lte('tanggal', lastDay);
 
             if (error) throw error;
+
             let nextNum = 1;
             if (data && data.length > 0) {
-                const existingNums = data.map(item => {
+                const existingNumbers = data.map(item => {
                     const parts = item.no_dokumen.split('/');
                     return parseInt(parts[0]) || 0;
                 });
-                nextNum = Math.max(...existingNums) + 1;
+                nextNum = Math.max(...existingNumbers) + 1;
             }
+
             document.getElementById('inNoUrut').value = String(nextNum).padStart(3, '0');
-            // Format Nomor: /MEMO-IDE/V/2026
-            document.getElementById('inNoFormat').value = `/MEMO-IDE/${getRoman(date.getMonth())}/${year}`;
+            document.getElementById('inNoFormat').value = `/MEMO-KSE/${getRomanMonth(date.getMonth())}/${year}`;
             update();
         } catch (err) {
-            console.error("Numbering Error:", err);
+            console.error("Gagal mengambil nomor urut:", err);
             document.getElementById('inNoUrut').value = "001";
         }
     }
 
-    function update() {
-        let nr = document.getElementById('inNoUrut').value;
-        if(!isNaN(nr) && nr !== "") nr = String(nr).padStart(3, '0');
-
-        const fullNo = nr + document.getElementById('inNoFormat').value;
-        document.getElementById('outNomor').innerText = fullNo;
-        document.getElementById('outPerihal').innerText = document.getElementById('inPerihal').value;
-        document.getElementById('outTujuanPT').innerText = document.getElementById('inTujuanPT').value;
-        document.getElementById('outAlamatPT').innerText = document.getElementById('inAlamatPT').value;
-        
-        const formatTgl = (d) => {
-            if(!d) return "-";
-            const dt = new Date(d);
-            return dt.toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' }).toUpperCase();
-        };
-
-        document.getElementById('outTglMemo').innerText = formatTgl(document.getElementById('inTglMemo').value);
-        document.getElementById('outTglLoad').innerText = formatTgl(document.getElementById('inTglLoad').value);
-        document.getElementById('outPO').innerText = document.getElementById('inPO').value;
-        document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
-
-        // Render QR Code
-        const qrBox = document.getElementById("qrcode");
-        qrBox.innerHTML = "";
-        if(fullNo.length > 5) {
-            new QRCode(qrBox, { 
-                text: fullNo, 
-                width: 50, 
-                height: 50,
-                correctLevel: QRCode.CorrectLevel.H 
-            });
-        }
-
-        let total = 0, rows = "";
-        for(let i=1; i<=10; i++) {
-            const nopol = document.getElementById(`inNopol${i}`).value;
-            if(nopol) {
-                const qty = parseFloat(document.getElementById(`inQty${i}`).value) || 0;
-                total += qty;
-                rows += `<tr>
-                    <td>${i}</td>
-                    <td style="text-align:left">${document.getElementById(`inTrans${i}`).value}</td>
-                    <td>${nopol}</td>
-                    <td>${document.getElementById(`inDriver${i}`).value}</td>
-                    <td style="font-weight:bold">${qty.toLocaleString()}</td>
-                    <td>${document.getElementById(`inTera${i}`).value}</td>
-                </tr>`;
-            }
-        }
-        document.getElementById('tableBody').innerHTML = rows || "<tr><td colspan='6'>Silahkan Input Data Armada</td></tr>";
-        document.getElementById('outTotal').innerText = total.toLocaleString() + " LTR";
+    function formatDateIndo(dateString) {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        return `${String(date.getDate()).padStart(2, '0')} ${months[date.getMonth()]} ${date.getFullYear()}`;
     }
 
-    async function saveData() {
-        const btn = document.getElementById('btnSave');
-        const nr = String(document.getElementById('inNoUrut').value).padStart(3, '0');
-        const noDok = nr + document.getElementById('inNoFormat').value;
-        const tgl = document.getElementById('inTglMemo').value;
-        const tujuan = document.getElementById('inTujuanPT').value;
-
-        let payload = [];
-        for(let i=1; i<=10; i++) {
-            const nopol = document.getElementById(`inNopol${i}`).value;
-            if(nopol) {
-                payload.push({
-                    tanggal: tgl,
-                    tujuan: tujuan,
-                    nomor_polisi: nopol,
-                    no_dokumen: noDok,
-                    sopir: document.getElementById(`inDriver${i}`).value,
-                    jumlah: parseFloat(document.getElementById(`inQty${i}`).value) || 0
-                });
-            }
-        }
-        if(!payload.length) return alert("Data kosong!");
-        btn.disabled = true; btn.innerText = "SAVING...";
-        try {
-            const { error } = await supabaseClient.from('memo_ide').insert(payload);
-            if (error) throw error;
-            alert("Data Berhasil Tersimpan!");
-            fetchNextNumber();
-        } catch (err) {
-            alert("Error: " + err.message);
-        } finally {
-            btn.disabled = false; btn.innerText = "SAVE CLOUD";
-        }
+    function createDatalist(id, list, key = null) {
+        return `<datalist id="${id}">` + list.map(item => `<option value="${key ? item[key] : item}">`).join('') + `</datalist>`;
     }
 
     function generateArmadaInputs() {
-        let html = `<datalist id="listTrans">${listTransportir.map(x=>`<option value="${x}">`).join('')}</datalist>
-                    <datalist id="listNopol">${dataArmada.map(x=>`<option value="${x.nopol}">`).join('')}</datalist>
-                    <datalist id="listDriver">${listDriver.map(x=>`<option value="${x}">`).join('')}</datalist>`;
+        let html = createDatalist('listTrans', listTransportir) + createDatalist('listNopol', dataArmada, 'nopol') + createDatalist('listDriver', listDriver);
         for(let i=1; i<=10; i++) {
-            html += `<div class="unit-card"><div class="unit-grid">
-                <input type="text" id="inNopol${i}" list="listNopol" placeholder="Nopol" onchange="autoFill(${i})">
-                <input type="text" id="inDriver${i}" list="listDriver" placeholder="Sopir">
-                <input type="text" id="inTrans${i}" list="listTrans" placeholder="Transportir">
-                <input type="number" id="inQty${i}" placeholder="Qty">
-                <input type="text" id="inTera${i}" placeholder="Tera">
-            </div></div>`;
+            html += `
+            <div class="unit-card">
+                <div class="unit-grid">
+                    <input type="text" id="inNopol${i}" list="listNopol" placeholder="Nopol" onchange="autoFill(${i})">
+                    <input type="text" id="inDriver${i}" list="listDriver" placeholder="Sopir">
+                    <input type="text" id="inTrans${i}" list="listTrans" placeholder="Transportir">
+                    <input type="number" id="inQty${i}" placeholder="Qty">
+                    <input type="text" id="inTera${i}" placeholder="Tera">
+                </div>
+            </div>`;
         }
         document.getElementById('unit-inputs').innerHTML = html;
     }
@@ -388,7 +323,7 @@
         if(d) {
             document.getElementById(`inQty${idx}`).value = d.qty;
             document.getElementById(`inTera${idx}`).value = d.tera;
-            document.getElementById(`inTrans${idx}`).value = "PT. INDO DHARMA ENERGI";
+            document.getElementById(`inTrans${idx}`).value = "PT. KHATULISTIWA SINAR ENERGI";
         }
         update();
     }
@@ -403,27 +338,96 @@
         update();
     }
 
+    function update() {
+        const no = document.getElementById('inNoUrut').value + document.getElementById('inNoFormat').value;
+        document.getElementById('outNomor').innerText = no;
+        document.getElementById('outPerihal').innerText = document.getElementById('inPerihal').value;
+        document.getElementById('outTujuanPT').innerText = document.getElementById('inTujuanPT').value;
+        document.getElementById('outAlamatPT').innerText = document.getElementById('inAlamatPT').value;
+        document.getElementById('outTglMemo').innerText = formatDateIndo(document.getElementById('inTglMemo').value);
+        document.getElementById('outTglLoad').innerText = formatDateIndo(document.getElementById('inTglLoad').value);
+        document.getElementById('outPO').innerText = document.getElementById('inPO').value;
+        document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
+
+        const qrContainer = document.getElementById("qrcode");
+        qrContainer.innerHTML = "";
+        if(no) new QRCode(qrContainer, { text: no, width: 40, height: 40 });
+
+        let total = 0, rows = "";
+        for(let i=1; i<=10; i++) {
+            const nopol = document.getElementById(`inNopol${i}`).value;
+            if(nopol) {
+                const qty = parseFloat(document.getElementById(`inQty${i}`).value) || 0;
+                total += qty;
+                rows += `<tr><td>${i}</td><td style="text-align:left">${document.getElementById(`inTrans${i}`).value}</td><td>${nopol}</td><td>${document.getElementById(`inDriver${i}`).value}</td><td>${qty.toLocaleString()}</td><td>${document.getElementById(`inTera${i}`).value}</td></tr>`;
+            }
+        }
+        document.getElementById('tableBody').innerHTML = rows || "<tr><td colspan='6'>Data Kosong</td></tr>";
+        document.getElementById('outTotal').innerText = total.toLocaleString();
+    }
+
+    async function saveData() {
+        const btn = document.getElementById('btnSave');
+        const noDokumen = document.getElementById('inNoUrut').value + document.getElementById('inNoFormat').value;
+        const tglMemo = document.getElementById('inTglMemo').value;
+        const tujuanPT = document.getElementById('inTujuanPT').value;
+
+        let payload = [];
+        for(let i=1; i<=10; i++) {
+            const nopol = document.getElementById(`inNopol${i}`).value;
+            if(nopol) {
+                payload.push({
+                    tanggal: tglMemo,
+                    tujuan: tujuanPT,
+                    nomor_polisi: nopol,
+                    no_dokumen: noDokumen,
+                    sopir: document.getElementById(`inDriver${i}`).value,
+                    jumlah: parseFloat(document.getElementById(`inQty${i}`).value) || 0
+                });
+            }
+        }
+
+        if(payload.length === 0) return alert("Isi data armada terlebih dahulu!");
+        btn.disabled = true; btn.innerText = "SAVING...";
+        
+        try {
+            const { data, error } = await supabaseClient.from('memo_kse').insert(payload);
+            if (error) throw error;
+            alert("Data Berhasil Disimpan!");
+            fetchNextNumber();
+        } catch (err) {
+            alert("Gagal simpan: " + err.message);
+        } finally {
+            btn.disabled = false; btn.innerText = "SAVE CLOUD";
+        }
+    }
+
     function downloadPDF() {
         const element = document.getElementById('memo-area');
-        const nr = document.getElementById('inNoUrut').value;
         html2pdf().set({
             margin: 0,
-            filename: `MEMO_IDE_${nr}.pdf`,
-            image: { type: 'jpeg', quality: 1 },
+            filename: `Memo_KSE_${Date.now()}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(element).save();
     }
 
-    window.onload = () => {
-        generateArmadaInputs();
-        const now = new Date();
-        document.getElementById('inTglMemo').valueAsDate = now;
-        document.getElementById('inTglLoad').valueAsDate = now;
+    function handleDateChange() {
         fetchNextNumber();
-    };
+    }
+
+    async function initPage() {
+        generateArmadaInputs();
+        const d = new Date();
+        document.getElementById('inTglMemo').valueAsDate = d;
+        document.getElementById('inTglLoad').valueAsDate = d;
+        await fetchNextNumber();
+    }
 
     document.addEventListener('input', update);
+    window.onload = initPage;
 </script>
 </body>
 </html>
+    
