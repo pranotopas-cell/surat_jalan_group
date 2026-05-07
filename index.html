@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SURAT JALAN GROUP</title>
+    <title>SURAT JALAN GROUP - DASHBOARD</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -90,9 +90,9 @@
         
         /* Updated Badge Classes */
         .badge-tag { padding: 5px 10px; border-radius: 4px; font-size: 0.65rem; color: white !important; font-weight: bold; display: inline-block; }
-        .badge-kse { background-color: #059669; } /* Emerald Green */
-        .badge-ide { background-color: #1e40af; } /* Royal Blue */
-        .badge-ikaen { background-color: #b91c1c; } /* Crimson Red */
+        .badge-kse { background-color: #059669; } 
+        .badge-ide { background-color: #1e40af; } 
+        .badge-ikaen { background-color: #b91c1c; } 
         
         .btn-view { padding: 4px 12px; font-size: 0.65rem; border-radius: 6px; border: 1px solid #000; color: #000; font-weight: 600; }
         .btn-view:hover { background: #000; color: #fff !important; }
@@ -106,10 +106,10 @@
         <div class="mb-4">
             <i class="bi bi-shield-lock-fill text-warning fs-1"></i>
         </div>
-        <h4 class="fw-bold mb-4 text-white" style="letter-spacing: 3px;">Login</h4>
+        <h4 class="fw-bold mb-4 text-white" style="letter-spacing: 3px;">LOGIN SYSTEM</h4>
         <input type="text" id="user" class="form-control mb-3 bg-dark text-white" placeholder="Username">
         <input type="password" id="pass" class="form-control mb-4 bg-dark text-white" placeholder="Password">
-        <button class="btn btn-warning w-100 py-2 fw-bold" onclick="handleLogin()">Acces</button>
+        <button class="btn btn-warning w-100 py-2 fw-bold" onclick="handleLogin()">ACCESS</button>
         <p id="error-msg" class="text-danger mt-3 small" style="display:none;">Autentikasi Gagal!</p>
     </div>
 </div>
@@ -200,6 +200,7 @@
 </div>
 
 <script>
+    // Konfigurasi Supabase
     const SB_URL = "https://qnamtickoteyvydayyor.supabase.co";
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYW10aWNrb3RleXZ5ZGF5eW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTU2MzksImV4cCI6MjA5MzQ3MTYzOX0.VAeN0JVnz4WNPzY5NTGmtGeHD-Da_qkCvy84ZDYZNHo";
     const _supabase = supabase.createClient(SB_URL, SB_KEY);
@@ -227,21 +228,36 @@
             let allData = [];
             responses.forEach((res, index) => {
                 if (res.data) {
-                    const mapped = res.data.map(item => ({
-                        ...item,
-                        tag: tables[index].tag,
-                        colorClass: tables[index].color
-                    }));
+                    const mapped = res.data.map(item => {
+                        // NORMALISASI LOGIKA: Memastikan field dari memo & baom terbaca meski beda nama kolom
+                        return {
+                            id: item.id,
+                            tanggal: item.tanggal,
+                            // Fallback nama kolom untuk Nomor Dokumen
+                            nomor_dokumen: item.nomor_dokumen || item.no_memo || item.no_ba || item.nomor || "-",
+                            // Fallback nama kolom untuk Tujuan
+                            tujuan: item.penerima || item.tujuan || item.lokasi || "-",
+                            // Fallback nama kolom untuk Sopir
+                            driver: item.driver || item.sopir || item.nama_supir || "-",
+                            // Fallback nama kolom untuk No Polisi
+                            nopol: item.nopol || item.no_polisi || "-",
+                            // Fallback nama kolom untuk Qty/Liter
+                            qty: item.qty || item.liter || item.vol || 0,
+                            tag: tables[index].tag,
+                            colorClass: tables[index].color
+                        };
+                    });
                     allData = [...allData, ...mapped];
                 }
             });
 
+            // Sorting Tanggal Terbaru
             allData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
             renderTable(allData);
 
         } catch (err) {
             console.error(err);
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-danger">GAGAL LOAD DATA DARI SUPABASE.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-danger">GAGAL LOAD DATA: ${err.message}</td></tr>`;
         }
     }
 
@@ -253,19 +269,18 @@
             html = '<tr><td colspan="8" class="text-center py-5" style="color:black;">DATA TIDAK DITEMUKAN</td></tr>';
         } else {
             data.forEach(row => {
-                const qty = row.qty || row.liter || 0;
                 const dateObj = new Date(row.tanggal);
                 const formattedDate = isNaN(dateObj) ? (row.tanggal || "-") : dateObj.toLocaleDateString('id-ID');
 
                 html += `
                     <tr>
                         <td><span class="fw-bold">${formattedDate}</span></td>
-                        <td><span class="text-number">${row.nomor_dokumen || "-"}</span></td>
+                        <td><span class="text-number">${row.nomor_dokumen}</span></td>
                         <td><span class="badge-tag ${row.colorClass}">${row.tag}</span></td>
-                        <td><span class="small">${row.penerima || "-"}</span></td>
-                        <td class="fw-bold">${row.driver || "-"}</td>
-                        <td class="font-monospace">${row.nopol || '-'}</td>
-                        <td class="text-end"><span class="text-qty">${Number(qty).toLocaleString('id-ID')} L</span></td>
+                        <td><span class="small">${row.tujuan}</span></td>
+                        <td class="fw-bold">${row.driver}</td>
+                        <td class="font-monospace">${row.nopol}</td>
+                        <td class="text-end"><span class="text-qty">${Number(row.qty).toLocaleString('id-ID')} L</span></td>
                         <td class="text-center">
                             <button class="btn btn-view" onclick="viewPDF('${row.id}', '${row.tag}')">
                                 <i class="bi bi-file-earmark-pdf"></i> VIEW
@@ -294,10 +309,18 @@
         fetchLogistikData();
     }
 
-    function handleLogout() { localStorage.removeItem('kse_session'); location.reload(); }
-    function viewPDF(id, type) { alert('Membuka Dokumen ' + type + ' ID: ' + id); }
+    function handleLogout() { 
+        localStorage.removeItem('kse_session'); 
+        location.reload(); 
+    }
+    
+    function viewPDF(id, type) { 
+        alert('Membuka Dokumen ' + type + '\nID: ' + id); 
+    }
 
-    window.onload = () => { if (localStorage.getItem('kse_session') === 'active') showDashboard(); };
+    window.onload = () => { 
+        if (localStorage.getItem('kse_session') === 'active') showDashboard(); 
+    };
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
