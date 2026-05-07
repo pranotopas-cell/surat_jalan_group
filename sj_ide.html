@@ -28,20 +28,19 @@
             background: white; width: 215.9mm; height: 279.4mm; padding: 8mm 12mm; 
             position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
             display: flex; flex-direction: column; transform: scale(0.85); transform-origin: top center;
-            overflow: hidden; /* Penting agar watermark tidak keluar batas */
+            overflow: hidden;
         }
 
-        /* WATERMARK LOGO BACKGROUND */
         .watermark {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-30deg);
             width: 70%;
-            opacity: 0.08; /* Sangat transparan abu-abu */
+            opacity: 0.08;
             z-index: 0;
             pointer-events: none;
-            filter: grayscale(100%); /* Memastikan warna abu-abu */
+            filter: grayscale(100%);
         }
 
         .dot-matrix { font-family: var(--dot-font); font-weight: bold; text-transform: uppercase; position: relative; z-index: 1; }
@@ -100,7 +99,6 @@
 
 <div class="container-fluid">
     <div class="row">
-        <!-- INPUT SIDEBAR -->
         <div class="col-lg-3 input-sidebar shadow-sm">
             <label class="form-label-custom">Tanggal Kirim</label>
             <input type="date" id="in_tgl" class="form-control form-control-sm mb-1">
@@ -161,12 +159,9 @@
             <input type="text" id="in_adm" class="form-control form-control-sm mb-1" value="STAFF OPERASIONAL">
         </div>
 
-        <!-- CANVAS AREA -->
         <div class="col-lg-9 p-0 bg-secondary bg-opacity-10">
             <div class="canvas-container">
                 <div class="document-canvas" id="printable-area">
-                    
-                    <!-- WATERMARK LOGO -->
                     <img src="ide1.png" class="watermark" alt="Watermark IDE">
 
                     <div class="header-sj">
@@ -399,22 +394,27 @@
     }
 
     async function saveToCloud() {
-        const btn = event.target;
-        if (!document.getElementById('in_tgl').value || !document.getElementById('in_no_sj').value) {
-            alert("Tanggal dan Nomor Dokumen harus diisi!");
+        const btn = event.currentTarget;
+        const tgl = document.getElementById('in_tgl').value;
+        const noSj = document.getElementById('out_no_sj').innerText;
+
+        if (!tgl || !noSj || noSj.includes("-")) {
+            alert("Tanggal dan Nomor Dokumen harus valid!");
             return;
         }
 
         btn.disabled = true;
+        const originalHTML = btn.innerHTML;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
 
+        // PAYLOAD DATA SESUAI PERMINTAAN
         const payload = {
-            tanggal: document.getElementById('in_tgl').value,
-            nomor_dokumen: document.getElementById('out_no_sj').innerText,
+            tanggal: tgl,
+            nomor_dokumen: noSj,
             penerima: document.getElementById('in_tujuan').value,
             nopol: document.getElementById('in_nopol').value,
-            driver: document.getElementById('in_driver').value,
-            qty: parseFloat(document.getElementById('in_qty').value) || 0
+            qty: parseFloat(document.getElementById('in_qty').value) || 0,
+            driver: document.getElementById('in_driver').value
         };
 
         try {
@@ -423,10 +423,10 @@
             alert("✅ Data Berhasil Disimpan ke Cloud IDE!");
         } catch (err) {
             console.error("Detail Error:", err);
-            alert("❌ Gagal Simpan!");
+            alert("❌ Gagal Simpan ke Database!");
         } finally {
             btn.disabled = false;
-            btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> SAVE CLOUD';
+            btn.innerHTML = originalHTML;
         }
     }
 
