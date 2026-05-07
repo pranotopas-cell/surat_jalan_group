@@ -99,6 +99,7 @@
 
 <div class="container-fluid">
     <div class="row">
+        <!-- INPUT SIDEBAR -->
         <div class="col-lg-3 input-sidebar shadow-sm">
             <label class="form-label-custom">Tanggal Kirim</label>
             <input type="date" id="in_tgl" class="form-control form-control-sm mb-1">
@@ -159,6 +160,7 @@
             <input type="text" id="in_adm" class="form-control form-control-sm mb-1" value="STAFF OPERASIONAL">
         </div>
 
+        <!-- CANVAS AREA -->
         <div class="col-lg-9 p-0 bg-secondary bg-opacity-10">
             <div class="canvas-container">
                 <div class="document-canvas" id="printable-area">
@@ -384,22 +386,34 @@
         try {
             const { data, error } = await supabaseClient.from('sj_ide').select('nomor_dokumen').order('created_at', { ascending: false }).limit(1);
             if (data && data.length > 0) {
-                const lastNum = data[0].nomor_dokumen.split('/')[0];
-                document.getElementById('in_no_sj').value = (parseInt(lastNum) + 1).toString().padStart(3, '0');
+                const lastDoc = data[0].nomor_dokumen;
+                const lastNum = lastDoc.split('/')[0];
+                if(!isNaN(lastNum)) {
+                    document.getElementById('in_no_sj').value = (parseInt(lastNum) + 1).toString().padStart(3, '0');
+                } else {
+                    document.getElementById('in_no_sj').value = "001";
+                }
             } else {
                 document.getElementById('in_no_sj').value = "001";
             }
             syncData();
-        } catch (e) { document.getElementById('in_no_sj').value = "001"; }
+        } catch (e) { 
+            document.getElementById('in_no_sj').value = "001"; 
+            syncData();
+        }
     }
 
     async function saveToCloud() {
+        // Jalankan sinkronisasi data terlebih dahulu agar elemen out_no_sj terisi
+        syncData();
+
         const btn = event.currentTarget;
         const tgl = document.getElementById('in_tgl').value;
         const noSj = document.getElementById('out_no_sj').innerText;
 
-        if (!tgl || !noSj || noSj.includes("-")) {
-            alert("Tanggal dan Nomor Dokumen harus valid!");
+        // Validasi
+        if (!tgl || !noSj || noSj === "-" || noSj === "" || noSj.startsWith("000")) {
+            alert("⚠️ Tanggal dan Nomor Dokumen harus diisi dengan benar!");
             return;
         }
 
@@ -407,7 +421,7 @@
         const originalHTML = btn.innerHTML;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
 
-        // PAYLOAD DATA SESUAI PERMINTAAN
+        // PAYLOAD SESUAI PERMINTAAN
         const payload = {
             tanggal: tgl,
             nomor_dokumen: noSj,
@@ -422,8 +436,8 @@
             if (error) throw error;
             alert("✅ Data Berhasil Disimpan ke Cloud IDE!");
         } catch (err) {
-            console.error("Detail Error:", err);
-            alert("❌ Gagal Simpan ke Database!");
+            console.error("Error:", err);
+            alert("❌ Gagal Simpan!");
         } finally {
             btn.disabled = false;
             btn.innerHTML = originalHTML;
@@ -432,7 +446,10 @@
 
     function syncData() {
         const val = (id) => document.getElementById(id).value;
-        const set = (id, text) => { if(document.getElementById(id)) document.getElementById(id).innerText = text || "-"; };
+        const set = (id, text) => { 
+            const el = document.getElementById(id);
+            if(el) el.innerText = text || "-"; 
+        };
 
         const tglInput = val('in_tgl');
         let displayTgl = "-", displayHari = "..........", autoSuffix = "";
@@ -489,9 +506,10 @@
     }
 
     document.querySelectorAll('input, select').forEach(el => el.addEventListener('input', syncData));
-    window.onload = () => {
+
+    window.onload = async () => {
         document.getElementById('in_tgl').value = new Date().toISOString().split('T')[0];
-        fetchLastNumber();
+        await fetchLastNumber();
     };
 </script>
 </body>
