@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memo IDE - Red Green Blue Edition</title>
+    <title>Memo IDE - RGB Edition</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -11,12 +11,10 @@
     <style>
         * { box-sizing: border-box; }
         :root {
-            /* Updated RGB Color Scheme */
             --ide-red: #dc2626; 
             --ide-green: #16a34a;
             --ide-blue: #2563eb;
             --dark-sidebar: #0f172a;
-            --gold-kse: #d4af37;
         }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #525659; margin: 0; display: flex; }
         
@@ -31,19 +29,8 @@
         .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
 
         /* ACTION BAR */
-        .top-action-bar { 
-            position: fixed; top: 0; right: 0; left: 400px; 
-            background: #ffffff; padding: 10px 25px; display: flex; 
-            justify-content: flex-end; gap: 12px; z-index: 1000; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .btn { 
-            padding: 10px 18px; border: none; border-radius: 6px; 
-            cursor: pointer; font-weight: 700; font-size: 12px; color: white; 
-            display: flex; align-items: center; gap: 8px; transition: all 0.2s ease;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .top-action-bar { position: fixed; top: 0; right: 0; left: 400px; background: #ffffff; padding: 10px 25px; display: flex; justify-content: flex-end; gap: 12px; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .btn { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 12px; color: white; display: flex; align-items: center; gap: 8px; transition: all 0.2s ease; text-transform: uppercase; }
         .btn-home { background: #64748b; } 
         .btn-print { background: var(--ide-blue); } 
         .btn-save { background: var(--ide-green); } 
@@ -53,15 +40,16 @@
         .main-content { margin-left: 400px; margin-top: 65px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; }
         .memo-page { background: white; width: 210mm; min-height: 297mm; padding: 15mm; box-shadow: 0 0 20px rgba(0,0,0,0.5); color: #111; font-family: 'Courier New', Courier, monospace; position: relative; display: flex; flex-direction: column; }
         
-        /* MEMO STYLING */
+        /* HEADER */
         .header-section { margin-bottom: 70px; display: flex; align-items: stretch; justify-content: space-between; }
         .header-left { display: flex; align-items: center; }
-        .logo-img { height: 55px; margin-right: 15px; filter: none; /* Berwarna */ }
+        .logo-img { height: 55px; margin-right: 15px; }
         .company-name-main { font-size: 25px; font-weight: 900; color: var(--ide-red); font-family: 'Arial Black', sans-serif; line-height: 1; }
         .company-name-sub { font-size: 14px; font-weight: bold; color: var(--ide-blue); font-family: Arial, sans-serif; letter-spacing: 3px; }
         .header-right { display: flex; align-items: center; text-align: right; border-left: 4px solid var(--ide-green); padding-left: 15px; margin-left: 20px; }
         .company-addr { font-size: 10px; font-family: Arial, sans-serif; line-height: 1.4; }
         
+        /* CONTENT BODY */
         .info-split-container { display: flex; justify-content: space-between; margin-bottom: 20px; }
         .recipient-side { width: 50%; font-weight: bold; }
         .meta-side { width: 48%; }
@@ -73,18 +61,20 @@
         .details-box { margin: 15px 0; padding: 10px; border: 1px dashed #000; background: #f8fafc; }
         table.data-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
         table.data-table th, table.data-table td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 11px; }
-        table.data-table th { background: #f1f5f9; text-transform: uppercase; color: var(--ide-blue); }
+        table.data-table th { background: #f1f5f9; color: var(--ide-blue); }
         
+        /* SIGNATURE - Underline Removed */
         .signature-container { margin-top: 40px; font-size: 12px; }
         .sig-space { height: 90px; display: flex; align-items: center; }
         .sig-img { width: 100px; }
+        .sig-dept { padding-top: 5px; border-top: none; } /* Garis bawah dihilangkan */
         
+        /* FOOTER */
         .footer-memo { margin-top: auto; padding-top: 20px; }
         .footer-bar { display: flex; width: 100%; height: 5px; margin-bottom: 10px; }
         .bar-red { background: var(--ide-red); flex: 4; }
         .bar-green { background: var(--ide-green); flex: 3; }
         .bar-blue { background: var(--ide-blue); flex: 3; }
-        
         .footer-content { display: flex; justify-content: space-between; align-items: flex-end; font-size: 9px; font-family: Arial, sans-serif; }
 
         @media print { .sidebar, .top-action-bar { display: none !important; } .main-content { margin: 0; padding: 0; } .memo-page { box-shadow: none; width: 100%; } }
@@ -102,7 +92,8 @@
 <div class="sidebar">
     <h2>IDE MEMO SYSTEM</h2>
     <div class="section-title">Dokumen Meta</div>
-    <div class="input-group"><label>No. Urut (Auto)</label><input type="text" id="inNoUrut" readonly placeholder="Auto"></div>
+    <!-- No Urut Sekarang Bisa Di-Edit -->
+    <div class="input-group"><label>No. Urut (Auto/Edit)</label><input type="text" id="inNoUrut" placeholder="001"></div>
     <div class="input-group"><label>Format</label><input type="text" id="inNoFormat" readonly></div>
     <div class="input-group"><label>Tanggal Memo</label><input type="date" id="inTglMemo" onchange="fetchNextNumber()"></div>
     <div class="input-group"><label>Perihal</label><textarea id="inPerihal" rows="2">MEMO PENGALIRAN BBM</textarea></div>
@@ -212,7 +203,7 @@
             <div class="sig-space">
                 <img src="ide.png" class="sig-img" alt="Stamp" onerror="this.style.opacity='0.2'">
             </div>
-            <b style="border-top: 1px solid #000; padding-top: 5px;">OPERATIONAL DEPT.</b>
+            <b class="sig-dept">OPERATIONAL DEPT.</b> <!-- Garis bawah dihilangkan -->
         </div>
 
         <div class="footer-memo">
@@ -249,19 +240,14 @@
     ];
     const listDriver = ["AGUS EFENDI", "WIYANTO", "WAHID", "SUPRIYADI", "INDRA", "AGUS MULYANTO", "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", "ADI SUCIPTO", "AGUS"];
 
-    function getRoman(m) {
-        return ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][m];
-    }
+    function getRoman(m) { return ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"][m]; }
 
     async function fetchNextNumber() {
         const dateVal = document.getElementById('inTglMemo').value;
         if(!dateVal) return;
-        
         const date = new Date(dateVal);
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
-        
-        // Cari data di bulan & tahun yang sama
         const firstDay = `${year}-${String(month).padStart(2, '0')}-01`;
         const lastDay = `${year}-${String(month).padStart(2, '0')}-31`;
 
@@ -273,7 +259,6 @@
                 .lte('tanggal', lastDay);
 
             if (error) throw error;
-
             let nextNum = 1;
             if (data && data.length > 0) {
                 const existingNums = data.map(item => {
@@ -282,7 +267,6 @@
                 });
                 nextNum = Math.max(...existingNums) + 1;
             }
-
             document.getElementById('inNoUrut').value = String(nextNum).padStart(3, '0');
             document.getElementById('inNoFormat').value = `/MEMO-IDE/${getRoman(date.getMonth())}/${year}`;
             update();
@@ -293,7 +277,11 @@
     }
 
     function update() {
-        const fullNo = document.getElementById('inNoUrut').value + document.getElementById('inNoFormat').value;
+        // Pad nomor urut jika user mengetik angka tunggal (misal: "1" jadi "001")
+        let nr = document.getElementById('inNoUrut').value;
+        if(!isNaN(nr) && nr !== "") nr = String(nr).padStart(3, '0');
+
+        const fullNo = nr + document.getElementById('inNoFormat').value;
         document.getElementById('outNomor').innerText = fullNo;
         document.getElementById('outPerihal').innerText = document.getElementById('inPerihal').value;
         document.getElementById('outTujuanPT').innerText = document.getElementById('inTujuanPT').value;
@@ -310,12 +298,10 @@
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
-        // QR Code
         const qrBox = document.getElementById("qrcode");
         qrBox.innerHTML = "";
         if(fullNo.length > 5) new QRCode(qrBox, { text: fullNo, width: 45, height: 45 });
 
-        // Table
         let total = 0, rows = "";
         for(let i=1; i<=10; i++) {
             const nopol = document.getElementById(`inNopol${i}`).value;
@@ -338,7 +324,8 @@
 
     async function saveData() {
         const btn = document.getElementById('btnSave');
-        const noDok = document.getElementById('inNoUrut').value + document.getElementById('inNoFormat').value;
+        const nr = String(document.getElementById('inNoUrut').value).padStart(3, '0');
+        const noDok = nr + document.getElementById('inNoFormat').value;
         const tgl = document.getElementById('inTglMemo').value;
         const tujuan = document.getElementById('inTujuanPT').value;
 
@@ -356,14 +343,12 @@
                 });
             }
         }
-
         if(!payload.length) return alert("Data kosong!");
         btn.disabled = true; btn.innerText = "SAVING...";
-
         try {
             const { error } = await supabaseClient.from('memo_ide').insert(payload);
             if (error) throw error;
-            alert("Data Berhasil Tersimpan di Cloud!");
+            alert("Data Berhasil Tersimpan!");
             fetchNextNumber();
         } catch (err) {
             alert("Error: " + err.message);
@@ -377,15 +362,13 @@
                     <datalist id="listNopol">${dataArmada.map(x=>`<option value="${x.nopol}">`).join('')}</datalist>
                     <datalist id="listDriver">${listDriver.map(x=>`<option value="${x}">`).join('')}</datalist>`;
         for(let i=1; i<=10; i++) {
-            html += `<div class="unit-card">
-                <div class="unit-grid">
-                    <input type="text" id="inNopol${i}" list="listNopol" placeholder="Nopol" onchange="autoFill(${i})">
-                    <input type="text" id="inDriver${i}" list="listDriver" placeholder="Sopir">
-                    <input type="text" id="inTrans${i}" list="listTrans" placeholder="Transportir">
-                    <input type="number" id="inQty${i}" placeholder="Qty">
-                    <input type="text" id="inTera${i}" placeholder="Tera">
-                </div>
-            </div>`;
+            html += `<div class="unit-card"><div class="unit-grid">
+                <input type="text" id="inNopol${i}" list="listNopol" placeholder="Nopol" onchange="autoFill(${i})">
+                <input type="text" id="inDriver${i}" list="listDriver" placeholder="Sopir">
+                <input type="text" id="inTrans${i}" list="listTrans" placeholder="Transportir">
+                <input type="number" id="inQty${i}" placeholder="Qty">
+                <input type="text" id="inTera${i}" placeholder="Tera">
+            </div></div>`;
         }
         document.getElementById('unit-inputs').innerHTML = html;
     }
@@ -413,14 +396,14 @@
 
     function downloadPDF() {
         const element = document.getElementById('memo-area');
-        const opt = {
+        const nr = document.getElementById('inNoUrut').value;
+        html2pdf().set({
             margin: 0,
-            filename: `MEMO_IDE_${document.getElementById('inNoUrut').value}.pdf`,
+            filename: `MEMO_IDE_${nr}.pdf`,
             image: { type: 'jpeg', quality: 1 },
             html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(element).save();
+        }).from(element).save();
     }
 
     window.onload = () => {
@@ -433,6 +416,5 @@
 
     document.addEventListener('input', update);
 </script>
-
 </body>
 </html>
