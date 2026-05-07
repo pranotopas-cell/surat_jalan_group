@@ -63,11 +63,10 @@
         table.data-table th, table.data-table td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 11px; }
         table.data-table th { background: #f1f5f9; color: var(--ide-blue); }
         
-        /* SIGNATURE - Underline Removed */
         .signature-container { margin-top: 40px; font-size: 12px; }
         .sig-space { height: 90px; display: flex; align-items: center; }
         .sig-img { width: 100px; }
-        .sig-dept { padding-top: 5px; border-top: none; } /* Garis bawah dihilangkan */
+        .sig-dept { padding-top: 5px; border-top: none; } 
         
         /* FOOTER */
         .footer-memo { margin-top: auto; padding-top: 20px; }
@@ -76,6 +75,7 @@
         .bar-green { background: var(--ide-green); flex: 3; }
         .bar-blue { background: var(--ide-blue); flex: 3; }
         .footer-content { display: flex; justify-content: space-between; align-items: flex-end; font-size: 9px; font-family: Arial, sans-serif; }
+        #qrcode { background: white; padding: 2px; }
 
         @media print { .sidebar, .top-action-bar { display: none !important; } .main-content { margin: 0; padding: 0; } .memo-page { box-shadow: none; width: 100%; } }
     </style>
@@ -92,7 +92,6 @@
 <div class="sidebar">
     <h2>IDE MEMO SYSTEM</h2>
     <div class="section-title">Dokumen Meta</div>
-    <!-- No Urut Sekarang Bisa Di-Edit -->
     <div class="input-group"><label>No. Urut (Auto/Edit)</label><input type="text" id="inNoUrut" placeholder="001"></div>
     <div class="input-group"><label>Format</label><input type="text" id="inNoFormat" readonly></div>
     <div class="input-group"><label>Tanggal Memo</label><input type="date" id="inTglMemo" onchange="fetchNextNumber()"></div>
@@ -122,6 +121,7 @@
 
 <div class="main-content">
     <div class="memo-page" id="memo-area">
+        <!-- HEADER -->
         <div class="header-section">
             <div class="header-left">
                 <img src="ide1.png" class="logo-img" alt="IDE LOGO" onerror="this.src='https://via.placeholder.com/60x60/dc2626/ffffff?text=IDE'">
@@ -203,7 +203,7 @@
             <div class="sig-space">
                 <img src="ide.png" class="sig-img" alt="Stamp" onerror="this.style.opacity='0.2'">
             </div>
-            <b class="sig-dept">OPERATIONAL DEPT.</b> <!-- Garis bawah dihilangkan -->
+            <b class="sig-dept">OPERATIONAL DEPT.</b>
         </div>
 
         <div class="footer-memo">
@@ -211,6 +211,7 @@
                 <div class="bar-red"></div><div class="bar-green"></div><div class="bar-blue"></div>
             </div>
             <div class="footer-content">
+                <!-- QR CODE DITAMPILKAN DI SINI -->
                 <div id="qrcode"></div>
                 <div style="text-align: right;">
                     <strong style="color: var(--ide-blue);">KSE SMART LOGISTICS</strong><br>
@@ -268,6 +269,7 @@
                 nextNum = Math.max(...existingNums) + 1;
             }
             document.getElementById('inNoUrut').value = String(nextNum).padStart(3, '0');
+            // Format Nomor: /MEMO-IDE/V/2026
             document.getElementById('inNoFormat').value = `/MEMO-IDE/${getRoman(date.getMonth())}/${year}`;
             update();
         } catch (err) {
@@ -277,7 +279,6 @@
     }
 
     function update() {
-        // Pad nomor urut jika user mengetik angka tunggal (misal: "1" jadi "001")
         let nr = document.getElementById('inNoUrut').value;
         if(!isNaN(nr) && nr !== "") nr = String(nr).padStart(3, '0');
 
@@ -298,9 +299,17 @@
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
+        // Render QR Code
         const qrBox = document.getElementById("qrcode");
         qrBox.innerHTML = "";
-        if(fullNo.length > 5) new QRCode(qrBox, { text: fullNo, width: 45, height: 45 });
+        if(fullNo.length > 5) {
+            new QRCode(qrBox, { 
+                text: fullNo, 
+                width: 50, 
+                height: 50,
+                correctLevel: QRCode.CorrectLevel.H 
+            });
+        }
 
         let total = 0, rows = "";
         for(let i=1; i<=10; i++) {
