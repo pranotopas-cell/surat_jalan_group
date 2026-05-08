@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memo - PT IKE</title>
+    <title>Memo -IKAEN</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -79,7 +79,7 @@
         table.data-table th { background: #f1f5f9; text-transform: uppercase; color: var(--primary-ike); }
         .signature-container { margin-top: 40px; font-size: 12px; }
         .sig-space { height: 80px; display: flex; align-items: center; }
-        .sig-img { width: 100px; }
+        .sig-img { width: 130px; }
         
         .footer-memo { margin-top: auto; padding-top: 20px; }
         .footer-bar { display: flex; width: 100%; height: 4px; margin-bottom: 10px; }
@@ -116,6 +116,7 @@
             <option value="PT. SINARINDO SUKSES SELALU" data-alamat="JL. Ahmad Yani Km.2,2 Pangkalan Bun.">PT. SINARINDO SUKSES SELALU</option>
             <option value="PT. OCEAN INDONESIA ENERGY" data-alamat="Jln. Alalak Utara RT.16 Kel.Alalak Utara Banjarmasin">PT. OCEAN INDONESIA ENERGY</option>
             <option value="PT. GLOBAL BORNEO ENERGI" data-alamat="Banjarmasin - kalimantan selatan.">PT. GLOBAL BORNEO ENERGI</option>
+            <option value="PT. PETRO ANDALAN NUSANTARA" data-alamat="Pelabuhan Bumiharjo, Pangkalan - Kalimantan Tengah">PT.PETRO ANDALAN NUSANTARA </option>
         </select>
     </div>
     <div class="input-group"><label>Nama PT</label><input type="text" id="inTujuanPT"></div>
@@ -137,14 +138,13 @@
                 <!-- LOGO DIUBAH KE ikaen.png -->
                 <img src="ikaen.png" class="logo-img" onerror="this.src='https://via.placeholder.com/60x60?text=IKE'">
                 <div class="company-title-box">
-                    <div class="company-name-main">INVENTAMA</div>
+                    <div class="company-name-main">INVESTAMA</div>
                     <div class="company-name-sub">KALIMANTAN ENERGI</div>
                 </div>
             </div>
             <div class="header-right">
                 <div class="company-addr">
-                    Jln. Ahmad Wongso Rt.18<br>
-                    Pangkalan Bun, Arut Selatan<br>
+                    Jln. Ahmad Wongso Rt.18, Pangkalan Bun, Arut Selatan<br>
                     Kotawaringin Barat, Kalimantan Tengah<br>
                     <b>pt.inventama.kalimantan.energi@gmail.com</b>
                 </div>
@@ -270,7 +270,7 @@
 
         try {
             const { data, error } = await supabaseClient
-                .from('memo_kse') // Nama tabel tetap kse (sesuai database Anda)
+                .from('memo_ikaen') // Nama tabel tetap kse (sesuai database Anda)
                 .select('no_dokumen')
                 .gte('tanggal', firstDay)
                 .lte('tanggal', lastDay);
@@ -284,7 +284,7 @@
                 nextNum = Math.max(...existingNumbers) + 1;
             }
             document.getElementById('inNoUrut').value = String(nextNum).padStart(3, '0');
-            document.getElementById('inNoFormat').value = `/MEMO-IKE/${getRomanMonth(date.getMonth())}/${year}`;
+            document.getElementById('inNoFormat').value = `/MEMO-IKAEN/${getRomanMonth(date.getMonth())}/${year}`;
             update();
         } catch (err) {
             console.error("Gagal ambil nomor:", err);
@@ -325,7 +325,7 @@
         if(d) {
             document.getElementById(`inQty${idx}`).value = d.qty;
             document.getElementById(`inTera${idx}`).value = d.tera;
-            document.getElementById(`inTrans${idx}`).value = "PT. INVENTAMA KALIMANTAN ENERGI";
+            document.getElementById(`inTrans${idx}`).value = "PT. INVESTAMA KALIMANTAN ENERGI";
         }
         update();
     }
@@ -393,7 +393,7 @@
         btn.disabled = true; btn.innerText = "SAVING...";
         
         try {
-            const { error } = await supabaseClient.from('memo_kse').insert(payload);
+            const { error } = await supabaseClient.from('memo_ikaen').insert(payload);
             if (error) throw error;
             alert("Data PT. IKE Berhasil Disimpan!");
             fetchNextNumber();
