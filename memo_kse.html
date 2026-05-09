@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memo</title>
+    <title>Memo - KSE Smart System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -30,7 +30,7 @@
         .unit-card { background: #34495e; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary-kse); }
         .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
 
-        /* UPDATED TOP ACTION BAR */
+        /* TOP ACTION BAR */
         .top-action-bar { 
             position: fixed; 
             top: 0; 
@@ -60,18 +60,16 @@
             letter-spacing: 0.5px;
         }
         .btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        .btn:active { transform: translateY(0); }
         
-        .btn-home { background: #4b5563; } /* Gray */
-        .btn-print { background: #6366f1; } /* Indigo */
-        .btn-save { background: var(--success-green); } /* Green */
-        .btn-download { background: var(--danger-red); } /* Red */
+        .btn-home { background: #4b5563; }
+        .btn-print { background: #6366f1; }
+        .btn-save { background: var(--success-green); }
+        .btn-download { background: var(--danger-red); }
 
         /* MAIN CONTENT */
         .main-content { margin-left: 400px; margin-top: 65px; flex-grow: 1; padding: 20px; display: flex; justify-content: center; }
         .memo-page { background: white; width: 210mm; min-height: 297mm; padding: 15mm; box-shadow: 0 0 20px rgba(0,0,0,0.5); color: #111; font-family: 'Courier New', Courier, monospace; position: relative; display: flex; flex-direction: column; }
         
-        /* MEMO STYLING (REMAINS SAME) */
         .header-section { margin-bottom: 70px; display: flex; align-items: stretch; justify-content: space-between; }
         .header-left { display: flex; align-items: center; }
         .logo-img { height: 45px; margin-right: 15px; }
@@ -79,6 +77,7 @@
         .company-name-sub { font-size: 14px; font-weight: bold; color: var(--primary-kse); font-family: Arial, sans-serif; letter-spacing: 3px; }
         .header-right { display: flex; align-items: center; text-align: right; border-left: 4px solid var(--gold-kse); padding-left: 15px; margin-left: 20px; }
         .company-addr { font-size: 10px; font-family: Arial, sans-serif; line-height: 1.4; font-weight: normal; }
+        
         .info-split-container { display: flex; justify-content: space-between; margin-bottom: 20px; }
         .recipient-side { width: 50%; font-weight: bold; }
         .meta-side { width: 45%; }
@@ -87,34 +86,44 @@
         .meta-label { width: 90px; font-size: 11px; }
         .meta-value { font-weight: bold; flex: 1; text-transform: uppercase; font-size: 12px; }
         .details-box { margin: 15px 0; padding: 10px; border: 1px dashed #000; background: #fafafa; }
+        
         table.data-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
         table.data-table th, table.data-table td { border: 1px solid #000; padding: 6px; text-align: center; font-size: 11px; }
         table.data-table th { background: #eee; text-transform: uppercase; }
+        
         .signature-container { margin-top: 40px; font-size: 12px; }
         .sig-space { height: 80px; display: flex; align-items: center; }
         .sig-img { width: 80px; filter: grayscale(1); }
+        
+        /* FOOTER SYSTEM STYLES */
         .footer-memo { margin-top: auto; padding-top: 20px; }
         .footer-bar { display: flex; width: 100%; height: 4px; margin-bottom: 10px; }
         .bar-1 { background: var(--primary-kse); flex: 6; }
         .bar-2 { background: #008b8b; flex: 2; }
         .bar-3 { background: var(--gold-kse); flex: 2; }
-        .footer-content { display: flex; justify-content: space-between; align-items: flex-end; font-size: 9px; font-family: Arial, sans-serif; }
+        
+        .footer-content { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end; 
+        }
         #qrcode { padding: 3px; border: 1px solid #000; }
+        .footer-sys-text { text-align: right; line-height: 1.2; }
+
         @media print { .sidebar, .top-action-bar { display: none !important; } .main-content { margin: 0; padding: 0; } .memo-page { box-shadow: none; width: 100%; height: auto; } body { background: white; } }
     </style>
 </head>
 <body>
 
-<!-- UPDATED BUTTONS -->
 <div class="top-action-bar">
     <button class="btn btn-home" onclick="window.location.href='index.html'">Home</button>
     <button class="btn btn-print" onclick="window.print()">Print</button>
-    <button class="btn btn-save" id="btnSave" onclick="saveData()">Save</button>
-    <button class="btn btn-download" onclick="downloadPDF()">Download </button>
+    <button class="btn btn-save" id="btnSave" onclick="saveData()">Save Cloud</button>
+    <button class="btn btn-download" onclick="downloadPDF()">Download PDF</button>
 </div>
 
 <div class="sidebar">
-    <h2>KSE MEMO </h2>
+    <h2>KSE MEMO CONTROL</h2>
     <div class="section-title">Dokumen Meta</div>
     <div class="input-group"><label>No. Urut (Auto)</label><input type="text" id="inNoUrut" readonly></div>
     <div class="input-group"><label>Format</label><input type="text" id="inNoFormat" readonly></div>
@@ -233,11 +242,11 @@
             <div class="footer-bar">
                 <div class="bar-1"></div><div class="bar-2"></div><div class="bar-3"></div>
             </div>
-            <div class="d-flex justify-content-between align-items-end" style="margin-top: 5px;">
-                        <div id="qrcode"></div>
-                        <div class="text-end" style="font-size: 6.5pt; color: #444;">
-                        <b style="color: var(--kse-primary);">KSE SMART LOGISTICS SYSTEM</b><br>
-                         Cetakan Sistem: <span id="out_sys_date"></span>
+            <div class="footer-content">
+                <div id="qrcode"></div>
+                <div class="footer-sys-text">
+                    <b style="font-size: 9px; color: var(--primary-kse); text-transform: uppercase;">KSE SMART LOGISTICS SYSTEM</b><br>
+                    <span style="font-size: 8px; color: #64748b;">Cetakan Sistem: <span id="out_sys_date"></span></span>
                 </div>
             </div>
         </div>
@@ -262,11 +271,7 @@
         { nopol: "L 9761 UJ", tera: "124.0 cm", qty: 8000 }
     ];
     
-    const listDriver = [
-        "AGUS EFENDI", "WIYANTO", "WAHID", "SUPRIYADI", "INDRA", "AGUS MULYANTO", 
-        "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", 
-        "ADI SUCIPTO", "AGUS"
-    ];
+    const listDriver = ["AGUS EFENDI", "WIYANTO", "WAHID", "SUPRIYADI", "INDRA", "AGUS MULYANTO", "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", "ADI SUCIPTO", "AGUS"];
 
     function getRomanMonth(monthIdx) {
         const roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
@@ -276,11 +281,9 @@
     async function fetchNextNumber() {
         const dateInput = document.getElementById('inTglMemo').value;
         if(!dateInput) return;
-        
         const date = new Date(dateInput);
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
-        
         const firstDay = `${year}-${String(month).padStart(2, '0')}-01`;
         const lastDay = `${year}-${String(month).padStart(2, '0')}-31`;
 
@@ -301,7 +304,6 @@
                 });
                 nextNum = Math.max(...existingNumbers) + 1;
             }
-
             document.getElementById('inNoUrut').value = String(nextNum).padStart(3, '0');
             document.getElementById('inNoFormat').value = `/MEMO-KSE/${getRomanMonth(date.getMonth())}/${year}`;
             update();
@@ -318,12 +320,11 @@
         return `${String(date.getDate()).padStart(2, '0')} ${months[date.getMonth()]} ${date.getFullYear()}`;
     }
 
-    function createDatalist(id, list, key = null) {
-        return `<datalist id="${id}">` + list.map(item => `<option value="${key ? item[key] : item}">`).join('') + `</datalist>`;
-    }
-
     function generateArmadaInputs() {
-        let html = createDatalist('listTrans', listTransportir) + createDatalist('listNopol', dataArmada, 'nopol') + createDatalist('listDriver', listDriver);
+        let html = `<datalist id="listTrans">${listTransportir.map(i => `<option value="${i}">`).join('')}</datalist>`;
+        html += `<datalist id="listNopol">${dataArmada.map(i => `<option value="${i.nopol}">`).join('')}</datalist>`;
+        html += `<datalist id="listDriver">${listDriver.map(i => `<option value="${i}">`).join('')}</datalist>`;
+        
         for(let i=1; i<=10; i++) {
             html += `
             <div class="unit-card">
@@ -371,10 +372,18 @@
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
+        // Update QR Code
         const qrContainer = document.getElementById("qrcode");
         qrContainer.innerHTML = "";
-        if(no) new QRCode(qrContainer, { text: no, width: 40, height: 40 });
+        if(no) new QRCode(qrContainer, { text: no, width: 45, height: 45 });
 
+        // Update System Timestamp (Live)
+        const now = new Date();
+        const sysDate = now.getDate().toString().padStart(2, '0') + '/' + (now.getMonth() + 1).toString().padStart(2, '0') + '/' + now.getFullYear();
+        const sysTime = now.getHours().toString().padStart(2, '0') + '.' + now.getMinutes().toString().padStart(2, '0');
+        document.getElementById('out_sys_date').innerText = `${sysDate}, ${sysTime}`;
+
+        // Table Logic
         let total = 0, rows = "";
         for(let i=1; i<=10; i++) {
             const nopol = document.getElementById(`inNopol${i}`).value;
@@ -384,7 +393,7 @@
                 rows += `<tr><td>${i}</td><td style="text-align:left">${document.getElementById(`inTrans${i}`).value}</td><td>${nopol}</td><td>${document.getElementById(`inDriver${i}`).value}</td><td>${qty.toLocaleString()}</td><td>${document.getElementById(`inTera${i}`).value}</td></tr>`;
             }
         }
-        document.getElementById('tableBody').innerHTML = rows || "<tr><td colspan='6'>Data Kosong</td></tr>";
+        document.getElementById('tableBody').innerHTML = rows || "<tr><td colspan='6'>Data Belum Diinput</td></tr>";
         document.getElementById('outTotal').innerText = total.toLocaleString();
     }
 
@@ -409,16 +418,16 @@
             }
         }
 
-        if(payload.length === 0) return alert("Isi data armada terlebih dahulu!");
+        if(payload.length === 0) return alert("Peringatan: Tidak ada data armada untuk disimpan!");
         btn.disabled = true; btn.innerText = "SAVING...";
         
         try {
-            const { data, error } = await supabaseClient.from('memo_kse').insert(payload);
+            const { error } = await supabaseClient.from('memo_kse').insert(payload);
             if (error) throw error;
-            alert("Data Berhasil Disimpan!");
+            alert("Berhasil! Data telah diamankan di Cloud.");
             fetchNextNumber();
         } catch (err) {
-            alert("Gagal simpan: " + err.message);
+            alert("Error: " + err.message);
         } finally {
             btn.disabled = false; btn.innerText = "SAVE CLOUD";
         }
@@ -426,13 +435,14 @@
 
     function downloadPDF() {
         const element = document.getElementById('memo-area');
-        html2pdf().set({
+        const opt = {
             margin: 0,
-            filename: `Memo_KSE_${Date.now()}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
+            filename: `Memo_KSE_${document.getElementById('inNoUrut').value}.pdf`,
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 2.5, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
+        };
+        html2pdf().set(opt).from(element).save();
     }
 
     function handleDateChange() {
@@ -445,6 +455,7 @@
         document.getElementById('inTglMemo').valueAsDate = d;
         document.getElementById('inTglLoad').valueAsDate = d;
         await fetchNextNumber();
+        update();
     }
 
     document.addEventListener('input', update);
