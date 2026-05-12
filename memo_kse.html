@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memo - KSE Smart System</title>
+    <title>Memo - KSE</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -145,8 +145,8 @@
     <div class="input-group"><label>Alamat</label><input type="text" id="inAlamatPT"></div>
 
     <div class="section-title">Informasi Detail</div>
-    <div class="input-group"><label>No. PO/SO/DO</label><input type="text" id="inPO" value="-"></div>
-    <div class="input-group"><label>Tgl Loading</label><input type="date" id="inTglLoad"></div>
+    <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="-"></div>
+    <div class="input-group"><label>No. SO/DO</label><input type="text" id="inSODO" value="-"></div>
     <div class="input-group"><label>Lokasi</label><input type="text" id="inLokasi" value="Pangkalan Bun"></div>
 
     <div class="section-title">Input Armada</div>
@@ -200,8 +200,8 @@
         </div>
 
         <div class="details-box">
-            <div class="meta-row"><div class="meta-label">NO. PO /SO /DO </div><div>: <span id="outPO"></span></div></div>
-            <div class="meta-row"><div class="meta-label">TGL LOAD</div><div>: <span id="outTglLoad"></span></div></div>
+            <div class="meta-row"><div class="meta-label">NO. PO</div><div>: <span id="outPO"></span></div></div>
+            <div class="meta-row"><div class="meta-label">NO. SO/DO</div><div>: <span id="outSODO"></span></div></div>
             <div class="meta-row"><div class="meta-label">LOKASI</div><div>: <span id="outLokasi"></span></div></div>
         </div>
 
@@ -259,7 +259,7 @@
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYW10aWNrb3RleXZ5ZGF5eW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4OTU2MzksImV4cCI6MjA5MzQ3MTYzOX0.VAeN0JVnz4WNPzY5NTGmtGeHD-Da_qkCvy84ZDYZNHo";
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-    const listTransportir = ["PT. KHATULISTIWA SINAR ENERGI", "PT. INDO DHARMA ENERGI", "PT. INVESTAMA KALIMANTAN ENERGI"];
+    const listTransportir = ["PT. KHATULISTIWA SINAR ENERGI", "PT. INDO DHARMA ENERGI", "PT. INVESTAMA KALIMANTAN ENERGI" , "PT.DABELINA KARYA BERSAMA"];
     const dataArmada = [
         { nopol: "KH 8141 GH", tera: "100.5 cm", qty: 5000 },
         { nopol: "KH 8139 GM", tera: "133.5 cm", qty: 10000 },
@@ -369,8 +369,8 @@
         document.getElementById('outTujuanPT').innerText = document.getElementById('inTujuanPT').value;
         document.getElementById('outAlamatPT').innerText = document.getElementById('inAlamatPT').value;
         document.getElementById('outTglMemo').innerText = formatDateIndo(document.getElementById('inTglMemo').value);
-        document.getElementById('outTglLoad').innerText = formatDateIndo(document.getElementById('inTglLoad').value);
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
+        document.getElementById('outSODO').innerText = document.getElementById('inSODO').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
         // Update QR Code
@@ -454,7 +454,6 @@
         generateArmadaInputs();
         const d = new Date();
         document.getElementById('inTglMemo').valueAsDate = d;
-        document.getElementById('inTglLoad').valueAsDate = d;
         await fetchNextNumber();
         update();
     }
