@@ -123,8 +123,9 @@
     <div class="input-group"><label>Alamat</label><input type="text" id="inAlamatPT"></div>
 
     <div class="section-title">Informasi Detail</div>
-    <div class="input-group"><label>No. PO/SO/DO  </label><input type="text" id="inPO" value="-"></div>
-    <div class="input-group"><label>Tgl Loading</label><input type="date" id="inTglLoad"></div>
+    <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="-"></div>
+    <!-- PERUBAHAN: Tgl Load diubah menjadi No. SO/DO -->
+    <div class="input-group"><label>No. SO/DO</label><input type="text" id="inSODO" value="-"></div>
     <div class="input-group"><label>Lokasi</label><input type="text" id="inLokasi" value="Pangkalan Bun"></div>
 
     <div class="section-title">Input Armada</div>
@@ -135,7 +136,6 @@
     <div class="memo-page" id="memo-area">
         <div class="header-section">
             <div class="header-left">
-                <!-- LOGO DIUBAH KE ikaen.png -->
                 <img src="ikaen.png" class="logo-img" onerror="this.src='https://via.placeholder.com/60x60?text=IKE'">
                 <div class="company-title-box">
                     <div class="company-name-main">INVESTAMA</div>
@@ -179,8 +179,9 @@
         </div>
 
         <div class="details-box">
-            <div class="meta-row"><div class="meta-label">NO. PO/SO/DO</div><div>: <span id="outPO"></span></div></div>
-            <div class="meta-row"><div class="meta-label">TGL LOAD</div><div>: <span id="outTglLoad"></span></div></div>
+            <div class="meta-row"><div class="meta-label">NO. PO</div><div>: <span id="outPO"></span></div></div>
+            <!-- PERUBAHAN: Tgl Load diubah menjadi NO. SO/DO di area cetak -->
+            <div class="meta-row"><div class="meta-label">NO. SO/DO</div><div>: <span id="outSODO"></span></div></div>
             <div class="meta-row"><div class="meta-label">LOKASI</div><div>: <span id="outLokasi"></span></div></div>
         </div>
 
@@ -213,7 +214,6 @@
             REGARDS,<br>
             <strong>PT. INVENTAMA KALIMANTAN ENERGI</strong>
             <div class="sig-space">
-                <!-- TANDA TANGAN DIUBAH KE ike.png -->
                 <img src="ike.png" class="sig-img" onerror="this.style.display='none'">
             </div>
             <b>OPERATIONAL DEPT.</b>
@@ -226,7 +226,7 @@
             <div class="footer-content">
                 <div id="qrcode"></div>
                 <div style="text-align: right;">
-                    <strong>IKE SMART LOGISTICS</strong><br>
+                    <strong>IKAEN SMART LOGISTICS</strong><br>
                     Authentic Digital Document
                 </div>
             </div>
@@ -270,7 +270,7 @@
 
         try {
             const { data, error } = await supabaseClient
-                .from('memo_ikaen') // Nama tabel tetap kse (sesuai database Anda)
+                .from('memo_ikaen')
                 .select('no_dokumen')
                 .gte('tanggal', firstDay)
                 .lte('tanggal', lastDay);
@@ -347,8 +347,10 @@
         document.getElementById('outTujuanPT').innerText = document.getElementById('inTujuanPT').value;
         document.getElementById('outAlamatPT').innerText = document.getElementById('inAlamatPT').value;
         document.getElementById('outTglMemo').innerText = formatDateIndo(document.getElementById('inTglMemo').value);
-        document.getElementById('outTglLoad').innerText = formatDateIndo(document.getElementById('inTglLoad').value);
+        
+        // Link value input ke output preview
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
+        document.getElementById('outSODO').innerText = document.getElementById('inSODO').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
         const qrContainer = document.getElementById("qrcode");
@@ -395,7 +397,7 @@
         try {
             const { error } = await supabaseClient.from('memo_ikaen').insert(payload);
             if (error) throw error;
-            alert("Data PT. IKE Berhasil Disimpan!");
+            alert("Data PT. IKAEN Berhasil Disimpan!");
             fetchNextNumber();
         } catch (err) {
             alert("Gagal simpan: " + err.message);
@@ -408,7 +410,7 @@
         const element = document.getElementById('memo-area');
         html2pdf().set({
             margin: 0,
-            filename: `Memo_IKE_${Date.now()}.pdf`,
+            filename: `Memo_IKAEN_${Date.now()}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -421,7 +423,7 @@
         generateArmadaInputs();
         const d = new Date();
         document.getElementById('inTglMemo').valueAsDate = d;
-        document.getElementById('inTglLoad').valueAsDate = d;
+        // Tgl Load dihapus dari init karena sudah diganti teks
         fetchNextNumber();
     }
 
