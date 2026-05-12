@@ -112,7 +112,7 @@
 
     <div class="section-title">Informasi Detail</div>
     <div class="input-group"><label>No. PO</label><input type="text" id="inPO" value="-"></div>
-    <div class="input-group"><label>Tgl Loading</label><input type="date" id="inTglLoad"></div>
+    <div class="input-group"><label>No. SO / DO</label><input type="text" id="inNoSO" placeholder="Masukkan nomor SO/DO"></div>
     <div class="input-group"><label>Lokasi</label><input type="text" id="inLokasi" value="Pangkalan Bun"></div>
 
     <div class="section-title">Input Armada</div>
@@ -168,7 +168,7 @@
 
         <div class="details-box">
             <div class="meta-row"><div class="meta-label">NO. PO</div><div>: <span id="outPO"></span></div></div>
-            <div class="meta-row"><div class="meta-label">TGL LOAD</div><div>: <span id="outTglLoad"></span></div></div>
+            <div class="meta-row"><div class="meta-label">NO. SO / DO</div><div>: <span id="outNoSO"></span></div></div>
             <div class="meta-row"><div class="meta-label">LOKASI</div><div>: <span id="outLokasi"></span></div></div>
         </div>
 
@@ -345,7 +345,10 @@
         document.getElementById('outTujuanPT').innerText = document.getElementById('inTujuanPT').value;
         document.getElementById('outAlamatPT').innerText = document.getElementById('inAlamatPT').value;
         document.getElementById('outTglMemo').innerText = formatDateIndo(document.getElementById('inTglMemo').value);
-        document.getElementById('outTglLoad').innerText = formatDateIndo(document.getElementById('inTglLoad').value);
+        
+        // Update No SO / DO
+        document.getElementById('outNoSO').innerText = document.getElementById('inNoSO').value;
+        
         document.getElementById('outPO').innerText = document.getElementById('inPO').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
@@ -413,15 +416,10 @@
         }).from(element).save();
     }
 
-    function handleDateChange() {
-        fetchNextNumber();
-    }
-
     async function initPage() {
         generateArmadaInputs();
         const d = new Date();
         document.getElementById('inTglMemo').valueAsDate = d;
-        document.getElementById('inTglLoad').valueAsDate = d;
         await fetchNextNumber();
     }
 
@@ -430,4 +428,3 @@
 </script>
 </body>
 </html>
-    
