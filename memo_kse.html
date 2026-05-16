@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memo - KSE</title>
+    <title>Memo - KSE Smart Logistics</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -60,7 +60,6 @@
             letter-spacing: 0.5px;
         }
         .btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        
         .btn-home { background: #4b5563; }
         .btn-print { background: #6366f1; }
         .btn-save { background: var(--success-green); }
@@ -95,18 +94,13 @@
         .sig-space { height: 80px; display: flex; align-items: center; }
         .sig-img { width: 80px; filter: grayscale(1); }
         
-        /* FOOTER SYSTEM STYLES */
         .footer-memo { margin-top: auto; padding-top: 20px; }
         .footer-bar { display: flex; width: 100%; height: 4px; margin-bottom: 10px; }
         .bar-1 { background: var(--primary-kse); flex: 6; }
         .bar-2 { background: #008b8b; flex: 2; }
         .bar-3 { background: var(--gold-kse); flex: 2; }
         
-        .footer-content { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: flex-end; 
-        }
+        .footer-content { display: flex; justify-content: space-between; align-items: flex-end; }
         #qrcode { padding: 3px; border: 1px solid #000; }
         .footer-sys-text { text-align: right; line-height: 1.2; }
 
@@ -125,7 +119,10 @@
 <div class="sidebar">
     <h2>KSE MEMO CONTROL</h2>
     <div class="section-title">Dokumen Meta</div>
-    <div class="input-group"><label>No. Urut (Auto)</label><input type="text" id="inNoUrut" readonly></div>
+    <div class="input-group">
+        <label>No. Urut (Bisa Diedit)</label>
+        <input type="text" id="inNoUrut" placeholder="Memuat...">
+    </div>
     <div class="input-group"><label>Format</label><input type="text" id="inNoFormat" readonly></div>
     <div class="input-group"><label>Tanggal Memo</label><input type="date" id="inTglMemo" onchange="handleDateChange()"></div>
     <div class="input-group"><label>Perihal</label><textarea id="inPerihal" rows="2">MEMO LOADING BBM</textarea></div>
@@ -196,7 +193,7 @@
 
         <div style="font-size: 12px; margin-bottom: 10px;">
             DENGAN HORMAT,<br>
-            BERSAMA INI KAMI SAMPAIKAN REALISASI PENGALIRAN / LOADING  BBM SOLAR INDUSTRI DENGAN RINCIAN SEBAGAI BERIKUT:
+            BERSAMA INI KAMI SAMPAIKAN REALISASI PENGALIRAN / LOADING BBM SOLAR INDUSTRI DENGAN RINCIAN SEBAGAI BERIKUT:
         </div>
 
         <div class="details-box">
@@ -271,7 +268,6 @@
         { nopol: "KH 8206 GN", tera: "106.2 cm", qty: 5000 },
         { nopol: "L 9761 UJ", tera: "124.0 cm", qty: 8000 }
     ];
-    
     const listDriver = ["AGUS EFENDI", "WIYANTO", "WAHID", "SUPRIYADI", "INDRA", "AGUS MULYANTO", "AGUS WANTO", "NUR KHOLIS", "FARID HABIBI", "RONNY PRASTIANSYAH", "ADI SUCIPTO", "AGUS"];
 
     function getRomanMonth(monthIdx) {
@@ -282,18 +278,18 @@
     async function fetchNextNumber() {
         const dateInput = document.getElementById('inTglMemo').value;
         if(!dateInput) return;
+        
         const date = new Date(dateInput);
         const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const firstDay = `${year}-${String(month).padStart(2, '0')}-01`;
-        const lastDay = `${year}-${String(month).padStart(2, '0')}-31`;
+        const startOfYear = `${year}-01-01`;
+        const endOfYear = `${year}-12-31`;
 
         try {
             const { data, error } = await supabaseClient
                 .from('memo_kse')
                 .select('no_dokumen')
-                .gte('tanggal', firstDay)
-                .lte('tanggal', lastDay);
+                .gte('tanggal', startOfYear)
+                .lte('tanggal', endOfYear);
 
             if (error) throw error;
 
@@ -305,12 +301,14 @@
                 });
                 nextNum = Math.max(...existingNumbers) + 1;
             }
+            
+            // Set nomor urut ke input (User bisa edit manual)
             document.getElementById('inNoUrut').value = String(nextNum).padStart(3, '0');
             document.getElementById('inNoFormat').value = `/MEMO-KSE/${getRomanMonth(date.getMonth())}/${year}`;
             update();
         } catch (err) {
-            console.error("Gagal mengambil nomor urut:", err);
-            document.getElementById('inNoUrut').value = "001";
+            console.error("Gagal sinkronisasi nomor:", err);
+            if(!document.getElementById('inNoUrut').value) document.getElementById('inNoUrut').value = "001";
         }
     }
 
@@ -325,7 +323,6 @@
         let html = `<datalist id="listTrans">${listTransportir.map(i => `<option value="${i}">`).join('')}</datalist>`;
         html += `<datalist id="listNopol">${dataArmada.map(i => `<option value="${i.nopol}">`).join('')}</datalist>`;
         html += `<datalist id="listDriver">${listDriver.map(i => `<option value="${i}">`).join('')}</datalist>`;
-        
         for(let i=1; i<=10; i++) {
             html += `
             <div class="unit-card">
@@ -363,8 +360,11 @@
     }
 
     function update() {
-        const no = document.getElementById('inNoUrut').value + document.getElementById('inNoFormat').value;
-        document.getElementById('outNomor').innerText = no;
+        const urut = document.getElementById('inNoUrut').value;
+        const format = document.getElementById('inNoFormat').value;
+        const fullNo = urut + format;
+
+        document.getElementById('outNomor').innerText = fullNo;
         document.getElementById('outPerihal').innerText = document.getElementById('inPerihal').value;
         document.getElementById('outTujuanPT').innerText = document.getElementById('inTujuanPT').value;
         document.getElementById('outAlamatPT').innerText = document.getElementById('inAlamatPT').value;
@@ -373,18 +373,15 @@
         document.getElementById('outSODO').innerText = document.getElementById('inSODO').value;
         document.getElementById('outLokasi').innerText = document.getElementById('inLokasi').value;
 
-        // Update QR Code
         const qrContainer = document.getElementById("qrcode");
         qrContainer.innerHTML = "";
-        if(no) new QRCode(qrContainer, { text: no, width: 45, height: 45 });
+        if(fullNo) new QRCode(qrContainer, { text: fullNo, width: 45, height: 45 });
 
-        // Update System Timestamp (Live)
         const now = new Date();
         const sysDate = now.getDate().toString().padStart(2, '0') + '/' + (now.getMonth() + 1).toString().padStart(2, '0') + '/' + now.getFullYear();
         const sysTime = now.getHours().toString().padStart(2, '0') + '.' + now.getMinutes().toString().padStart(2, '0');
         document.getElementById('out_sys_date').innerText = `${sysDate}, ${sysTime}`;
 
-        // Table Logic
         let total = 0, rows = "";
         for(let i=1; i<=10; i++) {
             const nopol = document.getElementById(`inNopol${i}`).value;
@@ -426,7 +423,7 @@
             const { error } = await supabaseClient.from('memo_kse').insert(payload);
             if (error) throw error;
             alert("Berhasil! Data telah diamankan di Cloud.");
-            fetchNextNumber();
+            await fetchNextNumber();
         } catch (err) {
             alert("Error: " + err.message);
         } finally {
@@ -446,8 +443,8 @@
         html2pdf().set(opt).from(element).save();
     }
 
-    function handleDateChange() {
-        fetchNextNumber();
+    async function handleDateChange() {
+        await fetchNextNumber();
     }
 
     async function initPage() {
